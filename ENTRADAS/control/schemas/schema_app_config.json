@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schema_app_config.json",
+  "title": "BDC App Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "env",
+    "system",
+    "base_dir",
+    "paths",
+    "control_files",
+    "naming"
+  ],
+  "properties": {
+    "env": {
+      "type": "string",
+      "enum": [
+        "dev",
+        "test",
+        "prod"
+      ]
+    },
+    "system": {
+      "type": "string",
+      "minLength": 1
+    },
+    "base_dir": {
+      "type": "string",
+      "minLength": 1
+    },
+    "paths": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      },
+      "required": [
+        "entradas",
+        "saidas",
+        "logs",
+        "configs",
+        "control",
+        "control_schemas",
+        "control_layouts",
+        "control_mappings",
+        "control_rules",
+        "control_quality",
+        "input_fichas_comercializadoras_root",
+        "input_fichas_comercializadoras_pendentes",
+        "input_fichas_comercializadoras_processadas",
+        "input_fichas_comercializadoras_rejeitadas",
+        "staging",
+        "staging_fichas_comercializadoras",
+        "bronze",
+        "bronze_fichas_comercializadoras_raw",
+        "bronze_ingestion_log",
+        "silver",
+        "silver_documentos_classificados",
+        "silver_fichas_comercializadoras_extraidas",
+        "relational",
+        "gold",
+        "output",
+        "log_runner",
+        "log_ingestion",
+        "log_classification",
+        "log_extraction"
+      ]
+    },
+    "control_files": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "naming": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id_prefix",
+        "staging_prefix",
+        "bronze_prefix",
+        "silver_prefix",
+        "gold_prefix",
+        "relational_prefix"
+      ],
+      "properties": {
+        "run_id_prefix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "staging_prefix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bronze_prefix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "silver_prefix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "gold_prefix": {
+          "type": "string",
+          "minLength": 1
+        },
+        "relational_prefix": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

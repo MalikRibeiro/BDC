@@ -1,0 +1,33 @@
+{
+  "tipo_ficha": "CONSUMIDOR",
+  "layouts": [
+    {
+      "version": "v1",
+      "file": "layout_ficha_consumidor_v1.json",
+      "required_fields": [
+        "EMPRESA",
+        "CNPJ",
+        "DATA_DEMONSTRACAO_FINANCEIRA"
+      ]
+    },
+    {
+      "version": "v2",
+      "file": "layout_ficha_consumidor_v2.json",
+      "required_fields": [
+        "EMPRESA",
+        "CNPJ",
+        "DATA_DEMONSTRACAO_FINANCEIRA",
+        "PATRIMONIO_LIQUIDO"
+      ]
+    },
+        {
+      "version": "v3",
+      "file": "layout_ficha_consumidor_v3.json",
+      "required_fields": [
+        "EMPRESA",
+        "CNPJ",
+        "PATRIMONIO_LIQUIDO"
+      ]
+    }
+  ]
+}

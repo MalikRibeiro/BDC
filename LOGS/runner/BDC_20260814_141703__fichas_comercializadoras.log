@@ -1,0 +1,12 @@
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Carregando Mapping de Comercializadoras: C:\Users\C807951\Desktop\BDC\ENTRADAS\control\mappings\mapping_fichas_comercializadoras.json
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Mapping de Comercializadoras carregado e validado com sucesso. Quantidade de registros: 48
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Iniciando carga dos layouts de comercializadoras.
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Layouts de comercializadoras carregados com sucesso. Quantidade: 7
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Carregando Regras de Qualidade de Comercializadoras: C:\Users\C807951\Desktop\BDC\ENTRADAS\control\quality\data_quality_rules_fichas_comercializadoras.json
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Regras de Qualidade de Comercializadoras carregado e validado com sucesso.
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Faixas de PD carregadas com sucesso.
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Configuração de CPURA carregada com sucesso.
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Configuração de score de CPURA carregada com sucesso.
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Regras de transformação de PD carregadas com sucesso.
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Iniciando processamento de 0 fichas (0 normais, 0 reprocessamento).
+2026-08-14 14:17:03 | INFO | bdc.comercializadoras | Resumo do processamento: {'run_id': 'BDC_20260814_141703', 'arquivos_recebidos': 0, 'arquivos_normais': 0, 'arquivos_reprocessamento': 0, 'registros_silver': 0, 'documentos_classificados': 0}

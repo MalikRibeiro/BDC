@@ -1,0 +1,359 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schema_ficha_comercializadora_extraida.json",
+  "title": "Schema da ficha de comercializadora extraída",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "documento_id",
+    "run_id",
+    "ambiente",
+    "tipo_ficha",
+    "versao_ficha",
+    "arquivo_nome",
+    "hash_arquivo",
+    "SIGLA",
+    "CNPJ",
+    "DATA_DEMONSTRACAO_FINANCEIRA"
+  ],
+  "properties": {
+    "documento_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ambiente": {
+      "type": "string",
+      "enum": [
+        "dev",
+        "test",
+        "prod"
+      ]
+    },
+    "tipo_ficha": {
+      "type": "string",
+      "const": "comercializadora"
+    },
+    "versao_ficha": {
+      "type": "string",
+      "enum": [
+        "padrao_1",
+        "padrao_2",
+        "padrao_3",
+        "padrao_4",
+        "padrao_5",
+        "padrao_6",
+        "padrao_7"
+      ]
+    },
+    "arquivo_nome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "hash_arquivo": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$"
+    },
+    "DATA_DEMONSTRACAO_FINANCEIRA": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "SIGLA": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "minLength": 1
+    },
+    "CNPJ": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{14}$"
+    },
+    "CODIGO_CCEE": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "DATA_ADESAO_CCEE": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "AUDITOR": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "TIPO_COMERCIALIZADORA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "PATRIMONIO_LIQUIDO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "AGENCIA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "NOTA_CREDITO": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ATIVO_CIRCULANTE_FINANCEIRO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "CAPITAL_SOCIAL": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PROBABILIDADE_DEFAULT": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "DATA_CALCULO": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "CNPJ_BBCE": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{14}$"
+    },
+    "DATA_RATING_AGENCIA": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "ATIVO_CIRCULANTE_AJUSTADO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ATIVO_TOTAL_AJUSTADO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PASSIVO_CIRCULANTE_AJUSTADO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PASSIVO_CIRCULANTE_FINANCEIRO_AJUSTADO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO_AJUSTADO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LUCROS_ACUMULADOS": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "RESERVA_DE_LUCROS": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "VENDAS_LIQUIDAS": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LUCRO_LIQUIDO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "RATING_COPEL": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "LIQUIDEZ_CORRENTE_AJUSTADO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "INDICE_SOLVENCIA_GERAL_AJUSTADO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "INDICE_COBERTURA_DE_DESPESA_COM_PESSOAL": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PAYOUT_AJUSTADO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "CAPITAL_CIRCULANTE_LIQUIDO_AJUSTADO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ROE": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ROA": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "MFCO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "NOTA_BOARD": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "NOTA_BUREAU": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "SCORE_BUREAU": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "CONTROLADOR": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "CNPJ_CONTROLADOR": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^\\d{14}$"
+    },
+    "QUANTIDADE_RESTRITIVOS": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "dt_processamento": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time"
+    },
+    "ROL": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LUCRO_BRUTO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LAJIR": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LAIR": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PL_CONTROLADOR": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PERCENTUAL_CONTROLADOR": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  }
+}

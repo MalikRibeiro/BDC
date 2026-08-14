@@ -1,0 +1,356 @@
+{
+  "tipo_ficha": "comercializadora",
+  "versao_ficha": "padrao_6",
+  "layout_id": "ficha_comercializadora_padrao_6",
+  "descricao": "Layout 6 da ficha de comercializadora",
+  "sheet_aliases": [
+    "FichaIndividual"
+  ],
+  "required_fields": [
+    "SIGLA",
+    "CNPJ",
+    "DATA_DEMONSTRACAO_FINANCEIRA",
+    "DATA_CALCULO",
+    "PATRIMONIO_LIQUIDO"
+  ],
+  "key_fields": [
+    "SIGLA",
+    "CNPJ",
+    "DATA_DEMONSTRACAO_FINANCEIRA",
+    "DATA_CALCULO",
+    "PATRIMONIO_LIQUIDO"
+  ],
+  "optional_fields": [
+    "AGENCIA",
+    "ATIVO_CIRCULANTE_AJUSTADO",
+    "ATIVO_CIRCULANTE_FINANCEIRO",
+    "ATIVO_TOTAL_AJUSTADO",
+    "AUDITOR",
+    "CAPITAL_CIRCULANTE_LIQUIDO_AJUSTADO",
+    "CAPITAL_SOCIAL",
+    "CNPJ_BBCE",
+    "CODIGO_CCEE",
+    "DATA_ADESAO_CCEE",
+    "DATA_RATING_AGENCIA",
+    "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+    "INDICE_COBERTURA_DE_DESPESA_COM_PESSOAL",
+    "INDICE_SOLVENCIA_GERAL_AJUSTADO",
+    "LIQUIDEZ_CORRENTE_AJUSTADO",
+    "LUCROS_ACUMULADOS",
+    "LUCRO_LIQUIDO",
+    "MFCO",
+    "NOTA_BOARD",
+    "NOTA_BUREAU",
+    "NOTA_CREDITO",
+    "PASSIVO_CIRCULANTE_AJUSTADO",
+    "PASSIVO_CIRCULANTE_FINANCEIRO_AJUSTADO",
+    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO_AJUSTADO",
+    "PAYOUT_AJUSTADO",
+    "PROBABILIDADE_DEFAULT",
+    "RATING_COPEL",
+    "RESERVA_DE_LUCROS",
+    "ROA",
+    "ROE",
+    "TIPO_COMERCIALIZADORA",
+    "VENDAS_LIQUIDAS",
+	"SCORE_BUREAU",
+	"QUANTIDADE_RESTRITIVOS",
+	"CONTROLADOR", 
+	"CNPJ_CONTROLADOR",
+	"PL_CONTROLADOR",
+	"PERCENTUAL_CONTROLADOR",
+	"ROL",
+	"LUCRO_BRUTO",
+	"LAJIR",
+	"LAIR"
+  ],
+    "verify_fields": [
+    "CNPJ"
+  ],
+  "field_map": {
+    "DATA_DEMONSTRACAO_FINANCEIRA": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A9",
+      "value_cell": "B9",
+      "implemented": true
+    },
+    "SIGLA": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A11",
+      "value_cell": "B11",
+      "implemented": true
+    },
+    "CNPJ": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A13",
+	  "expected_label": "CNPJ",
+      "value_cell": "B13",
+      "implemented": true
+    },
+    "CODIGO_CCEE": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A14",
+      "value_cell": "B14",
+      "implemented": true
+    },
+    "DATA_ADESAO_CCEE": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A15",
+      "value_cell": "B15",
+      "implemented": true
+    },
+    "AUDITOR": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A33",
+      "value_cell": "B33",
+      "implemented": true
+    },
+    "TIPO_COMERCIALIZADORA": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A18",
+      "value_cell": "B18",
+      "implemented": true
+    },
+    "PATRIMONIO_LIQUIDO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A21",
+      "value_cell": "B21",
+      "implemented": true
+    },
+    "AGENCIA": {
+      "sheet": "FichaIndividual",
+      "label_cell": "F12",
+      "value_cell": "H12",
+      "implemented": true
+    },
+    "NOTA_CREDITO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "F13",
+      "value_cell": "H13",
+      "implemented": true
+    },
+    "ATIVO_CIRCULANTE_FINANCEIRO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L15",
+      "value_cell": "Q15",
+      "implemented": true
+    },
+    "CAPITAL_SOCIAL": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L21",
+      "value_cell": "Q21",
+      "implemented": true
+    },
+    "PROBABILIDADE_DEFAULT": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L46",
+      "value_cell": "M46",
+      "implemented": true
+    },
+    "DATA_CALCULO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "C7",
+      "value_cell": "D7",
+      "implemented": true
+    },
+    "CNPJ_BBCE": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A12",
+      "value_cell": "B12",
+      "implemented": true
+    },
+    "DATA_RATING_AGENCIA": {
+      "sheet": "FichaIndividual",
+      "label_cell": "F14",
+      "value_cell": "H14",
+      "implemented": true
+    },
+    "ATIVO_CIRCULANTE_AJUSTADO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L14",
+      "value_cell": "Q14",
+      "implemented": true
+    },
+    "ATIVO_TOTAL_AJUSTADO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L16",
+      "value_cell": "Q16",
+      "implemented": true
+    },
+    "PASSIVO_CIRCULANTE_AJUSTADO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L17",
+      "value_cell": "Q17",
+      "implemented": true
+    },
+    "PASSIVO_CIRCULANTE_FINANCEIRO_AJUSTADO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L18",
+      "value_cell": "Q18",
+      "implemented": true
+    },
+    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO_AJUSTADO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L19",
+      "value_cell": "Q19",
+      "implemented": true
+    },
+    "LUCROS_ACUMULADOS": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L22",
+      "value_cell": "Q22",
+      "implemented": true
+    },
+    "RESERVA_DE_LUCROS": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L23",
+      "value_cell": "Q23",
+      "implemented": true
+    },
+    "VENDAS_LIQUIDAS": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L24",
+      "value_cell": "Q24",
+      "implemented": true
+    },
+    "LUCRO_LIQUIDO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L25",
+      "value_cell": "Q25",
+      "implemented": true
+    },
+    "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L26",
+      "value_cell": "Q26",
+      "implemented": true
+    },
+    "RATING_COPEL": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A49",
+      "value_cell": "B49",
+      "implemented": true
+    },
+    "LIQUIDEZ_CORRENTE_AJUSTADO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A59",
+      "value_cell": "B59",
+      "implemented": true
+    },
+    "INDICE_SOLVENCIA_GERAL_AJUSTADO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A60",
+      "value_cell": "B60",
+      "implemented": true
+    },
+    "INDICE_COBERTURA_DE_DESPESA_COM_PESSOAL": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A62",
+      "value_cell": "C62",
+      "implemented": true
+    },
+    "PAYOUT_AJUSTADO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A64",
+      "value_cell": "B64",
+      "implemented": true
+    },
+    "CAPITAL_CIRCULANTE_LIQUIDO_AJUSTADO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A65",
+      "value_cell": "B65",
+      "implemented": true
+    },
+    "ROE": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L57",
+      "value_cell": "M57",
+      "implemented": true
+    },
+    "ROA": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L56",
+      "value_cell": "M56",
+      "implemented": true
+    },
+    "MFCO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L55",
+      "value_cell": "M55",
+      "implemented": true
+    },
+    "NOTA_BOARD": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A32",
+      "value_cell": "C32",
+      "implemented": true
+    },
+    "NOTA_BUREAU": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A34",
+      "value_cell": "C34",
+      "implemented": true
+    },
+    "SCORE_BUREAU": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L83",
+      "value_cell": "M83",
+      "implemented": true
+    },
+    "QUANTIDADE_RESTRITIVOS": {
+      "sheet": "FichaIndividual",
+      "label_cell": "L84",
+      "value_cell": "M84",
+      "implemented": true
+    },
+    "CONTROLADOR": {
+      "sheet": "FichaIndividual",
+      "label_cell": "F42",
+      "value_cell": "H42",
+      "implemented": true
+    }
+	,
+    "CNPJ_CONTROLADOR": {
+      "sheet": "FichaIndividual",
+      "label_cell": "F43",
+      "value_cell": "H43",
+      "implemented": true
+    },
+    "ROL": {
+      "sheet": "Conf. Puras_DRE",
+      "label_cell": "A4",
+      "value_cell": "C4",
+      "implemented": true
+    },
+    "LUCRO_BRUTO": {
+      "sheet": "Conf. Puras_DRE",
+      "label_cell": "A11",
+      "value_cell": "C11",
+      "implemented": true
+    },
+    "LAJIR": {
+      "sheet": "Conf. Puras_DRE",
+      "label_cell": "A20",
+      "value_cell": "C20",
+      "implemented": true
+    },
+    "LAIR": {
+      "sheet": "Conf. Puras_DRE",
+      "label_cell": "A28",
+      "value_cell": "C28",
+      "implemented": true
+    },
+    "PL_CONTROLADOR": {
+      "sheet": "Conf. Puras_DRE",
+      "label_cell": "F37",
+      "value_cell": "H37",
+      "implemented": true
+    },
+    "PERCENTUAL_CONTROLADOR": {
+      "sheet": "Conf. Puras_DRE",
+      "label_cell": "F38",
+      "value_cell": "H38",
+      "implemented": true
+    }
+  }
+}

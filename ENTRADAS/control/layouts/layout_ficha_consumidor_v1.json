@@ -1,0 +1,203 @@
+{
+  "tipo_ficha": "consumidor",
+  "versao_ficha": "v1",
+  "layout_id": "ficha_consumidor_v1",
+  "descricao": "Layout v1 da ficha de consumidor",
+  "sheet_aliases": [
+    "Dados Gerais e Qualitativos"
+  ],
+  "required_fields": [
+    "EMPRESA",
+    "CNPJ"
+  ],
+  "key_fields": [
+    "DATA_DEMONSTRACAO_FINANCEIRA",
+    "EMPRESA",
+    "CNPJ"
+  ],
+    "verify_fields": [
+    "DADOS_CADASTRAIS"
+  ],
+  "optional_fields": [
+    "DATA_CALCULO",
+    "DATA_ABERTURA",
+    "CEP",
+    "ENDERECO",
+    "CAPITAL_SOCIAL",
+    "ATIVO_CIRCULANTE",
+    "ATIVO_CIRCULANTE_FINANCEIRO",
+    "ATIVO_TOTAL",
+    "PASSIVO_CIRCULANTE",
+    "PASSIVO_CIRCULANTE_FINANCEIRO",
+    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO",
+    "PATRIMONIO_LIQUIDO",
+    "LUCROS_ACUMULADOS",
+    "RESERVA_DE_LUCROS",
+    "VENDAS_LIQUIDAS",
+    "PROBABILIDADE_DEFAULT"
+  ],
+  "field_map": {
+    "DADOS_CADASTRAIS": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A6",
+	  "expected_label": "DADOS CADASTRAIS",
+      "value_cell": null,
+      "implemented": true,
+      "data_type": "text",
+      "required": true
+    },
+    "DATA_DEMONSTRACAO_FINANCEIRA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "E11",
+      "value_cell": "G11",
+      "implemented": true,
+      "data_type": "date",
+      "required": true,
+      "year_only_rule": "end_of_year"
+    },
+    "EMPRESA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "B9",
+      "implemented": true,
+      "data_type": "text",
+      "required": true
+    },
+    "DATA_CALCULO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "B61",
+      "implemented": true,
+      "data_type": "date",
+      "required": false
+    },
+    "CNPJ": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "B8",
+      "implemented": true,
+      "data_type": "cnpj",
+      "required": true
+    },
+    "DATA_ABERTURA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "B10",
+      "implemented": true,
+      "data_type": "date",
+      "required": false
+    },
+    "CEP": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "B13",
+      "implemented": true,
+      "data_type": "cep",
+      "required": false
+    },
+    "ENDERECO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "B14",
+      "implemented": true,
+      "data_type": "text",
+      "required": false
+    },
+    "CAPITAL_SOCIAL": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A15",
+      "value_cell": "B15",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    },
+    "ATIVO_CIRCULANTE": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "E12",
+      "value_cell": "G12",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    },
+    "ATIVO_CIRCULANTE_FINANCEIRO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "G13",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    },
+    "ATIVO_TOTAL": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "G14",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    },
+    "PASSIVO_CIRCULANTE": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "G15",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    },
+    "PASSIVO_CIRCULANTE_FINANCEIRO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "G16",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    },
+    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "G17",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    },
+    "PATRIMONIO_LIQUIDO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "G18",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    },
+    "LUCROS_ACUMULADOS": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "G20",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    },
+    "RESERVA_DE_LUCROS": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "G21",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    },
+    "VENDAS_LIQUIDAS": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "G22",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    },
+    "PROBABILIDADE_DEFAULT": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "G41",
+      "implemented": true,
+      "data_type": "float",
+      "required": false
+    }
+  }
+}

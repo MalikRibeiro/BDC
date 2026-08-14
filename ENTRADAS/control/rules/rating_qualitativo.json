@@ -1,0 +1,28 @@
+{
+  "pesos_notas": {
+    "A": 10,
+    "B": 8,
+    "C": 6,
+    "D": 3,
+    "E": 0
+  },
+  "auditor_para_nota": {
+    "DELOITTE": "A",
+    "PWC": "A",
+    "EY": "A",
+    "KPMG": "A",
+    "BDO": "C",
+    "GRANT THORNTON": "C",
+    "BAKER TILLY": "C",
+    "CROWE HORWATH": "D",
+    "NEXIA INTERNATIONAL": "D",
+    "RSM": "D",
+    "CONTADOR": "E",
+    "OUTRO": "E"
+  },
+  "pesos_componentes": {
+    "BOARD": 0.20,
+    "AUDITORIA": 0.05,
+    "BUREAU": 0.05
+  }
+}

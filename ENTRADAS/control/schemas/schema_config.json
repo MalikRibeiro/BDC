@@ -1,0 +1,395 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schema_config.json",
+  "title": "BDC Global Config",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "system_name",
+    "application_name",
+    "environment",
+    "version",
+    "base_dir",
+    "directories",
+    "standards",
+    "document_standards",
+    "file_rules",
+    "processing",
+    "relational_layer",
+    "logging",
+    "features"
+  ],
+  "properties": {
+    "system_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "application_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "environment": {
+      "type": "string",
+      "enum": [
+        "dev",
+        "test",
+        "prod"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "base_dir": {
+      "type": "string",
+      "minLength": 1
+    },
+    "directories": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "entradas",
+        "saidas",
+        "logs"
+      ],
+      "properties": {
+        "entradas": {
+          "type": "string",
+          "minLength": 1
+        },
+        "saidas": {
+          "type": "string",
+          "minLength": 1
+        },
+        "logs": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "network_paths": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "standards": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "date_format",
+        "datetime_format",
+        "file_datetime_format",
+        "encoding",
+        "csv_separator",
+        "decimal_separator",
+        "thousands_separator",
+        "null_values",
+        "boolean_true_values",
+        "boolean_false_values"
+      ],
+      "properties": {
+        "date_format": {
+          "type": "string",
+          "minLength": 1
+        },
+        "datetime_format": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_datetime_format": {
+          "type": "string",
+          "minLength": 1
+        },
+        "encoding": {
+          "type": "string",
+          "minLength": 1
+        },
+        "csv_separator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1
+        },
+        "decimal_separator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1
+        },
+        "thousands_separator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1
+        },
+        "null_values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boolean_true_values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "boolean_false_values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "document_standards": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cnpj_digits",
+        "cpf_digits",
+        "remove_mask_from_documents",
+        "uppercase_string_fields",
+        "trim_string_fields"
+      ],
+      "properties": {
+        "cnpj_digits": {
+          "type": "integer",
+          "const": 14
+        },
+        "cpf_digits": {
+          "type": "integer",
+          "const": 11
+        },
+        "remove_mask_from_documents": {
+          "type": "boolean"
+        },
+        "uppercase_string_fields": {
+          "type": "boolean"
+        },
+        "trim_string_fields": {
+          "type": "boolean"
+        }
+      }
+    },
+    "file_rules": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "allowed_extensions",
+        "hash_algorithm",
+        "overwrite_outputs",
+        "create_missing_directories",
+        "ignore_temporary_files",
+        "temporary_file_prefixes"
+      ],
+      "properties": {
+        "allowed_extensions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^\\."
+          },
+          "minItems": 1
+        },
+        "hash_algorithm": {
+          "type": "string",
+          "enum": [
+            "sha256",
+            "md5",
+            "sha1"
+          ]
+        },
+        "overwrite_outputs": {
+          "type": "boolean"
+        },
+        "create_missing_directories": {
+          "type": "boolean"
+        },
+        "ignore_temporary_files": {
+          "type": "boolean"
+        },
+        "temporary_file_prefixes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "processing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "use_staging",
+        "validate_before_publish",
+        "stop_on_error",
+        "move_processed_inputs",
+        "move_rejected_inputs",
+        "generate_run_id",
+        "write_execution_manifest",
+        "write_quality_report",
+        "write_row_count_report"
+      ],
+      "properties": {
+        "use_staging": {
+          "type": "boolean"
+        },
+        "validate_before_publish": {
+          "type": "boolean"
+        },
+        "stop_on_error": {
+          "type": "boolean"
+        },
+        "move_processed_inputs": {
+          "type": "boolean"
+        },
+        "move_rejected_inputs": {
+          "type": "boolean"
+        },
+        "generate_run_id": {
+          "type": "boolean"
+        },
+        "write_execution_manifest": {
+          "type": "boolean"
+        },
+        "write_quality_report": {
+          "type": "boolean"
+        },
+        "write_row_count_report": {
+          "type": "boolean"
+        }
+      }
+    },
+    "relational_layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "write_header",
+        "include_run_id",
+        "include_processing_timestamp",
+        "default_write_mode_dimensions",
+        "default_write_mode_facts",
+        "default_write_mode_configs"
+      ],
+      "properties": {
+        "format": {
+          "type": "string",
+          "enum": [
+            "csv",
+            "parquet"
+          ]
+        },
+        "write_header": {
+          "type": "boolean"
+        },
+        "include_run_id": {
+          "type": "boolean"
+        },
+        "include_processing_timestamp": {
+          "type": "boolean"
+        },
+        "default_write_mode_dimensions": {
+          "type": "string",
+          "enum": [
+            "overwrite",
+            "append"
+          ]
+        },
+        "default_write_mode_facts": {
+          "type": "string",
+          "enum": [
+            "overwrite",
+            "append"
+          ]
+        },
+        "default_write_mode_configs": {
+          "type": "string",
+          "enum": [
+            "overwrite",
+            "append"
+          ]
+        }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "level",
+        "console",
+        "file",
+        "separate_logs_by_module",
+        "log_filename_prefix"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "level": {
+          "type": "string",
+          "enum": [
+            "DEBUG",
+            "INFO",
+            "WARNING",
+            "ERROR",
+            "CRITICAL"
+          ]
+        },
+        "console": {
+          "type": "boolean"
+        },
+        "file": {
+          "type": "boolean"
+        },
+        "separate_logs_by_module": {
+          "type": "boolean"
+        },
+        "log_filename_prefix": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "features": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    },
+    "reconciliacao_mtm": {
+      "type": "object",
+      "properties": {
+        "tolerancia_absoluta": {
+          "type": "number"
+        },
+        "tolerancia_percentual": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "parametros_risco": {
+      "type": "object",
+      "properties": {
+        "fator_conversao_ead": {
+          "type": "number"
+        },
+        "lgd_bruta_padrao": {
+          "type": "number"
+        },
+        "lgd_bruta_por_segmento": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "number"
+          }
+        },
+        "dias_alerta_vencimento_garantia": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

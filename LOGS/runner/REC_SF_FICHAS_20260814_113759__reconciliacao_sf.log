@@ -1,0 +1,2 @@
+2026-08-14 11:37:59 | INFO | bdc.reconciliacao_sf | Iniciando reconciliação entre Fichas e Salesforce.
+2026-08-14 11:38:00 | WARNING | bdc.reconciliacao_sf | Uma das bases (Fichas ou Salesforce) está vazia.

@@ -1,0 +1,306 @@
+{
+  "type": "object",
+  "required": [
+    "EMPRESA",
+    "CNPJ",
+    "DATA_DEMONSTRACAO_FINANCEIRA"
+  ],
+  "properties": {
+    "DATA_DEMONSTRACAO_FINANCEIRA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "EMPRESA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "DATA_CALCULO": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "CNPJ": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9]{14}$"
+    },
+    "DATA_ABERTURA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "CEP": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ENDERECO": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "CAPITAL_SOCIAL": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ATIVO_CIRCULANTE": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ATIVO_CIRCULANTE_FINANCEIRO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ATIVO_TOTAL": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PASSIVO_CIRCULANTE": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PASSIVO_CIRCULANTE_FINANCEIRO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PATRIMONIO_LIQUIDO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LUCROS_ACUMULADOS": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "RESERVA_DE_LUCROS": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "VENDAS_LIQUIDAS": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PROBABILIDADE_DEFAULT": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "AUDITOR": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "MFCO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ROA": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "ROE": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "AGENCIA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "NOTA_CREDITO": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "NOTA_BOARD": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "NOTA_BUREAU": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "RATING_COPEL": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ROL": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LUCRO_BRUTO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LAJIR": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LAIR": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LUCRO_LIQUIDO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "SCORE_BUREAU": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "QUANTIDADE_RESTRITIVOS": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "CONTROLADOR": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "CNPJ_CONTROLADOR": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "PL_CONTROLADOR": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "PERCENTUAL_CONTROLADOR": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "NOTA_CREDITO_CONTROLADOR": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "AGENCIA_CONTROLADOR": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "DATA_RATING_CONTROLADOR": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "CAPITAL_CIRCULANTE_LIQUIDO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "NECESSIDADE_CAPITAL_GIRO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "INDICE_AUTO_FINANCIAMENTO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LIQUIDEZ_SECA": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "INDICE_SOLVENCIA_GERAL": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "MARGEM_LIQUIDA": {
+      "type": [
+        "number",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

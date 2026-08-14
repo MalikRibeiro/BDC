@@ -1,0 +1,52 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Template de Carga Manual e Eventos de Negócio",
+  "description": "Schema para registrar eventos de carga manual com rastreabilidade completa (dupla temporalidade) — §4.3, §4.5 e Apêndice A.",
+  "type": "object",
+  "required": [
+    "CNPJ",
+    "COMPETENCIA",
+    "CAMPO_ALTERADO",
+    "VALOR_APLICADO",
+    "MOTIVO",
+    "SOLICITANTE",
+    "TIPO_EVENTO"
+  ],
+  "properties": {
+    "CNPJ": {
+      "type": "string",
+      "pattern": "^[0-9]{14}$"
+    },
+    "COMPETENCIA": {
+      "type": "string",
+      "pattern": "^[0-9]{6}$",
+      "description": "Formato YYYYMM"
+    },
+    "CAMPO_ALTERADO": {
+      "type": "string"
+    },
+    "VALOR_APLICADO": {
+      "type": "number"
+    },
+    "MOTIVO": {
+      "type": "string",
+      "minLength": 10
+    },
+    "EVIDENCIA": {
+      "type": "string",
+      "description": "Caminho ou protocolo de email comprovando a decisão"
+    },
+    "SOLICITANTE": {
+      "type": "string"
+    },
+    "TIPO_EVENTO": {
+      "type": "string",
+      "enum": ["AJUSTE_BALANCO", "RECLASSIFICACAO_SETORIAL", "RESTRITIVO_MANUAL", "OUTRO"]
+    },
+    "DATA_REFERENCIA_NEGOCIO": {
+      "type": "string",
+      "format": "date",
+      "description": "Data real em que o evento ocorreu no negócio"
+    }
+  }
+}

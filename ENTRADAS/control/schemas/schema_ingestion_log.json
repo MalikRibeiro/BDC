@@ -1,0 +1,166 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schema_ingestion_log.json",
+  "title": "Schema do log de ingestão",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "documento_id",
+    "run_id",
+    "ambiente",
+    "tipo_ficha",
+    "arquivo_nome",
+    "caminho_origem",
+    "status_ingestao",
+    "status_classificacao",
+    "status_extracao",
+    "erros",
+    "avisos"
+  ],
+  "properties": {
+    "documento_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ambiente": {
+      "type": "string",
+      "enum": [
+        "dev",
+        "test",
+        "prod"
+      ]
+    },
+    "tipo_ficha": {
+      "type": "string",
+      "const": "comercializadora"
+    },
+    "versao_ficha": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        null,
+        "padrao_1",
+        "padrao_2",
+        "padrao_3",
+        "padrao_4",
+        "padrao_5",
+        "padrao_6",
+        "padrao_7"
+      ]
+    },
+    "arquivo_nome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "arquivo_ext": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "hash_arquivo": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^([0-9a-fA-F]{64})?$"
+    },
+    "caminho_origem": {
+      "type": "string",
+      "minLength": 1
+    },
+    "caminho_staging": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "caminho_bronze": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "caminho_destino": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status_ingestao": {
+      "type": "string",
+      "enum": [
+        "INICIADO",
+        "SUCESSO",
+        "ERRO",
+        "REJEITADO"
+      ]
+    },
+    "status_classificacao": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        null,
+        "CLASSIFICADO",
+        "REJEITADO",
+        "NAO_CLASSIFICADO"
+      ]
+    },
+    "status_extracao": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        null,
+        "NAO_EXECUTADO",
+        "SUCESSO",
+        "ERRO",
+        "ERRO_VALIDACAO",
+        "ERRO_DUPLICIDADE_HASH",
+        "ERRO_DUPLICIDADE_NEGOCIO"
+      ]
+    },
+    "cnpj_extraido": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^(\\d{14})?$"
+    },
+    "data_demonstracao_financeira": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "data_calculo": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "erros": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "avisos": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

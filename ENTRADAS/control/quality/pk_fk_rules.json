@@ -1,0 +1,43 @@
+{
+  "entities": [
+    {
+      "entity": "documento_classificado",
+      "primary_key": [
+        "documento_id"
+      ],
+      "unique_constraints": [
+        [
+          "hash_arquivo"
+        ]
+      ]
+    },
+    {
+      "entity": "ficha_comercializadora_extraida",
+      "primary_key": [
+        "documento_id"
+      ],
+      "unique_constraints": [
+        [
+          "hash_arquivo"
+        ],
+        [
+          "CNPJ",
+          "DATA_DEMONSTRACAO_FINANCEIRA"
+        ]
+      ],
+      "foreign_keys": [
+        {
+          "fields": [
+            "documento_id"
+          ],
+          "references": {
+            "entity": "documento_classificado",
+            "fields": [
+              "documento_id"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

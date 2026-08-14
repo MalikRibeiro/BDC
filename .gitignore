@@ -1,0 +1,43 @@
+# Arquivos de Ambiente
+# Nunca versione suas credenciais e configurações de ambiente!
+.env
+*.env
+
+# Arquivos de dados, relatórios e extrações
+# Conforme solicitado, ignorando planilhas e CSVs.
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+*.parquet
+
+# Diretórios e arquivos de saída gerados pelo projeto
+# O script 0_obter_e_triar.py cria esta pasta.
+/arquivos_fichas/
+
+# Outros diretórios que parecem ser de saída de dados (bronze/silver/etc.)
+/SAIDAS/
+/relatorios/
+
+# Python
+# Ignora arquivos de cache, bytecode e ambientes virtuais.
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv
+venv
+env/
+
+# Arquivos de dependências e build
+*.egg-info/
+dist/
+build/
+
+# Configurações de IDEs e Editores
+.vscode/
+.idea/
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db

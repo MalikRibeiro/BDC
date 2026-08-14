@@ -1,0 +1,526 @@
+{
+  "tipo_ficha": "consumidor",
+  "versao_ficha": "v3",
+  "layout_id": "ficha_consumidor_v3",
+  "descricao": "Layout v3 da ficha de consumidor",
+  "sheet_aliases": [
+    "Dados Gerais e Qualitativos",
+    "DRE"
+  ],
+  "required_fields": [
+    "EMPRESA",
+    "CNPJ",
+    "PATRIMONIO_LIQUIDO"
+  ],
+  "key_fields": [
+    "DATA_DEMONSTRACAO_FINANCEIRA",
+    "EMPRESA",
+    "CNPJ",
+    "PATRIMONIO_LIQUIDO"
+  ],
+  "verify_fields": [
+    "DADOS_CADASTRAIS"
+  ],
+  "optional_fields": [
+    "DATA_CALCULO",
+    "DATA_ABERTURA",
+    "CEP",
+    "ENDERECO",
+    "CAPITAL_SOCIAL",
+    "ATIVO_CIRCULANTE",
+    "ATIVO_CIRCULANTE_FINANCEIRO",
+    "ATIVO_TOTAL",
+    "PASSIVO_CIRCULANTE",
+    "PASSIVO_CIRCULANTE_FINANCEIRO",
+    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO",
+    "LUCROS_ACUMULADOS",
+    "RESERVA_DE_LUCROS",
+    "VENDAS_LIQUIDAS",
+    "PROBABILIDADE_DEFAULT",
+    "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+    "AUDITOR",
+    "MFCO",
+    "ROA",
+    "ROE",
+    "AGENCIA",
+    "NOTA_CREDITO",
+    "NOTA_BOARD",
+    "NOTA_BUREAU",
+    "RATING_COPEL",
+    "ROL",
+    "LUCRO_BRUTO",
+    "LAJIR",
+    "LAIR",
+    "LUCRO_LIQUIDO",
+    "SCORE_BUREAU",
+    "QUANTIDADE_RESTRITIVOS",
+    "CONTROLADOR",
+    "CNPJ_CONTROLADOR",
+    "PL_CONTROLADOR",
+    "PERCENTUAL_CONTROLADOR",
+    "NOTA_CREDITO_CONTROLADOR",
+    "AGENCIA_CONTROLADOR",
+    "DATA_RATING_CONTROLADOR",
+    "CAPITAL_CIRCULANTE_LIQUIDO",
+    "NECESSIDADE_CAPITAL_GIRO",
+    "INDICE_AUTO_FINANCIAMENTO",
+    "LIQUIDEZ_SECA",
+    "INDICE_SOLVENCIA_GERAL",
+    "MARGEM_LIQUIDA"
+  ],
+  "field_map": {
+    "DADOS_CADASTRAIS": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A7",
+      "expected_label": "DADOS CADASTRAIS",
+      "value_cell": null,
+      "implemented": true,
+      "data_type": "text",
+      "required": true,
+      "search_pattern": "DADOS CADASTRAIS"
+    },
+    "DATA_DEMONSTRACAO_FINANCEIRA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A18",
+      "value_cell": "C18",
+      "implemented": true,
+      "data_type": "date",
+      "required": true,
+      "year_only_rule": "end_of_year",
+      "search_pattern": "DATA DA DF|DATA DAS DEMONSTRACOES FINANCEIRAS"
+    },
+    "EMPRESA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A9",
+      "value_cell": "C9",
+      "implemented": true,
+      "data_type": "text",
+      "required": true,
+      "search_pattern": "RAZAO SOCIAL|EMPRESA"
+    },
+    "DATA_CALCULO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "A73",
+      "implemented": true,
+      "data_type": "date",
+      "required": false,
+      "search_pattern": null
+    },
+    "CNPJ": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A8",
+      "value_cell": "C8",
+      "implemented": true,
+      "data_type": "cnpj",
+      "required": true,
+      "search_pattern": "^\\s*CNPJ\\b(?!.*(?:BBCE|CONTROLADOR)).*$"
+    },
+    "DATA_ABERTURA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A10",
+      "value_cell": "C10",
+      "implemented": true,
+      "data_type": "date",
+      "required": false,
+      "search_pattern": "DATA DE ABERTURA"
+    },
+    "CEP": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A13",
+      "value_cell": "C13",
+      "implemented": true,
+      "data_type": "cep",
+      "required": false,
+      "search_pattern": "CEP"
+    },
+    "ENDERECO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A14",
+      "value_cell": "C14",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "ENDERECO"
+    },
+    "CAPITAL_SOCIAL": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H19",
+      "value_cell": "J19",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "CAPITAL SOCIAL"
+    },
+    "ATIVO_CIRCULANTE": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H12",
+      "value_cell": "J12",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "ATIVO CIRCULANTE"
+    },
+    "ATIVO_CIRCULANTE_FINANCEIRO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H13",
+      "value_cell": "J13",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "ATIVO CIRCULANTE FINANCEIRO"
+    },
+    "ATIVO_TOTAL": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H14",
+      "value_cell": "J14",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "ATIVO TOTAL"
+    },
+    "PASSIVO_CIRCULANTE": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H15",
+      "value_cell": "J15",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "PASSIVO CIRCULANTE"
+    },
+    "PASSIVO_CIRCULANTE_FINANCEIRO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H16",
+      "value_cell": "J16",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "PASSIVO CIRCULANTE FINANCEIRO"
+    },
+    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H17",
+      "value_cell": "J17",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "PASSIVO NAO CIRCULANTE FINANCEIRO"
+    },
+    "PATRIMONIO_LIQUIDO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H18",
+      "value_cell": "J18",
+      "implemented": true,
+      "data_type": "float",
+      "required": true,
+      "search_pattern": "PATRIMONIO LIQUIDO"
+    },
+    "LUCROS_ACUMULADOS": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H20",
+      "value_cell": "J20",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "LUCROS ACUMULADOS"
+    },
+    "RESERVA_DE_LUCROS": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H21",
+      "value_cell": "J21",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "RESERVA DE LUCROS"
+    },
+    "VENDAS_LIQUIDAS": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H22",
+      "value_cell": "J22",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "VENDA LIQUIDA|VENDAS LIQUIDAS|RECEITA OPERACIONAL LIQUIDA"
+    },
+    "PROBABILIDADE_DEFAULT": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A27",
+      "value_cell": "J43",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "PROBABILIDADE DE DEFAULT|PD"
+    },
+    "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H24",
+      "value_cell": "J24",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "CAIXA LIQUIDO GERADO NAS ATIVIDADES OPERACIONAIS|FLUXO DE CAIXA OPERACIONAL"
+    },
+    "AUDITOR": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H25",
+      "value_cell": "J25",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "QUALIFICACAO DAS DEMONSTRACOES FINANCEIRAS|AUDITOR"
+    },
+    "MFCO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H52",
+      "value_cell": "I52",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "MFCO|FCO/ROL"
+    },
+    "ROA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H53",
+      "value_cell": "I53",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "ROA|RETORNO SOBRE ATIVOS"
+    },
+    "ROE": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H54",
+      "value_cell": "I54",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "ROE|RETORNO SOBRE PATRIMONIO LIQUIDO"
+    },
+    "AGENCIA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A37",
+      "value_cell": "C37",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "RATING PUBLICO NACIONAL|AGENCIA"
+    },
+    "NOTA_CREDITO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A37",
+      "value_cell": "B37",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "RATING PUBLICO NACIONAL|NOTA DE CREDITO"
+    },
+    "NOTA_BOARD": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A22",
+      "value_cell": "C22",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "BOARD COPEL|NOTA BOARD COPEL"
+    },
+    "NOTA_BUREAU": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A24",
+      "value_cell": "C24",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "BUREAU|NOTA BUREAU"
+    },
+    "RATING_COPEL": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A35",
+      "value_cell": "C35",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "RATING|RATING COPEL"
+    },
+    "ROL": {
+      "sheet": "DRE",
+      "label_cell": "A4",
+      "value_cell": "B4",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "RECEITA OPERACIONAL LIQUIDA|ROL"
+    },
+    "LUCRO_BRUTO": {
+      "sheet": "DRE",
+      "label_cell": "A11",
+      "value_cell": "B11",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "LUCRO BRUTO"
+    },
+    "LAJIR": {
+      "sheet": "DRE",
+      "label_cell": "A20",
+      "value_cell": "B20",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "RESULTADO OPERACIONAL|LAJIR"
+    },
+    "LAIR": {
+      "sheet": "DRE",
+      "label_cell": "A28",
+      "value_cell": "B28",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "LAIR|LUCRO ANTES DO IMPOSTO DE RENDA"
+    },
+    "LUCRO_LIQUIDO": {
+      "sheet": "DRE",
+      "label_cell": "A34",
+      "value_cell": "B34",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "LUCRO LIQUIDO|RESULTADO LIQUIDO|LUCRO LIQUIDO/PREJUIZO DO EXERCICIO"
+    },
+    "SCORE_BUREAU": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H63",
+      "value_cell": "I63",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "SCORE|SCORE BUREAU"
+    },
+    "QUANTIDADE_RESTRITIVOS": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H64",
+      "value_cell": "I64",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "QUANTIDADE DE RESTRITIVOS"
+    },
+    "CONTROLADOR": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H68",
+      "value_cell": "I68",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "RAZAO SOCIAL|CONTROLADOR"
+    },
+    "CNPJ_CONTROLADOR": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H69",
+      "value_cell": "I69",
+      "implemented": true,
+      "data_type": "cnpj",
+      "required": false,
+      "search_pattern": "CNPJ CONTROLADOR|CNPJ DO CONTROLADOR"
+    },
+    "PL_CONTROLADOR": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H71",
+      "value_cell": "I71",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "PATRIMONIO LIQUIDO CONTROLADOR|PL CONTROLADOR"
+    },
+    "PERCENTUAL_CONTROLADOR": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H70",
+      "value_cell": "I70",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "PORCENTAGEM DO CAPITAL SOCIAL|PERCENTUAL DO CONTROLADOR"
+    },
+    "NOTA_CREDITO_CONTROLADOR": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H72",
+      "value_cell": "I72",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "RATING PUBLICO CONTROLADOR|NOTA DE CREDITO CONTROLADOR"
+    },
+    "AGENCIA_CONTROLADOR": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H73",
+      "value_cell": "I73",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "AGENCIA|AGENCIA CONTROLADOR"
+    },
+    "DATA_RATING_CONTROLADOR": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "H74",
+      "value_cell": "I74",
+      "implemented": true,
+      "data_type": "date",
+      "required": false,
+      "year_only_rule": "end_of_year",
+      "search_pattern": "DATA DO RATING|DATA RATING CONTROLADOR"
+    },
+    "CAPITAL_CIRCULANTE_LIQUIDO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "N11",
+      "value_cell": "Q11",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "CAPITAL CIRCULANTE LIQUIDO|CCL"
+    },
+    "NECESSIDADE_CAPITAL_GIRO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "N15",
+      "value_cell": "Q15",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "NECESSIDADE DE CAPITAL DE GIRO"
+    },
+    "INDICE_AUTO_FINANCIAMENTO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "N19",
+      "value_cell": "Q19",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "INDICE DE AUTO FINANCIAMENTO|INDICE DE AUTOFINANCIAMENTO"
+    },
+    "LIQUIDEZ_SECA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "N23",
+      "value_cell": "Q23",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "LIQUIDEZ SECA"
+    },
+    "INDICE_SOLVENCIA_GERAL": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "N30",
+      "value_cell": "Q30",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "INDICE DE SOLVENCIA GERAL|SOLVENCIA GERAL"
+    },
+    "MARGEM_LIQUIDA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "N34",
+      "value_cell": "Q34",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "MARGEM LIQUIDA"
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "nota_para_peso": {
+    "A": 10,
+    "B": 8,
+    "C": 6,
+    "D": 3,
+    "E": 0
+  },
+  "pesos_quantitativos": {
+    "PD": 0.322,
+    "FCO_ROL": 0.238,
+    "ROE": 0.070,
+    "ROA": 0.070
+  },
+  "pesos_qualitativos": {
+    "BOARD": 0.20,
+    "AUDITORIA": 0.05,
+    "BUREAU": 0.05
+  },
+  "auditor_para_nota": {
+    "DELOITTE": "A",
+    "PWC": "A",
+    "EY": "A",
+    "KPMG": "A",
+    "BDO": "C",
+    "GRANT THORNTON": "C",
+    "BAKER TILLY": "C",
+    "CROWE HORWATH": "D",
+    "NEXIA INTERNATIONAL": "D",
+    "RSM": "D",
+    "CONTADOR": "E",
+    "OUTRO": "E"
+  },
+  "faixas_notas_quantitativas": {
+    "PD": [
+      { "nota": "A", "min": 0.0000, "max": 0.0050 },
+      { "nota": "B", "min": 0.0050, "max": 0.0076 },
+      { "nota": "C", "min": 0.0076, "max": 0.0417 },
+      { "nota": "D", "min": 0.0417, "max": 0.1000 },
+      { "nota": "E", "min": 0.1000, "max": 1.0000 }
+    ],
+    "FCO_ROL": [
+      { "nota": "A", "min": 0.1784, "max": 999.0 },
+      { "nota": "B", "min": 0.0676, "max": 0.1784 },
+      { "nota": "C", "min": 0.00, "max": 0.0676 },
+      { "nota": "D", "min": -0.0412, "max": 0.00 },
+      { "nota": "E", "min": -1000.0, "max": -0.0412 }
+    ],
+    "ROE": [
+      { "nota": "A", "min": 0.2505, "max": 999.0 },
+      { "nota": "B", "min": 0.1410, "max": 0.2505 },
+      { "nota": "C", "min": 0.00, "max": 0.1410 },
+      { "nota": "D", "min": -0.0638, "max": 0.00 },
+      { "nota": "E", "min": -1000.0, "max": -0.0638 }
+    ],
+    "ROA": [
+      { "nota": "A", "min": 0.2081, "max": 999.0 },
+      { "nota": "B", "min": 0.1172, "max": 0.2081 },
+      { "nota": "C", "min": 0.00, "max": 0.1172 },
+      { "nota": "D", "min": -0.0595, "max": 0.00 },
+      { "nota": "E", "min": -1000.0, "max": -0.0595 }
+    ]
+  }
+}

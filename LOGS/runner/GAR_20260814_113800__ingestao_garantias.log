@@ -1,0 +1,4 @@
+2026-08-14 11:38:00 | INFO | bdc.garantias | Iniciando ingestão de Garantias (Modo CSV Local).
+2026-08-14 11:38:00 | INFO | bdc.garantias | Lendo garantias do arquivo local: garantias.csv
+2026-08-14 11:38:04 | INFO | bdc.garantias | Gerados 19205 alertas de garantias (GAR_001 / GAR_002).
+2026-08-14 11:38:07 | INFO | bdc.garantias | Ingestão de garantias concluída. Registros salvos: 36251

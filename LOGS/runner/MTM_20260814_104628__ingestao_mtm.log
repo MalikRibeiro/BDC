@@ -1,0 +1,4 @@
+2026-08-14 10:46:28 | INFO | bdc.mtm | Iniciando processo de ingestão e agregação da base de MtM.
+2026-08-14 10:46:28 | INFO | bdc.mtm | Snapshot bruto salvo na Bronze em: C:\Users\C807951\Desktop\BDC\SAIDAS\bronze\snapshots_fontes\mtm\raw_mtm_20260814_data.csv
+2026-08-14 10:46:28 | INFO | bdc.mtm | Lendo base de MtM a partir do arquivo local: data.csv
+2026-08-14 10:46:28 | INFO | bdc.mtm | Base de MtM carregada com sucesso. 46958 registros processados.

@@ -1,0 +1,114 @@
+{
+  "entity": "ficha_comercializadora_extraida",
+  "version": "1.0.0",
+  "business_keys": [
+    [
+      "CNPJ",
+      "DATA_DEMONSTRACAO_FINANCEIRA"
+    ]
+  ],
+  "unique_constraints": [
+    {
+      "name": "uk_hash_arquivo",
+      "fields": [
+        "hash_arquivo"
+      ],
+      "applies_when": {
+        "status_extracao": "SUCESSO"
+      }
+    },
+    {
+      "name": "uk_cnpj_data_df",
+      "fields": [
+        "CNPJ",
+        "DATA_DEMONSTRACAO_FINANCEIRA"
+      ],
+      "applies_when": {
+        "status_extracao": "SUCESSO"
+      }
+    }
+  ],
+  "required_fields_by_version": {
+    "padrao_1": [
+      "SIGLA",
+      "CNPJ",
+      "DATA_DEMONSTRACAO_FINANCEIRA"
+    ],
+    "padrao_2": [
+      "SIGLA",
+      "CNPJ",
+      "DATA_DEMONSTRACAO_FINANCEIRA"
+    ],
+    "padrao_3": [
+      "SIGLA",
+      "CNPJ",
+      "DATA_DEMONSTRACAO_FINANCEIRA"
+    ],
+    "padrao_4": [
+      "SIGLA",
+      "CNPJ",
+      "DATA_DEMONSTRACAO_FINANCEIRA"
+    ],
+    "padrao_5": [
+      "SIGLA",
+      "CNPJ",
+      "DATA_DEMONSTRACAO_FINANCEIRA"
+    ],
+    "padrao_6": [
+      "SIGLA",
+      "CNPJ",
+      "DATA_DEMONSTRACAO_FINANCEIRA"
+    ],
+    "padrao_7": [
+      "SIGLA",
+      "CNPJ",
+      "DATA_DEMONSTRACAO_FINANCEIRA"
+    ]
+  },
+  "date_fields": [
+    "DATA_DEMONSTRACAO_FINANCEIRA",
+    "DATA_ADESAO_CCEE",
+    "DATA_CALCULO",
+    "DATA_RATING_AGENCIA"
+  ],
+  "numeric_fields": [
+    "PATRIMONIO_LIQUIDO",
+    "ATIVO_CIRCULANTE_FINANCEIRO",
+    "CAPITAL_SOCIAL",
+    "PROBABILIDADE_DEFAULT",
+    "ATIVO_CIRCULANTE_AJUSTADO",
+    "ATIVO_TOTAL_AJUSTADO",
+    "PASSIVO_CIRCULANTE_AJUSTADO",
+    "PASSIVO_CIRCULANTE_FINANCEIRO_AJUSTADO",
+    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO_AJUSTADO",
+    "LUCROS_ACUMULADOS",
+    "RESERVA_DE_LUCROS",
+    "VENDAS_LIQUIDAS",
+    "LUCRO_LIQUIDO",
+    "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+    "LIQUIDEZ_CORRENTE_AJUSTADO",
+    "INDICE_SOLVENCIA_GERAL_AJUSTADO",
+    "INDICE_COBERTURA_DE_DESPESA_COM_PESSOAL",
+    "PAYOUT_AJUSTADO",
+    "CAPITAL_CIRCULANTE_LIQUIDO_AJUSTADO",
+    "ROE",
+    "ROA",
+    "MFCO",
+    "SCORE_BUREAU",
+    "QUANTIDADE_RESTRITIVOS",
+    "ROL",
+    "LUCRO_BRUTO",
+    "LAJIR",
+    "LAIR",
+    "PL_CONTROLADOR",
+    "PERCENTUAL_CONTROLADOR"
+  ],
+  "document_rules": {
+    "CNPJ": {
+      "digits": 14
+    },
+    "CNPJ_BBCE": {
+      "digits": 14
+    }
+  }
+}

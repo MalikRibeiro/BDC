@@ -1,0 +1,127 @@
+{
+  "system_name": "BDC",
+  "application_name": "BD Credito",
+  "environment": "dev",
+  "version": "1.0.0",
+  "base_dir": ".",
+  "directories": {
+    "entradas": "ENTRADAS",
+    "saidas": "SAIDAS",
+    "logs": "LOGS"
+  },
+  "network_paths": {
+    "fichas_2025": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2025",
+    "fichas_2026": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026"
+  },
+  "standards": {
+    "date_format": "%Y-%m-%d",
+    "datetime_format": "%Y-%m-%d %H:%M:%S",
+    "file_datetime_format": "%Y%m%d_%H%M%S",
+    "encoding": "utf-8-sig",
+    "csv_separator": ";",
+    "decimal_separator": ",",
+    "thousands_separator": ".",
+    "null_values": [
+      "",
+      "NULL",
+      "null",
+      "None",
+      "NaN"
+    ],
+    "boolean_true_values": [
+      "true",
+      "True",
+      "1",
+      "SIM",
+      "Sim",
+      "sim"
+    ],
+    "boolean_false_values": [
+      "false",
+      "False",
+      "0",
+      "NAO",
+      "Não",
+      "nao",
+      "não"
+    ]
+  },
+  "document_standards": {
+    "cnpj_digits": 14,
+    "cpf_digits": 11,
+    "remove_mask_from_documents": true,
+    "uppercase_string_fields": false,
+    "trim_string_fields": true
+  },
+  "file_rules": {
+    "allowed_extensions": [
+      ".xlsx",
+      ".xls",
+      ".xlsm",
+      ".csv",
+      ".json",
+      ".xml",
+      ".pdf",
+      ".txt"
+    ],
+    "hash_algorithm": "sha256",
+    "overwrite_outputs": true,
+    "create_missing_directories": true,
+    "ignore_temporary_files": true,
+    "temporary_file_prefixes": [
+      "~$",
+      "."
+    ]
+  },
+  "processing": {
+    "use_staging": true,
+    "validate_before_publish": true,
+    "stop_on_error": false,
+    "move_processed_inputs": true,
+    "move_rejected_inputs": true,
+    "generate_run_id": true,
+    "write_execution_manifest": true,
+    "write_quality_report": true,
+    "write_row_count_report": true
+  },
+  "relational_layer": {
+    "format": "csv",
+    "write_header": true,
+    "include_run_id": true,
+    "include_processing_timestamp": true,
+    "default_write_mode_dimensions": "overwrite",
+    "default_write_mode_facts": "append",
+    "default_write_mode_configs": "overwrite"
+  },
+  "logging": {
+    "enabled": true,
+    "level": "INFO",
+    "console": true,
+    "file": true,
+    "separate_logs_by_module": true,
+    "log_filename_prefix": "bdc"
+  },
+  "features": {
+    "enable_fichas_comercializadoras": true,
+    "enable_fichas_consumidores": true,
+    "enable_salesforce": true,
+    "enable_mtm": true,
+    "enable_blacklist": true,
+    "enable_receita": true,
+    "enable_gold_layer": true,
+    "enable_relational_layer": true
+  },
+  "reconciliacao_mtm": {
+    "tolerancia_absoluta": 0.01,
+    "tolerancia_percentual": 0.00001
+  },
+  "parametros_risco": {
+    "fator_conversao_ead": 1.0,
+    "lgd_bruta_padrao": 0.45,
+    "lgd_bruta_por_segmento": {
+      "COMERCIALIZADORA": 0.45,
+      "CONSUMIDOR": 0.50
+    },
+    "dias_alerta_vencimento_garantia": 30
+  }
+}

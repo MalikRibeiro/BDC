@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Schema para Data Quality Rules de fichas",
+  "description": "Valida estrutura mínima das regras de qualidade — §5.2, §5.3 do Planejamento Funcional.",
+  "type": "object",
+  "anyOf": [
+    {
+      "required": ["entity", "version"]
+    },
+    {
+      "required": ["required_fields"]
+    },
+    {
+      "required": ["rules"]
+    }
+  ],
+  "properties": {
+    "entity": { "type": "string" },
+    "version": { "type": "string" },
+    "business_keys": {
+      "type": "array",
+      "items": { "type": "array", "items": { "type": "string" } }
+    },
+    "unique_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "fields"],
+        "properties": {
+          "name": { "type": "string" },
+          "fields": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "required_fields": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "required_fields_by_version": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "date_fields": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "numeric_fields": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "document_rules": {
+      "type": "object"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["field", "type"],
+        "properties": {
+          "rule_id": { "type": "string" },
+          "field": { "type": "string" },
+          "type": { "type": "string", "enum": ["range", "min", "max"] }
+        }
+      }
+    }
+  },
+  "additionalProperties": true
+}
