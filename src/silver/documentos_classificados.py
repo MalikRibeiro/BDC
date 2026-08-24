@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 
-def build_classified_document(
+def criar_documento_classificado(
     documento_id: str,
     run_id: str,
     ambiente: str,

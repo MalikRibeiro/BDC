@@ -4,21 +4,20 @@ from __future__ import annotations
 
 from typing import Any
 
-from common.strings import normalize_string
-from common.types import normalize_float
+from silver.normalizadores import normalizar_string, normalizar_float
 
 
 def definir_segmento_metodologico(
     registro: dict[str, Any],
 ) -> str:
     """Define o segmento metodológico da contraparte."""
-    tipo_ficha = normalize_string(
+    tipo_ficha = normalizar_string(
         registro.get("TIPO_FICHA"),
         upper=True,
     )
     
     if tipo_ficha == "COMERCIALIZADORA":
-        tipo_comercializadora = normalize_string(
+        tipo_comercializadora = normalizar_string(
             registro.get("TIPO_COMERCIALIZADORA"),
             upper=True,
         )
@@ -34,7 +33,7 @@ def definir_segmento_metodologico(
 
     if tipo_ficha == "CONSUMIDOR":
         # Extrai o volume de enquadramento (em MWm)
-        volume_mwm = normalize_float(registro.get("VOLUME_ENQUADRAMENTO_MWM"))
+        volume_mwm = normalizar_float(registro.get("VOLUME_ENQUADRAMENTO_MWM"))
         
         # Critério de Aceite: Consumidor sem volume retorna NAO_ENQUADRADO
         if volume_mwm is None:

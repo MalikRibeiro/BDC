@@ -1,6 +1,49 @@
 # RESUMO TÉCNICO
 
 
+## 0_obter_e_triar.py
+Linhas: 516
+
+Imports:
+- __future__
+- app.context
+- common
+- control.layout_catalog
+- datetime
+- domain.fichas.classificador
+- logging
+- pandas
+- pathlib
+- shutil
+- sys
+- warnings
+
+Classes:
+
+Funções:
+- criar_pastas
+- gerar_assinatura
+- obter_assinaturas_locais
+- copiar_sem_sobrescrever
+- main
+
+Docstring:
+RPA Unificado: Coleta na Rede e Triagem Automática de Fichas de Crédito.
+
+
+## app_dashboard.py
+Linhas: 75
+
+Imports:
+- pandas
+- pathlib
+- streamlit
+
+Classes:
+
+Funções:
+
+
 ## gerar_contexto_ia.py
 Linhas: 146
 
@@ -18,31 +61,32 @@ Funções:
 
 
 ## main.py
-Linhas: 198
+Linhas: 220
 
 Imports:
 - app.bootstrap
 - argparse
 - cli
 - datetime
+- domain.auditoria.servico_auditoria
+- domain.cadastro.servico_bureau
+- domain.cadastro.servico_receita
+- domain.carga_manual.servico_carga_manual
+- domain.contrapartes.servico_dim_contraparte
+- domain.contrapartes.servico_enquadramento
+- domain.contratos.servico_contratos_denodo
+- domain.credito.servico_fato_analise_credito
+- domain.credito.servico_override
+- domain.credito.servico_risco
+- domain.garantias.servico_garantia
+- domain.mtm.servico_denodo_mtm_reconciliacao
+- domain.mtm.servico_mtm
+- domain.salesforce.servico_salesforce
+- domain.salesforce.servico_salesforce_reconciliacao
+- gold.service_gold
 - inspect
 - pandas
 - pathlib
-- services.audit_service
-- services.camada_gold_service
-- services.carga_manual_service
-- services.contratos_denodo_service
-- services.dim_contraparte_service
-- services.enquadramento_service
-- services.fato_analise_credito_service
-- services.garantias_service
-- services.mtm_ingestion_service
-- services.override_service
-- services.pipeline_risco_service
-- services.receita_ingestion_service
-- services.reconciliacao_denodo_mtm_service
-- services.reconciliacao_fichas_salesforce_service
-- services.salesforce_ingestion_service
 - sys
 - traceback
 - typing
@@ -109,7 +153,61 @@ Classes:
 
 Funções:
 - resolve_configs_dir
-- bootstrap_application
+- aplicativo_bootstrap
+
+
+## src\app\comercializadoras\orquestrador.py
+Linhas: 768
+
+Imports:
+- __future__
+- app.context
+- common.domain_normalizer
+- common.excel
+- common.hashing
+- common.json
+- common.paths
+- common.servico_desduplicacao
+- control.carregador_de_mapeamento
+- control.layout_catalog
+- control.logger
+- datetime
+- domain.auditoria.servico_auditoria
+- domain.contrapartes.segmentacao
+- domain.credito.pd_motor
+- domain.fichas.derivador_financeiro
+- domain.fichas.extrator
+- domain.fichas.validador
+- pathlib
+- silver.documentos_classificados
+- silver.normalizador_de_tipo_de_campo
+- silver.normalizadores
+- staging.descoberta
+- staging.staging_arquivo
+- storage.armazenamento_manifest
+- storage.bronze_arquivo
+- storage.escrever_dados
+- storage.estado_armazenamento
+- storage.operacao_arquivo
+- typing
+- uuid
+
+Classes:
+
+Funções:
+- disco_cheio_erro
+- criar_run_id
+- criar_nome_arquivo
+- resolver_subpasta_bronze
+- mover_para_rejeitados
+- mover_para_processados
+- criar_info_pd
+- criar_fila_processamento
+- processar_arquivo_individual
+- process_fichas_comercializadoras
+
+Docstring:
+Serviço principal refatorado do pipeline de fichas de comercializadoras.
 
 
 ## src\app\config_builder.py
@@ -130,14 +228,93 @@ Docstring:
 Builder programático para resolução de caminhos do sistema.
 
 
+## src\app\consumidores\classificacao.py
+Linhas: 188
+
+Imports:
+- __future__
+- dataclasses
+- typing
+
+Classes:
+- ClassificacaoDocumental
+
+Funções:
+- _esta_vazio
+- _tem_demonstracoes_financeiras
+- _avaliar_confianca
+- classificar_consumidor
+- criar_classificacao_registro
+
+Docstring:
+Serviço de classificação documental de consumidores.
+
+Determina o tipo de análise exigida (detalhada ou simplificada)
+com base no volume contratado, conforme planejamento v1.2.
+
+
+## src\app\consumidores\orquestrador.py
+Linhas: 709
+
+Imports:
+- __future__
+- app.consumidores.classificacao
+- app.context
+- common.domain_normalizer
+- common.excel
+- common.hashing
+- common.json
+- common.paths
+- common.servico_desduplicacao
+- control.carregador_de_mapeamento
+- control.layout_catalog
+- control.logger
+- control.quality_loader
+- datetime
+- domain.contrapartes.segmentacao
+- domain.credito.pd_motor
+- domain.fichas.extrator
+- domain.fichas.validador
+- pathlib
+- silver.documentos_classificados
+- silver.normalizador_de_tipo_de_campo
+- silver.normalizadores
+- staging.descoberta
+- staging.staging_arquivo
+- storage.armazenamento_manifest
+- storage.bronze_arquivo
+- storage.escrever_dados
+- storage.estado_armazenamento
+- storage.operacao_arquivo
+- typing
+- uuid
+
+Classes:
+
+Funções:
+- disco_cheio_erro
+- criar_run_id
+- criar_alvo_nome
+- resolver_subpasta_bronze
+- mover_para_rejeitados
+- mover_para_processados
+- criar_info_pd
+- criar_fila_processamento
+- processar_arquivo_individual
+- processar_fichas_consumidores
+
+Docstring:
+Serviço principal refatorado do pipeline de fichas de consumidores.
+
+
 ## src\app\context.py
 Linhas: 96
 
 Imports:
 - __future__
 - app.config_builder
-- common.io_json
-- common.validation
+- common.json
+- common.validador
 - dataclasses
 - dotenv
 - logging
@@ -150,7 +327,7 @@ Classes:
 - AppContext
 
 Funções:
-- load_context
+- carregar_contexto
 - path
 - control_file
 
@@ -171,58 +348,37 @@ Docstring:
 Comandos de linha do sistema BDC.
 
 
-## src\cli\run_discovery.py
-Linhas: 57
-
-Imports:
-- app.bootstrap
-- argparse
-- pathlib
-- services.network_discovery_service
-- sys
-- traceback
-
-Classes:
-
-Funções:
-- build_parser
-- main
-
-Docstring:
-CLI para disparar a varredura e triagem de fichas na rede corporativa.
-
-
-## src\cli\run_fichas_comercializadoras.py
+## src\cli\rodar_fichas_comercializadoras.py
 Linhas: 47
 
 Imports:
 - argparse
 - pathlib
 - src.app.bootstrap
-- src.services.fichas_comercializadoras_service
+- src.app.comercializadoras.orquestrador
 - sys
 
 Classes:
 
 Funções:
-- build_parser
+- criar_analisador
 - main
 
 
-## src\cli\run_fichas_consumidores.py
+## src\cli\rodar_fichas_consumidores.py
 Linhas: 47
 
 Imports:
 - argparse
 - pathlib
 - src.app.bootstrap
-- src.services.fichas_consumidores_service
+- src.app.consumidores.orquestrador
 - sys
 
 Classes:
 
 Funções:
-- build_parser
+- criar_analisador
 - main
 
 
@@ -235,29 +391,34 @@ Classes:
 
 Funções:
 
-Docstring:
-Utilitários compartilhados do sistema BDC.
 
-
-## src\common\dates.py
-Linhas: 34
+## src\common\domain_normalizer.py
+Linhas: 84
 
 Imports:
 - __future__
-- datetime
+- app.context
+- common.json
+- logging
 - typing
 
 Classes:
 
 Funções:
-- normalize_date
+- carregar_dicionarios_de_dominio
+- _normalizar_string_por_dicionario
+- aplicar_normalizacao_de_dominio
 
 Docstring:
-Normalização de datas no sistema BDC.
+Normalizador Semântico de Domínio.
+
+Aplica padronização de valores baseado em dicionários de negócios unificados,
+garantindo que strings equivalentes (ex: 'FITCH RATINGS' e 'FITCH') convirjam 
+para a mesma chave primária definida pela área de risco.
 
 
 ## src\common\excel.py
-Linhas: 94
+Linhas: 87
 
 Imports:
 - __future__
@@ -271,11 +432,10 @@ Imports:
 Classes:
 
 Funções:
-- open_workbook
-- close_workbook_safely
-- read_cell
-- normalize_label_text
-- find_cell_by_regex
+- abrir_pasta
+- fechar_pasta
+- ler_celula
+- localizar_celula_por_regex
 
 Docstring:
 Operações de leitura e fechamento seguro de workbooks Excel.
@@ -292,13 +452,13 @@ Imports:
 Classes:
 
 Funções:
-- hash_file
+- arquivo_hash
 
 Docstring:
 Geração de hash para arquivos do sistema BDC.
 
 
-## src\common\io_json.py
+## src\common\json.py
 Linhas: 14
 
 Imports:
@@ -310,27 +470,10 @@ Imports:
 Classes:
 
 Funções:
-- read_json
+- ler_json
 
 Docstring:
 Leitura e escrita de arquivos JSON do sistema BDC.
-
-
-## src\common\logging_utils.py
-Linhas: 34
-
-Imports:
-- __future__
-- logging
-- pathlib
-
-Classes:
-
-Funções:
-- get_logger
-
-Docstring:
-Configuração padronizada de loggers do sistema BDC.
 
 
 ## src\common\paths.py
@@ -343,47 +486,32 @@ Imports:
 Classes:
 
 Funções:
-- sanitize_folder_name
+- sanitizar_nome_da_pasta
 
 Docstring:
 Funções utilitárias para nomes de paths e diretórios.
 
 
-## src\common\strings.py
-Linhas: 31
+## src\common\servico_desduplicacao.py
+Linhas: 70
 
 Imports:
 - __future__
-- re
+- datetime
 - typing
 
 Classes:
 
 Funções:
-- normalize_string
-- normalize_cnpj
+- tem_hash_duplicado
+- tem_chave_de_negocio_duplicada
+- virar_chave_de_negocio_no_historico
 
 Docstring:
-Normalização de textos e documentos no sistema BDC.
+Regras de deduplicação e atualização incremental do sistema.
 
 
-## src\common\types.py
-Linhas: 20
-
-Imports:
-- __future__
-- typing
-
-Classes:
-
-Funções:
-- normalize_float
-
-Docstring:
-Conversões tipadas para valores numéricos do sistema BDC.
-
-
-## src\common\validation.py
+## src\common\validador.py
 Linhas: 18
 
 Imports:
@@ -396,7 +524,7 @@ Imports:
 Classes:
 
 Funções:
-- validate_json_schema
+- validar_esquema_json
 
 
 ## src\control\__init__.py
@@ -412,8 +540,31 @@ Docstring:
 Carregadores de arquivos de controle do sistema BDC.
 
 
-## src\control\field_types.py
+## src\control\carregador_de_mapeamento.py
 Linhas: 75
+
+Imports:
+- __future__
+- app.context
+- common.json
+- common.validador
+- logging
+- pathlib
+- typing
+
+Classes:
+
+Funções:
+- carregar_e_validar_mapeamento
+- mapeamento_de_carga_fichas_comercializadoras
+- mapeamento_de_carga_fichas_consumidores
+
+Docstring:
+Carregamento e validação estrita dos mappings das fichas.
+
+
+## src\control\field_types.py
+Linhas: 50
 
 Imports:
 - dataclasses
@@ -423,7 +574,7 @@ Classes:
 - FieldTypeConfig
 
 Funções:
-- get_field_type_config
+- obter_config_tipo_campo
 
 Docstring:
 Definição programática e tipada dos domínios de campos (Substitui os JSONs legados).
@@ -435,61 +586,56 @@ Linhas: 128
 Imports:
 - __future__
 - app.context
-- common.io_json
+- common.json
 - sys
 - typing
 
 Classes:
 
 Funções:
-- _validate_layout_structure
-- load_layout_catalog
-- load_layouts_comercializadoras
-- load_layouts_consumidores
+- validar_estrutura_do_layout
+- carregar_catalogo_de_layouts
+- carregar_layouts_comercializadoras
+- carregar_layouts_consumidores
 
 Docstring:
 Carregamento e validação dos layouts de fichas.
 
 
-## src\control\mapping_loader.py
-Linhas: 75
+## src\control\logger.py
+Linhas: 34
+
+Imports:
+- __future__
+- logging
+- pathlib
+
+Classes:
+
+Funções:
+- obter_logger
+
+Docstring:
+Configuração padronizada de loggers do sistema BDC.
+
+
+## src\control\quality_loader.py
+Linhas: 71
 
 Imports:
 - __future__
 - app.context
-- common.io_json
-- common.validation
-- logging
+- common.json
+- common.validador
 - pathlib
 - typing
 
 Classes:
 
 Funções:
-- _load_and_validate_mapping
-- load_mapping_fichas_comercializadoras
-- load_mapping_fichas_consumidores
-
-Docstring:
-Carregamento e validação estrita dos mappings das fichas.
-
-
-## src\control\quality_loader.py
-Linhas: 73
-
-Imports:
-- __future__
-- app.context
-- common.io_json
-- common.validation
-- typing
-
-Classes:
-
-Funções:
-- _load_and_validate_quality_rules
-- load_data_quality_rules_comercializadoras
-- load_data_quality_rules_consumidores
+- _carregar_e_validar_regras_de_qualidade
+- carregar_regras_de_qualidade_de_dados_comercializadoras
+- carregar_regras_de_qualidade_de_dados_consumidores
 
 Docstring:
 Carregamento e validação estrita das regras de qualidade da entidade.
@@ -499,13 +645,165 @@ Regras malformadas geram erro descritivo antes do processamento de qualquer fich
 Ref: §5.2, §5.3 do Planejamento Funcional.
 
 
-## src\domain\contrapartes\segmentacao.py
-Linhas: 51
+## src\domain\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
+## src\domain\auditoria\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
+## src\domain\auditoria\servico_auditoria.py
+Linhas: 162
 
 Imports:
 - __future__
-- common.strings
-- common.types
+- datetime
+- logging
+- pandas
+- pathlib
+- storage.escrever_dados
+- typing
+
+Classes:
+
+Funções:
+- registrar_inicio_pipeline
+- registrar_fim_pipeline
+- registrar_documento
+- registrar_linhagem_campos
+
+Docstring:
+Serviços de Auditoria do Pipeline (§11.5 — Tabelas de Controle).
+
+Registra cada execução do pipeline (ctl_run_pipeline) e cada documento
+processado (ctl_documento) em tabelas persistentes.
+
+
+## src\domain\cadastro\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
+## src\domain\cadastro\servico_bureau.py
+Linhas: 69
+
+Imports:
+- __future__
+- app.context
+- datetime
+- logging
+- pandas
+- services.connectors.risk3_connector
+- storage.escrever_dados
+- typing
+
+Classes:
+
+Funções:
+- inserir_dados_bureau
+
+Docstring:
+Serviço de Ingestão e Persistência do Bureau RISK3.
+
+
+## src\domain\cadastro\servico_receita.py
+Linhas: 130
+
+Imports:
+- __future__
+- app.context
+- datetime
+- domain.enums
+- json
+- logging
+- pandas
+- pathlib
+- re
+- services.connectors.receita_connector
+- shutil
+- storage.escrever_dados
+- typing
+
+Classes:
+- ReceitaIngestionError
+
+Funções:
+- _listar_cnpjs_de_entrada
+- _salvar_instantaneo_bruto
+- inserir_dados_receita
+
+Docstring:
+Serviço de ingestão e validação cadastral da Receita Federal.
+
+
+## src\domain\carga_manual\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
+## src\domain\carga_manual\servico_carga_manual.py
+Linhas: 75
+
+Imports:
+- __future__
+- app.context
+- common.json
+- common.validador
+- datetime
+- logging
+- pandas
+- pathlib
+- storage.escrever_dados
+- typing
+
+Classes:
+
+Funções:
+- inserir_dados_carga_manual
+
+Docstring:
+Serviço de Carga Manual e Eventos de Negócio.
+
+
+## src\domain\contrapartes\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
+## src\domain\contrapartes\segmentacao.py
+Linhas: 50
+
+Imports:
+- __future__
+- silver.normalizadores
 - typing
 
 Classes:
@@ -515,6 +813,93 @@ Funções:
 
 Docstring:
 Segmentação metodológica da contraparte para cálculo de PD.
+
+
+## src\domain\contrapartes\servico_dim_contraparte.py
+Linhas: 87
+
+Imports:
+- __future__
+- app.context
+- datetime
+- logging
+- pandas
+- storage.escrever_dados
+- typing
+
+Classes:
+
+Funções:
+- criar_dim_contraparte
+
+Docstring:
+Serviço de consolidação da Dimensão de Contraparte.
+
+
+## src\domain\contrapartes\servico_enquadramento.py
+Linhas: 173
+
+Imports:
+- __future__
+- app.context
+- pandas
+- pathlib
+- typing
+
+Classes:
+
+Funções:
+- calcular_enquadramento_consumidor
+
+Docstring:
+Serviço de cálculo do volume de enquadramento (≥ 5 MWm) para consumidores.
+
+
+## src\domain\contratos\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
+## src\domain\contratos\servico_contratos_denodo.py
+Linhas: 171
+
+Imports:
+- __future__
+- app.context
+- calendar
+- datetime
+- logging
+- pandas
+- pathlib
+- services.connectors.denodo_connector
+- silver.normalizadores
+- storage.escrever_dados
+- typing
+
+Classes:
+
+Funções:
+- aplicar_regras_negocio_pandas
+- processar_contratos_denodo
+- calcular_horas
+
+Docstring:
+Serviço oficial de ingestão de Contratos Correntes do Denodo.
+
+
+## src\domain\credito\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
 
 
 ## src\domain\credito\ead_engine.py
@@ -570,12 +955,12 @@ o percentual será calculado automaticamente a partir de garantias_service.
 
 
 ## src\domain\credito\notas_quantitativas_cpura.py
-Linhas: 172
+Linhas: 170
 
 Imports:
 - __future__
-- common.types
 - domain.credito.pd_exceptions
+- silver.normalizadores
 - typing
 
 Classes:
@@ -596,8 +981,8 @@ Linhas: 43
 
 Imports:
 - __future__
-- common.types
 - domain.credito.pd_exceptions
+- silver.normalizadores
 - typing
 
 Classes:
@@ -644,7 +1029,7 @@ Imports:
 Classes:
 
 Funções:
-- _inv_t_approx
+- _inv_t_aproximado
 - _normalize_pd_input
 - calcular_pd_final_consumidor_gt5
 
@@ -657,8 +1042,8 @@ Linhas: 75
 
 Imports:
 - __future__
-- common.types
 - domain.credito.pd_exceptions
+- silver.normalizadores
 - typing
 
 Classes:
@@ -696,8 +1081,25 @@ Docstring:
 Transformação de PD para comercializadoras puras.
 
 
-## src\domain\credito\pd_engine.py
-Linhas: 164
+## src\domain\credito\pd_exceptions.py
+Linhas: 15
+
+Imports:
+- __future__
+
+Classes:
+- PdCalculationError
+- PdInputValidationError
+- PdConfigurationError
+
+Funções:
+
+Docstring:
+Exceções do motor de probabilidade de default.
+
+
+## src\domain\credito\pd_motor.py
+Linhas: 161
 
 Imports:
 - __future__
@@ -719,23 +1121,6 @@ Funções:
 
 Docstring:
 Orquestração do cálculo de PD ajustada.
-
-
-## src\domain\credito\pd_exceptions.py
-Linhas: 15
-
-Imports:
-- __future__
-
-Classes:
-- PdCalculationError
-- PdInputValidationError
-- PdConfigurationError
-
-Funções:
-
-Docstring:
-Exceções do motor de probabilidade de default.
 
 
 ## src\domain\credito\pd_transform.py
@@ -761,13 +1146,12 @@ Despacho da transformação de PD por segmento.
 
 
 ## src\domain\credito\pd_validator.py
-Linhas: 105
+Linhas: 104
 
 Imports:
 - __future__
-- common.strings
-- common.types
 - domain.credito.pd_exceptions
+- silver.normalizadores
 - typing
 
 Classes:
@@ -806,8 +1190,8 @@ Linhas: 112
 
 Imports:
 - __future__
-- common.strings
 - domain.credito.pd_exceptions
+- silver.normalizadores
 - typing
 
 Classes:
@@ -826,8 +1210,8 @@ Linhas: 161
 
 Imports:
 - __future__
-- common.strings
 - domain.credito.pd_exceptions
+- silver.normalizadores
 - typing
 
 Classes:
@@ -846,8 +1230,8 @@ Linhas: 127
 
 Imports:
 - __future__
-- common.strings
 - domain.credito.pd_exceptions
+- silver.normalizadores
 - typing
 
 Classes:
@@ -875,6 +1259,75 @@ Funções:
 
 Docstring:
 Cálculo do score total de CPURA.
+
+
+## src\domain\credito\servico_fato_analise_credito.py
+Linhas: 53
+
+Imports:
+- __future__
+- app.context
+- datetime
+- logging
+- pandas
+- storage.escrever_dados
+- typing
+
+Classes:
+
+Funções:
+- construir_fato_analise_credito
+
+Docstring:
+Construção da tabela Fato de Análise de Crédito (fato_analise_credito).
+
+
+## src\domain\credito\servico_override.py
+Linhas: 88
+
+Imports:
+- __future__
+- app.context
+- datetime
+- domain.enums
+- logging
+- pandas
+- storage.escrever_dados
+- typing
+
+Classes:
+
+Funções:
+- processar_solicitacao_override
+
+Docstring:
+Serviço de Gestão de Overrides e Exceções (Módulo de Governança).
+
+
+## src\domain\credito\servico_risco.py
+Linhas: 124
+
+Imports:
+- __future__
+- app.context
+- control.logger
+- datetime
+- domain.credito.ead_engine
+- domain.credito.lgd_engine
+- domain.credito.pe_engine
+- domain.credito.taxa_risco_engine
+- logging
+- pandas
+- storage.escrever_dados
+- typing
+
+Classes:
+
+Funções:
+- rodar_pipeline_risco
+
+Docstring:
+Orquestrador do Pipeline de Risco de Crédito.
 
 
 ## src\domain\credito\taxa_risco_engine.py
@@ -927,6 +1380,150 @@ Docstring:
 Domínios controlados e enumeradores do sistema BDC.
 
 
+## src\domain\fichas\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
+## src\domain\fichas\classificador.py
+Linhas: 196
+
+Imports:
+- __future__
+- common.excel
+- dataclasses
+- openpyxl.worksheet.worksheet
+- re
+- silver.normalizadores
+- typing
+
+Classes:
+- ClassificationResult
+
+Funções:
+- normalizar_rotulo
+- localizar_celula_por_regex
+- verificar_label
+- classificar_pasta_de_trabalho
+
+Docstring:
+Classificação de fichas conforme os layouts conhecidos.
+
+
+## src\domain\fichas\derivador_financeiro.py
+Linhas: 74
+
+Imports:
+- logging
+
+Classes:
+
+Funções:
+- divisao_segura
+- calcular_indicadores_derivados
+
+
+## src\domain\fichas\extrator.py
+Linhas: 505
+
+Imports:
+- __future__
+- common.excel
+- datetime
+- logging
+- math
+- openpyxl
+- openpyxl.utils
+- openpyxl.utils.datetime
+- openpyxl.worksheet.worksheet
+- re
+- silver.normalizadores
+- typing
+- warnings
+
+Classes:
+
+Funções:
+- analisar_data_com_seguranca
+- valor_extraido_limpo
+- _tipo_extraido_valido
+- busca_omnidirecional
+- extrair_registro
+- extrair_registro_do_vencedor
+- norm_tab
+
+Docstring:
+Serviço de extração de dados dinâmico e omnidirecional das fichas Excel.
+
+
+## src\domain\fichas\ficha_extractor.py
+Linhas: 424
+
+Imports:
+- __future__
+- common.excel
+- datetime
+- logging
+- math
+- openpyxl
+- openpyxl.utils
+- openpyxl.utils.datetime
+- openpyxl.worksheet.worksheet
+- re
+- silver.normalizadores
+- typing
+
+Classes:
+
+Funções:
+- analisar_data_com_seguranca
+- valor_extraido_limpo
+- _tipo_extraido_valido
+- busca_omnidirecional
+- extrair_registro
+- extrair_registro_do_vencedor
+- norm_tab
+
+Docstring:
+Serviço de extração de dados dinâmico e omnidirecional das fichas Excel.
+
+
+## src\domain\fichas\validador.py
+Linhas: 242
+
+Imports:
+- __future__
+- typing
+
+Classes:
+- DomainRuleEngine
+
+Funções:
+- _is_empty
+- validar_registro
+- validar_registro_consumidor
+- __init__
+- validate
+
+Docstring:
+Validação técnica e de domínio unificada dos registros extraídos.
+
+
+## src\domain\garantias\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
 ## src\domain\garantias\garantia_model.py
 Linhas: 27
 
@@ -943,6 +1540,200 @@ Docstring:
 Modelo de dados formal para o domínio de Garantias.
 
 
+## src\domain\garantias\servico_garantia.py
+Linhas: 178
+
+Imports:
+- __future__
+- app.context
+- control.logger
+- datetime
+- domain.enums
+- pandas
+- pathlib
+- shutil
+- storage.escrever_dados
+- typing
+
+Classes:
+- GarantiaIngestionError
+
+Funções:
+- inserir_dados_garantias
+
+Docstring:
+Serviço de ingestão, validação e alertas de Garantias.
+
+Lê o CSV extraído da query customizada do Denodo, salva na Bronze,
+valida regras de vigência e cobertura, gera alertas e publica na Silver.
+Ref: §2 (Módulo Garantias), §6.8 do Planejamento Funcional.
+
+
+## src\domain\mtm\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
+## src\domain\mtm\servico_denodo_mtm_reconciliacao.py
+Linhas: 144
+
+Imports:
+- __future__
+- app.context
+- control.logger
+- datetime
+- domain.enums
+- numpy
+- pandas
+- storage.escrever_dados
+- typing
+
+Classes:
+- ReconciliacaoDataError
+
+Funções:
+- executar_reconciliacao_denodo_mtm
+
+Docstring:
+Serviço de reconciliação entre contratos do Denodo e posições consolidadas de MtM.
+
+
+## src\domain\mtm\servico_mtm.py
+Linhas: 142
+
+Imports:
+- __future__
+- app.context
+- control.logger
+- datetime
+- pandas
+- services.connectors.mtm_connector
+- shutil
+- storage.escrever_dados
+- typing
+
+Classes:
+- MtmReconciliationError
+
+Funções:
+- inserir_dados_mtm
+
+Docstring:
+Serviço de ingestão e agregação da base de MtM para as camadas Bronze e Silver.
+
+fix(T2.2.2): Removida lógica duplicada (leitura antiga via MTM_NETWORK_PATH
+que salvava Bronze duas vezes). Mantido apenas o fluxo via mtm_connector.
+Ref: §3.5, §11.6 do Planejamento Funcional.
+
+
+## src\domain\salesforce\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
+## src\domain\salesforce\servico_salesforce.py
+Linhas: 134
+
+Imports:
+- __future__
+- app.context
+- control.logger
+- datetime
+- pandas
+- services.connectors.salesforce_connector
+- shutil
+- storage.escrever_dados
+- typing
+
+Classes:
+- SalesforceIngestionError
+
+Funções:
+- inserir_dados_salesforce
+- enriquecer_com_cnpj
+
+Docstring:
+Serviço de ingestão e normalização da base do Salesforce.
+
+
+## src\domain\salesforce\servico_salesforce_reconciliacao.py
+Linhas: 124
+
+Imports:
+- __future__
+- app.context
+- datetime
+- logging
+- pandas
+- storage.escrever_dados
+- typing
+
+Classes:
+
+Funções:
+- executar_reconciliacao_fichas_salesforce
+
+Docstring:
+Serviço de Reconciliação: Fichas de Crédito vs Salesforce.
+Verifica se todas as contrapartes com ficha de crédito estão devidamente cadastradas no CRM.
+
+
+## src\gold\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
+## src\gold\service_gold.py
+Linhas: 347
+
+Imports:
+- datetime
+- logging
+- pandas
+- pathlib
+- silver.normalizadores
+- typing
+
+Classes:
+
+Funções:
+- exportar_visao_consolidada_gold
+- resolver_situacao_df
+- resolver_situacao_analise
+- classificar_exigencia
+- status_metodologia
+
+Docstring:
+Serviço da Camada Gold.
+Responsável por realizar o Master Join entre Contratos (Denodo), Fichas (Análise), Risco (MtM), e Cadastro.
+Aplica as agregações mensais de volume e regras de negócio temporais para criar a Tabela Analítica Oficial.
+
+
+## src\relational\__init__.py
+Linhas: 0
+
+Imports:
+
+Classes:
+
+Funções:
+
+
 ## src\services\__init__.py
 Linhas: 1
 
@@ -956,126 +1747,17 @@ Docstring:
 Serviços de processamento do sistema BDC.
 
 
-## src\services\audit_service.py
-Linhas: 162
+## src\services\connectors\__init__.py
+Linhas: 0
 
 Imports:
-- __future__
-- datetime
-- logging
-- pandas
-- pathlib
-- storage.silver_store
-- typing
 
 Classes:
 
 Funções:
-- registrar_inicio_pipeline
-- registrar_fim_pipeline
-- registrar_documento
-- registrar_linhagem_campos
-
-Docstring:
-Serviços de Auditoria do Pipeline (§11.5 — Tabelas de Controle).
-
-Registra cada execução do pipeline (ctl_run_pipeline) e cada documento
-processado (ctl_documento) em tabelas persistentes.
 
 
-## src\services\camada_gold_service.py
-Linhas: 145
-
-Imports:
-- __future__
-- app.context
-- datetime
-- logging
-- pandas
-- pydot
-- storage.silver_store
-
-Classes:
-
-Funções:
-- _classificar_matriz_operacional
-- exportar_visao_consolidada_gold
-
-Docstring:
-Construtor da Visão Operacional Consolidada (Camada Gold).
-
-
-## src\services\carga_manual_service.py
-Linhas: 85
-
-Imports:
-- __future__
-- app.context
-- common.io_json
-- common.validation
-- datetime
-- logging
-- pandas
-- storage.silver_store
-- typing
-
-Classes:
-
-Funções:
-- ingest_carga_manual
-
-Docstring:
-Serviço de Carga Manual e Eventos de Negócio.
-
-feat(T4.1.2): Serviço de ingestão de eventos de carga manual com garantia
-de imutabilidade (append-only) e dupla temporalidade.
-Ref: §4.3, §4.5 do Planejamento Funcional.
-
-
-## src\services\contratos_denodo_service.py
-Linhas: 131
-
-Imports:
-- __future__
-- app.context
-- datetime
-- logging
-- pandas
-- pathlib
-- services.denodo_connector
-- storage.silver_store
-- typing
-
-Classes:
-
-Funções:
-- aplicar_regras_negocio_pandas
-- ingest_contratos_denodo
-
-Docstring:
-Serviço oficial de ingestão de Contratos Correntes do Denodo.
-
-
-## src\services\dedup_service.py
-Linhas: 70
-
-Imports:
-- __future__
-- datetime
-- typing
-
-Classes:
-
-Funções:
-- has_duplicate_hash
-- has_duplicate_business_key
-- upsert_business_key_in_history
-
-Docstring:
-Regras de deduplicação e atualização incremental do sistema.
-
-
-## src\services\denodo_connector.py
+## src\services\connectors\denodo_connector.py
 Linhas: 144
 
 Imports:
@@ -1094,9 +1776,9 @@ Classes:
 - DenodoConnectionError
 
 Funções:
-- _request_with_retry
-- _find_latest_bronze_snapshot
-- fetch_denodo_rest
+- _solicitacao_com_tentativa
+- _encontrar_arquivo_bronze_recente
+- buscar_denodo
 
 Docstring:
 Conector central para o virtualizador Denodo via API RESTful.
@@ -1106,282 +1788,15 @@ feat(T2.1.1): Adicionados retry com backoff exponencial e fallback para
 Ref: §3.4 do Planejamento Funcional.
 
 
-## src\services\dim_contraparte_service.py
-Linhas: 42
-
-Imports:
-- __future__
-- app.context
-- datetime
-- logging
-- pandas
-- storage.silver_store
-- typing
-
-Classes:
-
-Funções:
-- build_dim_contraparte
-
-Docstring:
-Construção da dimensão de Contrapartes (dim_contraparte).
-
-
-## src\services\enquadramento_service.py
-Linhas: 72
-
-Imports:
-- __future__
-- app.context
-- pandas
-- pathlib
-- typing
-
-Classes:
-
-Funções:
-- calcular_enquadramento_consumidor
-
-Docstring:
-Serviço de cálculo do volume de enquadramento (≥ 5 MWm) para consumidores.
-
-
-## src\services\fato_analise_credito_service.py
-Linhas: 47
-
-Imports:
-- __future__
-- app.context
-- datetime
-- logging
-- pandas
-- storage.silver_store
-- typing
-
-Classes:
-
-Funções:
-- build_fato_analise_credito
-
-Docstring:
-Construção da tabela Fato de Análise de Crédito (fato_analise_credito).
-
-
-## src\services\ficha_classifier.py
-Linhas: 200
-
-Imports:
-- __future__
-- common.excel
-- common.strings
-- dataclasses
-- openpyxl.worksheet.worksheet
-- re
-- typing
-
-Classes:
-- ClassificationResult
-
-Funções:
-- _normalize_label
-- _find_label_by_regex
-- _verify_field
-- classify_workbook
-
-Docstring:
-Classificação de fichas conforme os layouts conhecidos.
-
-
-## src\services\ficha_extractor.py
-Linhas: 140
-
-Imports:
-- common.excel
-- datetime
-- openpyxl
-- openpyxl.utils.datetime
-- typing
-
-Classes:
-
-Funções:
-- parse_date_safely
-- extract_field_value
-- extract_record
-
-Docstring:
-Serviço de extração de dados das fichas Excel.
-
-
-## src\services\ficha_validator.py
-Linhas: 123
-
-Imports:
-- __future__
-- typing
-
-Classes:
-- DomainRuleEngine
-
-Funções:
-- _is_empty
-- validate_record
-- __init__
-- validate
-
-Docstring:
-Validação técnica e de domínio unificada dos registros extraídos.
-
-
-## src\services\fichas_comercializadoras_service.py
-Linhas: 736
-
-Imports:
-- __future__
-- app.context
-- common.excel
-- common.hashing
-- common.io_json
-- common.logging_utils
-- common.paths
-- common.strings
-- control.layout_catalog
-- control.mapping_loader
-- control.quality_loader
-- datetime
-- domain.contrapartes.segmentacao
-- domain.credito.pd_engine
-- pathlib
-- services.audit_service
-- services.dedup_service
-- services.ficha_classifier
-- services.ficha_extractor
-- services.ficha_validator
-- silver.documentos_classificados
-- silver.field_type_normalizer
-- staging.discovery
-- staging.staging_writer
-- storage.bronze_store
-- storage.file_ops
-- storage.manifest_store
-- storage.silver_store
-- storage.state_store
-- typing
-- uuid
-
-Classes:
-
-Funções:
-- is_valid_cnpj
-- _is_disk_full_error
-- _build_run_id
-- _build_target_name
-- _resolve_bronze_subfolder
-- _move_to_rejected
-- _move_to_processed
-- _build_pd_info
-- _build_processing_queue
-- _process_single_file
-- process_fichas_comercializadoras
-- calc_digit
-
-Docstring:
-Serviço principal refatorado do pipeline de fichas de comercializadoras.
-
-
-## src\services\fichas_consumidores_service.py
-Linhas: 689
-
-Imports:
-- __future__
-- app.context
-- common.excel
-- common.hashing
-- common.io_json
-- common.logging_utils
-- common.paths
-- common.strings
-- control.layout_catalog
-- control.mapping_loader
-- control.quality_loader
-- datetime
-- domain.contrapartes.segmentacao
-- domain.credito.pd_engine
-- pathlib
-- services.audit_service
-- services.dedup_service
-- services.ficha_classifier
-- services.ficha_extractor
-- services.ficha_validator
-- silver.documentos_classificados
-- silver.field_type_normalizer
-- staging.discovery
-- staging.staging_writer
-- storage.bronze_store
-- storage.file_ops
-- storage.manifest_store
-- storage.silver_store
-- storage.state_store
-- typing
-- uuid
-
-Classes:
-
-Funções:
-- is_valid_cnpj
-- _is_disk_full_error
-- _build_run_id
-- _build_target_name
-- _resolve_bronze_subfolder
-- _move_to_rejected
-- _move_to_processed
-- _build_pd_info
-- _build_processing_queue
-- _process_single_file
-- process_fichas_consumidores
-- calc_digit
-
-Docstring:
-Serviço principal refatorado do pipeline de fichas de consumidores.
-
-
-## src\services\garantias_service.py
-Linhas: 178
-
-Imports:
-- __future__
-- app.context
-- common.logging_utils
-- datetime
-- domain.enums
-- pandas
-- pathlib
-- shutil
-- storage.silver_store
-- typing
-
-Classes:
-- GarantiaIngestionError
-
-Funções:
-- ingest_garantias_data
-
-Docstring:
-Serviço de ingestão, validação e alertas de Garantias.
-
-Lê o CSV extraído da query customizada do Denodo, salva na Bronze,
-valida regras de vigência e cobertura, gera alertas e publica na Silver.
-Ref: §2 (Módulo Garantias), §6.8 do Planejamento Funcional.
-
-
-## src\services\mtm_connector.py
-Linhas: 70
+## src\services\connectors\mtm_connector.py
+Linhas: 84
 
 Imports:
 - __future__
 - datetime
 - pandas
 - pathlib
+- silver.normalizadores
 - typing
 
 Classes:
@@ -1389,121 +1804,14 @@ Classes:
 
 Funções:
 - _encontrar_arquivo_mtm_recente
-- fetch_mtm_consolidado
+- buscar_mtm_consolidado
 
 Docstring:
 Conector de integração com a base de MtM (Risco de Mercado).
 
 
-## src\services\mtm_ingestion_service.py
-Linhas: 130
-
-Imports:
-- __future__
-- app.context
-- common.logging_utils
-- datetime
-- pandas
-- services.mtm_connector
-- shutil
-- storage.silver_store
-- typing
-
-Classes:
-- MtmReconciliationError
-
-Funções:
-- ingest_mtm_data
-
-Docstring:
-Serviço de ingestão e agregação da base de MtM para as camadas Bronze e Silver.
-
-fix(T2.2.2): Removida lógica duplicada (leitura antiga via MTM_NETWORK_PATH
-que salvava Bronze duas vezes). Mantido apenas o fluxo via mtm_connector.
-Ref: §3.5, §11.6 do Planejamento Funcional.
-
-
-## src\services\network_discovery_service.py
-Linhas: 188
-
-Imports:
-- __future__
-- app.context
-- common.excel
-- common.logging_utils
-- control.layout_catalog
-- datetime
-- logging
-- pandas
-- pathlib
-- services.ficha_classifier
-- shutil
-- typing
-
-Classes:
-- NetworkDiscoveryError
-
-Funções:
-- _obter_assinaturas_locais
-- run_network_discovery
-
-Docstring:
-Serviço de Coleta na Rede e Triagem Automática de Fichas de Crédito.
-
-
-## src\services\override_service.py
-Linhas: 79
-
-Imports:
-- __future__
-- app.context
-- datetime
-- domain.enums
-- logging
-- pandas
-- storage.silver_store
-- typing
-
-Classes:
-
-Funções:
-- processar_solicitacao_override
-
-Docstring:
-Serviço de Gestão de Overrides e Exceções (Módulo de Governança).
-
-feat(T4.2.1): Serviço para aplicar, aprovar e monitorar vigência de Overrides.
-Ref: §11.7 do Planejamento Funcional.
-
-
-## src\services\pipeline_risco_service.py
-Linhas: 108
-
-Imports:
-- __future__
-- app.context
-- common.logging_utils
-- datetime
-- domain.credito.ead_engine
-- domain.credito.lgd_engine
-- domain.credito.pe_engine
-- domain.credito.taxa_risco_engine
-- logging
-- pandas
-- storage.silver_store
-- typing
-
-Classes:
-
-Funções:
-- run_pipeline_risco
-
-Docstring:
-Orquestrador do Pipeline de Risco de Crédito.
-
-
-## src\services\receita_connector.py
-Linhas: 117
+## src\services\connectors\receita_connector.py
+Linhas: 181
 
 Imports:
 - __future__
@@ -1514,6 +1822,7 @@ Imports:
 - pandas
 - pathlib
 - requests
+- silver.normalizadores
 - time
 - typing
 - urllib3
@@ -1521,94 +1830,46 @@ Imports:
 Classes:
 
 Funções:
-- normalizar_cnpj
 - _cache_path
 - _load_cache
 - _save_cache
 - _is_same_day_cache
-- fetch_receita_data_batch
+- _consultar_cnpj_brasilapi
+- buscar_receita_dados_lote
 
 Docstring:
 Conector e cache da BrasilAPI para consulta cadastral de Receita Federal.
 
 
-## src\services\receita_ingestion_service.py
+## src\services\connectors\risk3_connector.py
 Linhas: 130
 
 Imports:
 - __future__
 - app.context
 - datetime
-- domain.enums
 - json
 - logging
+- os
 - pandas
 - pathlib
-- re
-- services.receita_connector
-- shutil
-- storage.silver_store
+- requests
+- silver.normalizadores
+- time
 - typing
-
-Classes:
-- ReceitaIngestionError
-
-Funções:
-- _listar_cnpjs_de_entrada
-- _save_raw_snapshot
-- ingest_receita_data
-
-Docstring:
-Serviço de ingestão e validação cadastral da Receita Federal.
-
-
-## src\services\reconciliacao_denodo_mtm_service.py
-Linhas: 144
-
-Imports:
-- __future__
-- app.context
-- common.logging_utils
-- datetime
-- domain.enums
-- numpy
-- pandas
-- storage.silver_store
-- typing
-
-Classes:
-- ReconciliacaoDataError
-
-Funções:
-- executar_reconciliacao_denodo_mtm
-
-Docstring:
-Serviço de reconciliação entre contratos do Denodo e posições consolidadas de MtM.
-
-
-## src\services\reconciliacao_fichas_salesforce_service.py
-Linhas: 124
-
-Imports:
-- __future__
-- app.context
-- datetime
-- logging
-- pandas
-- storage.silver_store
-- typing
+- urllib3
 
 Classes:
 
 Funções:
-- executar_reconciliacao_fichas_salesforce
+- _obter_token_auth
+- buscar_bureau_risk3
 
 Docstring:
-Serviço de Reconciliação: Fichas de Crédito vs Salesforce.
-Verifica se todas as contrapartes com ficha de crédito estão devidamente cadastradas no CRM.
+Conector oficial para a API Expresso RISK3 (Bureau de Crédito).
 
 
-## src\services\salesforce_connector.py
+## src\services\connectors\salesforce_connector.py
 Linhas: 74
 
 Imports:
@@ -1621,35 +1882,10 @@ Classes:
 - SalesforceConnectionError
 
 Funções:
-- fetch_salesforce_data
+- buscar_salesforce_dados
 
 Docstring:
 Conector de integração de arquivos extraídos do Salesforce (via Power Query).
-
-
-## src\services\salesforce_ingestion_service.py
-Linhas: 134
-
-Imports:
-- __future__
-- app.context
-- common.logging_utils
-- datetime
-- pandas
-- services.salesforce_connector
-- shutil
-- storage.silver_store
-- typing
-
-Classes:
-- SalesforceIngestionError
-
-Funções:
-- ingest_salesforce_data
-- enriquecer_com_cnpj
-
-Docstring:
-Serviço de ingestão e normalização da base do Salesforce.
 
 
 ## src\silver\__init__.py
@@ -1674,36 +1910,58 @@ Imports:
 Classes:
 
 Funções:
-- build_classified_document
+- criar_documento_classificado
 
 Docstring:
 Builders da camada silver para documentos classificados.
 
 
-## src\silver\field_type_normalizer.py
-Linhas: 136
+## src\silver\normalizador_de_tipo_de_campo.py
+Linhas: 140
 
 Imports:
 - __future__
+- anyio
 - app.context
-- common.dates
-- common.io_json
-- common.strings
-- common.types
+- common.json
 - control.field_types
 - datetime
+- re
+- silver.normalizadores
+- typing
+
+Classes:
+
+Funções:
+- _obter_campos
+- normalizar_registro
+
+Docstring:
+Normalização técnica das fichas.
+
+
+## src\silver\normalizadores.py
+Linhas: 182
+
+Imports:
+- __future__
+- datetime
+- math
 - re
 - typing
 
 Classes:
 
 Funções:
-- _get_fields
+- normalizar_string
+- normalizar_float
+- normalize_date
 - normalize_data_demonstracao_financeira
-- normalize_record
+- padronizar_cnpj
+- calc_digit
 
 Docstring:
-Normalização técnica das fichas.
+Orquestrador Central de Normalizadores do Projeto BDC.
 
 
 ## src\staging\__init__.py
@@ -1719,7 +1977,7 @@ Docstring:
 Camada de staging do sistema BDC.
 
 
-## src\staging\discovery.py
+## src\staging\descoberta.py
 Linhas: 18
 
 Imports:
@@ -1729,13 +1987,13 @@ Imports:
 Classes:
 
 Funções:
-- discover_pending_excels
+- detectar_arquivos_excel_pendentes
 
 Docstring:
 Descoberta de arquivos pendentes para processamento.
 
 
-## src\staging\staging_writer.py
+## src\staging\staging_arquivo.py
 Linhas: 21
 
 Imports:
@@ -1746,7 +2004,7 @@ Imports:
 Classes:
 
 Funções:
-- copy_to_staging
+- copiar_para_staging
 
 Docstring:
 Cópia de arquivos para a área de staging do sistema.
@@ -1765,42 +2023,7 @@ Docstring:
 Camada de persistência física do sistema BDC.
 
 
-## src\storage\bronze_store.py
-Linhas: 20
-
-Imports:
-- __future__
-- pathlib
-- shutil
-
-Classes:
-
-Funções:
-- publish_raw_file
-
-Docstring:
-Publicação de arquivos válidos na camada bronze.
-
-
-## src\storage\file_ops.py
-Linhas: 34
-
-Imports:
-- __future__
-- pathlib
-- shutil
-- time
-
-Classes:
-
-Funções:
-- move_file_with_retry
-
-Docstring:
-Operações robustas de arquivo para ambiente Windows.
-
-
-## src\storage\manifest_store.py
+## src\storage\armazenamento_manifest.py
 Linhas: 39
 
 Imports:
@@ -1812,15 +2035,32 @@ Imports:
 Classes:
 
 Funções:
-- append_manifest_record
-- load_ingestion_history
+- anexar_registro_de_manifesto
+- historico_de_ingestao_de_carga
 
 Docstring:
 Persistência do manifest de ingestão em formato JSONL.
 
 
-## src\storage\silver_store.py
-Linhas: 136
+## src\storage\bronze_arquivo.py
+Linhas: 20
+
+Imports:
+- __future__
+- pathlib
+- shutil
+
+Classes:
+
+Funções:
+- publicar_arquivo_bruto
+
+Docstring:
+Publicação de arquivos válidos na camada bronze.
+
+
+## src\storage\escrever_dados.py
+Linhas: 159
 
 Imports:
 - pandas
@@ -1831,14 +2071,14 @@ Classes:
 
 Funções:
 - _normalize_filename
-- write_silver_dataset
-- merge_silver_dataset_by_business_key
+- escrever_conjunto_de_dados_silver
+- mesclar_conjunto_de_dados_prata_por_chave_de_negocio
 
 Docstring:
 Persistência de datasets padronizados da camada silver.
 
 
-## src\storage\state_store.py
+## src\storage\estado_armazenamento.py
 Linhas: 72
 
 Imports:
@@ -1858,285 +2098,19 @@ Docstring:
 Estruturas de estado e manifesto do processamento.
 
 
-## src\tests\test_context.py
-Linhas: 131
+## src\storage\operacao_arquivo.py
+Linhas: 34
 
 Imports:
-- app.context
-- json
+- __future__
 - pathlib
-- pytest
-- sys
+- shutil
+- time
 
 Classes:
 
 Funções:
-- setup_env
-- test_cenario_1_sucesso
-- test_cenario_2_diretorio_inexistente
-- test_cenario_3_arquivo_config_ausente
-- test_cenario_4_control_files_ausente
-- test_cenario_5_schema_nao_encontrado_no_disco
-- test_cenario_6_schema_invalido_campo_ausente
-- test_cenario_7_schema_invalido_tipo_errado
+- mover_arquivo_com_tentativa_adicional
 
-
-## src\tests\test_denodo_connector.py
-Linhas: 27
-
-Imports:
-- pandas
-- pathlib
-- pytest
-- services.denodo_connector
-- sys
-
-Classes:
-
-Funções:
-- test_t211_leitura_denodo_local
-
-
-## src\tests\test_domain_rule_engine.py
-Linhas: 43
-
-Imports:
-- logging
-- pathlib
-- pytest
-- services.ficha_validator
-- sys
-
-Classes:
-
-Funções:
-- test_t132_engine_com_regras_dinamicas
-- test_t132_engine_fallback_nativo
-
-
-## src\tests\test_dynamic_paths.py
-Linhas: 26
-
-Imports:
-- app.config_builder
-- pathlib
-- pytest
-- sys
-
-Classes:
-
-Funções:
-- test_config_builder_sem_json_t122
-
-
-## src\tests\test_enquadramento.py
-Linhas: 42
-
-Imports:
-- pandas
-- pathlib
-- pytest
-- services.enquadramento_service
-- sys
-
-Classes:
-- MockContext
-
-Funções:
-- test_t213_calculo_volume_enquadramento
-- path
-
-
-## src\tests\test_enums.py
-Linhas: 36
-
-Imports:
-- pathlib
-- pytest
-- storage.state_store
-- sys
-
-Classes:
-
-Funções:
-- test_t133_rejeicao_valor_fora_do_dominio
-- test_t133_conversao_string_valida_para_enum
-
-
-## src\tests\test_field_type_normalizer.py
-Linhas: 71
-
-Imports:
-- json
-- logging
-- pathlib
-- pytest
-- silver.field_type_normalizer
-- sys
-
-Classes:
-- MockContext
-
-Funções:
-- mock_context
-- test_t131_normalizer_using_python_class
-- test_t131_normalizer_fallback_json
-- control_file
-
-
-## src\tests\test_layout_catalog.py
-Linhas: 46
-
-Imports:
-- control.layout_catalog
-- logging
-- pathlib
-- pytest
-- sys
-
-Classes:
-
-Funções:
-- test_cenario_1_layout_valido
-- test_cenario_2_layout_sem_field_map
-- test_cenario_3_layout_com_campo_vazio
-
-
-## src\tests\test_mtm_connector.py
-Linhas: 46
-
-Imports:
-- pandas
-- pathlib
-- pytest
-- services.mtm_connector
-- sys
-
-Classes:
-
-Funções:
-- test_t221_leitura_mtm_local
-
-
-## src\tests\test_mtm_ingestion.py
-Linhas: 135
-
-Imports:
-- pandas
-- pathlib
-- pytest
-- services.mtm_ingestion_service
-- sys
-
-Classes:
-- MockContext
-
-Funções:
-- mock_context_factory
-- test_t222_ingestao_e_reconciliacao_mtm_sucesso
-- test_t222_falha_reconciliacao_mtm
-- _create_mock_context
-- __init__
-- path
-
-
-## src\tests\test_pd_consumidor_le5.py
-Linhas: 33
-
-Imports:
-- domain.credito.pd_consumidor_le5
-- pathlib
-- pytest
-- sys
-
-Classes:
-
-Funções:
-- test_t142_calculo_pd_bureau_sem_restritivo
-- test_t142_calculo_pd_bureau_com_restritivo
-
-
-## src\tests\test_receita_ingestion.py
-Linhas: 133
-
-Imports:
-- json
-- pandas
-- pathlib
-- pytest
-- services.receita_connector
-- services.receita_ingestion_service
-- sys
-
-Classes:
-- MockContext
-- DummyResponse
-
-Funções:
-- _write_cnpj_list_file
-- test_consulta_brasilapi_sucesso
-- test_cache_local_receita
-- test_geracao_alerta_cad001
-- __init__
-- path
-- fake_get
-- fake_get
-- __init__
-- json
-
-
-## src\tests\test_reconciliacao_denodo_mtm.py
-Linhas: 97
-
-Imports:
-- pandas
-- pathlib
-- pytest
-- services.reconciliacao_denodo_mtm_service
-- sys
-
-Classes:
-- MockContext
-
-Funções:
-- test_t223_reconciliacao_denodo_mtm_cenarios_completos
-- path
-
-
-## src\tests\test_reconciliacao_fichas_salesforce.py
-Linhas: 78
-
-Imports:
-- pandas
-- pathlib
-- pytest
-- services.reconciliacao_fichas_salesforce_service
-- sys
-
-Classes:
-- MockContext
-
-Funções:
-- test_t232_reconciliacao_fichas_salesforce_cenarios
-- path
-
-
-## src\tests\test_salesforce_ingestion.py
-Linhas: 107
-
-Imports:
-- pandas
-- pathlib
-- pytest
-- services.salesforce_ingestion_service
-- sys
-
-Classes:
-- MockContext
-
-Funções:
-- mock_context
-- criar_mock_excel_salesforce
-- test_t232_ingestao_salesforce_sucesso
-- test_t232_ingestao_salesforce_arquivo_inexistente
-- path
+Docstring:
+Operações robustas de arquivo para ambiente Windows.

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from common.strings import normalize_string
+from silver.normalizadores import normalizar_string
 from domain.credito.pd_exceptions import (
     PdConfigurationError,
     PdInputValidationError,
@@ -18,7 +18,7 @@ def _obter_peso_nota(
     nome_campo: str,
 ) -> float:
     """Obtém o peso numérico da nota."""
-    nota_normalizada = normalize_string(nota, upper=True)
+    nota_normalizada = normalizar_string(nota, upper=True)
 
     if not nota_normalizada:
         raise PdInputValidationError(

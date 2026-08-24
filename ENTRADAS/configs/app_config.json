@@ -6,55 +6,71 @@
     "entradas": "ENTRADAS",
     "saidas": "SAIDAS",
     "logs": "LOGS",
+
     "configs": "ENTRADAS\\configs",
     "control": "ENTRADAS\\control",
+
     "control_schemas": "ENTRADAS\\control\\schemas",
     "control_layouts": "ENTRADAS\\control\\layouts",
     "control_mappings": "ENTRADAS\\control\\mappings",
     "control_rules": "ENTRADAS\\control\\rules",
     "control_quality": "ENTRADAS\\control\\quality",
+
     "input_contratos_denodo": "ENTRADAS\\contratos_denodo",
+
     "input_fichas_comercializadoras_root": "ENTRADAS\\fichas\\comercializadoras",
     "input_fichas_comercializadoras_pendentes": "ENTRADAS\\fichas\\comercializadoras\\pendentes",
     "input_fichas_comercializadoras_processadas": "ENTRADAS\\fichas\\comercializadoras\\processadas",
     "input_fichas_comercializadoras_rejeitadas": "ENTRADAS\\fichas\\comercializadoras\\rejeitadas",
+
     "input_reprocessamento_comercializadoras_root": "ENTRADAS\\fichas\\comercializadoras\\reprocessamento",
     "input_reprocessamento_comercializadoras_pendentes": "ENTRADAS\\fichas\\comercializadoras\\reprocessamento\\pendentes",
     "input_reprocessamento_comercializadoras_processados": "ENTRADAS\\fichas\\comercializadoras\\reprocessamento\\processados",
     "input_reprocessamento_comercializadoras_rejeitados": "ENTRADAS\\fichas\\comercializadoras\\reprocessamento\\rejeitados",
+
     "input_fichas_consumidores_root": "ENTRADAS\\fichas\\consumidores",
     "input_fichas_consumidores_pendentes": "ENTRADAS\\fichas\\consumidores\\pendentes",
     "input_fichas_consumidores_processadas": "ENTRADAS\\fichas\\consumidores\\processadas",
     "input_fichas_consumidores_rejeitadas": "ENTRADAS\\fichas\\consumidores\\rejeitadas",
+
     "input_reprocessamento_consumidores_root": "ENTRADAS\\fichas\\consumidores\\reprocessamento",
     "input_reprocessamento_consumidores_pendentes": "ENTRADAS\\fichas\\consumidores\\reprocessamento\\pendentes",
     "input_reprocessamento_consumidores_processados": "ENTRADAS\\fichas\\consumidores\\reprocessamento\\processados",
     "input_reprocessamento_consumidores_rejeitados": "ENTRADAS\\fichas\\consumidores\\reprocessamento\\rejeitados",
+
     "staging": "SAIDAS\\staging",
+
     "staging_fichas_comercializadoras": "SAIDAS\\staging\\fichas_comercializadoras",
     "staging_fichas_consumidores": "SAIDAS\\staging\\fichas_consumidores",
+
     "bronze": "SAIDAS\\bronze",
     "bronze_fichas_comercializadoras_raw": "SAIDAS\\bronze\\fichas_comercializadoras_raw",
     "bronze_fichas_consumidores_raw": "SAIDAS\\bronze\\fichas_consumidores_raw",
     "bronze_salesforce_raw": "SAIDAS\\bronze\\salesforce_raw",
     "bronze_ingestion_log": "SAIDAS\\bronze\\ingestion_log",
+
     "silver": "SAIDAS\\silver",
     "silver_documentos_classificados": "SAIDAS\\silver\\documentos_classificados",
     "silver_fichas_comercializadoras_extraidas": "SAIDAS\\silver\\fichas_comercializadoras_extraidas",
     "silver_fichas_consumidores_extraidas": "SAIDAS\\silver\\fichas_consumidores_extraidas",
+
+    "gold": "SAIDAS\\gold",
+
     "relational": "SAIDAS\\relational",
     "relational_dimensions": "SAIDAS\\relational\\dimensions",
     "relational_facts": "SAIDAS\\relational\\facts",
     "relational_configs": "SAIDAS\\relational\\configs",
     "relational_control": "SAIDAS\\relational\\control",
-    "log_runner": "LOGS\\runner",
-    "gold": "SAIDAS\\gold",
+
     "output": "SAIDAS\\output",
+    
+    "log_runner": "LOGS\\runner",
     "log_ingestion": "LOGS\\ingestion",
     "log_classification": "LOGS\\classification",
     "log_extraction": "LOGS\\extraction"
   },
   "control_files": {
+    
     "layout_ficha_comercializadora_v1": "ENTRADAS\\control\\layouts\\layout_ficha_comercializadora_v1.json",
     "layout_ficha_comercializadora_v2": "ENTRADAS\\control\\layouts\\layout_ficha_comercializadora_v2.json",
     "layout_ficha_comercializadora_v3": "ENTRADAS\\control\\layouts\\layout_ficha_comercializadora_v3.json",
@@ -62,29 +78,38 @@
     "layout_ficha_comercializadora_v5": "ENTRADAS\\control\\layouts\\layout_ficha_comercializadora_v5.json",
     "layout_ficha_comercializadora_v6": "ENTRADAS\\control\\layouts\\layout_ficha_comercializadora_v6.json",
     "layout_ficha_comercializadora_v7": "ENTRADAS\\control\\layouts\\layout_ficha_comercializadora_v7.json",
+    
     "catalogo_layouts_ficha_comercializadora": "ENTRADAS\\control\\layouts\\catalogo_layouts_ficha_comercializadora.json",
+    
     "layout_ficha_consumidor_v1": "ENTRADAS\\control\\layouts\\layout_ficha_consumidor_v1.json",
     "layout_ficha_consumidor_v2": "ENTRADAS\\control\\layouts\\layout_ficha_consumidor_v2.json",
     "layout_ficha_consumidor_v3": "ENTRADAS\\control\\layouts\\layout_ficha_consumidor_v3.json",
+
     "catalogo_layouts_ficha_consumidores": "ENTRADAS\\control\\layouts\\catalogo_layouts_ficha_consumidor.json",
+
     "mapping_fichas_comercializadoras": "ENTRADAS\\control\\mappings\\mapping_fichas_comercializadoras.json",
     "mapping_fichas_consumidores": "ENTRADAS\\control\\mappings\\mapping_fichas_consumidores.json",
+    
+    "master_catalog_comercializadoras": "ENTRADAS\\control\\quality\\master_catalog_comercializadoras.json",
+
+    "pk_fk_rules": "ENTRADAS\\control\\quality\\pk_fk_rules.json",
+
+    "data_quality_rules_fichas_consumidores": "ENTRADAS\\control\\quality\\data_quality_rules_fichas_consumidores.json",
+    "field_types_fichas_consumidores": "ENTRADAS\\control\\quality\\field_types_fichas_consumidores.json",
+    
+    "pd_faixas": "ENTRADAS\\control\\configs\\pd_faixas.json",
+    "pd_cpura_config": "ENTRADAS\\control\\configs\\pd_cpura_config.json",
+    "pd_transform_rules": "ENTRADAS\\control\\rules\\pd_transform_rules.json",
+    
+    "score_cpura_config": "ENTRADAS\\control\\configs\\score_cpura_config.json",
+    
+    "schema_data_quality_rules": "ENTRADAS\\control\\schemas\\schema_data_quality_rules.json",
     "schema_mapping_fichas_comercializadoras": "ENTRADAS\\control\\schemas\\schema_mapping_fichas_comercializadoras.json",
     "schema_mapping_fichas_consumidores": "ENTRADAS\\control\\schemas\\schema_mapping_fichas_consumidores.json",
     "schema_app_config": "ENTRADAS\\control\\schemas\\schema_app_config.json",
     "schema_config": "ENTRADAS\\control\\schemas\\schema_config.json",
     "schema_ficha_comercializadora_extraida": "ENTRADAS\\control\\schemas\\schema_ficha_comercializadora_extraida.json",
-    "schema_ingestion_log": "ENTRADAS\\control\\schemas\\schema_ingestion_log.json",
-    "pk_fk_rules": "ENTRADAS\\control\\quality\\pk_fk_rules.json",
-    "data_quality_rules_fichas_comercializadoras": "ENTRADAS\\control\\quality\\data_quality_rules_fichas_comercializadoras.json",
-    "field_types_fichas_comercializadoras": "ENTRADAS\\control\\quality\\field_types_fichas_comercializadoras.json",
-    "data_quality_rules_fichas_consumidores": "ENTRADAS\\control\\quality\\data_quality_rules_fichas_consumidores.json",
-    "field_types_fichas_consumidores": "ENTRADAS\\control\\quality\\field_types_fichas_consumidores.json",
-    "pd_faixas": "ENTRADAS\\control\\configs\\pd_faixas.json",
-    "pd_cpura_config": "ENTRADAS\\control\\configs\\pd_cpura_config.json",
-    "score_cpura_config": "ENTRADAS\\control\\configs\\score_cpura_config.json",
-    "pd_transform_rules": "ENTRADAS\\control\\rules\\pd_transform_rules.json",
-    "schema_data_quality_rules": "ENTRADAS\\control\\schemas\\schema_data_quality_rules.json"
+    "schema_ingestion_log": "ENTRADAS\\control\\schemas\\schema_ingestion_log.json"
   },
   "naming": {
     "run_id_prefix": "BDC",

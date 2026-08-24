@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from common.types import normalize_float
+from silver.normalizadores import normalizar_float
 from domain.credito.pd_exceptions import (
     PdConfigurationError,
     PdInputValidationError,
@@ -17,7 +17,7 @@ def _obter_valor_numerico(
     campo: str,
 ) -> float:
     """Obtém e valida um valor numérico do registro."""
-    valor = normalize_float(registro.get(campo))
+    valor = normalizar_float(registro.get(campo))
 
     if valor is None:
         raise PdInputValidationError(
@@ -115,7 +115,7 @@ def calcular_notas_quantitativas_cpura(
             )
 
         pd_valor = _obter_valor_numerico(registro, "PROBABILIDADE_DEFAULT")
-        fco_rol_valor = _obter_valor_numerico(registro, "MFCO")
+        fco_rol_valor = _obter_valor_numerico(registro, "FCO")
         roe_valor = _obter_valor_numerico(registro, "ROE")
         roa_valor = _obter_valor_numerico(registro, "ROA")
 
@@ -162,11 +162,9 @@ def calcular_notas_quantitativas_cpura(
 
         return resultado
 
-    except Exception:
+    except Exception as e:
         if logger is not None:
-            logger.exception(
-                "Falha no cálculo das notas quantitativas CPURA. "
-                "CNPJ=%s",
-                registro.get("CNPJ"),
+            logger.error(
+                f"Falha no cálculo das notas quantitativas CPURA. CNPJ={registro.get('CNPJ')} - Motivo: {str(e)}"
             )
         raise

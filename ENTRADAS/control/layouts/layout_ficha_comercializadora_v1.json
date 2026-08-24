@@ -31,7 +31,8 @@
     "DATA_ADESAO_CCEE",
     "NOTA_CREDITO",
     "PROBABILIDADE_DEFAULT",
-    "TIPO_COMERCIALIZADORA"
+    "TIPO_COMERCIALIZADORA",
+    "LUCRO_LIQUIDO"
   ],
     "verify_fields": [
     "CNPJ"
@@ -121,6 +122,14 @@
       "label_cell": "B5",
       "value_cell": "E5",
       "implemented": true
+    },
+    "LUCRO_LIQUIDO": {
+      "sheet": "V0",
+      "label_cell": null,
+      "value_cell": null,
+      "search_pattern": "LUCRO LIQUIDO|LUCRO/PREJUIZO DO EXERCICIO",
+      "implemented": true,
+      "data_type": "float"
     }
   }
 }

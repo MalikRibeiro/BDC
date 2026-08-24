@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import Optional, Union
 
-from src.app.context import AppContext, load_context
+from src.app.context import AppContext, carregar_contexto
 from dotenv import load_dotenv
 
 load_dotenv()  # Carrega as variáveis do arquivo .env para o os.environ automaticamente
@@ -46,7 +46,7 @@ def resolve_configs_dir(explicit_path: Optional[Union[str, Path]] = None) -> Pat
     return configs_dir
 
 
-def bootstrap_application(configs_dir: Optional[Union[str, Path]] = None) -> AppContext:
+def aplicativo_bootstrap(configs_dir: Optional[Union[str, Path]] = None) -> AppContext:
     """
     Realiza o bootstrap da aplicação e carrega o AppContext.
 
@@ -57,4 +57,4 @@ def bootstrap_application(configs_dir: Optional[Union[str, Path]] = None) -> App
         AppContext: Contexto inicializado da aplicação.
     """
     resolved_dir = resolve_configs_dir(configs_dir)
-    return load_context(resolved_dir)
+    return carregar_contexto(resolved_dir)

@@ -6,10 +6,10 @@ import sys
 from typing import Any
 
 from app.context import AppContext
-from common.io_json import read_json
+from common.json import ler_json
 
 
-def _validate_layout_structure(layout: dict[str, Any], versao: str, logger: Any) -> None:
+def validar_estrutura_do_layout(layout: dict[str, Any], versao: str, logger: Any) -> None:
     """Valida se o layout possui a estrutura mínima para não quebrar o extrator."""
     if "field_map" not in layout:
         logger.critical("Layout '%s' inválido: chave 'field_map' ausente.", versao)
@@ -32,7 +32,7 @@ def _validate_layout_structure(layout: dict[str, Any], versao: str, logger: Any)
             )
 
 
-def load_layout_catalog(
+def carregar_catalogo_de_layouts(
     catalog_path: str,
     logger: Any | None = None,
 ) -> dict[str, Any]:
@@ -41,7 +41,7 @@ def load_layout_catalog(
         if logger is not None:
             logger.info("Carregando catálogo de layouts: %s", catalog_path)
 
-        catalog = read_json(catalog_path)
+        catalog = ler_json(catalog_path)
 
         if logger is not None:
             logger.info("Catálogo de layouts carregado com sucesso.")
@@ -54,7 +54,7 @@ def load_layout_catalog(
         raise
 
 
-def load_layouts_comercializadoras(
+def carregar_layouts_comercializadoras(
     context: AppContext,
     logger: Any | None = None,
 ) -> dict[str, dict[str, Any]]:
@@ -69,11 +69,11 @@ def load_layouts_comercializadoras(
             key = f"layout_ficha_comercializadora_v{version}"
             layout_path = context.control_file(key)
 
-            layout_data = read_json(layout_path)
+            layout_data = ler_json(layout_path)
             
             # Validação adaptada para não quebrar layouts antigos
             if logger is not None:
-                _validate_layout_structure(layout_data, key, logger)
+                validar_estrutura_do_layout(layout_data, key, logger)
 
             layouts[f"padrao_{version}"] = layout_data
 
@@ -91,7 +91,7 @@ def load_layouts_comercializadoras(
         raise
 
 
-def load_layouts_consumidores(
+def carregar_layouts_consumidores(
     context: AppContext,
     logger: Any | None = None,
 ) -> dict[str, dict[str, Any]]:
@@ -106,11 +106,11 @@ def load_layouts_consumidores(
             key = f"layout_ficha_consumidor_v{version}"
             layout_path = context.control_file(key)
 
-            layout_data = read_json(layout_path)
+            layout_data = ler_json(layout_path)
             
             # Validação adaptada para não quebrar layouts antigos
             if logger is not None:
-                _validate_layout_structure(layout_data, key, logger)
+                validar_estrutura_do_layout(layout_data, key, logger)
 
             layouts[f"v{version}"] = layout_data
 

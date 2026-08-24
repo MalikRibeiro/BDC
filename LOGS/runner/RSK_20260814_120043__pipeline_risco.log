@@ -1,4 +1,0 @@
-2026-08-14 12:00:43 | INFO | bdc.risco | Iniciando Pipeline de Risco de Crédito (run_id=RSK_20260814_120043)
-2026-08-14 12:00:45 | INFO | bdc.risco | Pipeline de Risco concluído. Taxa Carteira: nan
-2026-08-14 12:00:45 | INFO | bdc.risco | fato_exposicao_risco salva com sucesso. 1401 registros.
-2026-08-14 12:00:45 | INFO | bdc.risco | Pipeline de Risco concluído. Taxa Carteira: nan

@@ -38,7 +38,7 @@
     "LIQUIDEZ_CORRENTE_AJUSTADO",
     "LUCROS_ACUMULADOS",
     "LUCRO_LIQUIDO",
-    "MFCO",
+    "FCO",
     "NOTA_BOARD",
     "NOTA_BUREAU",
     "NOTA_CREDITO",
@@ -62,7 +62,18 @@
     "ROL",
     "LUCRO_BRUTO",
     "LAJIR",
-    "LAIR"
+    "LAIR",
+    "MATURIDADE_CALCULADA",
+    "CATEGORIA_CPURA",
+    "CATEGORIA_GRUPO",
+    "SCORE_QUANTITATIVO",
+    "SCORE_QUALITATIVO",
+    "NOTA_AUDITORIA",
+    "SCORE_PD",
+    "SCORE_FCO_ROL",
+    "SCORE_ROA",
+    "SCORE_ROE",
+    "LUCRO_LIQUIDO_SOBRE_ROL"
   ],
   "verify_fields": [
     "CNPJ",
@@ -309,10 +320,10 @@
       "value_cell": "M56",
       "implemented": true
     },
-    "MFCO": {
+    "FCO": {
       "sheet": "FichaIndividual",
       "label_cell": "L55",
-      "search_pattern": "MFCO = FCO/ROL (1)",
+      "search_pattern": "FCO = FCO/ROL (1)",
       "value_cell": "M55",
       "implemented": true
     },
@@ -384,6 +395,102 @@
       "label_cell": "A28",
       "search_pattern": "LAIR",
       "value_cell": "C28",
+      "implemented": true
+    },
+    "MATURIDADE_CALCULADA": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A16",
+      "search_pattern": "MATURIDADE",
+      "value_cell": "B16",
+      "data_type": "float",
+      "implemented": true
+    },
+    "CATEGORIA_CPURA": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A20",
+      "search_pattern": "CATEGORIA.*COMERCIALIZADORA.*PURA|CATEGORIA.*PURA",
+      "value_cell": "B20",
+      "data_type": "text",
+      "implemented": true
+    },
+    "CATEGORIA_GRUPO": {
+      "sheet": "FichaIndividual",
+      "label_cell": "A21",
+      "search_pattern": "CATEGORIA.*COMERCIALIZADORA.*GRUPO|CATEGORIA.*GRUPO",
+      "value_cell": "B21",
+      "data_type": "text",
+      "implemented": true
+    },
+    "SCORE_QUANTITATIVO": {
+      "sheet": "FichaIndividual",
+      "label_cell": null,
+      "search_pattern": "TOTAL QUANTITATIVO",
+      "value_cell": null,
+      "offset_col": 2,
+      "data_type": "float",
+      "implemented": true
+    },
+    "SCORE_QUALITATIVO": {
+      "sheet": "FichaIndividual",
+      "label_cell": null,
+      "search_pattern": "TOTAL QUALITATIVO",
+      "value_cell": null,
+      "offset_col": 2,
+      "data_type": "float",
+      "implemented": true
+    },
+    "NOTA_AUDITORIA": {
+      "sheet": "FichaIndividual",
+      "label_cell": null,
+      "search_pattern": "DEMONSTRACOES FINANCEIRAS AUDITADAS.*REDUCAO|AUDITADAS.*REDUCAO",
+      "value_cell": null,
+      "offset_col": 1,
+      "data_type": "text",
+      "implemented": true
+    },
+    "SCORE_PD": {
+      "sheet": "FichaIndividual",
+      "label_cell": null,
+      "search_pattern": "^\\s*PD\\s*$",
+      "value_cell": null,
+      "offset_col": 3,
+      "data_type": "float",
+      "implemented": true
+    },
+    "SCORE_FCO_ROL": {
+      "sheet": "FichaIndividual",
+      "label_cell": null,
+      "search_pattern": "^\\s*FCO/ROL\\s*$",
+      "value_cell": null,
+      "offset_col": 3,
+      "data_type": "float",
+      "implemented": true
+    },
+    "SCORE_ROA": {
+      "sheet": "FichaIndividual",
+      "label_cell": null,
+      "search_pattern": "^\\s*ROA\\s*$",
+      "value_cell": null,
+      "offset_col": 3,
+      "data_type": "float",
+      "implemented": true
+    },
+    "SCORE_ROE": {
+      "sheet": "FichaIndividual",
+      "label_cell": null,
+      "search_pattern": "^\\s*ROE\\s*$",
+      "value_cell": null,
+      "offset_col": 3,
+      "data_type": "float",
+      "implemented": true
+    },
+    "LUCRO_LIQUIDO_SOBRE_ROL": {
+      "sheet": "FichaIndividual",
+      "label_cell": null,
+      "search_pattern": "LUCRO LIQUIDO.*RECEITA OPERACIONAL|LUCRO LIQUIDO/RECEITA",
+      "value_cell": null,
+      "offset_col": 1,
+      "data_type": "float",
       "implemented": true
     }
   }

@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from common.types import normalize_float
-from common.strings import normalize_string
+from silver.normalizadores import normalizar_string, normalizar_float
 from domain.credito.pd_exceptions import PdInputValidationError, PdCalculationError
 
 
@@ -30,7 +29,7 @@ def validar_insumos_pd(
         return
 
     pd_base_raw = registro.get("PROBABILIDADE_DEFAULT")
-    pd_base = normalize_float(pd_base_raw)
+    pd_base = normalizar_float(pd_base_raw)
 
     if pd_base is None:
         raise PdInputValidationError("PROBABILIDADE_DEFAULT não informada.")
@@ -63,19 +62,19 @@ def validar_insumos_pd(
             or registro.get("RATING_FINAL")
         )
 
-        if _is_blank(rating):
-            raise PdInputValidationError("Rating final não informado.")
+        # Rating pode estar vazio na extração inicial (é output do cálculo
+        # de crédito para comercializadoras). Valida somente se informado.
+        if not _is_blank(rating):
+            rating_normalizado = normalizar_string(str(rating), upper=True)
+            ratings_validos = {"A", "B", "C", "D", "E"}
 
-        rating_normalizado = normalize_string(str(rating), upper=True)
-        ratings_validos = {"A", "B", "C", "D", "E"}
-
-        if rating_normalizado not in ratings_validos:
-            raise PdInputValidationError(
-                f"Rating inválido para {segmento_pd}: {rating_normalizado!r}"
-            )
+            if rating_normalizado not in ratings_validos:
+                raise PdInputValidationError(
+                    f"Rating inválido para {segmento_pd}: {rating_normalizado!r}"
+                )
 
     if segmento_pd in {"CPURA", "CGRUPO"}:
-        tipo_comercializadora = normalize_string(
+        tipo_comercializadora = normalizar_string(
             str(registro.get("TIPO_COMERCIALIZADORA", "")),
             upper=True,
         )
@@ -97,7 +96,7 @@ def validar_insumos_pd(
                 "RATING_FINAL/RATING_COPEL não informado para CONSUMIDOR_GT_5."
             )
 
-        rating_norm = normalize_string(rating, upper=True)
+        rating_norm = normalizar_string(rating, upper=True)
         if rating_norm not in {"A", "B", "C", "D", "E"}:
             raise PdCalculationError(
                 f"Rating inválido para CONSUMIDOR_GT_5: {rating_norm!r}"

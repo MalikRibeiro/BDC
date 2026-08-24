@@ -12,8 +12,8 @@ from typing import Any
 from dotenv import load_dotenv
 
 from app.config_builder import AppConfigBuilder
-from common.io_json import read_json
-from common.validation import validate_json_schema
+from common.json import ler_json
+from common.validador import validar_esquema_json
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +34,7 @@ class AppContext:
         return Path(self.control_files[key])
 
 
-def load_context(configs_dir: str | Path) -> AppContext:
+def carregar_contexto(configs_dir: str | Path) -> AppContext:
     configs_path = Path(configs_dir)
 
     base_dir_env = os.getenv("BDC_BASE_DIR")
@@ -53,8 +53,8 @@ def load_context(configs_dir: str | Path) -> AppContext:
         logger.critical("Arquivos de configuração base não encontrados.")
         sys.exit(1)
 
-    app_config = read_json(app_config_path)
-    config = read_json(config_path)
+    app_config = ler_json(app_config_path)
+    config = ler_json(config_path)
 
     try:
         raw_paths = app_config["paths"]
@@ -75,12 +75,12 @@ def load_context(configs_dir: str | Path) -> AppContext:
         logger.critical("Arquivos de schema de configuração não encontrados.")
         sys.exit(1)
 
-    schema_app_config = read_json(schema_app_config_path)
-    schema_config = read_json(schema_config_path)
+    schema_app_config = ler_json(schema_app_config_path)
+    schema_config = ler_json(schema_config_path)
 
     # Validação estrutural do JSON original (Fail-Fast)
-    validate_json_schema(app_config, schema_app_config, "app_config.json")
-    validate_json_schema(config, schema_config, "config.json")
+    validar_esquema_json(app_config, schema_app_config, "app_config.json")
+    validar_esquema_json(config, schema_config, "config.json")
 
     # Injeta valores resolvidos para manter coerência nos serviços
     app_config["base_dir"] = str(builder.base_dir)

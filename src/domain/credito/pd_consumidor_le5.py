@@ -3,7 +3,7 @@
 from __future__ import annotations
 from typing import Any
 
-from common.types import normalize_float
+from silver.normalizadores import normalizar_float
 from domain.credito.pd_exceptions import PdCalculationError, PdInputValidationError
 
 def calcular_pd_final_consumidor_le5(
@@ -13,8 +13,8 @@ def calcular_pd_final_consumidor_le5(
 ) -> dict[str, Any]:
     """Calcula PD via score de bureau e restritivos (Sem DFs)."""
     try:
-        score = normalize_float(registro.get("SCORE_BUREAU"))
-        restritivos = normalize_float(registro.get("QUANTIDADE_RESTRITIVOS")) or 0.0
+        score = normalizar_float(registro.get("SCORE_BUREAU"))
+        restritivos = normalizar_float(registro.get("QUANTIDADE_RESTRITIVOS")) or 0.0
 
         if score is None:
             raise PdInputValidationError("SCORE_BUREAU não informado para consumidor < 5 MWm.")

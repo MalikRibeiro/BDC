@@ -7,15 +7,16 @@ Ref: §5.2, §5.3 do Planejamento Funcional.
 from __future__ import annotations
 
 from typing import Any
+from pathlib import Path
 
 from app.context import AppContext
-from common.io_json import read_json
-from common.validation import validate_json_schema
+from common.json import ler_json
+from common.validador import validar_esquema_json
 
 
-def _load_and_validate_quality_rules(
-    rules_path,
-    schema_path,
+def _carregar_e_validar_regras_de_qualidade(
+    rules_path: Path,
+    schema_path: Path,
     descricao: str,
     logger: Any,
 ) -> dict[str, Any]:
@@ -29,11 +30,11 @@ def _load_and_validate_quality_rules(
         if not schema_path.exists():
             raise FileNotFoundError(f"Arquivo de schema não encontrado: {schema_path}")
 
-        content = read_json(rules_path)
-        schema = read_json(schema_path)
+        content = ler_json(rules_path)
+        schema = ler_json(schema_path)
 
         # Validação Estrita (Fail-Fast)
-        validate_json_schema(instance=content, schema=schema, label=descricao)
+        validar_esquema_json(instance=content, schema=schema, label=descricao)
 
         if not isinstance(content, dict):
             raise ValueError(f"O {descricao} deve ser um objeto JSON.")
@@ -47,25 +48,24 @@ def _load_and_validate_quality_rules(
         raise
 
 
-def load_data_quality_rules_comercializadoras(
+def carregar_regras_de_qualidade_de_dados_comercializadoras(
     context: AppContext,
     logger: Any,
 ) -> dict[str, Any]:
-    """Carrega e valida as regras de qualidade das fichas de comercializadoras."""
-    return _load_and_validate_quality_rules(
-        rules_path=context.control_file("data_quality_rules_fichas_comercializadoras"),
-        schema_path=context.control_file("schema_data_quality_rules"),
-        descricao="Regras de Qualidade de Comercializadoras",
-        logger=logger,
-    )
+    """Carrega as regras de qualidade das fichas de comercializadoras usando o novo master_catalog."""
+    
+    master_catalog_path = context.path("control_quality") / "master_catalog_comercializadoras.json"
+    
+    logger.info("Lendo master catalog: %s", master_catalog_path)
+    return ler_json(master_catalog_path)
 
 
-def load_data_quality_rules_consumidores(
+def carregar_regras_de_qualidade_de_dados_consumidores(
     context: AppContext,
     logger: Any,
 ) -> dict[str, Any]:
     """Carrega e valida as regras de qualidade das fichas de consumidores."""
-    return _load_and_validate_quality_rules(
+    return _carregar_e_validar_regras_de_qualidade(
         rules_path=context.control_file("data_quality_rules_fichas_consumidores"),
         schema_path=context.control_file("schema_data_quality_rules"),
         descricao="Regras de Qualidade de Consumidores",

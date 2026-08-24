@@ -6,7 +6,7 @@ import hashlib
 from pathlib import Path
 
 
-def hash_file(path: str | Path, chunk_size: int = 1024 * 1024) -> str:
+def arquivo_hash(path: str | Path, chunk_size: int = 1024 * 1024) -> str:
     """Calcula o hash SHA-256 de um arquivo."""
     file_path = Path(path)
     hasher = hashlib.sha256()

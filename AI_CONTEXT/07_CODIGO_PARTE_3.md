@@ -2,6 +2,162 @@
 
 
 ---
+## gerar_contexto_ia.py
+Linhas: 146
+Classes: -
+Funções: tree, analyze
+```python
+
+from pathlib import Path
+import shutil
+import ast
+from textwrap import dedent
+
+
+ROOT = Path(".").resolve()
+OUT = ROOT / "AI_CONTEXT"
+
+IGNORE = {
+    ".git",".venv","venv","__pycache__",".idea",".vscode",
+    "node_modules","dist","build",".pytest_cache",".mypy_cache","AI_CONTEXT"
+}
+
+if OUT.exists():
+    shutil.rmtree(OUT)
+OUT.mkdir()
+
+py_files=[]
+json_files=[]
+
+for p in ROOT.rglob("*"):
+    if any(x in p.parts for x in IGNORE):
+        continue
+    if p.is_file():
+        if p.suffix.lower()==".py":
+            py_files.append(p)
+        elif p.suffix.lower()==".json":
+            json_files.append(p)
+
+py_files.sort()
+json_files.sort()
+
+def tree(folder,prefix=""):
+    lines=[]
+    items=[i for i in sorted(folder.iterdir(), key=lambda x:(x.is_file(),x.name.lower()))
+           if i.name not in IGNORE]
+    for idx,item in enumerate(items):
+        last=idx==len(items)-1
+        c="└── " if last else "├── "
+        lines.append(prefix+c+item.name)
+        if item.is_dir():
+            lines.extend(tree(item,prefix+("    " if last else "│   ")))
+    return lines
+
+def analyze(path):
+    try:
+        txt=path.read_text(encoding="utf-8")
+    except:
+        return {"lines":0,"imports":[],"classes":[],"functions":[],"doc":""}
+    info={"lines":len(txt.splitlines()),"imports":[],"classes":[],"functions":[],"doc":""}
+    try:
+        t=ast.parse(txt)
+        info["doc"]=ast.get_docstring(t) or ""
+        for n in ast.walk(t):
+            if isinstance(n,ast.Import):
+                info["imports"] += [a.name for a in n.names]
+            elif isinstance(n,ast.ImportFrom):
+                info["imports"].append(n.module or "")
+            elif isinstance(n,ast.ClassDef):
+                info["classes"].append(n.name)
+            elif isinstance(n,ast.FunctionDef):
+                info["functions"].append(n.name)
+    except:
+        pass
+    return info
+
+(OUT/"00_README.md").write_text(dedent("""\
+# AI_CONTEXT
+
+Arquivos gerados automaticamente para análise por IA.
+
+Ordem sugerida:
+1. Planejamento.pdf
+2. 01_CONTEXTO.md
+3. 02_ESTRUTURA.md
+4. 03_CONFIGURACOES.md
+5. 04_RESUMO_TECNICO.md
+6. 05_CODIGO_PARTE_1.md
+7. 06_CODIGO_PARTE_2.md
+8. 07_CODIGO_PARTE_3.md
+"""),encoding="utf-8")
+
+with open(OUT/"01_CONTEXTO.md","w",encoding="utf-8") as f:
+    f.write("# CONTEXTO\n\n")
+    f.write(f"Python: {len(py_files)}\n\nJSON: {len(json_files)}\n\n")
+
+with open(OUT/"02_ESTRUTURA.md","w",encoding="utf-8") as f:
+    f.write("# ESTRUTURA\n\n")
+    f.write(ROOT.name+"\n")
+    f.write("\n".join(tree(ROOT)))
+
+with open(OUT/"03_CONFIGURACOES.md","w",encoding="utf-8") as f:
+    f.write("# CONFIGURAÇÕES\n")
+    for j in json_files:
+        f.write(f"\n\n---\n# {j.relative_to(ROOT)}\n```json\n")
+        try:
+            f.write(j.read_text(encoding="utf-8"))
+        except:
+            f.write("[Erro ao ler]")
+        f.write("\n```\n")
+
+with open(OUT/"04_RESUMO_TECNICO.md","w",encoding="utf-8") as f:
+    f.write("# RESUMO TÉCNICO\n")
+    for p in py_files:
+        i=analyze(p)
+        f.write(f"\n\n## {p.relative_to(ROOT)}\n")
+        f.write(f"Linhas: {i['lines']}\n\n")
+        f.write("Imports:\n")
+        for x in sorted(set(i["imports"])):
+            f.write(f"- {x}\n")
+        f.write("\nClasses:\n")
+        for x in i["classes"]:
+            f.write(f"- {x}\n")
+        f.write("\nFunções:\n")
+        for x in i["functions"]:
+            f.write(f"- {x}\n")
+        if i["doc"]:
+            f.write("\nDocstring:\n"+i["doc"]+"\n")
+
+parts=[[],[],[]]
+sizes=[0,0,0]
+for p in py_files:
+    s=p.stat().st_size
+    idx=sizes.index(min(sizes))
+    parts[idx].append(p)
+    sizes[idx]+=s
+
+for n,plist in enumerate(parts,5):
+    with open(OUT/f"{n:02d}_CODIGO_PARTE_{n-4}.md","w",encoding="utf-8") as f:
+        f.write(f"# CÓDIGO PARTE {n-4}\n")
+        for p in plist:
+            info=analyze(p)
+            f.write(f"\n\n---\n## {p.relative_to(ROOT)}\n")
+            f.write(f"Linhas: {info['lines']}\n")
+            f.write(f"Classes: {', '.join(info['classes']) or '-'}\n")
+            f.write(f"Funções: {', '.join(info['functions']) or '-'}\n")
+            f.write("```python\n")
+            try:
+                f.write(p.read_text(encoding="utf-8"))
+            except:
+                f.write("[Erro ao ler]")
+            f.write("\n```\n")
+
+print("Concluído.")
+
+```
+
+
+---
 ## reset.py
 Linhas: 126
 Classes: -
@@ -137,385 +293,867 @@ if __name__ == "__main__":
 
 
 ---
-## src\app\config_builder.py
-Linhas: 17
-Classes: AppConfigBuilder
-Funções: __init__, resolve_dict
+## src\app\__init__.py
+Linhas: 1
+Classes: -
+Funções: -
 ```python
-"""Builder programático para resolução de caminhos do sistema."""
+"""Pacote de bootstrap e contexto da aplicação BDC."""
 
-from pathlib import Path
-from typing import Any
-
-class AppConfigBuilder:
-    """Construtor responsável por aplicar o diretório base à topologia relativa."""
-    
-    def __init__(self, base_dir: str | Path):
-        self.base_dir = Path(base_dir).resolve()
-
-    def resolve_dict(self, paths_dict: dict[str, Any]) -> dict[str, str]:
-        """Resolve todos os caminhos relativos de um dicionário contra o diretório base."""
-        resolved = {}
-        for key, relative_path in paths_dict.items():
-            resolved[key] = str(self.base_dir / relative_path)
-        return resolved
 ```
 
 
 ---
-## src\app\context.py
-Linhas: 96
-Classes: AppContext
-Funções: load_context, path, control_file
+## src\app\bootstrap.py
+Linhas: 60
+Classes: -
+Funções: resolve_configs_dir, aplicativo_bootstrap
 ```python
-"""Carregamento do contexto de execução do sistema BDC."""
-
-from __future__ import annotations
-
 import os
-import sys
-import logging
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Optional, Union
 
+from src.app.context import AppContext, carregar_contexto
 from dotenv import load_dotenv
 
-from app.config_builder import AppConfigBuilder
-from common.io_json import read_json
-from common.validation import validate_json_schema
+load_dotenv()  # Carrega as variáveis do arquivo .env para o os.environ automaticamente
 
-logger = logging.getLogger(__name__)
-
-load_dotenv()
-
-@dataclass
-class AppContext:
-    app_config: dict[str, Any]
-    config: dict[str, Any]
-    paths: dict[str, Any]
-    control_files: dict[str, Any]
-    naming: dict[str, Any]
-
-    def path(self, key: str) -> Path:
-        return Path(self.paths[key])
-
-    def control_file(self, key: str) -> Path:
-        return Path(self.control_files[key])
+CONFIGS_DIR_ENV_VAR = "BDC_CONFIGS_DIR"
 
 
-def load_context(configs_dir: str | Path) -> AppContext:
-    configs_path = Path(configs_dir)
+def resolve_configs_dir(explicit_path: Optional[Union[str, Path]] = None) -> Path:
+    """
+    Resolve o diretório de configurações utilizando a seguinte hierarquia:
+    1. Caminho explícito fornecido (ex.: via flag CLI --configs-dir).
+    2. Variável de ambiente `BDC_CONFIGS_DIR`.
+    3. Diretório relativo à raiz do projeto (`<project_root>/ENTRADAS/configs`).
 
-    base_dir_env = os.getenv("BDC_BASE_DIR")
-    if not base_dir_env:
-        logger.critical("Variavel BDC_BASE_DIR nao encontrada no arquivo .env!")
-        sys.exit(1)
+    Args:
+        explicit_path: Caminho explícito opcional (string ou Path).
 
-    if not configs_path.exists():
-        logger.critical("Diretório de configs não encontrado: %s", configs_path)
-        sys.exit(1)
+    Returns:
+        Path: Objeto Path do diretório de configurações validado.
 
-    app_config_path = configs_path / "app_config.json"
-    config_path = configs_path / "config.json"
+    Raises:
+        FileNotFoundError: Caso o diretório de configurações não exista.
+    """
+    if explicit_path:
+        configs_dir = Path(explicit_path).resolve()
+    elif os.environ.get(CONFIGS_DIR_ENV_VAR):
+        configs_dir = Path(os.environ[CONFIGS_DIR_ENV_VAR]).resolve()
+    else:
+        # Calcula a raiz do projeto (src/app/bootstrap.py -> src/app -> src -> project_root)
+        project_root = Path(__file__).resolve().parents[2]
+        configs_dir = project_root / "ENTRADAS" / "configs"
 
-    if not app_config_path.exists() or not config_path.exists():
-        logger.critical("Arquivos de configuração base não encontrados.")
-        sys.exit(1)
+    if not configs_dir.exists() or not configs_dir.is_dir():
+        raise FileNotFoundError(
+            f"Diretório de configurações não encontrado em: '{configs_dir}'.\n"
+            f"Por favor, verifique se o caminho existe ou especifique o caminho correto via:\n"
+            f"  - Flag CLI: --configs-dir /caminho/para/configs\n"
+            f"  - Variável de ambiente: export {CONFIGS_DIR_ENV_VAR}=/caminho/para/configs"
+        )
 
-    app_config = read_json(app_config_path)
-    config = read_json(config_path)
+    return configs_dir
 
-    try:
-        raw_paths = app_config["paths"]
-        raw_control_files = app_config["control_files"]
-    except KeyError as e:
-        logger.critical("app_config.json malformado. Chave ausente: %s", e)
-        sys.exit(1)
 
-    # Resolve os caminhos usando o Builder
-    builder = AppConfigBuilder(base_dir_env)
-    resolved_paths = builder.resolve_dict(raw_paths)
-    resolved_control_files = builder.resolve_dict(raw_control_files)
+def aplicativo_bootstrap(configs_dir: Optional[Union[str, Path]] = None) -> AppContext:
+    """
+    Realiza o bootstrap da aplicação e carrega o AppContext.
 
-    schema_app_config_path = Path(resolved_control_files["schema_app_config"])
-    schema_config_path = Path(resolved_control_files["schema_config"])
+    Args:
+        configs_dir: Caminho explícito ou opcional para o diretório de configurações.
 
-    if not schema_app_config_path.exists() or not schema_config_path.exists():
-        logger.critical("Arquivos de schema de configuração não encontrados.")
-        sys.exit(1)
-
-    schema_app_config = read_json(schema_app_config_path)
-    schema_config = read_json(schema_config_path)
-
-    # Validação estrutural do JSON original (Fail-Fast)
-    validate_json_schema(app_config, schema_app_config, "app_config.json")
-    validate_json_schema(config, schema_config, "config.json")
-
-    # Injeta valores resolvidos para manter coerência nos serviços
-    app_config["base_dir"] = str(builder.base_dir)
-    app_config["paths"] = resolved_paths
-    app_config["control_files"] = resolved_control_files
-
-    return AppContext(
-        app_config=app_config,
-        config=config,
-        paths=resolved_paths,
-        control_files=resolved_control_files,
-        naming=app_config.get("naming", {}),
-    )
+    Returns:
+        AppContext: Contexto inicializado da aplicação.
+    """
+    resolved_dir = resolve_configs_dir(configs_dir)
+    return carregar_contexto(resolved_dir)
 ```
 
 
 ---
-## src\cli\run_fichas_comercializadoras.py
-Linhas: 47
+## src\app\comercializadoras\orquestrador.py
+Linhas: 768
 Classes: -
-Funções: build_parser, main
+Funções: disco_cheio_erro, criar_run_id, criar_nome_arquivo, resolver_subpasta_bronze, mover_para_rejeitados, mover_para_processados, criar_info_pd, criar_fila_processamento, processar_arquivo_individual, process_fichas_comercializadoras
 ```python
-import argparse
-import sys
+"""Serviço principal refatorado do pipeline de fichas de comercializadoras."""
+
+from __future__ import annotations
+
+import uuid
+from datetime import datetime
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
-from src.app.bootstrap import bootstrap_application
-from src.services.fichas_comercializadoras_service import process_fichas_comercializadoras
+from app.context import AppContext
+from common.excel import  abrir_pasta, fechar_pasta
+from common.hashing import arquivo_hash
+from common.json import ler_json
+from control.logger import obter_logger
+from silver.normalizadores import padronizar_cnpj
+from common.paths import sanitizar_nome_da_pasta
 
+from control.layout_catalog import carregar_layouts_comercializadoras
+from control.carregador_de_mapeamento import mapeamento_de_carga_fichas_comercializadoras
+from domain.contrapartes.segmentacao import definir_segmento_metodologico
+from domain.credito.pd_motor import calcular_pd_ajustada
+from domain.auditoria.servico_auditoria import registrar_documento, registrar_linhagem_campos
+from common.servico_desduplicacao import (
+    tem_chave_de_negocio_duplicada,
+    tem_hash_duplicado,
+    virar_chave_de_negocio_no_historico,
+)
+from domain.fichas.validador import validar_registro
+from silver.documentos_classificados import criar_documento_classificado
+from silver.normalizador_de_tipo_de_campo import normalizar_registro
+from staging.descoberta import detectar_arquivos_excel_pendentes
+from staging.staging_arquivo import copiar_para_staging
+from storage.bronze_arquivo import publicar_arquivo_bruto
+from storage.operacao_arquivo import mover_arquivo_com_tentativa_adicional
+from storage.armazenamento_manifest import (
+    anexar_registro_de_manifesto,
+    historico_de_ingestao_de_carga,
+)
+from storage.escrever_dados import (
+    mesclar_conjunto_de_dados_prata_por_chave_de_negocio,
+    escrever_conjunto_de_dados_silver,
+)
+from storage.estado_armazenamento import DocumentManifest
 
-def build_parser() -> argparse.ArgumentParser:
-    """
-    Constrói o parser de argumentos de linha de comando para o script de comercializadoras.
-    """
-    parser = argparse.ArgumentParser(
-        description="Processamento e geração de fichas de comercializadoras."
+def disco_cheio_erro(exc: Exception) -> bool:
+    """Indica se a exceção representa falta de espaço em disco."""
+    if not isinstance(exc, OSError):
+        return False
+
+    text = str(exc).lower()
+
+    return (
+        getattr(exc, "winerror", None) == 112
+        or getattr(exc, "errno", None) == 28
+        or "no space left on device" in text
+        or "espaço insuficiente no disco" in text
     )
-    parser.add_argument(
-        "--configs-dir",
-        type=str,
-        default=None,
-        help=(
-            "Caminho para o diretório de configurações (opcional). "
-            "Se omitido, busca a variável de ambiente 'BDC_CONFIGS_DIR' "
-            "ou utiliza o caminho relativo da raiz do projeto ('ENTRADAS/configs')."
-        ),
-    )
-    return parser
 
 
-def main() -> None:
-    parser = build_parser()
-    args = parser.parse_args()
+def criar_run_id(context: AppContext) -> str:
+    """Monta o identificador textual da execução."""
+    prefix = context.naming.get("run_id_prefix", "BDC")
+    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    return f"{prefix}_{stamp}"
+
+
+def criar_nome_arquivo(
+    original_name: str,
+    versao_ficha: str | None,
+    cnpj: str | None,
+    data_df: str | None,
+    hash_value: str | None,
+) -> str:
+    """Monta o nome técnico do arquivo processado."""
+    source = Path(original_name)
+    stem = source.stem[:40]
+
+    parts: list[str] = [stem]
+
+    if versao_ficha:
+        parts.append(versao_ficha)
+
+    if cnpj:
+        safe_cnpj = "".join(ch for ch in str(cnpj) if ch.isdigit()) if cnpj else None
+        parts.append(safe_cnpj)
+
+    if data_df:
+        safe_data_df = "".join(ch for ch in str(data_df) if ch.isdigit())
+        parts.append(safe_data_df[:8])
+
+    if hash_value:
+        parts.append(hash_value[:8])
+
+    return "__".join(parts) + source.suffix.lower()
+
+
+def resolver_subpasta_bronze(
+    cnpj: str | None,
+    sigla: str | None,
+) -> str:
+    """Resolve a subpasta da bronze organizada por CNPJ e sigla."""
+    if not cnpj:
+        raise ValueError("Não é possível publicar em bronze sem CNPJ válido.")
+    safe_cnpj = "".join(ch for ch in str(cnpj) if ch.isdigit()) if cnpj else None
+    safe_sigla = sanitizar_nome_da_pasta(sigla or "")
+    if safe_sigla:
+        return f"{safe_cnpj}__{safe_sigla}"
+
+    return safe_cnpj
+
+
+def mover_para_rejeitados(
+    source_file: Path,
+    rejected_dir: Path,
+    manifest: DocumentManifest,
+    ingestion_log_path: Path,
+    logger: Any,
+    control_dir: Path | None = None,
+) -> None:
+    """Move o arquivo para rejeitados e grava o manifest."""
+    target = rejected_dir / source_file.name
 
     try:
-        app_ctx = bootstrap_application(configs_dir=args.configs_dir)
-        print(f"[INFO] Contexto da aplicacao inicializado a partir de: {app_ctx.path('configs')}")
-        
-        # Inicia o processamento real da fila
-        summary = process_fichas_comercializadoras(app_ctx)
-        print(f"[INFO] Resumo do processamento: {summary}")
+        if source_file.exists():
+            mover_arquivo_com_tentativa_adicional(source_file, target)
+    except Exception as exc:
+        manifest.erros.append(f"Falha ao mover para rejeitados: {exc}")
+        logger.exception("Falha ao mover %s para rejeitados.", source_file.name)
+
+    try:
+        anexar_registro_de_manifesto(str(ingestion_log_path), manifest.to_dict())
+        if control_dir:
+            registrar_documento(
+                manifest.documento_id,
+                manifest.run_id,
+                manifest.arquivo_nome,
+                manifest.hash_arquivo,
+                manifest.tipo_ficha,
+                manifest.status_classificacao or "N/A",
+                manifest.status_extracao or "N/A",
+                control_dir
+            )
+    except Exception as exc:
+        logger.exception(
+            "Falha ao gravar manifest de rejeição para %s.", source_file.name
+        )
+        raise
+
+
+def mover_para_processados(
+    source_file: Path,
+    processed_dir: Path,
+    manifest: DocumentManifest,
+    ingestion_log_path: Path,
+    logger: Any,
+    control_dir: Path | None = None,
+) -> None:
+    """Move o arquivo para processadas e grava o manifest."""
+    target = processed_dir / source_file.name
+
+    try:
+        if source_file.exists():
+            mover_arquivo_com_tentativa_adicional(source_file, target)
+    except Exception as exc:
+        manifest.erros.append(f"Falha ao mover para processadas: {exc}")
+        logger.exception("Falha ao mover %s para processadas.", source_file.name)
+
+    try:
+        anexar_registro_de_manifesto(str(ingestion_log_path), manifest.to_dict())
+        if control_dir:
+            registrar_documento(
+                manifest.documento_id,
+                manifest.run_id,
+                manifest.arquivo_nome,
+                manifest.hash_arquivo,
+                manifest.tipo_ficha,
+                manifest.status_classificacao or "N/A",
+                manifest.status_extracao or "N/A",
+                control_dir
+            )
+    except Exception as exc:
+        logger.exception(
+            "Falha ao gravar manifest de processamento para %s.", source_file.name
+        )
+        raise
+
+
+def criar_info_pd(
+    normalized: dict[str, Any],
+    pd_faixas: dict[str, Any],
+    pd_transform_rules: dict[str, Any],
+    pd_cpura_config: dict[str, Any],
+    score_cpura_config: dict[str, Any],
+    logger: Any,
+    source_file: Path,
+    manifest: DocumentManifest,
+    peer_group: list[float] | None = None,
+) -> dict[str, Any]:
+    """Calcula a PD ajustada para o registro normalizado de comercializadora."""
+    segmento_pd: str | None = None
+
+    try:
+        registro_pd = dict(normalized)
+        registro_pd["TIPO_FICHA"] = "COMERCIALIZADORA"
+
+        segmento_pd = definir_segmento_metodologico(registro_pd)
+        registro_pd["SEGMENTO_PD"] = segmento_pd
+
+        pd_info = calcular_pd_ajustada(
+            registro=registro_pd,
+            pd_faixas=pd_faixas,
+            pd_transform_rules=pd_transform_rules,
+            pd_cpura_config=pd_cpura_config,
+            score_cpura_config=score_cpura_config,
+            peer_group=peer_group,
+            logger=logger,
+        )
+
+        logger.info(
+            "PD ajustada calculada para %s. "
+            "Segmento=%s SCORE_TOTAL=%s RATING_FINAL=%s PD_FINAL=%s",
+            source_file.name,
+            pd_info.get("SEGMENTO_PD"),
+            pd_info.get("SCORE_TOTAL"),
+            pd_info.get("RATING_FINAL"),
+            pd_info.get("PD_FINAL"),
+        )
+        return pd_info
 
     except Exception as exc:
-        print(f"[ERRO] Falha na execucao: {exc}", file=sys.stderr)
-        sys.exit(1)
+        logger.warning(
+            "PD ajustada não calculada para %s. Motivo: %s",
+            source_file.name,
+            exc,
+        )
+        manifest.avisos.append(f"PD ajustada não calculada: {exc}")
+
+        return {
+            "SEGMENTO_PD": segmento_pd,
+            "NOTA_AUDITORIA": None,
+            "PESO_BOARD": None,
+            "PESO_AUDITORIA": None,
+            "PESO_BUREAU": None,
+            "SCORE_QUALITATIVO": None,
+            "PESO_PD": None,
+            "PESO_FCO_ROL": None,
+            "PESO_ROE": None,
+            "PESO_ROA": None,
+            "SCORE_QUANTITATIVO": None,
+            "SCORE_TOTAL": None,
+            "SCORE_MIN_RATING": None,
+            "SCORE_MAX_RATING": None,
+            "SCORE_TRUNCADO": None,
+            "PD_BASE": None,
+            "RATING_FINAL": None,
+            "FONTE_RATING": None,
+            "PD_MIN_FAIXA": None,
+            "PD_MAX_FAIXA": None,
+            "PERCENTIL_PD_BASE": None,
+            "PD_BRUTA": None,
+            "PD_ESTABILIZADA": None,
+            "PD_FINAL": None,
+            "PD_METODO": None,
+            "LOGIT_TRUNCADO": None,
+        }
+        
+    except Exception as exc:
+        logger.error("Falha bloqueante no motor de crédito para %s. Motivo: %s", source_file.name, exc)
+        manifest.avisos.append(f"PD ajustada não calculada: {exc}")
+        raise ValueError(f"Insumo obrigatório ausente ou falha no motor: {exc}")
 
 
-if __name__ == "__main__":
-    main()
-```
-
-
----
-## src\common\__init__.py
-Linhas: 1
-Classes: -
-Funções: -
-```python
-"""Utilitários compartilhados do sistema BDC."""
-
-```
-
-
----
-## src\common\dates.py
-Linhas: 34
-Classes: -
-Funções: normalize_date
-```python
-"""Normalização de datas no sistema BDC."""
-
-from __future__ import annotations
-
-from datetime import datetime
-from typing import Any
-
-
-def normalize_date(value: Any) -> str | None:
-    """Normaliza uma data para o formato ISO ``YYYY-MM-DD``."""
-    if value is None:
-        return None
-
-    if isinstance(value, datetime):
-        return value.date().isoformat()
-
-    text = str(value).strip()
-    if not text:
-        return None
-
-    patterns = (
-        "%d/%m/%Y",
-        "%Y-%m-%d",
-        "%d-%m-%Y",
-        "%d.%m.%Y",
+def criar_fila_processamento(
+    context: AppContext,
+) -> list[tuple[Path, str, Path, Path]]:
+    """Monta a fila de processamento normal e reprocessamento."""
+    normal_files = detectar_arquivos_excel_pendentes(
+        context.path("input_fichas_comercializadoras_pendentes")
+    )
+    reprocess_files = detectar_arquivos_excel_pendentes(
+        context.path("input_reprocessamento_comercializadoras_pendentes")
     )
 
-    for pattern in patterns:
+    queue: list[tuple[Path, str, Path, Path]] = []
+
+    for file_path in normal_files:
+        queue.append(
+            (
+                file_path,
+                "incremental",
+                context.path("input_fichas_comercializadoras_processadas"),
+                context.path("input_fichas_comercializadoras_rejeitadas"),
+            )
+        )
+
+    for file_path in reprocess_files:
+        queue.append(
+            (
+                file_path,
+                "reprocess",
+                context.path("input_reprocessamento_comercializadoras_processados"),
+                context.path("input_reprocessamento_comercializadoras_rejeitados"),
+            )
+        )
+
+    return queue
+
+
+def processar_arquivo_individual(
+    source_file: Path,
+    load_mode: str,
+    processed_dir: Path,
+    rejected_dir: Path,
+    context: AppContext,
+    layouts: dict[str, Any],
+    pd_faixas: dict[str, Any],
+    pd_cpura_config: dict[str, Any],
+    score_cpura_config: dict[str, Any],
+    pd_transform_rules: dict[str, Any],
+    history: list[dict[str, Any]],
+    ingestion_log_path: Path,
+    logger: Any,
+    run_id: str,
+    master_catalog: dict[str, Any],
+    control_dir: Path | None = None,
+) -> Optional[dict[str, Any]]:
+    """Processa de ponta a ponta um único arquivo de ficha de comercializadora."""
+    workbook = None
+    manifest = DocumentManifest(
+        documento_id=str(uuid.uuid4()),
+        run_id=run_id,
+        ambiente=context.app_config["env"],
+        tipo_ficha="comercializadora",
+        arquivo_nome=source_file.name,
+        caminho_origem=str(source_file),
+        load_mode=load_mode,
+    )
+
+    try:
+        logger.info(
+            "Iniciando processamento do arquivo %s em modo %s.",
+            source_file.name,
+            load_mode,
+        )
+
+        manifest.hash_arquivo = arquivo_hash(source_file)
+
+        # 1. Checagem de Hash em Carga Incremental
+        if load_mode == "incremental" and tem_hash_duplicado(
+            history, manifest.hash_arquivo
+        ):
+            manifest.status_extracao = "ERRO_DUPLICIDADE_HASH"
+            manifest.erros.append("Hash já processado anteriormente.")
+            mover_para_rejeitados(
+                source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir
+            )
+            return None
+
+        # 2. Copia para Staging
+        staging_dir = context.path("staging_fichas_comercializadoras")
+        staging_name = criar_nome_arquivo(
+            original_name=source_file.name,
+            versao_ficha=None,
+            cnpj=None,
+            data_df=None,
+            hash_value=manifest.hash_arquivo,
+        )
+        staging_file = copiar_para_staging(source_file, staging_dir, staging_name)
+        manifest.caminho_staging = str(staging_file)
+
+        # 3 & 4. Extração Competitiva (Tournament Extraction)
+        workbook = abrir_pasta(staging_file)
+        from domain.fichas.extrator import extrair_registro_do_vencedor
+        raw_record, metadata_list, winner_layout = extrair_registro_do_vencedor(workbook, layouts, master_catalog)
+        
+        if winner_layout == "DOC_001_ESTRUTURA_INCOMPATIVEL":
+            manifest.status_classificacao = "REJEITADO"
+            manifest.status_extracao = "ERRO_LAYOUT"
+            manifest.erros.append("DOC_001_ESTRUTURA_INCOMPATIVEL: Nenhuma aba compativel com o layout esperada foi encontrada.")
+            fechar_pasta(workbook)
+            mover_para_rejeitados(
+                source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir
+            )
+            return None
+            
+        score_campeao = raw_record.get("INTEGRIDADE_EXTRAIDA_PERCENTUAL", 0)
+        
+        # Validar aprovação (GATES e Score Ponderado)
+        if raw_record.get("_FALHA_GATE_CRITICO"):
+            manifest.status_classificacao = "REJEITADO"
+            manifest.status_extracao = "ERRO_DADOS_CRITICOS_AUSENTES"
+            manifest.erros.append("Ficha falhou nos GATES de segurança (Campos obrigatórios ausentes).")
+            fechar_pasta(workbook)
+            mover_para_rejeitados(
+                source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir
+            )
+            return None
+            
+        if not winner_layout or winner_layout == "NENHUM" or score_campeao < 40.0:
+            manifest.status_classificacao = "REJEITADO"
+            manifest.status_extracao = "ERRO_INTEGRIDADE"
+            manifest.erros.append(f"Score insuficiente: {score_campeao}%. Minimo exigido: 40.0%.")
+            fechar_pasta(workbook)
+            mover_para_rejeitados(
+                source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir
+            )
+            return None
+
+        manifest.versao_ficha = winner_layout
+        manifest.status_classificacao = "CLASSIFICADO"
+        
+        logger.info(
+            "Extração competitiva: Vencedor %s identificado para %s.",
+            winner_layout,
+            source_file.name,
+        )
+
+        classification = type("MockClassification", (), {"versao_ficha": winner_layout})()
+        
+        if control_dir and metadata_list:
+            registrar_linhagem_campos(
+                manifest.documento_id,
+                manifest.run_id,
+                metadata_list,
+                control_dir
+            )
+            
+        slug = "field_types_fichas_comercializadoras"
+        normalized = normalizar_registro(raw_record, context, slug, logger)
+        
+        # 4b. Normalização Semântica de Domínio (Negócio)
+        from common.domain_normalizer import aplicar_normalizacao_de_dominio
+        normalized = aplicar_normalizacao_de_dominio(normalized, context, logger)
+        
+        # 4c. Derivação Financeira (Calcula DERIVED fields caso não existam)
+        from domain.fichas.derivador_financeiro import calcular_indicadores_derivados
+        normalized = calcular_indicadores_derivados(normalized)
+
+        manifest.cnpj_extraido = normalized.get("CNPJ")
+
+        manifest.data_demonstracao_financeira = normalized.get(
+            "DATA_DEMONSTRACAO_FINANCEIRA"
+        )
+        manifest.data_calculo = normalized.get("DATA_CALCULO")
+
+        # 5. Validação Técnica (GATES e Sanity Checks)
+        errors, warnings = validar_registro(
+            record=normalized,
+            master_catalog=master_catalog,
+            logger=logger
+        )
+        
+        integridade = normalized.get("INTEGRIDADE_EXTRAIDA_PERCENTUAL", 0)
+        
+        if errors:
+            manifest.status_extracao = "ERRO_VALIDACAO_GATES"
+            
+        manifest.erros.extend(errors)
+        manifest.avisos.extend(warnings)
+        
+        if integridade < 40.0:
+            manifest.status_extracao = "ERRO_INTEGRIDADE"
+            manifest.erros.append(f"Integridade baixa: {integridade}% (mínimo 40%). Ficha rejeitada.")
+            fechar_pasta(workbook)
+            mover_para_rejeitados(
+                source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir
+            )
+            return None
+
+        if not manifest.cnpj_extraido:
+            manifest.status_extracao = "ERRO_SEM_CNPJ"
+            manifest.erros.append("Ficha sem CNPJ válido.")
+            fechar_pasta(workbook)
+            mover_para_rejeitados(
+                source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir
+            )
+            return None
+
+        if not padronizar_cnpj(manifest.cnpj_extraido):
+            manifest.status_extracao = "ERRO_CNPJ_INVALIDO"
+            manifest.erros.append(f"CNPJ inválido: {manifest.cnpj_extraido}")
+            fechar_pasta(workbook)
+            mover_para_rejeitados(
+                source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir
+            )
+            return None
+
+        if errors:
+            manifest.status_extracao = "ERRO_VALIDACAO_GATES"
+            fechar_pasta(workbook)
+            mover_para_rejeitados(
+                source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir
+            )
+            return None
+
+        # 6. Checagem de Duplicidade de Negócio e Versionamento
+        duplicate_business = tem_chave_de_negocio_duplicada(
+            history,
+            manifest.cnpj_extraido,
+            manifest.data_demonstracao_financeira,
+        )
+
+        # C0.1 - CORREÇÃO: Se o hash é novo (passou na etapa 1), mas a chave de negócio existe,
+        # trata-se de uma nova versão factual da ficha. O sistema não rejeita, ele versiona.
+        if duplicate_business:
+            manifest.reprocessed = True
+            manifest.previous_record_found = True
+            logger.info("Nova versão identificada para CNPJ %s e DF %s. O registro será versionado na Silver.", manifest.cnpj_extraido, manifest.data_demonstracao_financeira)
+        else:
+            manifest.reprocessed = False
+            manifest.previous_record_found = False
+
+        fechar_pasta(workbook)
+        workbook = None
+
+        # 7. Regras de Negócio de Crédito (PD / Scoring)
         try:
-            return datetime.strptime(text, pattern).date().isoformat()
-        except ValueError:
-            continue
+            pd_info = criar_info_pd(
+                normalized=normalized,
+                pd_faixas=pd_faixas,
+                pd_transform_rules=pd_transform_rules,
+                pd_cpura_config=pd_cpura_config,
+                score_cpura_config=score_cpura_config,
+                logger=logger,
+                source_file=source_file,
+                manifest=manifest,
+                peer_group=None,
+            )
+        except ValueError as pd_error:
+            manifest.status_extracao = "ERRO_MOTOR_CREDITO"
+            manifest.erros.append(str(pd_error))
+            fechar_pasta(workbook)
+            mover_para_rejeitados(source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir)
+            return None
 
-    return None
+        # 8. Verificação de Caminhos e Publicação Bronze
+        bronze_root_dir = context.path("bronze_fichas_comercializadoras_raw")
+        bronze_name = criar_nome_arquivo(
+            original_name=source_file.name,
+            versao_ficha=manifest.versao_ficha,
+            cnpj=manifest.cnpj_extraido,
+            data_df=manifest.data_demonstracao_financeira,
+            hash_value=manifest.hash_arquivo,
+        )
 
-```
+        bronze_subfolder = resolver_subpasta_bronze(
+            manifest.cnpj_extraido,
+            normalized.get("SIGLA"),
+        )
+        bronze_staging_target = staging_dir / bronze_name
 
+        logger.info("Fonte bronze_staging: %s", staging_file)
+        logger.info("Destino bronze_staging: %s", bronze_staging_target)
+        logger.info(
+            "Tamanho do caminho destino: %s", len(str(bronze_staging_target))
+        )
 
----
-## src\common\hashing.py
-Linhas: 21
-Classes: -
-Funções: hash_file
-```python
-"""Geração de hash para arquivos do sistema BDC."""
+        target_path = staging_dir / bronze_name
+        if len(str(target_path)) > 240:
+            raise ValueError(f"Caminho de destino muito longo: {target_path}")
 
-from __future__ import annotations
+        bronze_staging = copiar_para_staging(staging_file, staging_dir, bronze_name)
+        bronze_file = publicar_arquivo_bruto(
+            source_file=bronze_staging,
+            bronze_root_dir=bronze_root_dir / bronze_subfolder,
+        )
+        manifest.caminho_bronze = str(bronze_file)
+        manifest.status_extracao = "SUCESSO"
 
-import hashlib
-from pathlib import Path
+        mover_para_processados(
+            source_file, processed_dir, manifest, ingestion_log_path, logger, control_dir
+        )
+        virar_chave_de_negocio_no_historico(history, manifest.to_dict())
 
+        logger.info("Ficha processada com sucesso: %s.", source_file.name)
 
-def hash_file(path: str | Path, chunk_size: int = 1024 * 1024) -> str:
-    """Calcula o hash SHA-256 de um arquivo."""
-    file_path = Path(path)
-    hasher = hashlib.sha256()
+        # 9. Retorno Estruturado
+        silver_record = {
+            **normalized,
+            **pd_info,
+            "documento_id": manifest.documento_id,
+            "run_id": run_id,
+            "ambiente": manifest.ambiente,
+            "tipo_ficha": manifest.tipo_ficha,
+            "versao_ficha": manifest.versao_ficha,
+            "arquivo_nome": manifest.arquivo_nome,
+            "hash_arquivo": manifest.hash_arquivo,
+            "load_mode": load_mode,
+            "dt_processamento": datetime.now().isoformat(timespec="seconds"),
+            "METADADOS_EXTRACAO": metadata_list,
+        }
 
-    with file_path.open("rb") as file_obj:
-        while True:
-            chunk = file_obj.read(chunk_size)
-            if not chunk:
-                break
-            hasher.update(chunk)
+        classified_document = criar_documento_classificado(
+            documento_id=manifest.documento_id,
+            run_id=run_id,
+            ambiente=manifest.ambiente,
+            arquivo_nome=manifest.arquivo_nome or "",
+            versao_ficha=manifest.versao_ficha or "",
+            tipo_ficha=manifest.tipo_ficha,
+            hash_arquivo=manifest.hash_arquivo or "",
+        )
 
-    return hasher.hexdigest()
+        return {
+            "silver_record": silver_record,
+            "classified_document": classified_document,
+        }
 
-```
+    except Exception as exc:
+        if workbook:
+            fechar_pasta(workbook)
+        manifest.status_extracao = "ERRO_PROCESSAMENTO"
+        manifest.erros.append(str(exc))
 
+        if disco_cheio_erro(exc):
+            logger.exception(
+                "Execução interrompida por falta de espaço em disco ao processar %s.",
+                source_file.name,
+            )
+            raise
 
----
-## src\common\io_json.py
-Linhas: 14
-Classes: -
-Funções: read_json
-```python
-"""Leitura e escrita de arquivos JSON do sistema BDC."""
+        try:
+            mover_para_rejeitados(
+                source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir
+            )
+        except Exception as move_exc:
+            if disco_cheio_erro(move_exc):
+                logger.exception(
+                    "Execução interrompida por falta de espaço em disco ao registrar rejeição do arquivo %s.",
+                    source_file.name,
+                )
+                raise
 
-from __future__ import annotations
+            logger.exception(
+                "Falha adicional ao mover/gravar rejeição do arquivo %s.",
+                source_file.name,
+            )
+            raise
 
-import json
-from pathlib import Path
-from typing import Any
-
-
-def read_json(path: str | Path) -> Any:
-    """Lê um arquivo JSON e devolve seu conteúdo."""
-    file_path = Path(path)
-    with file_path.open("r", encoding="utf-8") as file_obj:
-        return json.load(file_obj)
-
-```
-
-
----
-## src\common\paths.py
-Linhas: 16
-Classes: -
-Funções: sanitize_folder_name
-```python
-"""Funções utilitárias para nomes de paths e diretórios."""
-
-from __future__ import annotations
-
-import re
-
-
-_INVALID_PATH_CHARS = r'[<>:"/\\|?*]+'
-
-
-def sanitize_folder_name(value: str) -> str:
-    """Sanitiza um texto para uso seguro em nome de pasta."""
-    cleaned = re.sub(_INVALID_PATH_CHARS, "_", value.strip())
-    cleaned = re.sub(r"\s+", "_", cleaned)
-    cleaned = re.sub(r"_+", "_", cleaned)
-    return cleaned.strip("._ ")
-
-```
-
-
----
-## src\common\strings.py
-Linhas: 31
-Classes: -
-Funções: normalize_string, normalize_cnpj
-```python
-"""Normalização de textos e documentos no sistema BDC."""
-
-from __future__ import annotations
-
-import re
-from typing import Any
-
-
-def normalize_string(value: Any, upper: bool = False) -> str | None:
-    """Normaliza um valor textual."""
-    if value is None:
+        logger.exception("Falha inesperada ao processar %s.", source_file.name)
         return None
 
-    text = str(value).strip()
-    if not text:
-        return None
 
-    return text.upper() if upper else text
+def process_fichas_comercializadoras(
+    context: AppContext,
+) -> dict[str, Any]:
+    """Executa o pipeline completo das fichas de comercializadoras."""
+    run_id = criar_run_id(context)
 
+    log_file = (
+        context.path("log_runner") / f"{run_id}__fichas_comercializadoras.log"
+    )
+    logger = obter_logger("bdc.comercializadoras", log_file)
 
-def normalize_cnpj(value: Any) -> str | None:
-    """Normaliza um CNPJ para 14 dígitos numéricos."""
-    if value is None:
-        return None
+    _ = mapeamento_de_carga_fichas_comercializadoras(context, logger)
 
-    digits = re.sub(r"\D", "", str(value))
+    layouts = carregar_layouts_comercializadoras(context, logger)
+    
+    catalog_path = Path("ENTRADAS/control/quality/master_catalog_comercializadoras.json")
+    logger.info(f"Carregando Master Catalog definitivo: {catalog_path}")
+    master_catalog = ler_json(catalog_path)
 
-    if not digits:
-        return None
+    try:
+        pd_faixas = ler_json(context.control_file("pd_faixas"))
+        logger.info("Faixas de PD carregadas com sucesso.")
+    except Exception:
+        logger.exception("Falha ao carregar pd_faixas.")
+        raise
 
-    return digits.zfill(14)
+    try:
+        pd_cpura_config = ler_json(context.control_file("pd_cpura_config"))
+        logger.info("Configuração de CPURA carregada com sucesso.")
+    except Exception:
+        logger.exception("Falha ao carregar pd_cpura_config.")
+        raise
 
-```
+    try:
+        score_cpura_config = ler_json(
+            context.control_file("score_cpura_config")
+        )
+        logger.info("Configuração de score de CPURA carregada com sucesso.")
+    except Exception:
+        logger.exception("Falha ao carregar score_cpura_config.")
+        raise
 
+    try:
+        pd_transform_rules = ler_json(
+            context.control_file("pd_transform_rules")
+        )
+        logger.info("Regras de transformação de PD carregadas com sucesso.")
+    except Exception:
+        logger.exception("Falha ao carregar pd_transform_rules.")
+        raise
 
----
-## src\control\__init__.py
-Linhas: 1
-Classes: -
-Funções: -
-```python
-"""Carregadores de arquivos de controle do sistema BDC."""
+    ingestion_log_path = (
+        context.path("bronze_ingestion_log")
+        / "fichas_comercializadoras_ingestion.jsonl"
+    )
+    history = historico_de_ingestao_de_carga(ingestion_log_path)
 
+    silver_records: list[dict[str, Any]] = []
+    classified_documents: list[dict[str, Any]] = []
+
+    queue = criar_fila_processamento(context)
+
+    normal_count = sum(1 for _, mode, _, _ in queue if mode == "incremental")
+    reprocess_count = sum(1 for _, mode, _, _ in queue if mode == "reprocess")
+
+    logger.info(
+        "Iniciando processamento de %s fichas (%s normais, %s reprocessamento).",
+        len(queue),
+        normal_count,
+        reprocess_count,
+    )
+
+    # Processa cada item da fila isoladamente
+    for source_file, load_mode, processed_dir, rejected_dir in queue:
+        result = processar_arquivo_individual(
+            source_file=source_file,
+            load_mode=load_mode,
+            processed_dir=processed_dir,
+            rejected_dir=rejected_dir,
+            context=context,
+            layouts=layouts,
+            pd_faixas=pd_faixas,
+            pd_cpura_config=pd_cpura_config,
+            score_cpura_config=score_cpura_config,
+            pd_transform_rules=pd_transform_rules,
+            history=history,
+            ingestion_log_path=ingestion_log_path,
+            logger=logger,
+            run_id=run_id,
+            master_catalog=master_catalog,
+            control_dir=context.path("relational_control") if hasattr(context, "path") and context.path("relational_control") else Path("SAIDAS/relational/control"),
+        )
+
+        if result:
+            silver_records.append(result["silver_record"])
+            classified_documents.append(result["classified_document"])
+
+    silver_output_dir = context.path("silver_fichas_comercializadoras_extraidas")
+    docs_output_dir = context.path("silver_documentos_classificados")
+
+    if silver_records:
+        mesclar_conjunto_de_dados_prata_por_chave_de_negocio(
+            records=silver_records,
+            output_dir=silver_output_dir,
+            filename="fichas_comercializadoras_extraidas.csv",
+            business_keys=["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA"],
+        )
+
+    if classified_documents:
+        escrever_conjunto_de_dados_silver(
+            records=classified_documents,
+            output_dir=docs_output_dir,
+            filename=f"documentos_classificados__{run_id}",
+        )
+
+    summary = {
+        "run_id": run_id,
+        "arquivos_recebidos": len(queue),
+        "arquivos_normais": normal_count,
+        "arquivos_reprocessamento": reprocess_count,
+        "registros_silver": len(silver_records),
+        "documentos_classificados": len(classified_documents),
+    }
+
+    logger.info("Resumo do processamento: %s", summary)
+    return summary
 ```
 
 
 ---
 ## src\control\field_types.py
-Linhas: 75
+Linhas: 50
 Classes: FieldTypeConfig
-Funções: get_field_type_config
+Funções: obter_config_tipo_campo
 ```python
 """Definição programática e tipada dos domínios de campos (Substitui os JSONs legados)."""
 
@@ -531,34 +1169,6 @@ class FieldTypeConfig:
     text_fields: list[str] = field(default_factory=list)
     cnpj_fields: list[str] = field(default_factory=list)
 
-
-COMERCIALIZADORAS_FIELD_TYPES = FieldTypeConfig(
-    entity="fichas_comercializadoras",
-    date_fields=[
-        "DATA_DEMONSTRACAO_FINANCEIRA", "DATA_ADESAO_CCEE", 
-        "DATA_CALCULO", "DATA_RATING_AGENCIA"
-    ],
-    float_fields=[
-        "PATRIMONIO_LIQUIDO", "PROBABILIDADE_DEFAULT", "ATIVO_CIRCULANTE_FINANCEIRO",
-        "CAPITAL_SOCIAL", "ATIVO_CIRCULANTE_AJUSTADO", "ATIVO_TOTAL_AJUSTADO",
-        "PASSIVO_CIRCULANTE_AJUSTADO", "PASSIVO_CIRCULANTE_FINANCEIRO_AJUSTADO",
-        "PASSIVO_NAO_CIRCULANTE_FINANCEIRO_AJUSTADO", "LUCROS_ACUMULADOS",
-        "RESERVA_DE_LUCROS", "VENDAS_LIQUIDAS", "LUCRO_LIQUIDO",
-        "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS", "LIQUIDEZ_CORRENTE_AJUSTADO",
-        "INDICE_SOLVENCIA_GERAL_AJUSTADO", "INDICE_COBERTURA_DE_DESPESA_COM_PESSOAL",
-        "PAYOUT_AJUSTADO", "CAPITAL_CIRCULANTE_LIQUIDO_AJUSTADO", "ROE", "ROA", "MFCO",
-        "SCORE_BUREAU", "QUANTIDADE_RESTRITIVOS", "ROL", "LUCRO_BRUTO", "LAJIR", "LAIR",
-        "PL_CONTROLADOR", "PERCENTUAL_CONTROLADOR"
-    ],
-    text_fields=[
-        "CODIGO_CCEE", "SIGLA", "RATING_COPEL", "AGENCIA", "NOTA_CREDITO", "AUDITOR", 
-        "NOTA_BOARD", "NOTA_BUREAU", "TIPO_COMERCIALIZADORA", "CONTROLADOR"
-    ],
-    cnpj_fields=[
-        "CNPJ", "CNPJ_BBCE", "CNPJ_CONTROLADOR"
-    ]
-)
-
 CONSUMIDORES_FIELD_TYPES = FieldTypeConfig(
     entity="fichas_consumidores",
     date_fields=[
@@ -569,14 +1179,18 @@ CONSUMIDORES_FIELD_TYPES = FieldTypeConfig(
         "CAPITAL_SOCIAL", "ATIVO_CIRCULANTE", "ATIVO_CIRCULANTE_FINANCEIRO", "ATIVO_TOTAL",
         "PASSIVO_CIRCULANTE", "PASSIVO_CIRCULANTE_FINANCEIRO", "PASSIVO_NAO_CIRCULANTE_FINANCEIRO",
         "PATRIMONIO_LIQUIDO", "LUCROS_ACUMULADOS", "RESERVA_DE_LUCROS", "VENDAS_LIQUIDAS",
-        "PROBABILIDADE_DEFAULT", "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS", "MFCO", "ROA", "ROE",
+        "PROBABILIDADE_DEFAULT", "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS", "FCO", "ROA", "ROE",
         "ROL", "LUCRO_BRUTO", "LAJIR", "LAIR", "LUCRO_LIQUIDO", "SCORE_BUREAU", "QUANTIDADE_RESTRITIVOS",
         "PL_CONTROLADOR", "PERCENTUAL_CONTROLADOR", "CAPITAL_CIRCULANTE_LIQUIDO", "NECESSIDADE_CAPITAL_GIRO",
-        "INDICE_AUTO_FINANCIAMENTO", "LIQUIDEZ_SECA", "INDICE_SOLVENCIA_GERAL", "MARGEM_LIQUIDA"
+        "INDICE_AUTO_FINANCIAMENTO", "LIQUIDEZ_SECA", "INDICE_SOLVENCIA_GERAL", "MARGEM_LIQUIDA",
+        "SCORE_QUANTITATIVO", "SCORE_QUALITATIVO",
+        "SCORE_PD", "SCORE_FCO_ROL", "SCORE_ROA", "SCORE_ROE",
+        "LUCRO_LIQUIDO_SOBRE_ROL"
     ],
     text_fields=[
         "EMPRESA", "CEP", "ENDERECO", "AUDITOR", "AGENCIA", "NOTA_CREDITO", "NOTA_BOARD",
-        "NOTA_BUREAU", "RATING_COPEL", "CONTROLADOR", "NOTA_CREDITO_CONTROLADOR", "AGENCIA_CONTROLADOR"
+        "NOTA_BUREAU", "RATING_COPEL", "CONTROLADOR", "NOTA_CREDITO_CONTROLADOR", "AGENCIA_CONTROLADOR",
+        "SITUACAO_CADASTRAL", "NATUREZA_JURIDICA", "CNAE", "NOTA_AUDITORIA"
     ],
     cnpj_fields=[
         "CNPJ", "CNPJ_CONTROLADOR"
@@ -585,1077 +1199,281 @@ CONSUMIDORES_FIELD_TYPES = FieldTypeConfig(
 
 # Catálogo em memória que substitui a busca no disco
 FIELD_TYPES_CATALOG = {
-    "field_types_fichas_comercializadoras": COMERCIALIZADORAS_FIELD_TYPES,
     "field_types_fichas_consumidores": CONSUMIDORES_FIELD_TYPES,
 }
 
-def get_field_type_config(slug: str) -> Optional[FieldTypeConfig]:
+def obter_config_tipo_campo(slug: str) -> Optional[FieldTypeConfig]:
     """Retorna a configuração de tipagem em memória correspondente ao slug."""
     return FIELD_TYPES_CATALOG.get(slug)
 ```
 
 
 ---
-## src\domain\contrapartes\segmentacao.py
-Linhas: 51
+## src\control\quality_loader.py
+Linhas: 71
 Classes: -
-Funções: definir_segmento_metodologico
+Funções: _carregar_e_validar_regras_de_qualidade, carregar_regras_de_qualidade_de_dados_comercializadoras, carregar_regras_de_qualidade_de_dados_consumidores
 ```python
-"""Segmentação metodológica da contraparte para cálculo de PD."""
+"""Carregamento e validação estrita das regras de qualidade da entidade.
 
-from __future__ import annotations
-
-from typing import Any
-
-from common.strings import normalize_string
-from common.types import normalize_float
-
-
-def definir_segmento_metodologico(
-    registro: dict[str, Any],
-) -> str:
-    """Define o segmento metodológico da contraparte."""
-    tipo_ficha = normalize_string(
-        registro.get("TIPO_FICHA"),
-        upper=True,
-    )
-    
-    if tipo_ficha == "COMERCIALIZADORA":
-        tipo_comercializadora = normalize_string(
-            registro.get("TIPO_COMERCIALIZADORA"),
-            upper=True,
-        )
-        if tipo_comercializadora == "CPURA":
-            return "CPURA"
-
-        if tipo_comercializadora == "CGRUPO":
-            return "CGRUPO"
-
-        raise ValueError(
-            "Comercializadora sem TIPO_COMERCIALIZADORA válido."
-        )
-
-    if tipo_ficha == "CONSUMIDOR":
-        # Extrai o volume de enquadramento (em MWm)
-        volume_mwm = normalize_float(registro.get("VOLUME_ENQUADRAMENTO_MWM"))
-        
-        # Critério de Aceite: Consumidor sem volume retorna NAO_ENQUADRADO
-        if volume_mwm is None:
-            return "NAO_ENQUADRADO"
-            
-        # Critério de Aceite: Bifurcação baseada no limite de 5 MWm
-        if volume_mwm >= 5.0:
-            return "CONSUMIDOR_GT_5"
-        else:
-            return "CONSUMIDOR_LE_5"
-
-    raise ValueError(
-        f"TIPO_FICHA inválido para segmentação: {tipo_ficha!r}"
-    )
-```
-
-
----
-## src\domain\credito\lgd_engine.py
-Linhas: 90
-Classes: -
-Funções: calcular_lgd
-```python
-"""Motor de Loss Given Default (LGD).
-
-feat(T3.3.1): Adicionados lookup de LGD bruta por segmento via config e
-rastreabilidade com calculo_id.
-Ref: §6.8, §7.1, Apêndice C do Planejamento Funcional.
-
-Nota: A redução por garantias é recebida como parâmetro (cobertura_garantias).
-A integração com a base real de garantias é um TODO — quando disponível,
-o percentual será calculado automaticamente a partir de garantias_service.
+feat(T1.1.2): Integra validação contra JSON Schema (mesmo padrão de mapping_loader.py).
+Regras malformadas geram erro descritivo antes do processamento de qualquer ficha.
+Ref: §5.2, §5.3 do Planejamento Funcional.
 """
-
 from __future__ import annotations
 
-import hashlib
-import json
-from datetime import datetime
 from typing import Any
-from uuid import uuid4
+from pathlib import Path
 
-# LGD bruta padrão por segmento metodológico (§6.8)
-# Estes valores devem migrar para config.json quando homologados pelo negócio.
-LGD_BRUTA_POR_SEGMENTO: dict[str, float] = {
-    "CPURA": 0.45,
-    "CGRUPO": 0.45,
-    "CONSUMIDOR_GT_5": 0.45,
-    "CONSUMIDOR_LE_5": 0.75,
-}
+from app.context import AppContext
+from common.json import ler_json
+from common.validador import validar_esquema_json
 
 
-def calcular_lgd(
-    segmento: str,
-    cobertura_garantias: float = 0.0,
-    lgd_bruta_override: float | None = None,
-    config: dict[str, Any] | None = None,
+def _carregar_e_validar_regras_de_qualidade(
+    rules_path: Path,
+    schema_path: Path,
+    descricao: str,
+    logger: Any,
 ) -> dict[str, Any]:
-    """
-    Cálculo da LGD líquida após mitigação por garantias.
-
-    Fórmula: LGD_liquida = LGD_bruta × (1 - cobertura_garantias) (§6.8).
-
-    Args:
-        segmento: Segmento metodológico (CPURA, CGRUPO, etc.).
-        cobertura_garantias: Percentual de cobertura de garantias elegíveis [0, 1].
-            Default 0.0 — TODO: será alimentado automaticamente pela base de garantias.
-        lgd_bruta_override: Se informado, sobrescreve o lookup por segmento.
-        config: Dict de configuração para lookup customizado.
-
-    Returns:
-        Dict rastreável com calculo_id, lgd_bruta, lgd_liquida e metadados.
-    """
-    calculo_id = f"LGD_{uuid4().hex[:12]}"
-
-    # Lookup de LGD bruta por segmento (§6.8)
-    if lgd_bruta_override is not None:
-        lgd_bruta = lgd_bruta_override
-        fonte_lgd_bruta = "OVERRIDE"
-    elif config and "lgd_bruta_por_segmento" in config:
-        lgd_bruta = config["lgd_bruta_por_segmento"].get(segmento, LGD_BRUTA_POR_SEGMENTO.get(segmento, 0.45))
-        fonte_lgd_bruta = "CONFIG"
-    else:
-        lgd_bruta = LGD_BRUTA_POR_SEGMENTO.get(segmento, 0.45)
-        fonte_lgd_bruta = "PADRAO_SISTEMA"
-
-    # Trava matemática para não gerar LGD negativa (§6.8)
-    cobertura_efetiva = max(0.0, min(float(cobertura_garantias), 1.0))
-
-    lgd_liquida = lgd_bruta * (1.0 - cobertura_efetiva)
-
-    # Snapshot da configuração usada (§11.2)
-    config_usada = {
-        "segmento": segmento,
-        "lgd_bruta": lgd_bruta,
-        "fonte_lgd_bruta": fonte_lgd_bruta,
-        "cobertura_garantias": cobertura_efetiva,
-    }
-    config_snapshot_id = hashlib.sha256(
-        json.dumps(config_usada, sort_keys=True).encode()
-    ).hexdigest()[:16]
-
-    return {
-        "calculo_id": calculo_id,
-        "segmento": segmento,
-        "lgd_bruta": lgd_bruta,
-        "fonte_lgd_bruta": fonte_lgd_bruta,
-        "cobertura_garantias": cobertura_efetiva,
-        "lgd_liquida": lgd_liquida,
-        "config_snapshot_id": config_snapshot_id,
-        "dt_calculo": datetime.now().isoformat(timespec="seconds"),
-        "status": "CALCULADO",
-    }
-```
-
-
----
-## src\domain\credito\pd_consumidor_gt5.py
-Linhas: 121
-Classes: -
-Funções: _inv_t_approx, _normalize_pd_input, calcular_pd_final_consumidor_gt5
-```python
-"""Transformação da PD para consumidores acima de 5 MWm."""
-
-from __future__ import annotations
-
-import math
-from statistics import NormalDist
-from typing import Any
-
-from domain.credito.pd_exceptions import (
-    PdCalculationError,
-    PdConfigurationError,
-)
-
-
-def _inv_t_approx(prob: float, df: float) -> float:
-    """Aproxima o quantil da t de Student a partir do quantil normal."""
-    if not 0 < prob < 1:
-        raise PdCalculationError(
-            f"Probabilidade inválida para inversa t: {prob!r}"
-        )
-
-    z = NormalDist().inv_cdf(prob)
-
-    g1 = (z**3 + z) / (4 * df)
-    g2 = (5 * z**5 + 16 * z**3 + 3 * z) / (96 * (df**2))
-    g3 = (3 * z**7 + 19 * z**5 + 17 * z**3 - 15 * z) / (384 * (df**3))
-
-    return z + g1 + g2 + g3
-
-
-def _normalize_pd_input(
-    value: float,
-    normalize_percent_if_gt_1: bool,
-) -> float:
-    q = float(value)
-    if normalize_percent_if_gt_1 and q > 1:
-        q = q / 100.0
-    return q
-
-
-def calcular_pd_final_consumidor_gt5(
-    registro: dict[str, Any],
-    pd_base: float,
-    rating_final: str,
-    pd_min: float,
-    pd_max: float,
-    regras_segmento: dict[str, Any],
-    logger: Any | None = None,
-) -> dict[str, Any]:
-    """Calcula a PD ajustada para consumidor acima de 5 MWm."""
+    """Carrega um arquivo de quality rules e valida contra seu JSON Schema."""
     try:
-        regras_pd = regras_segmento["pd_final_rules"]
-        metodo = str(regras_pd.get("method", "")).strip().lower()
+        logger.info("Carregando %s: %s", descricao, rules_path)
 
-        if metodo != "t_dist_logistic":
-            raise PdConfigurationError(
-                f"Método inválido para CONSUMIDOR_GT_5: {metodo!r}"
-            )
+        if not rules_path.exists():
+            raise FileNotFoundError(f"Arquivo de quality rules não encontrado: {rules_path}")
 
-        df = float(regras_pd["df"])
-        scale = float(regras_pd["scale"])
-        eps = float(regras_pd["eps"])
-        normalize_percent_if_gt_1 = bool(
-            regras_pd.get("normalize_input_percent_if_gt_1", True)
-        )
+        if not schema_path.exists():
+            raise FileNotFoundError(f"Arquivo de schema não encontrado: {schema_path}")
 
-        q = _normalize_pd_input(
-            value=float(pd_base),
-            normalize_percent_if_gt_1=normalize_percent_if_gt_1,
-        )
+        content = ler_json(rules_path)
+        schema = ler_json(schema_path)
 
-        q_cap = min(1 - eps, max(eps, q))
+        # Validação Estrita (Fail-Fast)
+        validar_esquema_json(instance=content, schema=schema, label=descricao)
 
-        z_t = _inv_t_approx(q_cap, df)
-        z = scale * z_t
-        u = 1.0 / (1.0 + math.exp(-z))
+        if not isinstance(content, dict):
+            raise ValueError(f"O {descricao} deve ser um objeto JSON.")
 
-        pd_final = pd_min + u * (pd_max - pd_min)
+        logger.info("%s carregado e validado com sucesso.", descricao)
 
-        resultado = {
-            "RATING_FINAL": rating_final,
-            "PD_BASE": pd_base,
-            "PD_MIN_FAIXA": pd_min,
-            "PD_MAX_FAIXA": pd_max,
-            "PERCENTIL_PD_BASE": None,
-            "PD_FINAL": pd_final,
-            "PD_METODO": "T_DIST_LOGISTIC",
-            "PD_Q_NORMALIZADA": q,
-            "PD_Q_CAP": q_cap,
-            "PD_Z_T": z_t,
-            "PD_Z_ESCALADO": z,
-            "PD_U_INTERPOLACAO": u,
-        }
-
-        if logger is not None:
-            logger.info(
-                "PD ajustada CONSUMIDOR_GT_5 calculada. "
-                "CNPJ=%s RATING=%s PD_BASE=%s Q=%s Q_CAP=%s "
-                "PD_MIN=%s PD_MAX=%s Z_T=%s Z=%s U=%s PD_FINAL=%s",
-                registro.get("CNPJ"),
-                rating_final,
-                pd_base,
-                q,
-                q_cap,
-                pd_min,
-                pd_max,
-                z_t,
-                z,
-                u,
-                pd_final,
-            )
-
-        return resultado
-
-    except Exception as exc:
-        if isinstance(exc, (PdCalculationError, PdConfigurationError)):
-            raise
-        raise PdCalculationError(
-            "Falha no cálculo da PD ajustada de CONSUMIDOR_GT_5: "
-            f"{exc}"
-        ) from exc
-
-```
-
-
----
-## src\domain\credito\pd_cpura.py
-Linhas: 282
-Classes: -
-Funções: _clamp, _obter_score_total, _obter_faixa_score_rating, _obter_estabilizacao, _calcular_score_truncado, _calcular_posicao_relativa, _calcular_pd_bruta, _estabilizar_pd, calcular_pd_final_cpura
-```python
-"""Transformação de PD para comercializadoras puras."""
-
-from __future__ import annotations
-
-import math
-from typing import Any
-
-from domain.credito.pd_exceptions import (
-    PdConfigurationError,
-    PdInputValidationError,
-)
-
-
-def _clamp(valor: float, minimo: float, maximo: float) -> float:
-    """Restringe valor ao intervalo informado."""
-    return max(min(valor, maximo), minimo)
-
-
-def _obter_score_total(registro: dict[str, Any]) -> float:
-    """Obtém o score total S do registro."""
-    score_total = registro.get("SCORE_TOTAL")
-
-    if score_total is None:
-        raise PdInputValidationError(
-            "Registro sem SCORE_TOTAL para cálculo de PD de CPURA."
-        )
-
-    try:
-        score_total = float(score_total)
-    except (TypeError, ValueError) as exc:
-        raise PdInputValidationError(
-            f"SCORE_TOTAL inválido: {score_total!r}"
-        ) from exc
-
-    if score_total < 0 or score_total > 10:
-        raise PdInputValidationError(
-            f"SCORE_TOTAL fora do intervalo esperado [0, 10]: {score_total}"
-        )
-
-    return score_total
-
-
-def _obter_faixa_score_rating(
-    rating_final: str,
-    score_faixas: dict[str, dict[str, float]],
-) -> tuple[float, float]:
-    """Obtém a faixa de score do rating."""
-    if not score_faixas:
-        raise PdConfigurationError(
-            "Configuração 'score_faixas' não informada para CPURA."
-        )
-
-    if rating_final not in score_faixas:
-        raise PdConfigurationError(
-            f"Rating inválido para CPURA: {rating_final}"
-        )
-
-    faixa = score_faixas[rating_final]
-
-    if "min" not in faixa or "max" not in faixa:
-        raise PdConfigurationError(
-            f"Faixa de score inválida para rating {rating_final}."
-        )
-
-    try:
-        score_min = float(faixa["min"])
-        score_max = float(faixa["max"])
-    except (TypeError, ValueError) as exc:
-        raise PdConfigurationError(
-            f"Faixa de score não numérica para rating {rating_final}."
-        ) from exc
-
-    if score_min > score_max:
-        raise PdConfigurationError(
-            f"Faixa de score inválida para rating {rating_final}: min > max."
-        )
-
-    return score_min, score_max
-
-
-def _obter_estabilizacao(
-    cpura_config: dict[str, Any],
-) -> tuple[float, float, float]:
-    """Obtém os parâmetros de estabilização numérica."""
-    estabilizacao = cpura_config.get("estabilizacao")
-
-    if not isinstance(estabilizacao, dict):
-        raise PdConfigurationError(
-            "Bloco 'estabilizacao' ausente ou inválido em cpura_config."
-        )
-
-    try:
-        epsilon = float(estabilizacao["epsilon"])
-        z_min = float(estabilizacao["z_min"])
-        z_max = float(estabilizacao["z_max"])
-    except KeyError as exc:
-        raise PdConfigurationError(
-            f"Parâmetro de estabilização ausente: {exc}"
-        ) from exc
-    except (TypeError, ValueError) as exc:
-        raise PdConfigurationError(
-            "Parâmetros de estabilização inválidos."
-        ) from exc
-
-    if epsilon <= 0 or epsilon >= 0.5:
-        raise PdConfigurationError(
-            f"Epsilon inválido para estabilização: {epsilon}"
-        )
-
-    if z_min > z_max:
-        raise PdConfigurationError(
-            f"Intervalo de logit inválido: z_min={z_min}, z_max={z_max}"
-        )
-
-    return epsilon, z_min, z_max
-
-
-def _calcular_score_truncado(
-    score_total: float,
-    score_min: float,
-    score_max: float,
-) -> float:
-    """Aplica truncamento do score dentro da faixa do rating."""
-    return _clamp(score_total, score_min, score_max)
-
-
-def _calcular_posicao_relativa(
-    score_truncado: float,
-    score_min: float,
-    score_max: float,
-) -> float:
-    """Calcula a posição relativa intra-rating."""
-    if score_max == score_min:
-        return 0.0
-
-    u = (score_max - score_truncado) / (score_max - score_min)
-    return _clamp(u, 0.0, 1.0)
-
-
-def _calcular_pd_bruta(
-    pd_min: float,
-    pd_max: float,
-    posicao_relativa: float,
-) -> float:
-    """Interpola a PD bruta dentro da faixa do rating."""
-    pd_bruta = pd_min + posicao_relativa * (pd_max - pd_min)
-    return _clamp(pd_bruta, 0.0, 1.0)
-
-
-def _estabilizar_pd(
-    pd_bruta: float,
-    epsilon: float,
-    z_min: float,
-    z_max: float,
-) -> tuple[float, float, float]:
-    """Aplica estabilização numérica via logit."""
-    p = _clamp(pd_bruta, epsilon, 1.0 - epsilon)
-    z = math.log(p / (1.0 - p))
-    z_truncado = _clamp(z, z_min, z_max)
-    pd_final = 1.0 / (1.0 + math.exp(-z_truncado))
-    return p, z_truncado, pd_final
-
-
-def calcular_pd_final_cpura(
-    registro: dict[str, Any],
-    pd_base: float,
-    rating_final: str,
-    pd_min: float,
-    pd_max: float,
-    cpura_config: dict[str, Any],
-    logger: Any | None = None,
-) -> dict[str, Any]:
-    """Calcula a PD final de CPURA por interpolação intra-rating."""
-    try:
-        if logger is not None:
-            logger.info(
-                "Iniciando cálculo de PD final CPURA. "
-                "CNPJ=%s rating=%s pd_min=%s pd_max=%s",
-                registro.get("CNPJ"),
-                rating_final,
-                pd_min,
-                pd_max,
-            )
-
-        if not cpura_config:
-            raise PdConfigurationError(
-                "Configuração de CPURA não informada."
-            )
-
-        if pd_min < 0 or pd_max < 0 or pd_min > 1 or pd_max > 1:
-            raise PdInputValidationError(
-                f"Faixa de PD inválida: pd_min={pd_min}, pd_max={pd_max}"
-            )
-
-        if pd_min > pd_max:
-            raise PdInputValidationError(
-                f"Faixa de PD inválida: pd_min > pd_max "
-                f"({pd_min} > {pd_max})"
-            )
-
-        score_total = _obter_score_total(registro)
-        score_faixas = cpura_config.get("score_faixas", {})
-        score_min, score_max = _obter_faixa_score_rating(
-            rating_final=rating_final,
-            score_faixas=score_faixas,
-        )
-        epsilon, z_min, z_max = _obter_estabilizacao(cpura_config)
-
-        score_truncado = _calcular_score_truncado(
-            score_total=score_total,
-            score_min=score_min,
-            score_max=score_max,
-        )
-
-        posicao_relativa = _calcular_posicao_relativa(
-            score_truncado=score_truncado,
-            score_min=score_min,
-            score_max=score_max,
-        )
-
-        pd_bruta = _calcular_pd_bruta(
-            pd_min=pd_min,
-            pd_max=pd_max,
-            posicao_relativa=posicao_relativa,
-        )
-
-        p_estabilizado, z_truncado, pd_final = _estabilizar_pd(
-            pd_bruta=pd_bruta,
-            epsilon=epsilon,
-            z_min=z_min,
-            z_max=z_max,
-        )
-
-        resultado = {
-            "SCORE_TOTAL": score_total,
-            "SCORE_MIN_RATING": score_min,
-            "SCORE_MAX_RATING": score_max,
-            "SCORE_TRUNCADO": score_truncado,
-            "PD_MIN_FAIXA": pd_min,
-            "PD_MAX_FAIXA": pd_max,
-            "PD_PERCENTIL_INTERNO": posicao_relativa,
-            "PD_BRUTA": pd_bruta,
-            "PD_ESTABILIZADA": p_estabilizado,
-            "PD_FINAL": pd_final,
-            "PD_METODO": "INTERPOLACAO_INTRA_RATING_CPURA",
-            "LOGIT_TRUNCADO": z_truncado,
-        }
-
-        if logger is not None:
-            logger.info(
-                "PD final CPURA calculada com sucesso. "
-                "CNPJ=%s score_total=%s score_truncado=%s "
-                "u=%s pd_bruta=%s pd_final=%s",
-                registro.get("CNPJ"),
-                resultado["SCORE_TOTAL"],
-                resultado["SCORE_TRUNCADO"],
-                resultado["PD_PERCENTIL_INTERNO"],
-                resultado["PD_BRUTA"],
-                resultado["PD_FINAL"],
-            )
-
-        return resultado
-
-    except (PdInputValidationError, PdConfigurationError):
-        if logger is not None:
-            logger.exception(
-                "Erro controlado no cálculo de PD final CPURA. "
-                "CNPJ=%s rating=%s",
-                registro.get("CNPJ"),
-                rating_final,
-            )
-        raise
+        return content
 
     except Exception:
-        if logger is not None:
-            logger.exception(
-                "Falha inesperada no cálculo de PD final CPURA. "
-                "CNPJ=%s rating=%s",
-                registro.get("CNPJ"),
-                rating_final,
-            )
+        logger.exception("Falha crítica ao carregar e validar %s", descricao)
         raise
 
-```
 
-
----
-## src\domain\credito\rating.py
-Linhas: 112
-Classes: -
-Funções: _calcular_rating_final_cpura, _obter_rating_pronto, calcular_rating_final
-```python
-"""Determinação do rating final para o cálculo de PD ajustada."""
-
-from __future__ import annotations
-
-from typing import Any
-
-from common.strings import normalize_string
-from domain.credito.pd_exceptions import (
-    PdConfigurationError,
-    PdInputValidationError,
-)
-
-
-def _calcular_rating_final_cpura(
-    registro: dict[str, Any],
-    cpura_score_faixas: dict[str, Any],
-) -> str:
-    """Calcula o rating final de CPURA a partir do SCORE_TOTAL."""
-    score_total = registro.get("SCORE_TOTAL")
-
-    if score_total is None:
-        raise PdInputValidationError(
-            "SCORE_TOTAL não informado para cálculo do rating de CPURA."
-        )
-
-    try:
-        score_total = float(score_total)
-    except (TypeError, ValueError) as exc:
-        raise PdInputValidationError(
-            f"SCORE_TOTAL inválido: {score_total!r}"
-        ) from exc
-
-    if not isinstance(cpura_score_faixas, dict) or not cpura_score_faixas:
-        raise PdConfigurationError(
-            "Configuração de score_faixas de CPURA ausente ou inválida."
-        )
-
-    for rating, faixa in cpura_score_faixas.items():
-        try:
-            score_min = float(faixa["min"])
-            score_max = float(faixa["max"])
-        except KeyError as exc:
-            raise PdConfigurationError(
-                f"Faixa de score incompleta para rating {rating}."
-            ) from exc
-        except (TypeError, ValueError) as exc:
-            raise PdConfigurationError(
-                f"Faixa de score inválida para rating {rating}."
-            ) from exc
-
-        if score_min <= score_total <= score_max:
-            return rating
-
-    raise PdInputValidationError(
-        f"SCORE_TOTAL fora das faixas esperadas para CPURA: {score_total}"
-    )
-
-
-def _obter_rating_pronto(
-    registro: dict[str, Any],
-    segmento_pd: str,
-) -> str:
-    """Obtém rating já existente no registro."""
-    rating = (
-        registro.get("RATING_COPEL")
-        or registro.get("NOTA_CREDITO")
-        or registro.get("RATING_FINAL")
-    )
-
-    if rating is None:
-        raise PdInputValidationError(
-            f"Registro sem rating para {segmento_pd}."
-        )
-
-    rating_final = normalize_string(rating, upper=True)
-
-    validos = {"A", "B", "E"} if segmento_pd == "CGRUPO" else {
-        "A", "B", "C", "D", "E"
-    }
-
-    if rating_final not in validos:
-        raise PdInputValidationError(
-            f"Rating inválido para {segmento_pd}: {rating_final}"
-        )
-
-    return rating_final
-
-
-def calcular_rating_final(
-    registro: dict[str, Any],
-    segmento_pd: str,
-    pd_cpura_config: dict[str, Any] | None = None,
-) -> str:
-    """Determina o rating final conforme o segmento."""
-    segmento_pd = str(segmento_pd).strip().upper()
-
-    if segmento_pd == "CPURA":
-        if not pd_cpura_config:
-            raise PdConfigurationError(
-                "pd_cpura_config não informado para cálculo do rating de CPURA."
-            )
-
-        score_faixas = pd_cpura_config.get("score_faixas")
-        return _calcular_rating_final_cpura(
-            registro=registro,
-            cpura_score_faixas=score_faixas,
-        )
-
-    return _obter_rating_pronto(
-        registro=registro,
-        segmento_pd=segmento_pd,
-    )
-
-```
-
-
----
-## src\domain\credito\score_total.py
-Linhas: 50
-Classes: -
-Funções: calcular_score_total_cpura
-```python
-# -*- coding: utf-8 -*-
-"""Cálculo do score total de CPURA."""
-
-from __future__ import annotations
-
-from typing import Any
-
-from domain.credito.pd_exceptions import PdInputValidationError
-
-
-def calcular_score_total_cpura(
-    score_quant_info: dict[str, Any],
-    score_qual_info: dict[str, Any],
-    logger: Any | None = None,
+def carregar_regras_de_qualidade_de_dados_comercializadoras(
+    context: AppContext,
+    logger: Any,
 ) -> dict[str, Any]:
-    """Calcula o score total de CPURA."""
-    try:
-        score_quant = score_quant_info.get("SCORE_QUANTITATIVO")
-        score_qual = score_qual_info.get("SCORE_QUALITATIVO")
+    """Carrega as regras de qualidade das fichas de comercializadoras usando o novo master_catalog."""
+    master_catalog_path = context.control_file("schema_data_quality_rules").parent / "master_catalog_comercializadoras.json"
+    logger.info("Lendo master catalog temporário: %s", master_catalog_path)
+    return ler_json(master_catalog_path)
 
-        if score_quant is None:
-            raise PdInputValidationError(
-                "SCORE_QUANTITATIVO não informado."
-            )
 
-        if score_qual is None:
-            raise PdInputValidationError(
-                "SCORE_QUALITATIVO não informado."
-            )
-
-        score_total = float(score_quant) + float(score_qual)
-
-        resultado = {
-            "SCORE_TOTAL": score_total,
-        }
-
-        if logger is not None:
-            logger.info(
-                "Score total CPURA calculado. SCORE_TOTAL=%s",
-                score_total,
-            )
-
-        return resultado
-
-    except Exception:
-        if logger is not None:
-            logger.exception(
-                "Falha no cálculo do score total CPURA."
-            )
-        raise
+def carregar_regras_de_qualidade_de_dados_consumidores(
+    context: AppContext,
+    logger: Any,
+) -> dict[str, Any]:
+    """Carrega e valida as regras de qualidade das fichas de consumidores."""
+    return _carregar_e_validar_regras_de_qualidade(
+        rules_path=context.control_file("data_quality_rules_fichas_consumidores"),
+        schema_path=context.control_file("schema_data_quality_rules"),
+        descricao="Regras de Qualidade de Consumidores",
+        logger=logger,
+    )
 
 ```
 
 
 ---
-## src\domain\credito\taxa_risco_engine.py
-Linhas: 79
+## src\domain\cadastro\__init__.py
+Linhas: 0
 Classes: -
-Funções: calcular_taxa_risco
+Funções: -
 ```python
-"""Motor de Taxa de Risco de Crédito.
 
-feat(T3.4.2): Cálculo de Taxa_Risco = PE_total / Notional_total.
-Trata divisão por zero gerando alerta QLT_002.
-Ref: §7.1, §8.3 (QLT_002), §11.6 do Planejamento Funcional.
-"""
+```
+
+
+---
+## src\domain\cadastro\servico_bureau.py
+Linhas: 69
+Classes: -
+Funções: inserir_dados_bureau
+```python
+"""Serviço de Ingestão e Persistência do Bureau RISK3."""
 
 from __future__ import annotations
 
 import logging
 from datetime import datetime
 from typing import Any
-from uuid import uuid4
+import pandas as pd
+
+from app.context import AppContext
+from services.connectors.risk3_connector import buscar_bureau_risk3
+from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
 LOGGER = logging.getLogger(__name__)
 
+def inserir_dados_bureau(context: AppContext) -> dict[str, Any]:
+    run_id = f"BUR_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    logger = logging.getLogger("bdc.bureau")
 
-def calcular_taxa_risco(
-    pe_total: float | None,
-    notional_total: float | None,
-) -> dict[str, Any]:
-    """
-    Cálculo da Taxa de Risco de Crédito da carteira.
+    try:
+        # 1. Busca Consumidores enquadrados no motor de volume
+        path_enq = context.path("relational_configs")
+        arquivos = list(path_enq.glob("enquadramento_consumidores_*.parquet"))
+        if not arquivos:
+            logger.warning("Nenhum enquadramento encontrado para guiar o Bureau.")
+            return {"run_id": run_id, "status": "SEM_DADOS_ENQUADRAMENTO"}
+            
+        df_enq = pd.read_parquet(max(arquivos, key=lambda f: f.stat().st_mtime))
+        
+        # 2. Filtra os clientes que exigem Bureau (< 5 MWm)
+        df_le5 = df_enq[df_enq["POSSUI_PELO_MENOS_5_MWM"] == False]
+        cnpjs_alvo = df_le5["CNPJ"].dropna().unique().tolist()
+        
+        if not cnpjs_alvo:
+            return {"run_id": run_id, "status": "NENHUM_CLIENTE_ELEGIVEL"}
 
-    Fórmula: Taxa_Risco = PE_total / Notional_total (§7.1).
+        # 3. Consulta a API RISK3
+        df_bureau = buscar_bureau_risk3(cnpjs_alvo, context)
 
-    Args:
-        pe_total: Somatório da Perda Esperada em Reais.
-        notional_total: Somatório do Notional (Exposição Bruta).
+        if df_bureau.empty:
+            return {"run_id": run_id, "status": "SEM_RETORNO_API"}
 
-    Returns:
-        Dict com taxa_risco, calculo_id e potenciais alertas.
-    """
-    calculo_id = f"TAXA_{uuid4().hex[:12]}"
-    dt_calculo = datetime.now().isoformat(timespec="seconds")
+        # 4. Salva Snapshot na Bronze
+        bronze_dir = context.path("bronze") / "snapshots_fontes" / "bureau"
+        bronze_dir.mkdir(parents=True, exist_ok=True)
+        df_bureau.to_parquet(bronze_dir / f"raw_bureau_{run_id}.parquet", index=False)
 
-    if pe_total is None or notional_total is None:
-        return {
-            "calculo_id": calculo_id,
-            "taxa_risco": None,
-            "dt_calculo": dt_calculo,
-            "status": "DADOS_INSUFICIENTES",
-            "alertas": []
-        }
-
-    alertas = []
-    
-    # Tratamento de divisão por zero / Notional inválido (§8.3 — QLT_002)
-    if float(notional_total) <= 0:
-        LOGGER.warning(
-            "Cálculo de Taxa de Risco não executado: Notional Total inválido ou zero (%.2f).", 
-            notional_total
+        # 5. Salva Fato na Silver (Para consumo pela Camada Gold)
+        df_silver = df_bureau[df_bureau["STATUS"] == "SUCESSO"].copy()
+        
+        if df_silver.empty:
+            return {"run_id": run_id, "status": "FALHA_OU_BLOQUEIO_DE_REDE"}
+            
+        df_silver["RUN_ID"] = run_id
+        df_silver["DT_PROCESSAMENTO"] = datetime.now().isoformat(timespec="seconds")
+        
+        silver_dir = context.path("silver") / "fato_bureau_silver"
+        escrever_conjunto_de_dados_silver(
+            records=df_silver.to_dict(orient="records"), 
+            output_dir=silver_dir, 
+            filename="fato_bureau_silver"
         )
-        alertas.append({
-            "CODIGO": "QLT_002",
-            "SEVERIDADE": "ALTO",
-            "MENSAGEM": f"Divisão por zero: Notional total ({notional_total}) <= 0 durante cálculo da Taxa de Risco."
-        })
-        return {
-            "calculo_id": calculo_id,
-            "taxa_risco": None,
-            "pe_total_input": float(pe_total),
-            "notional_total_input": float(notional_total),
-            "dt_calculo": dt_calculo,
-            "status": "ERRO_MATEMATICO",
-            "alertas": alertas
-        }
 
-    taxa_risco = float(pe_total) / float(notional_total)
+        logger.info("Ingestão do Bureau concluída. %d registros na Silver.", len(df_silver))
+        return {"run_id": run_id, "status": "SUCESSO", "linhas": len(df_silver)}
 
-    return {
-        "calculo_id": calculo_id,
-        "taxa_risco": taxa_risco,
-        "pe_total_input": float(pe_total),
-        "notional_total_input": float(notional_total),
-        "dt_calculo": dt_calculo,
-        "status": "CALCULADO",
-        "alertas": alertas
-    }
+    except Exception as e:
+        logger.exception("Falha crítica na ingestão do Bureau RISK3.")
+        raise
+```
+
+
+---
+## src\domain\carga_manual\__init__.py
+Linhas: 0
+Classes: -
+Funções: -
+```python
 
 ```
 
 
 ---
-## src\services\camada_gold_service.py
-Linhas: 145
+## src\domain\carga_manual\servico_carga_manual.py
+Linhas: 75
 Classes: -
-Funções: _classificar_matriz_operacional, exportar_visao_consolidada_gold
+Funções: inserir_dados_carga_manual
 ```python
-"""
-Construtor da Visão Operacional Consolidada (Camada Gold).
-"""
-from __future__ import annotations
-import logging
-from datetime import datetime
-import pandas as pd
-from pydot import Any
-from app.context import AppContext
-from storage.silver_store import write_silver_dataset
+"""Serviço de Carga Manual e Eventos de Negócio."""
 
-def _classificar_matriz_operacional(row: pd.Series) -> str:
-    c = row.get("STATUS_CONTRATUAL", "SEM_CONTRATO")
-    a = row.get("SITUACAO_ANALISE", "SEM_ANALISE")
-    if c == "CONTRATO_VIGENTE":
-        if a == "VIGENTE": return "CONTRATO_VIGENTE_ANALISE_VIGENTE"
-        if a == "VENCIDA": return "CONTRATO_VIGENTE_ANALISE_VENCIDA"
-        return "CONTRATO_VIGENTE_SEM_ANALISE"
-    if c == "CONTRATO_FUTURO":
-        if a == "VIGENTE": return "CONTRATO_FUTURO_ANALISE_VIGENTE"
-        if a == "VENCIDA": return "CONTRATO_FUTURO_ANALISE_VENCIDA"
-        return "CONTRATO_FUTURO_SEM_ANALISE"
-    if c == "SEM_CONTRATO":
-        if a == "VIGENTE": return "SEM_CONTRATO_ANALISE_VIGENTE"
-        if a == "VENCIDA": return "SEM_CONTRATO_ANALISE_VENCIDA"
-        return "SEM_CONTRATO_SEM_ANALISE"
-    return "OUTROS"
-
-def exportar_visao_consolidada_gold(context: AppContext) -> dict[str, Any]:
-    run_id = f"GLD_MVP_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = logging.getLogger("bdc.gold.operacional")
-
-    path_contratos = context.path("silver") / "denodo_contratos_silver" / "contratos_correntes.parquet"
-    path_analises = context.path("relational_facts") / "fato_analise_credito.parquet"
-    path_contraparte = context.path("relational_dimensions") / "dim_contraparte.parquet"
-    path_risco = context.path("relational_facts") / "fato_exposicao_risco_LATEST.parquet"
-    
-    df_contratos = pd.read_parquet(path_contratos) if path_contratos.exists() else pd.DataFrame()
-    df_analises = pd.read_parquet(path_analises) if path_analises.exists() else pd.DataFrame()
-    df_contraparte = pd.read_parquet(path_contraparte) if path_contraparte.exists() else pd.DataFrame()
-    df_risco = pd.read_parquet(path_risco) if path_risco.exists() else pd.DataFrame()
-
-    hoje = pd.Timestamp(datetime.now().date())
-
-    df_contratos_agg = pd.DataFrame()
-    if not df_contratos.empty:
-        df_contratos["CNPJ"] = df_contratos["CNPJ"].astype(str).str.replace(r'\D', '', regex=True).str.zfill(14)
-        df_contratos["VOLUME_MWM"] = pd.to_numeric(df_contratos.get("VOLUME_CONTRATADO_MENSAL_MWM", 0), errors="coerce").fillna(0.0)
-        df_contratos["INICIO"] = pd.to_datetime(df_contratos.get("VIGENCIA_INICIO"), errors="coerce")
-        df_contratos["FIM"] = pd.to_datetime(df_contratos.get("VIGENCIA_FIM"), errors="coerce")
-        df_contratos["EH_VIGENTE"] = (df_contratos["INICIO"] <= hoje) & (df_contratos["FIM"] >= hoje)
-        df_contratos["EH_FUTURO"] = (df_contratos["INICIO"] > hoje)
-        
-        df_contratos_agg = df_contratos.groupby("CNPJ").agg(
-            QTD_CONTRATOS=("CONTRATO", "nunique"), VOLUME_MWM=("VOLUME_MWM", "sum"),
-            QTD_VIGENTES=("EH_VIGENTE", "sum"), QTD_FUTUROS=("EH_FUTURO", "sum"),
-            PROXIMO_INICIO=("INICIO", "min"), PROXIMO_FIM=("FIM", "max")
-        ).reset_index()
-        
-        df_contratos_agg["STATUS_CONTRATUAL"] = df_contratos_agg.apply(lambda r: "CONTRATO_VIGENTE" if r["QTD_VIGENTES"] > 0 else ("CONTRATO_FUTURO" if r["QTD_FUTUROS"] > 0 else "CONTRATO_VENCIDO"), axis=1)
-        df_contratos_agg["TEM_CONTRATO"] = df_contratos_agg["STATUS_CONTRATUAL"].isin(["CONTRATO_VIGENTE", "CONTRATO_FUTURO"]).map({True:"SIM", False:"NÃO"})
-
-    df_analises_agg = pd.DataFrame()
-    if not df_analises.empty:
-        df_analises["CNPJ"] = df_analises["CNPJ"].astype(str).str.replace(r'\D', '', regex=True).str.zfill(14)
-        df_analises = df_analises.dropna(subset=["CNPJ"]).copy()
-        
-        df_analises["DATA_BALANCO_DT"] = pd.to_datetime(df_analises.get("DATA_BALANCO_USADO"), format="%d/%m/%Y", errors="coerce")
-        df_analises.loc[df_analises["DATA_BALANCO_DT"].isna(), "DATA_BALANCO_DT"] = pd.to_datetime(df_analises.get("DATA_BALANCO_USADO"), errors="coerce")
-        df_analises["VALIDADE_DT"] = df_analises["DATA_BALANCO_DT"] + pd.DateOffset(years=1, months=4)
-        
-        df_analises = df_analises.sort_values("DATA_BALANCO_DT").drop_duplicates("CNPJ", keep="last")
-        df_analises["SITUACAO_ANALISE"] = df_analises["VALIDADE_DT"].apply(lambda x: "VIGENTE" if pd.notnull(x) and x >= hoje else ("VENCIDA" if pd.notnull(x) else "IRREGULAR"))
-        
-        col_map = {"DATA_ANALISE": "DATA_ANALISE", "DATA_BALANCO_USADO": "DATA_DF", "RATING": "RATING", "PD_PERCENTUAL": "PD", "MODELO": "MODELO_ANALISE"}
-        df_analises_agg = df_analises.rename(columns=col_map)
-        df_analises_agg["VALIDADE_ANALISE"] = df_analises_agg["VALIDADE_DT"].dt.strftime("%d/%m/%Y")
-        df_analises_agg["TEM_ANALISE"] = "SIM"
-
-    if df_contratos_agg.empty and df_analises_agg.empty:
-        return {"run_id": run_id, "status": "SEM_DADOS"}
-    elif df_contratos_agg.empty:
-        df_gold = df_analises_agg.copy()
-    elif df_analises_agg.empty:
-        df_gold = df_contratos_agg.copy()
-    else:
-        df_gold = pd.merge(df_contratos_agg, df_analises_agg, on="CNPJ", how="outer")
-
-    if not df_contraparte.empty and "CNPJ" in df_contraparte.columns:
-        df_contraparte["CNPJ"] = df_contraparte["CNPJ"].astype(str).str.zfill(14)
-        df_gold = pd.merge(df_gold, df_contraparte[["CNPJ", "SEGMENTO_METODOLOGICO", "SITUACAO_CADASTRAL"]], on="CNPJ", how="left")
-
-    # ENRIQUECIMENTO FINANCEIRO (Risco / Exposições)
-    if not df_risco.empty and "CNPJ" in df_risco.columns:
-        df_risco["CNPJ"] = df_risco["CNPJ"].astype(str).str.zfill(14)
-        df_risco = df_risco.drop_duplicates(subset=["CNPJ"], keep="last")
-        df_gold = pd.merge(df_gold, df_risco[["CNPJ", "EAD_VALOR", "LGD_LIQUIDA", "PE_REAIS"]], on="CNPJ", how="left")
-
-    colunas_finais = ["CNPJ", "SEGMENTO_METODOLOGICO", "SITUACAO_CADASTRAL", "STATUS_CONTRATUAL", "TEM_CONTRATO", "QTD_CONTRATOS", "VOLUME_MWM", "PROXIMO_INICIO", "PROXIMO_FIM", "TEM_ANALISE", "SITUACAO_ANALISE", "DATA_ANALISE", "DATA_DF", "VALIDADE_ANALISE", "RATING", "PD", "MODELO_ANALISE", "EAD_VALOR", "LGD_LIQUIDA", "PE_REAIS"]
-    df_gold = df_gold.reindex(columns=colunas_finais)
-
-    df_gold["STATUS_CONTRATUAL"] = df_gold["STATUS_CONTRATUAL"].fillna("SEM_CONTRATO").astype(str)
-    df_gold["TEM_CONTRATO"] = df_gold["TEM_CONTRATO"].fillna("NÃO").astype(str)
-    df_gold["QTD_CONTRATOS"] = df_gold["QTD_CONTRATOS"].fillna(0).astype(int)
-    df_gold["VOLUME_MWM"] = df_gold["VOLUME_MWM"].fillna(0.0).astype(float).round(2)
-    df_gold["TEM_ANALISE"] = df_gold["TEM_ANALISE"].fillna("NÃO").astype(str)
-    df_gold["SITUACAO_ANALISE"] = df_gold["SITUACAO_ANALISE"].fillna("SEM_ANALISE").astype(str)
-    df_gold["SEGMENTO_METODOLOGICO"] = df_gold["SEGMENTO_METODOLOGICO"].fillna("NAO_ENQUADRADO").astype(str)
-    df_gold["SITUACAO_CADASTRAL"] = df_gold["SITUACAO_CADASTRAL"].fillna("NAO_INFORMADA").astype(str)
-    
-    # Preenchimento das colunas financeiras (mantém como Float para o Power BI / Excel formatar o R$)
-    for col_fin in ["EAD_VALOR", "LGD_LIQUIDA", "PE_REAIS"]:
-        df_gold[col_fin] = pd.to_numeric(df_gold[col_fin], errors="coerce").fillna(0.0).round(2)
-    
-    for col in ["PROXIMO_INICIO", "PROXIMO_FIM", "DATA_ANALISE", "DATA_DF", "VALIDADE_ANALISE", "RATING", "PD", "MODELO_ANALISE"]:
-        df_gold[col] = df_gold[col].fillna("-").astype(str)
-
-    df_gold["STATUS_OPERACIONAL"] = df_gold.apply(_classificar_matriz_operacional, axis=1)
-    colunas_finais.append("STATUS_OPERACIONAL")
-    df_export = df_gold[colunas_finais].copy()
-
-    gold_dir = context.path("gold") / "visao_operacional_negocio"
-    gold_dir.mkdir(parents=True, exist_ok=True)
-    
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    df_export.to_csv(gold_dir / f"Visao_Operacional_BDC_{timestamp}.csv", index=False, encoding="utf-8-sig", sep=";", decimal=",")
-    df_export.to_parquet(gold_dir / "Visao_Operacional_BDC_LATEST.parquet", index=False)
-
-    # Cálculo da Exposição a Descoberto
-    mask_descoberto = (df_export["STATUS_CONTRATUAL"] == "CONTRATO_VIGENTE") & (df_export["SITUACAO_ANALISE"] != "VIGENTE")
-    ead_descoberto = df_export.loc[mask_descoberto, "EAD_VALOR"].sum()
-
-    metrics = {
-        "run_id": run_id, "status": "SUCESSO", "total_contrapartes": len(df_export),
-        "contrato_vigente": int((df_export["STATUS_CONTRATUAL"] == "CONTRATO_VIGENTE").sum()),
-        "contrato_futuro": int((df_export["STATUS_CONTRATUAL"] == "CONTRATO_FUTURO").sum()),
-        "analise_vigente": int((df_export["SITUACAO_ANALISE"] == "VIGENTE").sum()),
-        "contrato_vig_sem_analise_vig": int(mask_descoberto.sum()),
-        "analise_vencida": int((df_export["SITUACAO_ANALISE"] == "VENCIDA").sum()),
-        "ficha_sem_contrato": int(((df_export["STATUS_CONTRATUAL"] == "SEM_CONTRATO") & (df_export["TEM_ANALISE"] == "SIM")).sum()),
-        "contrato_sem_ficha": int(((df_export["STATUS_CONTRATUAL"].isin(["CONTRATO_VIGENTE", "CONTRATO_FUTURO"])) & (df_export["TEM_ANALISE"] == "NÃO")).sum()),
-        "dados_incompletos": int((df_export["SITUACAO_CADASTRAL"] == "NAO_INFORMADA").sum()),
-        "ead_descoberto": float(ead_descoberto)
-    }
-    return metrics
-```
-
-
----
-## src\services\dim_contraparte_service.py
-Linhas: 42
-Classes: -
-Funções: build_dim_contraparte
-```python
-"""Construção da dimensão de Contrapartes (dim_contraparte)."""
 from __future__ import annotations
 import logging
 from datetime import datetime
 from typing import Any
 import pandas as pd
+from pathlib import Path
+
 from app.context import AppContext
-from storage.silver_store import write_silver_dataset
+from common.validador import validar_esquema_json
+from common.json import ler_json
+from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
-def build_dim_contraparte(context: AppContext, df_silver_receita: pd.DataFrame, df_silver_segmentacao: pd.DataFrame) -> dict[str, Any]:
-    run_id = f"DIM_CTR_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = logging.getLogger("bdc.gold.dim_contraparte")
-
-    if df_silver_receita.empty:
-        df_silver_receita = pd.DataFrame(columns=["CNPJ", "SITUACAO_CADASTRAL", "NATUREZA_JURIDICA", "CNAE_PRINCIPAL"])
-    if df_silver_segmentacao.empty:
-        df_silver_segmentacao = pd.DataFrame(columns=["CNPJ", "VOLUME_ENQUADRAMENTO_MWM", "POSSUI_PELO_MENOS_5_MWM", "SEGMENTO_METODOLOGICO"])
-
-    # NORMALIZAÇÃO ESTRITA
-    df_silver_receita["CNPJ"] = df_silver_receita["CNPJ"].astype(str).str.replace(r"\D", "", regex=True).str.zfill(14)
-    df_silver_segmentacao["CNPJ"] = df_silver_segmentacao["CNPJ"].astype(str).str.replace(r"\D", "", regex=True).str.zfill(14)
-
-    for col in ["SITUACAO_CADASTRAL", "CNAE_PRINCIPAL"]:
-        if col not in df_silver_receita.columns: df_silver_receita[col] = "NAO_INFORMADO"
-    for col in ["SEGMENTO_METODOLOGICO"]:
-        if col not in df_silver_segmentacao.columns: df_silver_segmentacao[col] = "NAO_ENQUADRADO"
-
-    # OUTER JOIN PARA SALVAR O SEGMENTO MESMO SEM RECEITA FEDERAL
-    df_dim = pd.merge(df_silver_receita, df_silver_segmentacao, on="CNPJ", how="outer")
-    df_dim = df_dim.dropna(subset=["CNPJ"])
+def inserir_dados_carga_manual(context: AppContext) -> dict[str, Any]:
+    run_id = f"MAN_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    logger = logging.getLogger("bdc.governanca.carga_manual")
     
-    df_dim["CNPJ_RAIZ"] = df_dim["CNPJ"].str[:8]
-    df_dim["SITUACAO_CADASTRAL"] = df_dim["SITUACAO_CADASTRAL"].fillna("NAO_INFORMADO")
-    df_dim["SEGMENTO_METODOLOGICO"] = df_dim["SEGMENTO_METODOLOGICO"].fillna("NAO_ENQUADRADO")
+    input_dir = context.path("entradas") / "atualizacoes_manuais" / "pendentes"
+    input_dir.mkdir(parents=True, exist_ok=True)
 
-    schema_dim = {"CNPJ": "CNPJ", "CNPJ_RAIZ": "CNPJ_RAIZ", "SITUACAO_CADASTRAL": "SITUACAO_CADASTRAL", "CNAE_PRINCIPAL": "SETOR", "SEGMENTO_METODOLOGICO": "SEGMENTO_METODOLOGICO"}
-    df_final = df_dim[list(schema_dim.keys())].rename(columns=schema_dim).copy()
-    
-    relational_dir = context.path("relational_dimensions")
-    relational_dir.mkdir(parents=True, exist_ok=True)
-    write_silver_dataset(records=df_final.to_dict(orient="records"), output_dir=relational_dir, filename="dim_contraparte")
-    return {"run_id": run_id, "linhas": len(df_final), "status": "SUCESSO"}
+    arquivos = list(input_dir.glob("*.csv")) + list(input_dir.glob("*.xlsx"))
+    if not arquivos:
+        return {"run_id": run_id, "processados": 0, "status": "SEM_DADOS"}
+
+    schema_path = context.path("control_schemas") / "schema_carga_manual.json"
+    schema = ler_json(schema_path) if schema_path.exists() else None
+
+    processados = []
+    agora = datetime.now().isoformat(timespec="seconds")
+
+    for arquivo in arquivos:
+        try:
+            if arquivo.suffix == ".csv":
+                df = pd.read_csv(arquivo, sep=";", dtype=str)
+            else:
+                df = pd.read_excel(arquivo, dtype=str)
+
+            registros = df.to_dict(orient="records")
+
+            for idx, reg in enumerate(registros):
+                if schema:
+                    try:
+                        validar_esquema_json(reg, schema, f"Registro [{idx}] do arquivo {arquivo.name}")
+                    except Exception as exc:
+                        logger.warning("Registro %s inválido: %s. Ignorando.", idx, exc)
+                        continue
+
+                novo_reg = reg.copy()
+                novo_reg["DATA_REGISTRO_SISTEMA"] = agora
+                novo_reg["RUN_ID"] = run_id
+                processados.append(novo_reg)
+
+            # Move para aprovadas
+            target_dir = context.path("entradas") / "atualizacoes_manuais" / "aprovadas"
+            target_dir.mkdir(parents=True, exist_ok=True)
+            arquivo.rename(target_dir / arquivo.name)
+            
+        except Exception as e:
+            logger.error("Erro ao processar arquivo %s: %s", arquivo.name, e)
+            target_dir = context.path("entradas") / "atualizacoes_manuais" / "rejeitadas"
+            target_dir.mkdir(parents=True, exist_ok=True)
+            arquivo.rename(target_dir / arquivo.name)
+
+    if processados:
+        silver_dir = context.path("silver") / "governanca_carga_manual"
+        df_manual = pd.DataFrame(processados)
+        escrever_conjunto_de_dados_silver(
+            records=df_manual.to_dict(orient="records"),
+            output_dir=silver_dir,
+            filename=f"eventos_manuais_{run_id}"
+        )
+
+    logger.info("Carga manual concluída. %d eventos registrados.", len(processados))
+    return {"run_id": run_id, "eventos_processados": len(processados), "status": "SUCESSO"}
 ```
 
 
 ---
-## src\services\enquadramento_service.py
-Linhas: 72
+## src\domain\contrapartes\servico_enquadramento.py
+Linhas: 173
 Classes: -
 Funções: calcular_enquadramento_consumidor
 ```python
@@ -1676,926 +1494,1550 @@ def calcular_enquadramento_consumidor(
 ) -> pd.DataFrame:
     """
     Lê os contratos normalizados da Silver do Denodo, calcula o maior volume mensal
-    simultâneo por CNPJ e retorna a base consolidada de enquadramento.
+    simultâneo por raiz de CNPJ (Matriz + Filiais) e retorna a base consolidada
+    de enquadramento propagada para todos os CNPJs completos.
     """
     silver_dir = context.path("silver") / "denodo_contratos_padronizados"
     parquet_path = silver_dir / f"contratos_correntes_{competencia_base}.parquet"
 
     if not parquet_path.exists():
         raise FileNotFoundError(
-            f"Base Silver de contratos do Denodo não encontrada para a competência {competencia_base} em: {parquet_path}. "
+            f"Base Silver de contratos do Denodo não encontrada para a competência "
+            f"{competencia_base} em: {parquet_path}. "
             "Execute a ingestão (T2.1.2) primeiro."
         )
 
     df_contratos = pd.read_parquet(parquet_path)
 
     if df_contratos.empty:
-        return pd.DataFrame(columns=["CNPJ", "VOLUME_ENQUADRAMENTO_MWM", "POSSUI_PELO_MENOS_5_MWM"])
+        return pd.DataFrame(
+            columns=[
+                "CNPJ",
+                "VOLUME_ENQUADRAMENTO_MWM",
+                "POSSUI_PELO_MENOS_5_MWM",
+            ]
+        )
 
     # 1. Filtra apenas contratos ativos/válidos se houver coluna de status
     if "STATUS" in df_contratos.columns:
-        # Padroniza para capturar variações como 'Ativo', 'ATIVO', 'Ativo/Fechado'
-        df_contratos["STATUS_UP"] = df_contratos["STATUS"].astype(str).str.upper()
-        df_ativos = df_contratos[df_contratos["STATUS_UP"].str.contains("ATIVO", na=False)].copy()
+        # Padroniza para capturar variações como:
+        # 'Ativo', 'ATIVO', 'Ativo/Fechado', etc.
+        df_contratos["STATUS_UP"] = (
+            df_contratos["STATUS"]
+            .astype(str)
+            .str.upper()
+        )
+
+        df_ativos = df_contratos[
+            df_contratos["STATUS_UP"].str.contains("ATIVO", na=False)
+        ].copy()
     else:
         df_ativos = df_contratos.copy()
 
     if df_ativos.empty:
-        return pd.DataFrame(columns=["CNPJ", "VOLUME_ENQUADRAMENTO_MWM", "POSSUI_PELO_MENOS_5_MWM"])
+        return pd.DataFrame(
+            columns=[
+                "CNPJ",
+                "VOLUME_ENQUADRAMENTO_MWM",
+                "POSSUI_PELO_MENOS_5_MWM",
+            ]
+        )
 
-    # 2. Agrupa por CNPJ e Competência para somar volumes simultâneos
+    # 2. Cria/valida a raiz do CNPJ para agregar Matriz e Filiais.
+    # Prefere a coluna CNPJ_RAIZ já vinda padronizada da Silver (8 dígitos garantidos).
+    # Caso não exista (bases legadas), recalcula a partir do CNPJ de 14 dígitos.
+    if "CNPJ_RAIZ" not in df_ativos.columns:
+        df_ativos["CNPJ_RAIZ"] = (
+            df_ativos["CNPJ"]
+            .astype(str)
+            .str.replace(r"\D", "", regex=True)
+            .str[:8]
+        )
+
+    # Resolução case-insensitive das colunas de competência (ANO/ano, MES/mes).
+    # A Silver do Denodo pode entregar em maiúsculas ou minúsculas dependendo
+    # da versão da ingestão.
+    col_ano = next((c for c in df_ativos.columns if c.upper() == "ANO"), None)
+    col_mes = next((c for c in df_ativos.columns if c.upper() == "MES"), None)
+
+    # Resolução case-insensitive da coluna de volume
+    col_vol = next(
+        (c for c in df_ativos.columns if c.upper() in {"VOLUME_CONTRATADO_MENSAL_MWM", "VOLUME_MWM"}),
+        None,
+    )
+    if col_vol is None:
+        raise KeyError(
+            "Coluna de volume (VOLUME_CONTRATADO_MENSAL_MWM ou VOLUME_MWM) "
+            "não encontrada na base de contratos."
+        )
+    if col_vol != "VOLUME_CONTRATADO_MENSAL_MWM":
+        df_ativos = df_ativos.rename(columns={col_vol: "VOLUME_CONTRATADO_MENSAL_MWM"})
+
+    # Garante competência: se não existir como coluna, monta a partir de ANO+MES
+    if "COMPETENCIA" not in df_ativos.columns and col_ano and col_mes:
+        df_ativos["COMPETENCIA"] = (
+            df_ativos[col_ano].astype(str).str.replace(r"\.0$", "", regex=True)
+            + df_ativos[col_mes].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(2)
+        )
+
+    # 3. Agrupa por CNPJ_RAIZ e Competência para somar volumes
+    # simultâneos de Matriz + Filiais do mesmo grupo.
     df_mensal = (
-        df_ativos.groupby(["CNPJ", "COMPETENCIA"], as_index=False)["VOLUME_CONTRATADO_MENSAL_MWM"]
+        df_ativos.groupby(
+            ["CNPJ_RAIZ", "COMPETENCIA"],
+            as_index=False,
+        )["VOLUME_CONTRATADO_MENSAL_MWM"]
         .sum()
-        .rename(columns={"VOLUME_CONTRATADO_MENSAL_MWM": "VOLUME_CONSOLIDADO_MENSAL"})
+        .rename(
+            columns={
+                "VOLUME_CONTRATADO_MENSAL_MWM": "VOLUME_CONSOLIDADO_MENSAL"
+            }
+        )
     )
 
-    # 3. Regra de Negócio: O volume de enquadramento é o MAIOR volume mensal
-    df_enquadramento = (
-        df_mensal.groupby("CNPJ", as_index=False)["VOLUME_CONSOLIDADO_MENSAL"]
+    # 4. Regra de Negócio:
+    # O volume de enquadramento do Grupo é o MAIOR volume mensal consolidado.
+    df_enq_raiz = (
+        df_mensal.groupby(
+            "CNPJ_RAIZ",
+            as_index=False,
+        )["VOLUME_CONSOLIDADO_MENSAL"]
         .max()
-        .rename(columns={"VOLUME_CONSOLIDADO_MENSAL": "VOLUME_ENQUADRAMENTO_MWM"})
+        .rename(
+            columns={
+                "VOLUME_CONSOLIDADO_MENSAL": "VOLUME_ENQUADRAMENTO_MWM"
+            }
+        )
     )
 
-    # 4. Deriva o indicador booleano de corte (Parametrizado em 5.0 MWm conforme Planejamento §6.2)
+    # 5. Deriva o indicador booleano de corte.
+    # Parametrizado em 5.0 MWm conforme Planejamento §6.2.
     LIMIAR_MWM = 5.0
-    df_enquadramento["POSSUI_PELO_MENOS_5_MWM"] = (
-        df_enquadramento["VOLUME_ENQUADRAMENTO_MWM"] >= LIMIAR_MWM
+
+    df_enq_raiz["POSSUI_PELO_MENOS_5_MWM"] = (
+        df_enq_raiz["VOLUME_ENQUADRAMENTO_MWM"] >= LIMIAR_MWM
     )
 
-    # Persiste o resultado resumido na camada Relacional (Dimensions/Configs)
+    # 6. Propaga o enquadramento da raiz de volta para todos os CNPJs
+    # completos (14 dígitos) encontrados na base.
+    #
+    # Isso garante que:
+    # - a Matriz herde o volume consolidado das Filiais;
+    # - as Filiais herdem o mesmo enquadramento da Matriz;
+    # - todos os estabelecimentos do mesmo grupo tenham o mesmo critério
+    #   de enquadramento.
+    df_enquadramento = pd.merge(
+        df_ativos[["CNPJ", "CNPJ_RAIZ"]].drop_duplicates(),
+        df_enq_raiz,
+        on="CNPJ_RAIZ",
+        how="left",
+    ).drop(columns=["CNPJ_RAIZ"])
+
+    # Persiste o resultado resumido na camada Relacional
+    # (Dimensions/Configs).
     relational_dir = context.path("relational_configs")
     relational_dir.mkdir(parents=True, exist_ok=True)
-    output_path = relational_dir / f"enquadramento_consumidores_{competencia_base}.csv"
-    
-    df_enquadramento.to_csv(output_path, index=False, encoding="utf-8-sig")
+
+    output_path = (
+        relational_dir
+        / f"enquadramento_consumidores_{competencia_base}.csv"
+    )
+
+    df_enquadramento.to_csv(
+        output_path,
+        index=False,
+        encoding="utf-8-sig",
+    )
 
     return df_enquadramento
 ```
 
 
 ---
-## src\services\ficha_validator.py
-Linhas: 123
-Classes: DomainRuleEngine
-Funções: _is_empty, validate_record, __init__, validate
-```python
-"""Validação técnica e de domínio unificada dos registros extraídos."""
-
-from __future__ import annotations
-from typing import Any
-
-def _is_empty(value: Any) -> bool:
-    """Indica se o valor deve ser tratado como vazio."""
-    if value is None:
-        return True
-    if isinstance(value, str) and not value.strip():
-        return True
-    return False
-
-class DomainRuleEngine:
-    """Motor unificado que aplica validações nativas e regras do JSON em um único passo."""
-
-    def __init__(self, quality_rules: dict[str, Any] | None = None):
-        self.quality_rules = quality_rules or {}
-        self.dynamic_rules = self.quality_rules.get("rules", [])
-
-    def validate(
-        self, record: dict[str, Any], required_fields: list[str]
-    ) -> tuple[list[str], list[str]]:
-        errors: list[str] = []
-        warnings: list[str] = []
-
-        # 1. Validação de Campos Obrigatórios (Estática)
-        for field in required_fields:
-            if _is_empty(record.get(field)):
-                errors.append(f"Campo obrigatório ausente: {field}")
-
-        # 2. Validações de Domínio Universais (Fallback / Plausibilidade Básica)
-        pl = record.get("PATRIMONIO_LIQUIDO")
-        if _is_empty(pl):
-            warnings.append("PATRIMONIO_LIQUIDO não informado.")
-        elif not isinstance(pl, (int, float)):
-            errors.append("PATRIMONIO_LIQUIDO inválido: valor não numérico.")
-
-        data_df = record.get("DATA_DEMONSTRACAO_FINANCEIRA")
-        data_calculo = record.get("DATA_CALCULO")
-        if _is_empty(data_df):
-            warnings.append("DATA_DEMONSTRACAO_FINANCEIRA não informada.")
-        if _is_empty(data_calculo):
-            warnings.append("DATA_CALCULO não informada.")
-
-        # Trata a PD se não houver regra dinâmica explícita (para não quebrar comercializadoras)
-        has_pd_rule = any(r.get("field") == "PROBABILIDADE_DEFAULT" for r in self.dynamic_rules)
-        if not has_pd_rule and "PROBABILIDADE_DEFAULT" in record:
-            pd_val = record.get("PROBABILIDADE_DEFAULT")
-            if _is_empty(pd_val):
-                warnings.append("PROBABILIDADE_DEFAULT não informada.")
-            elif not isinstance(pd_val, (int, float)):
-                errors.append("PROBABILIDADE_DEFAULT inválida: valor não numérico.")
-            elif pd_val < 0 or pd_val > 100:
-                errors.append("PROBABILIDADE_DEFAULT inválida: fora do intervalo [0, 100].")
-
-        # 3. Validações Dinâmicas (Data Quality Rules JSON)
-        for rule in self.dynamic_rules:
-            field = rule.get("field")
-            val = record.get(field)
-
-            if _is_empty(val):
-                continue
-
-            if not isinstance(val, (int, float)):
-                errors.append(f"{field} inválido: valor não numérico.")
-                continue
-
-            rule_type = rule.get("type")
-            if rule_type == "range":
-                r_min, r_max = rule.get("min"), rule.get("max")
-                if r_min is not None and val < r_min:
-                    errors.append(f"{field} inválido: valor {val} menor que o limite ({r_min}).")
-                if r_max is not None and val > r_max:
-                    errors.append(f"{field} inválido: valor {val} maior que o limite ({r_max}).")
-            elif rule_type == "min":
-                r_val = rule.get("value")
-                if r_val is not None and val < r_val:
-                    errors.append(f"{field} inválido: valor {val} menor que o limite ({r_val}).")
-            elif rule_type == "max":
-                r_val = rule.get("value")
-                if r_val is not None and val > r_val:
-                    errors.append(f"{field} inválido: valor {val} maior que o limite ({r_val}).")
-
-        return errors, warnings
-
-
-def validate_record(
-    record: dict[str, Any],
-    required_fields: list[str],
-    logger: Any | None = None,
-    quality_rules: dict[str, Any] | None = None,
-) -> tuple[list[str], list[str]]:
-    """Valida o registro normalizado da ficha usando o DomainRuleEngine."""
-    try:
-        if logger is not None:
-            logger.info(
-                "Iniciando validação unificada do registro. CNPJ=%s EMPRESA=%s",
-                record.get("CNPJ"),
-                record.get("EMPRESA"),
-            )
-
-        engine = DomainRuleEngine(quality_rules)
-        errors, warnings = engine.validate(record, required_fields)
-
-        if logger is not None:
-            logger.info(
-                "Validação concluída. CNPJ=%s ERROS=%s AVISOS=%s",
-                record.get("CNPJ"),
-                len(errors),
-                len(warnings),
-            )
-            if errors:
-                logger.warning("Erros de validação para CNPJ=%s: %s", record.get("CNPJ"), errors)
-            if warnings:
-                logger.warning("Avisos de validação para CNPJ=%s: %s", record.get("CNPJ"), warnings)
-
-        return errors, warnings
-
-    except Exception:
-        if logger is not None:
-            logger.exception("Falha inesperada na validação do registro. CNPJ=%s", record.get("CNPJ"))
-        raise
-```
-
-
----
-## src\services\garantias_service.py
-Linhas: 178
-Classes: GarantiaIngestionError
-Funções: ingest_garantias_data
-```python
-"""Serviço de ingestão, validação e alertas de Garantias.
-
-Lê o CSV extraído da query customizada do Denodo, salva na Bronze,
-valida regras de vigência e cobertura, gera alertas e publica na Silver.
-Ref: §2 (Módulo Garantias), §6.8 do Planejamento Funcional.
-"""
-
-from __future__ import annotations
-
-import shutil
-from datetime import datetime
-from pathlib import Path
-from typing import Any
-
-import pandas as pd
-
-from app.context import AppContext
-from common.logging_utils import get_logger
-from domain.enums import StatusGarantia
-from storage.silver_store import write_silver_dataset
-
-class GarantiaIngestionError(Exception):
-    """Exceção levantada para falhas na ingestão de garantias."""
-
-# Limiar mínimo de cobertura para disparo de alerta GAR_002 (§6.8)
-COBERTURA_MINIMA = 0.5
-
-def ingest_garantias_data(
-    context: AppContext,
-    df_garantias_externo: pd.DataFrame | None = None,
-) -> dict[str, Any]:
-    run_id = f"GAR_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    log_file = context.path("log_runner") / f"{run_id}__ingestao_garantias.log"
-    logger = get_logger("bdc.garantias", log_file)
-
-    try:
-        logger.info("Iniciando ingestão de Garantias (Modo CSV Local).")
-
-        # --- Obtenção dos dados ---
-        if df_garantias_externo is not None:
-            df_raw = df_garantias_externo.copy()
-            logger.info("Usando DataFrame externo fornecido.")
-        else:
-            input_dir = context.path("entradas") / "garantias"
-            input_dir.mkdir(parents=True, exist_ok=True)
-
-            arquivos = [
-                f for f in input_dir.iterdir()
-                if f.is_file() and f.suffix.lower() in {".xlsx", ".xls", ".csv"}
-                and not f.name.startswith("~$")
-            ]
-
-            if not arquivos:
-                logger.warning("Nenhum arquivo de garantias encontrado em %s.", input_dir)
-                return {"run_id": run_id, "linhas_processadas": 0, "status": "SEM_DADOS"}
-
-            arquivo_fonte = max(arquivos, key=lambda f: f.stat().st_mtime)
-            logger.info("Lendo garantias do arquivo local: %s", arquivo_fonte.name)
-
-            if arquivo_fonte.suffix.lower() == ".csv":
-                df_raw = pd.read_csv(arquivo_fonte, dtype=str, sep=";", encoding="utf-8-sig")
-            else:
-                df_raw = pd.read_excel(arquivo_fonte, dtype=str)
-
-        if df_raw.empty:
-            return {"run_id": run_id, "linhas_processadas": 0, "status": "SEM_DADOS"}
-
-        # 1. Snapshot na Bronze (Imutabilidade — §11.5)
-        bronze_dir = context.path("bronze") / "snapshots_fontes" / "garantias"
-        bronze_dir.mkdir(parents=True, exist_ok=True)
-        caminho_bronze = bronze_dir / f"raw_garantias_{datetime.now().strftime('%Y%m%d')}.parquet"
-        
-        # Salva o Parquet cru na Bronze
-        df_raw.to_parquet(caminho_bronze, index=False)
-
-        # Padroniza as colunas em maiúsculo (pois o CSV veio em minúsculo da query)
-        df_garantias = df_raw.copy()
-        df_garantias.columns = [str(c).strip().upper() for c in df_garantias.columns]
-
-        # Limpa CNPJ, converte Datas e Valores Numéricos
-        df_garantias["CNPJ_CONTRAPARTE"] = (
-            df_garantias["CNPJ_CONTRAPARTE"]
-            .astype(str).str.replace(r"\D", "", regex=True).str.zfill(14)
-        )
-        # O CSV usa VENCIMENTO, não VIGENCIA_FIM
-        df_garantias["VENCIMENTO"] = pd.to_datetime(df_garantias["VENCIMENTO"], errors="coerce")
-
-        if "PERCENTUAL_COBERTURA" not in df_garantias.columns:
-            df_garantias["PERCENTUAL_COBERTURA"] = 1.0
-        else:
-            df_garantias["PERCENTUAL_COBERTURA"] = pd.to_numeric(
-                df_garantias["PERCENTUAL_COBERTURA"], errors="coerce"
-            ).fillna(1.0)
-
-        hoje = pd.Timestamp(datetime.now().date())
-        alertas = []
-        status_list = []
-
-        # 2. Validação de Regras de Negócio e Geração de Alertas
-        for _, row in df_garantias.iterrows():
-            garantia_id = row.get("GARANTIA_ID")
-            cnpj = row.get("CNPJ_CONTRAPARTE")
-            data_fim = row.get("VENCIMENTO")
-            cobertura = float(row.get("PERCENTUAL_COBERTURA", 1.0))
-
-            # Regra: GAR_001 (Vencida ou Próxima do Vencimento — §6.8)
-            dias_para_vencimento = (data_fim - hoje).days if pd.notnull(data_fim) else -1
-
-            if dias_para_vencimento < 0:
-                status_garantia = StatusGarantia.VENCIDA.value
-                data_fmt = data_fim.strftime('%Y-%m-%d') if pd.notnull(data_fim) else "N/A"
-                alertas.append({
-                    "CODIGO": "GAR_001",
-                    "CNPJ": cnpj,
-                    "SEVERIDADE": "ALTO",
-                    "MENSAGEM": f"Garantia {garantia_id} está vencida desde {data_fmt}."
-                })
-            elif 0 <= dias_para_vencimento <= 30:
-                status_garantia = StatusGarantia.PROXIMA_VENCIMENTO.value
-                alertas.append({
-                    "CODIGO": "GAR_001",
-                    "CNPJ": cnpj,
-                    "SEVERIDADE": "MEDIO",
-                    "MENSAGEM": f"Garantia {garantia_id} próxima do vencimento ({dias_para_vencimento} dias)."
-                })
-            else:
-                status_garantia = StatusGarantia.VIGENTE.value
-
-            # Regra: GAR_002 (Cobertura abaixo do mínimo — §6.8)
-            if cobertura < COBERTURA_MINIMA:
-                alertas.append({
-                    "CODIGO": "GAR_002",
-                    "CNPJ": cnpj,
-                    "SEVERIDADE": "MEDIO",
-                    "MENSAGEM": f"Garantia {garantia_id} com cobertura insuficiente ({cobertura*100:.1f}%)."
-                })
-
-            status_list.append(status_garantia)
-
-        # Sobrescrevemos o status da query SQL caso o Python perceba que venceu hoje
-        df_garantias["STATUS"] = status_list
-        df_garantias["VENCIMENTO"] = df_garantias["VENCIMENTO"].dt.strftime("%Y-%m-%d")
-        df_garantias["RUN_ID"] = run_id
-        df_garantias["DT_PROCESSAMENTO"] = datetime.now().isoformat(timespec="seconds")
-
-        # 3. Gravação de Alertas e Fatos
-        if alertas:
-            df_alertas = pd.DataFrame(alertas)
-            df_alertas["RUN_ID"] = run_id
-            df_alertas["DATA_DETECCAO"] = datetime.now().isoformat(timespec="seconds")
-            df_alertas["STATUS_ALERTA"] = "ABERTO"
-
-            write_silver_dataset(
-                records=df_alertas.to_dict(orient="records"),
-                output_dir=context.path("silver") / "alertas_credito",
-                filename=f"alertas_garantias_{run_id}"
-            )
-            logger.info("Gerados %s alertas de garantias (GAR_001 / GAR_002).", len(alertas))
-
-        silver_dir = context.path("silver") / "garantias_silver"
-        write_silver_dataset(
-            records=df_garantias.to_dict(orient="records"),
-            output_dir=silver_dir,
-            filename="fato_garantia"
-        )
-
-        logger.info("Ingestão de garantias concluída. Registros salvos: %s", len(df_garantias))
-
-        return {
-            "run_id": run_id,
-            "linhas_processadas": len(df_garantias),
-            "alertas_gerados": len(alertas),
-            "status": "SUCESSO"
-        }
-
-    except Exception as exc:
-        logger.exception("Falha crítica na ingestão de garantias.")
-        raise GarantiaIngestionError(f"Erro ao ingerir base de garantias: {exc}") from exc
-```
-
-
----
-## src\services\mtm_connector.py
-Linhas: 70
-Classes: MtmConnectionError
-Funções: _encontrar_arquivo_mtm_recente, fetch_mtm_consolidado
-```python
-"""Conector de integração com a base de MtM (Risco de Mercado)."""
-
-from __future__ import annotations
-from pathlib import Path
-from typing import Any
-from datetime import datetime
-import pandas as pd
-
-class MtmConnectionError(Exception):
-    """Exceção levantada quando a base de MtM não pode ser obtida."""
-
-def _encontrar_arquivo_mtm_recente(diretorio: Path) -> Path:
-    arquivos = [f for f in diretorio.iterdir() if f.is_file() and f.suffix.lower() in {".xlsx", ".xls", ".csv"} and not f.name.startswith("~$")]
-    if not arquivos: raise FileNotFoundError(f"Nenhum arquivo de MtM encontrado na pasta: {diretorio}")
-    return max(arquivos, key=lambda f: f.stat().st_mtime)
-
-def fetch_mtm_consolidado(input_dir: Path | str, logger: Any | None = None) -> pd.DataFrame:
-    diretorio = Path(input_dir)
-    diretorio.mkdir(parents=True, exist_ok=True)
-    
-    try:
-        arquivo_fonte = _encontrar_arquivo_mtm_recente(diretorio)
-        if logger: logger.info("Lendo base de MtM a partir do arquivo local: %s", arquivo_fonte.name)
-        
-        if arquivo_fonte.suffix.lower() == ".csv":
-            df_bruto = pd.read_csv(arquivo_fonte, sep=";", encoding="utf-8-sig", dtype=str, low_memory=False)
-        else:
-            df_bruto = pd.read_excel(arquivo_fonte, dtype=str)
-
-        df_bruto.columns = [str(c).strip().upper() for c in df_bruto.columns]
-
-        # 1. CNPJ
-        col_cnpj = next((c for c in df_bruto.columns if "CNPJ" in c and "CONTROLADOR" not in c), None)
-        cnpj_series = df_bruto[col_cnpj].astype(str).str.replace(r"\D", "", regex=True).str.zfill(14) if col_cnpj else pd.Series(["00000000000000"] * len(df_bruto), name="CNPJ")
-
-        # 2. MTM TOTAL (Reais)
-        if "MTM_TOTAL" in df_bruto.columns:
-            raw_mtm = df_bruto["MTM_TOTAL"].astype(str).str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
-            valores_mtm = pd.to_numeric(raw_mtm, errors="coerce").fillna(0.0)
-        else:
-            valores_mtm = pd.Series([0.0] * len(df_bruto), name="MTM_TOTAL")
-
-        # 3. NOTIONAL FINANCEIRO (MWh * Preço)
-        if "ENERGIA_MWH" in df_bruto.columns and "PRECO_REAJUSTADO" in df_bruto.columns:
-            vol = df_bruto["ENERGIA_MWH"].astype(str).str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
-            px = df_bruto["PRECO_REAJUSTADO"].astype(str).str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
-            valores_notional = pd.to_numeric(vol, errors="coerce").fillna(0.0) * pd.to_numeric(px, errors="coerce").fillna(0.0)
-        else:
-            valores_notional = pd.Series([0.0] * len(df_bruto), name="NOTIONAL")
-
-        # 4. Dados Base
-        contrato_series = df_bruto.get("COD_CONTRATO", pd.Series([None] * len(df_bruto)))
-        data_base_series = df_bruto.get("DATA_AVALIACAO", pd.Series([datetime.now().strftime("%Y-%m-%d")] * len(df_bruto)))
-
-        # 5. Output
-        df_resultado = pd.DataFrame({
-            "CNPJ": cnpj_series,
-            "CONTRATO": contrato_series,
-            "DATA_BASE": data_base_series,
-            "MTM_POSITIVO": valores_mtm.apply(lambda x: x if x > 0 else 0.0),
-            "MTM_NEGATIVO": valores_mtm.apply(lambda x: abs(x) if x < 0 else 0.0),
-            "NOTIONAL": valores_notional
-        })
-
-        if logger: logger.info("MtM lido. Notional convertido para Financeiro (R$).")
-        return df_resultado
-
-    except Exception as exc:
-        if logger: logger.exception("Falha ao processar o arquivo local de MtM.")
-        raise MtmConnectionError(f"Erro ao ler base de MtM: {exc}") from exc
-```
-
-
----
-## src\services\mtm_ingestion_service.py
-Linhas: 130
-Classes: MtmReconciliationError
-Funções: ingest_mtm_data
-```python
-"""Serviço de ingestão e agregação da base de MtM para as camadas Bronze e Silver.
-
-fix(T2.2.2): Removida lógica duplicada (leitura antiga via MTM_NETWORK_PATH
-que salvava Bronze duas vezes). Mantido apenas o fluxo via mtm_connector.
-Ref: §3.5, §11.6 do Planejamento Funcional.
-"""
-
-from __future__ import annotations
-
-import shutil
-from datetime import datetime
-from typing import Any
-
-import pandas as pd
-
-from app.context import AppContext
-from common.logging_utils import get_logger
-from services.mtm_connector import fetch_mtm_consolidado, _encontrar_arquivo_mtm_recente
-from storage.silver_store import write_silver_dataset
-
-
-class MtmReconciliationError(Exception):
-    """Exceção para falhas na reconciliação de totais entre Bronze e Silver."""
-
-
-def ingest_mtm_data(context: AppContext) -> dict[str, Any]:
-    """Orquestra a ingestão MtM: Bronze snapshot → Conector → Agregação → Reconciliação → Silver."""
-    run_id = f"MTM_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    log_file = context.path("log_runner") / f"{run_id}__ingestao_mtm.log"
-    logger = get_logger("bdc.mtm", log_file)
-
-    try:
-        logger.info("Iniciando processo de ingestão e agregação da base de MtM.")
-
-        input_dir = context.path("entradas") / "mtm"
-        arquivo_bruto = _encontrar_arquivo_mtm_recente(input_dir)
-
-        # 1. Copia o snapshot bruto intacto para a Bronze (DoD T2.2.2 — §11.5)
-        bronze_dir = context.path("bronze") / "snapshots_fontes" / "mtm"
-        bronze_dir.mkdir(parents=True, exist_ok=True)
-
-        nome_bronze = f"raw_mtm_{datetime.now().strftime('%Y%m%d')}_{arquivo_bruto.name}"
-        caminho_bronze = bronze_dir / nome_bronze
-        shutil.copy2(arquivo_bruto, caminho_bronze)
-        logger.info("Snapshot bruto salvo na Bronze em: %s", caminho_bronze)
-
-        # 2. Leitura via Conector (T2.2.1)
-        df_mtm = fetch_mtm_consolidado(input_dir=input_dir, logger=logger)
-
-        if df_mtm.empty:
-            logger.warning("Nenhum registro encontrado na base de MtM.")
-            return {"run_id": run_id, "contrapartes_consolidadas": 0, "status": "SEM_DADOS"}
-
-        # Captura totais originais para controle de reconciliação
-        soma_pos_orig = float(df_mtm["MTM_POSITIVO"].sum())
-        soma_neg_orig = float(df_mtm["MTM_NEGATIVO"].sum())
-        soma_not_orig = float(df_mtm["NOTIONAL"].sum())
-
-        # 3. Agregação por contraparte (CNPJ) e DATA_BASE para a Silver
-        if "DATA_BASE" not in df_mtm.columns:
-            df_mtm["DATA_BASE"] = datetime.now().strftime("%Y-%m-%d")
-
-        df_agregado = (
-            df_mtm.groupby(["CNPJ", "DATA_BASE"], as_index=False)
-            .agg({
-                "MTM_POSITIVO": "sum",
-                "MTM_NEGATIVO": "sum",
-                "NOTIONAL": "sum"
-            })
-            .rename(columns={
-                "MTM_POSITIVO": "MTM_POSITIVO_TOTAL",
-                "MTM_NEGATIVO": "MTM_NEGATIVO_TOTAL",
-                "NOTIONAL": "NOTIONAL_TOTAL"
-            })
-        )
-
-        # 4. Reconciliação de integridade entre Bronze e Silver (§11.6)
-        reconciliation_config = context.config.get("reconciliacao_mtm", {})
-        tolerancia = reconciliation_config.get("tolerancia_absoluta", 0.01)
-
-        soma_pos_silver = float(df_agregado["MTM_POSITIVO_TOTAL"].sum())
-        soma_neg_silver = float(df_agregado["MTM_NEGATIVO_TOTAL"].sum())
-        soma_not_silver = float(df_agregado["NOTIONAL_TOTAL"].sum())
-
-        checks = [
-            ("MTM Positivo Total", soma_pos_orig, soma_pos_silver),
-            ("MTM Negativo Total", soma_neg_orig, soma_neg_silver),
-            ("Notional Total", soma_not_orig, soma_not_silver),
-        ]
-        for label, original, silver in checks:
-            diff = abs(original - silver)
-            if diff > tolerancia:
-                raise MtmReconciliationError(
-                    f"Divergência de reconciliação no {label}! "
-                    f"Original: {original} vs Silver: {silver} (Diff: {diff} > Tolerância: {tolerancia})"
-                )
-
-        df_agregado["RUN_ID"] = run_id
-        df_agregado["DT_PROCESSAMENTO"] = datetime.now().isoformat(timespec="seconds")
-
-        records = df_agregado.to_dict(orient="records")
-
-        # 5. Persistência na Silver (CSV + Parquet) — versionado por run_id (§1.5)
-        silver_output_dir = context.path("silver") / "mtm_consolidado_silver"
-        csv_path, parquet_path = write_silver_dataset(
-            records=records,
-            output_dir=silver_output_dir,
-            filename=f"mtm_agregado_contraparte_{run_id}"
-        )
-
-        # Ponteiro LATEST para consumo downstream (preserva versão anterior)
-        latest_path = silver_output_dir / "mtm_agregado_contraparte.parquet"
-        if latest_path.exists():
-            ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-            shutil.copy2(latest_path, silver_output_dir / f"mtm_agregado_contraparte_HIST_{ts}.parquet")
-        shutil.copy2(parquet_path, latest_path)
-
-        return {
-            "run_id": run_id,
-            "linhas_processadas": len(df_mtm),
-            "contrapartes_consolidadas": len(records),
-            "soma_mtm_positivo_total": soma_pos_silver,
-            "soma_mtm_negativo_total": soma_neg_silver,
-            "soma_notional_total": soma_not_silver,
-            "status": "SUCESSO"
-        }
-
-    except Exception as exc:
-        logger.exception("Falha crítica na ingestão/reconciliação do MtM.")
-        raise
-```
-
-
----
-## src\services\network_discovery_service.py
-Linhas: 188
-Classes: NetworkDiscoveryError
-Funções: _obter_assinaturas_locais, run_network_discovery
-```python
-"""Serviço de Coleta na Rede e Triagem Automática de Fichas de Crédito."""
-
-from __future__ import annotations
-
-import logging
-import shutil
-from datetime import datetime
-from pathlib import Path
-from typing import Any
-
-import pandas as pd
-
-from app.context import AppContext
-from common.excel import close_workbook_safely, open_workbook
-from common.logging_utils import get_logger
-from control.layout_catalog import (
-    load_layouts_comercializadoras,
-    load_layouts_consumidores,
-)
-from services.ficha_classifier import classify_workbook
-
-EXTENSOES_EXCEL = {".xlsx", ".xls", ".xlsm"}
-
-class NetworkDiscoveryError(Exception):
-    """Exceção levantada para falhas na varredura de arquivos de rede."""
-
-def _obter_assinaturas_locais(entradas_dir: Path) -> set[str]:
-    """
-    Varre a pasta local ENTRADAS/fichas (abrangendo pendentes, processadas, 
-    rejeitadas e nao_identificados) e gera uma assinatura 'Nome_Tamanho' 
-    para cada arquivo. Isso evita downloads redundantes da rede.
-    """
-    assinaturas = set()
-    fichas_dir = entradas_dir / "fichas"
-    
-    if not fichas_dir.exists():
-        return assinaturas
-
-    for f in fichas_dir.rglob("*"):
-        if f.is_file() and f.suffix.lower() in EXTENSOES_EXCEL and not f.name.startswith("~$"):
-            try:
-                # Assinatura rápida e leve: Nome do arquivo + Tamanho em bytes
-                assinatura = f"{f.name}_{f.stat().st_size}"
-                assinaturas.add(assinatura)
-            except OSError:
-                continue
-                
-    return assinaturas
-
-def run_network_discovery(context: AppContext) -> dict[str, Any]:
-    """
-    Varre os diretórios de rede parametrizados, ignora arquivos já existentes localmente,
-    classifica as novas fichas e as copia para as pastas de 'pendentes'.
-    """
-    run_id = f"DISC_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    log_file = context.path("log_runner") / f"{run_id}__discovery.log"
-    logger = get_logger("bdc.discovery", log_file)
-
-    try:
-        logger.info("Iniciando varredura inteligente na rede...")
-
-        # 1. Carrega caminhos de rede e lista de arquivos já conhecidos
-        network_paths = context.config.get("network_paths", {})
-        if not network_paths:
-            logger.warning("Nenhum 'network_paths' configurado no config.json.")
-            return {"run_id": run_id, "status": "SEM_CONFIGURACAO"}
-
-        assinaturas_conhecidas = _obter_assinaturas_locais(context.path("entradas"))
-        logger.info("Encontrados %s arquivos já cacheados localmente. Eles serão ignorados na rede.", len(assinaturas_conhecidas))
-
-        # 2. Carrega catálogos de layouts silenciosamente
-        dummy_logger = logging.getLogger("dummy")
-        dummy_logger.setLevel(logging.CRITICAL)
-        layouts_com = load_layouts_comercializadoras(context, logger=dummy_logger)
-        layouts_cons = load_layouts_consumidores(context, logger=dummy_logger)
-
-        # 3. Prepara diretórios de destino
-        dest_com = context.path("input_fichas_comercializadoras_pendentes")
-        dest_cons = context.path("input_fichas_consumidores_pendentes")
-        dest_falha = context.path("entradas") / "fichas" / "nao_identificados"
-
-        dest_com.mkdir(parents=True, exist_ok=True)
-        dest_cons.mkdir(parents=True, exist_ok=True)
-        dest_falha.mkdir(parents=True, exist_ok=True)
-
-        registros_relatorio = []
-        cont_com, cont_cons, cont_falha, cont_ignorados = 0, 0, 0, 0
-
-        # 4. Varredura na Rede
-        for key, pasta_raiz in network_paths.items():
-            raiz = Path(pasta_raiz)
-            if not raiz.exists():
-                logger.warning("Pasta de rede inacessível: %s", raiz)
-                continue
-
-            for caminho in raiz.rglob("*"):
-                if not caminho.is_file() or caminho.suffix.lower() not in EXTENSOES_EXCEL or caminho.name.startswith("~$"):
-                    continue
-
-                nome_original = caminho.name
-                
-                # Filtro Antiduplicidade de Rede (Aderente à Seção 4.1 do Planejamento)
-                try:
-                    assinatura_rede = f"{nome_original}_{caminho.stat().st_size}"
-                except OSError:
-                    continue
-
-                if assinatura_rede in assinaturas_conhecidas:
-                    cont_ignorados += 1
-                    continue
-
-                logger.info("Novo arquivo detectado na rede: %s", nome_original)
-
-                workbook = None
-                destino_final = "ERRO_LEITURA"
-                tipo_identificado = "FALHA/DESCONHECIDO"
-
-                try:
-                    # Trazemos para a memória (via openpyxl) SOMENTE se for um arquivo novo
-                    workbook = open_workbook(caminho)
-
-                    match_com = classify_workbook(workbook, layouts_com, logger=dummy_logger)
-                    match_cons = None
-                    if not match_com:
-                        match_cons = classify_workbook(workbook, layouts_cons, logger=dummy_logger)
-
-                    close_workbook_safely(workbook)
-
-                    if match_com:
-                        shutil.copy2(caminho, dest_com / nome_original)
-                        tipo_identificado = "COMERCIALIZADORA"
-                        destino_final = str(dest_com)
-                        cont_com += 1
-                    elif match_cons:
-                        shutil.copy2(caminho, dest_cons / nome_original)
-                        tipo_identificado = "CONSUMIDOR"
-                        destino_final = str(dest_cons)
-                        cont_cons += 1
-                    else:
-                        shutil.copy2(caminho, dest_falha / nome_original)
-                        destino_final = str(dest_falha)
-                        cont_falha += 1
-
-                except Exception as e:
-                    if workbook is not None:
-                        close_workbook_safely(workbook)
-                    logger.error("Erro ao ler %s: %s", nome_original, e)
-                    shutil.copy2(caminho, dest_falha / f"[ERRO_LEITURA] {nome_original}")
-                    destino_final = str(dest_falha)
-                    cont_falha += 1
-
-                # Adiciona a assinatura aos conhecidos em memória para evitar que
-                # o mesmo arquivo repetido em duas pastas de rede seja copiado duas vezes no mesmo run.
-                assinaturas_conhecidas.add(assinatura_rede)
-
-                registros_relatorio.append({
-                    "Origem_Rede": str(caminho),
-                    "Nome_Arquivo": nome_original,
-                    "Classificacao": tipo_identificado,
-                    "Destino_Local": destino_final,
-                    "Data_Coleta": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                })
-
-        # 5. Geração de Relatório
-        if registros_relatorio:
-            df = pd.DataFrame(registros_relatorio)
-            output_dir = context.path("output")
-            output_dir.mkdir(parents=True, exist_ok=True)
-            
-            nome_relatorio = output_dir / f"relatorio_triagem_{run_id}.xlsx"
-            df.to_excel(nome_relatorio, index=False)
-            logger.info("Relatório de triagem de rede gerado: %s", nome_relatorio.name)
-
-        summary = {
-            "run_id": run_id,
-            "arquivos_ignorados_ja_locais": cont_ignorados,
-            "comercializadoras_novas": cont_com,
-            "consumidores_novos": cont_cons,
-            "falhas_identificacao": cont_falha,
-            "status": "SUCESSO"
-        }
-        
-        logger.info("Discovery concluído. Resumo: %s", summary)
-        return summary
-
-    except Exception as exc:
-        logger.exception("Falha crítica durante a triagem de rede.")
-        raise NetworkDiscoveryError(f"Erro na varredura: {exc}") from exc
-```
-
-
----
-## src\services\receita_connector.py
-Linhas: 117
+## src\domain\credito\notas_quantitativas_cpura.py
+Linhas: 170
 Classes: -
-Funções: normalizar_cnpj, _cache_path, _load_cache, _save_cache, _is_same_day_cache, fetch_receita_data_batch
+Funções: _obter_valor_numerico, _normalizar_pd, _obter_faixas_notas, _atribuir_nota_por_faixa, calcular_notas_quantitativas_cpura
 ```python
 # -*- coding: utf-8 -*-
-"""Conector e cache da BrasilAPI para consulta cadastral de Receita Federal."""
+"""Cálculo das notas quantitativas de CPURA."""
 
 from __future__ import annotations
 
-import json
-import logging
-import time
-from datetime import date, datetime
-from pathlib import Path
 from typing import Any
 
-import pandas as pd
-import requests
-import urllib3
+from silver.normalizadores import normalizar_float
+from domain.credito.pd_exceptions import (
+    PdConfigurationError,
+    PdInputValidationError,
+)
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-from app.context import AppContext
 
-LOGGER = logging.getLogger(__name__)
+def _obter_valor_numerico(
+    registro: dict[str, Any],
+    campo: str,
+) -> float:
+    """Obtém e valida um valor numérico do registro."""
+    valor = normalizar_float(registro.get(campo))
 
-def normalizar_cnpj(valor: Any) -> str | None:
-    """Normaliza um CNPJ para 14 dígitos, preservando zeros à esquerda."""
-    if valor is None or pd.isna(valor):
-        return None
-    cnpj = str(valor).strip()
-    if cnpj.endswith(".0"):
-        cnpj = cnpj[:-2]
-    somente_digitos = "".join(ch for ch in cnpj if ch.isdigit())
-    if len(somente_digitos) != 14:
-        return None
-    return somente_digitos.zfill(14)
+    if valor is None:
+        raise PdInputValidationError(
+            f"{campo} não informado."
+        )
 
-def _cache_path(context: AppContext) -> Path:
-    return context.path("entradas") / "receita" / "cache" / "receita_cache.json"
+    return float(valor)
 
-def _load_cache(path: Path) -> dict[str, dict[str, Any]]:
-    if not path.exists():
-        return {}
+
+def _normalizar_pd(valor: float) -> float:
+    """Normaliza PD para escala decimal [0, 1]."""
+    if valor < 0:
+        raise PdInputValidationError(
+            f"PROBABILIDADE_DEFAULT negativa: {valor}"
+        )
+
+    if valor > 1:
+        valor = valor / 100.0
+
+    if valor > 1:
+        raise PdInputValidationError(
+            f"PROBABILIDADE_DEFAULT fora do intervalo após normalização: {valor}"
+        )
+
+    return valor
+
+
+def _obter_faixas_notas(
+    score_cpura_config: dict[str, Any],
+    indicador: str,
+) -> list[dict[str, Any]]:
+    """Obtém as faixas de notas de um indicador."""
+    faixas_root = score_cpura_config.get("faixas_notas_quantitativas")
+
+    if not isinstance(faixas_root, dict):
+        raise PdConfigurationError(
+            "Bloco 'faixas_notas_quantitativas' ausente ou inválido."
+        )
+
+    faixas = faixas_root.get(indicador)
+
+    if not isinstance(faixas, list) or not faixas:
+        raise PdConfigurationError(
+            f"Faixas quantitativas ausentes ou inválidas para {indicador}."
+        )
+
+    return faixas
+
+
+def _atribuir_nota_por_faixa(
+    valor: float,
+    faixas: list[dict[str, Any]],
+    indicador: str,
+) -> str:
+    """Atribui nota A-E conforme a faixa parametrizada."""
+    for faixa in faixas:
+        try:
+            nota = str(faixa["nota"]).strip().upper()
+            minimo = float(faixa["min"])
+            maximo = float(faixa["max"])
+        except KeyError as exc:
+            raise PdConfigurationError(
+                f"Faixa incompleta em {indicador}: {exc}"
+            ) from exc
+        except (TypeError, ValueError) as exc:
+            raise PdConfigurationError(
+                f"Faixa inválida em {indicador}."
+            ) from exc
+
+        if minimo > maximo:
+            raise PdConfigurationError(
+                f"Faixa inválida em {indicador}: min > max."
+            )
+
+        if minimo <= valor <= maximo:
+            return nota
+
+    raise PdInputValidationError(
+        f"Valor sem faixa configurada para {indicador}: {valor}"
+    )
+
+
+def calcular_notas_quantitativas_cpura(
+    registro: dict[str, Any],
+    score_cpura_config: dict[str, Any],
+    logger: Any | None = None,
+) -> dict[str, Any]:
+    """Calcula as notas quantitativas de CPURA."""
     try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError):
-        return {}
-    if not isinstance(payload, dict):
-        return {}
-    cache: dict[str, dict[str, Any]] = {}
-    for cnpj, record in payload.items():
-        normalized = normalizar_cnpj(cnpj)
-        if normalized and isinstance(record, dict):
-            cache[normalized] = record
-    return cache
+        if logger is not None:
+            logger.info(
+                "Iniciando cálculo das notas quantitativas CPURA. "
+                "CNPJ=%s",
+                registro.get("CNPJ"),
+            )
 
-def _save_cache(path: Path, cache: dict[str, dict[str, Any]]) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    ordered = {cnpj: cache[cnpj] for cnpj in sorted(cache)}
-    path.write_text(json.dumps(ordered, ensure_ascii=False, indent=2), encoding="utf-8")
+        pd_valor = _obter_valor_numerico(registro, "PROBABILIDADE_DEFAULT")
+        fco_rol_valor = _obter_valor_numerico(registro, "FCO")
+        roe_valor = _obter_valor_numerico(registro, "ROE")
+        roa_valor = _obter_valor_numerico(registro, "ROA")
 
-def _is_same_day_cache(record: dict[str, Any]) -> bool:
-    quando = record.get("DATA_CONSULTA")
-    if not quando:
-        return False
-    try:
-        return str(quando)[:10] == date.today().isoformat()
-    except Exception:
-        return False
+        pd_valor = _normalizar_pd(pd_valor)
 
-def fetch_receita_data_batch(cnpjs: list[str], context: AppContext) -> pd.DataFrame:
-    cache_path = _cache_path(context)
-    cache = _load_cache(cache_path)
-    
-    list_normalizada = []
-    seen = set()
-    for cnpj in cnpjs or []:
-        normalized = normalizar_cnpj(cnpj)
-        if normalized and normalized not in seen:
-            seen.add(normalized)
-            list_normalizada.append(normalized)
+        nota_pd = _atribuir_nota_por_faixa(
+            valor=pd_valor,
+            faixas=_obter_faixas_notas(score_cpura_config, "PD"),
+            indicador="PD",
+        )
+        nota_fco_rol = _atribuir_nota_por_faixa(
+            valor=fco_rol_valor,
+            faixas=_obter_faixas_notas(score_cpura_config, "FCO_ROL"),
+            indicador="FCO_ROL",
+        )
+        nota_roe = _atribuir_nota_por_faixa(
+            valor=roe_valor,
+            faixas=_obter_faixas_notas(score_cpura_config, "ROE"),
+            indicador="ROE",
+        )
+        nota_roa = _atribuir_nota_por_faixa(
+            valor=roa_valor,
+            faixas=_obter_faixas_notas(score_cpura_config, "ROA"),
+            indicador="ROA",
+        )
 
-    results = []
-    total = len(list_normalizada)
-    
-    print(f"\n[RECEITA FEDERAL] Iniciando processamento de {total} CNPJs...")
-
-    for index, cnpj in enumerate(list_normalizada):
-        if index > 0 and index % 500 == 0:
-            print(f" -> Progresso Receita Federal: {index}/{total} CNPJs validados...")
-
-        cached = cache.get(cnpj)
-        if cached and _is_same_day_cache(cached):
-            results.append(cached)
-            continue
-
-        # BYPASS PARA O MVP: Simula retorno de sucesso sem bater na API HTTP
-        # Isso reduz o tempo da etapa de 20 minutos para 0.2 segundos.
-        mock_result = {
-            "CNPJ": cnpj,
-            "SITUACAO_CADASTRAL": "ATIVA",
-            "DATA_ABERTURA": "2000-01-01",
-            "CNAE_PRINCIPAL": "0000000",
-            "NATUREZA_JURIDICA": "Simulacao MVP Bypass",
-            "DATA_CONSULTA": datetime.now().isoformat(timespec="seconds"),
-            "STATUS": "OK_BYPASS",
-            "MENSAGEM": "Bypass aplicado para acelerar execução local"
+        resultado = {
+            "NOTA_PD": nota_pd,
+            "NOTA_FCO_ROL": nota_fco_rol,
+            "NOTA_ROE": nota_roe,
+            "NOTA_ROA": nota_roa,
         }
-        cache[cnpj] = mock_result
-        results.append(mock_result)
 
-    if cache:
-        _save_cache(cache_path, cache)
+        if logger is not None:
+            logger.info(
+                "Notas quantitativas CPURA calculadas. "
+                "CNPJ=%s NOTA_PD=%s NOTA_FCO_ROL=%s NOTA_ROE=%s NOTA_ROA=%s",
+                registro.get("CNPJ"),
+                resultado["NOTA_PD"],
+                resultado["NOTA_FCO_ROL"],
+                resultado["NOTA_ROE"],
+                resultado["NOTA_ROA"],
+            )
 
-    print(f"[RECEITA FEDERAL] Concluído! {total} CNPJs consolidados no cache local.\n")
+        return resultado
 
-    if not results:
-        return pd.DataFrame(columns=["CNPJ", "SITUACAO_CADASTRAL", "DATA_ABERTURA", "CNAE_PRINCIPAL", "NATUREZA_JURIDICA", "DATA_CONSULTA"])
+    except Exception as e:
+        if logger is not None:
+            logger.error(
+                f"Falha no cálculo das notas quantitativas CPURA. CNPJ={registro.get('CNPJ')} - Motivo: {str(e)}"
+            )
+        raise
 
-    df = pd.DataFrame(results)
-    return df.drop_duplicates(subset=["CNPJ"], keep="last").reset_index(drop=True)
 ```
 
 
 ---
-## src\services\reconciliacao_denodo_mtm_service.py
+## src\domain\credito\pd_consumidor_le5.py
+Linhas: 75
+Classes: -
+Funções: calcular_pd_final_consumidor_le5
+```python
+"""Transformação da PD para consumidores abaixo de 5 MWm (Bureau)."""
+
+from __future__ import annotations
+from typing import Any
+
+from silver.normalizadores import normalizar_float
+from domain.credito.pd_exceptions import PdCalculationError, PdInputValidationError
+
+def calcular_pd_final_consumidor_le5(
+    registro: dict[str, Any],
+    pd_faixas: dict[str, Any],
+    logger: Any | None = None,
+) -> dict[str, Any]:
+    """Calcula PD via score de bureau e restritivos (Sem DFs)."""
+    try:
+        score = normalizar_float(registro.get("SCORE_BUREAU"))
+        restritivos = normalizar_float(registro.get("QUANTIDADE_RESTRITIVOS")) or 0.0
+
+        if score is None:
+            raise PdInputValidationError("SCORE_BUREAU não informado para consumidor < 5 MWm.")
+
+        # 1. Mapeamento Direto: Score -> Rating (Escala 0 a 1000)
+        if score >= 800:
+            rating = "A"
+        elif score >= 600:
+            rating = "B"
+        elif score >= 400:
+            rating = "C"
+        elif score >= 200:
+            rating = "D"
+        else:
+            rating = "E"
+
+        # 2. Regra de Política de Crédito: Restritivos derrubam a nota
+        if restritivos > 0:
+            rating = "E"
+
+        faixas = pd_faixas.get("CONSUMIDOR_LE_5", {})
+        if rating not in faixas:
+            raise PdCalculationError(f"Faixa de PD não encontrada para o rating {rating}.")
+
+        pd_min = float(faixas[rating]["min"])
+        pd_max = float(faixas[rating]["max"])
+
+        # 3. Interpolação: Inversamente proporcional (Maior Score = Menor PD)
+        limites = {"A": (800, 1000), "B": (600, 800), "C": (400, 600), "D": (200, 400), "E": (0, 200)}
+        s_min, s_max = limites[rating]
+
+        score_truncado = max(s_min, min(score, s_max))
+        fator = 0.5 if s_max == s_min else 1.0 - ((score_truncado - s_min) / (s_max - s_min))
+        pd_final = pd_min + (fator * (pd_max - pd_min))
+
+        resultado = {
+            "RATING_FINAL": rating,
+            "PD_FINAL": pd_final,
+            "PD_METODO": "SCORE_BUREAU",
+            "SCORE_BUREAU_UTILIZADO": score,
+            "QUANTIDADE_RESTRITIVOS": restritivos,
+            "PD_MIN_FAIXA": pd_min,
+            "PD_MAX_FAIXA": pd_max,
+            # T1.4.2: Mascarar campos ausentes como NAO_APLICAVEL para tabelas relacionais
+            "PATRIMONIO_LIQUIDO": "NAO_APLICAVEL",
+            "LUCRO_LIQUIDO": "NAO_APLICAVEL",
+            "ATIVO_TOTAL": "NAO_APLICAVEL",
+            "PASSIVO_CIRCULANTE": "NAO_APLICAVEL"
+        }
+
+        if logger:
+            logger.info("PD LE_5 calculada. CNPJ=%s SCORE=%s RATING=%s PD=%s", registro.get("CNPJ"), score, rating, pd_final)
+
+        return resultado
+
+    except Exception as exc:
+        if logger: logger.exception("Falha no cálculo LE_5.")
+        raise PdCalculationError(f"Falha LE_5: {exc}") from exc
+```
+
+
+---
+## src\domain\credito\pd_exceptions.py
+Linhas: 15
+Classes: PdCalculationError, PdInputValidationError, PdConfigurationError
+Funções: -
+```python
+"""Exceções do motor de probabilidade de default."""
+
+from __future__ import annotations
+
+
+class PdCalculationError(Exception):
+    """Erro base do cálculo de PD ajustada."""
+
+
+class PdInputValidationError(PdCalculationError):
+    """Erro de validação dos insumos de PD."""
+
+
+class PdConfigurationError(PdCalculationError):
+    """Erro de configuração do motor de PD."""
+
+```
+
+
+---
+## src\domain\credito\pd_transform.py
+Linhas: 173
+Classes: -
+Funções: _obter_faixa_pd, transformar_pd_por_segmento
+```python
+"""Despacho da transformação de PD por segmento."""
+
+from __future__ import annotations
+
+from typing import Any
+
+from domain.credito.pd_cgrupo import calcular_pd_final_cgrupo
+from domain.credito.pd_consumidor_gt5 import calcular_pd_final_consumidor_gt5
+from domain.credito.pd_consumidor_le5 import calcular_pd_final_consumidor_le5
+from domain.credito.pd_cpura import calcular_pd_final_cpura
+from domain.credito.pd_exceptions import PdCalculationError, PdConfigurationError
+
+
+def _obter_faixa_pd(
+    pd_faixas: dict[str, Any],
+    segmento_pd: str,
+    rating_final: str,
+) -> tuple[float, float]:
+    """Obtém a faixa de PD parametrizada para segmento e rating."""
+    if not pd_faixas:
+        raise PdConfigurationError("Faixas de PD não informadas.")
+
+    if segmento_pd not in pd_faixas:
+        raise PdConfigurationError(
+            f"Segmento não encontrado nas faixas de PD: {segmento_pd}"
+        )
+
+    faixas_segmento = pd_faixas[segmento_pd]
+
+    if rating_final not in faixas_segmento:
+        raise PdConfigurationError(
+            f"Rating {rating_final} não encontrado para {segmento_pd}"
+        )
+
+    faixa = faixas_segmento[rating_final]
+
+    if "min" not in faixa or "max" not in faixa:
+        raise PdConfigurationError(
+            f"Faixa inválida para {segmento_pd}/{rating_final}."
+        )
+
+    pd_min = float(faixa["min"])
+    pd_max = float(faixa["max"])
+
+    if pd_min > pd_max:
+        raise PdConfigurationError(
+            f"Faixa inválida: min > max para {segmento_pd}/{rating_final}."
+        )
+
+    return pd_min, pd_max
+
+
+def transformar_pd_por_segmento(
+    registro: dict[str, Any],
+    segmento_pd: str,
+    pd_base: float,
+    pd_faixas: dict[str, Any],
+    pd_cpura_config: dict[str, Any] | None = None,
+    logger: Any | None = None,
+    peer_group: list[float] | None = None,
+    pd_transform_rules: dict[str, Any] | None = None,
+    rating_final: str | None = None,
+) -> dict[str, Any]:
+    """Transforma a PD base conforme a metodologia do segmento."""
+    segmento = str(segmento_pd or "").strip().upper()
+
+    if segmento == "CPURA":
+        rating = str(
+            registro.get("RATING_FINAL") or rating_final or ""
+        ).strip().upper()
+
+        if not rating:
+            raise PdConfigurationError(
+                "RATING_FINAL não informado para CPURA.")
+
+        pd_min, pd_max = _obter_faixa_pd(
+            pd_faixas=pd_faixas,
+            segmento_pd=segmento,
+            rating_final=rating,
+        )
+
+        return calcular_pd_final_cpura(
+            registro=registro,
+            pd_base=pd_base,
+            rating_final=rating,
+            pd_min=pd_min,
+            pd_max=pd_max,
+            cpura_config=pd_cpura_config or {},
+            logger=logger,
+        )
+
+    if segmento == "CGRUPO":
+        if not pd_transform_rules:
+            raise PdConfigurationError(
+                "pd_transform_rules não informado para CGRUPO."
+            )
+
+        registro_calculo = dict(registro)
+        registro_calculo["PD_BASE"] = pd_base
+
+        return calcular_pd_final_cgrupo(
+            registro=registro_calculo,
+            regras_segmento=pd_transform_rules["CGRUPO"],
+            logger=logger,
+        )
+
+    if segmento == "CONSUMIDOR_GT_5":
+        rating = str(
+            registro.get("RATING_FINAL")
+            or registro.get("RATING_COPEL")
+            or rating_final
+            or ""
+        ).strip().upper()
+
+        if not rating:
+            raise PdConfigurationError(
+                "RATING_FINAL não informado para CONSUMIDOR_GT_5."
+            )
+
+        pd_min, pd_max = _obter_faixa_pd(
+            pd_faixas=pd_faixas,
+            segmento_pd=segmento,
+            rating_final=rating,
+        )
+
+        if not pd_transform_rules or segmento not in pd_transform_rules:
+            raise PdConfigurationError(
+                "pd_transform_rules não informado para CONSUMIDOR_GT_5."
+            )
+
+        return calcular_pd_final_consumidor_gt5(
+            registro=registro,
+            pd_base=pd_base,
+            rating_final=rating,
+            pd_min=pd_min,
+            pd_max=pd_max,
+            regras_segmento=pd_transform_rules[segmento],
+            logger=logger,
+        )
+        
+    if segmento == "CONSUMIDOR_LE_5":
+        rating = str(
+            registro.get("RATING_FINAL")
+            or registro.get("RATING_COPEL")
+            or rating_final
+            or ""
+        ).strip().upper()
+
+        if not rating:
+            raise PdConfigurationError(
+                "RATING_FINAL não informado para CONSUMIDOR_LE_5."
+            )
+
+        pd_min, pd_max = _obter_faixa_pd(
+            pd_faixas=pd_faixas,
+            segmento_pd=segmento,
+            rating_final=rating,
+        )
+
+        if not pd_transform_rules or segmento not in pd_transform_rules:
+            raise PdConfigurationError(
+                "pd_transform_rules não informado para CONSUMIDOR_LE_5."
+            )
+
+        return calcular_pd_final_consumidor_le5(
+            registro=registro,
+            pd_faixas=pd_faixas,
+            logger=logger,
+        )
+
+    raise PdCalculationError(
+        f"Segmento PD não suportado para transformação: {segmento}"
+    )
+
+```
+
+
+---
+## src\domain\credito\pd_validator.py
+Linhas: 104
+Classes: -
+Funções: _is_blank, validar_insumos_pd
+```python
+"""Validação dos insumos do cálculo de PD ajustada."""
+
+from __future__ import annotations
+
+from typing import Any
+
+from silver.normalizadores import normalizar_string, normalizar_float
+from domain.credito.pd_exceptions import PdInputValidationError, PdCalculationError
+
+
+def _is_blank(value: Any) -> bool:
+    if value is None:
+        return True
+    texto = str(value).strip().upper()
+    return texto in {"", "N/A", "NA", "N.D.", "ND", "NONE", "NULL"}
+
+
+def validar_insumos_pd(
+    registro: dict[str, Any],
+    segmento_pd: str,
+) -> None:
+    """Valida os insumos mínimos para cálculo de PD ajustada."""
+    if not segmento_pd:
+        raise PdInputValidationError("SEGMENTO_PD não informado.")
+    
+    if segmento_pd == "CONSUMIDOR_LE_5":
+        if registro.get("SCORE_BUREAU") is None:
+            raise PdInputValidationError("SCORE_BUREAU não informado para CONSUMIDOR_LE_5.")
+        return
+
+    pd_base_raw = registro.get("PROBABILIDADE_DEFAULT")
+    pd_base = normalizar_float(pd_base_raw)
+
+    if pd_base is None:
+        raise PdInputValidationError("PROBABILIDADE_DEFAULT não informada.")
+
+    if pd_base < 0:
+        raise PdInputValidationError(
+            f"PROBABILIDADE_DEFAULT negativa: {pd_base_raw!r}"
+        )
+
+    if segmento_pd == "CGRUPO":
+        agencia = registro.get("AGENCIA")
+        nota_credito = registro.get("NOTA_CREDITO")
+        rating_interno = registro.get(
+            "RATING_FINAL") or registro.get("RATING_COPEL")
+
+        tem_rating_publico = not _is_blank(
+            agencia) and not _is_blank(nota_credito)
+        tem_rating_interno = not _is_blank(rating_interno)
+
+        if not tem_rating_publico and not tem_rating_interno:
+            raise PdInputValidationError(
+                "CGRUPO sem rating público (AGENCIA/NOTA_CREDITO) "
+                "e sem rating interno (RATING_FINAL/RATING_COPEL)."
+            )
+
+    else:
+        rating = (
+            registro.get("RATING_COPEL")
+            or registro.get("NOTA_CREDITO")
+            or registro.get("RATING_FINAL")
+        )
+
+        # Rating pode estar vazio na extração inicial (é output do cálculo
+        # de crédito para comercializadoras). Valida somente se informado.
+        if not _is_blank(rating):
+            rating_normalizado = normalizar_string(str(rating), upper=True)
+            ratings_validos = {"A", "B", "C", "D", "E"}
+
+            if rating_normalizado not in ratings_validos:
+                raise PdInputValidationError(
+                    f"Rating inválido para {segmento_pd}: {rating_normalizado!r}"
+                )
+
+    if segmento_pd in {"CPURA", "CGRUPO"}:
+        tipo_comercializadora = normalizar_string(
+            str(registro.get("TIPO_COMERCIALIZADORA", "")),
+            upper=True,
+        )
+        if tipo_comercializadora not in {"CPURA", "CGRUPO"}:
+            raise PdInputValidationError(
+                "TIPO_COMERCIALIZADORA inválido ou ausente."
+            )
+    if segmento_pd == "CONSUMIDOR_GT_5":
+        pd_base = registro.get("PROBABILIDADE_DEFAULT")
+        rating = registro.get("RATING_FINAL") or registro.get("RATING_COPEL")
+
+        if _is_blank(pd_base):
+            raise PdCalculationError(
+                "PROBABILIDADE_DEFAULT não informada para CONSUMIDOR_GT_5."
+            )
+
+        if _is_blank(rating):
+            raise PdCalculationError(
+                "RATING_FINAL/RATING_COPEL não informado para CONSUMIDOR_GT_5."
+            )
+
+        rating_norm = normalizar_string(rating, upper=True)
+        if rating_norm not in {"A", "B", "C", "D", "E"}:
+            raise PdCalculationError(
+                f"Rating inválido para CONSUMIDOR_GT_5: {rating_norm!r}"
+            )
+        return
+
+```
+
+
+---
+## src\domain\credito\score_quantitativo.py
+Linhas: 127
+Classes: -
+Funções: _obter_peso_nota, calcular_score_quantitativo_cpura
+```python
+# -*- coding: utf-8 -*-
+"""Cálculo do score quantitativo para CPURA."""
+
+from __future__ import annotations
+
+from typing import Any
+
+from silver.normalizadores import normalizar_string
+from domain.credito.pd_exceptions import (
+    PdConfigurationError,
+    PdInputValidationError,
+)
+
+
+def _obter_peso_nota(
+    nota: Any,
+    nota_para_peso: dict[str, Any],
+    nome_campo: str,
+) -> float:
+    """Obtém o peso numérico da nota."""
+    nota_normalizada = normalizar_string(nota, upper=True)
+
+    if not nota_normalizada:
+        raise PdInputValidationError(
+            f"{nome_campo} não informada."
+        )
+
+    if nota_normalizada not in nota_para_peso:
+        raise PdInputValidationError(
+            f"{nome_campo} inválida: {nota!r}"
+        )
+
+    try:
+        return float(nota_para_peso[nota_normalizada])
+    except (TypeError, ValueError) as exc:
+        raise PdConfigurationError(
+            f"Peso inválido para nota {nota_normalizada}."
+        ) from exc
+
+
+def calcular_score_quantitativo_cpura(
+    registro: dict[str, Any],
+    score_cpura_config: dict[str, Any],
+    logger: Any | None = None,
+) -> dict[str, Any]:
+    """Calcula o score quantitativo de CPURA."""
+    try:
+        if logger is not None:
+            logger.info(
+                "Iniciando score quantitativo CPURA. CNPJ=%s",
+                registro.get("CNPJ"),
+            )
+
+        nota_para_peso = score_cpura_config.get("nota_para_peso")
+        pesos_quantitativos = score_cpura_config.get("pesos_quantitativos")
+
+        if not isinstance(nota_para_peso, dict):
+            raise PdConfigurationError(
+                "Bloco 'nota_para_peso' ausente ou inválido."
+            )
+
+        if not isinstance(pesos_quantitativos, dict):
+            raise PdConfigurationError(
+                "Bloco 'pesos_quantitativos' ausente ou inválido."
+            )
+
+        nota_pd = registro.get("NOTA_PD")
+        nota_fco_rol = registro.get("NOTA_FCO_ROL")
+        nota_roe = registro.get("NOTA_ROE")
+        nota_roa = registro.get("NOTA_ROA")
+
+        peso_pd = _obter_peso_nota(nota_pd, nota_para_peso, "NOTA_PD")
+        peso_fco_rol = _obter_peso_nota(
+            nota_fco_rol,
+            nota_para_peso,
+            "NOTA_FCO_ROL",
+        )
+        peso_roe = _obter_peso_nota(nota_roe, nota_para_peso, "NOTA_ROE")
+        peso_roa = _obter_peso_nota(nota_roa, nota_para_peso, "NOTA_ROA")
+
+        try:
+            w_pd = float(pesos_quantitativos["PD"])
+            w_fco_rol = float(pesos_quantitativos["FCO_ROL"])
+            w_roe = float(pesos_quantitativos["ROE"])
+            w_roa = float(pesos_quantitativos["ROA"])
+        except KeyError as exc:
+            raise PdConfigurationError(
+                f"Peso quantitativo ausente: {exc}"
+            ) from exc
+        except (TypeError, ValueError) as exc:
+            raise PdConfigurationError(
+                "Pesos quantitativos inválidos."
+            ) from exc
+
+        score_quantitativo = (
+            w_pd * peso_pd
+            + w_fco_rol * peso_fco_rol
+            + w_roe * peso_roe
+            + w_roa * peso_roa
+        )
+
+        resultado = {
+            "PESO_PD": peso_pd,
+            "PESO_FCO_ROL": peso_fco_rol,
+            "PESO_ROE": peso_roe,
+            "PESO_ROA": peso_roa,
+            "SCORE_QUANTITATIVO": score_quantitativo,
+        }
+
+        if logger is not None:
+            logger.info(
+                "Score quantitativo CPURA calculado. "
+                "CNPJ=%s SCORE_QUANTITATIVO=%s",
+                registro.get("CNPJ"),
+                score_quantitativo,
+            )
+
+        return resultado
+
+    except Exception:
+        if logger is not None:
+            logger.exception(
+                "Falha no cálculo do score quantitativo CPURA. "
+                "CNPJ=%s",
+                registro.get("CNPJ"),
+            )
+        raise
+
+```
+
+
+---
+## src\domain\credito\servico_risco.py
+Linhas: 124
+Classes: -
+Funções: rodar_pipeline_risco
+```python
+"""Orquestrador do Pipeline de Risco de Crédito."""
+
+from __future__ import annotations
+import logging
+from datetime import datetime
+from typing import Any
+import pandas as pd
+
+from app.context import AppContext
+from control.logger import obter_logger
+from domain.credito.ead_engine import calcular_ead
+from domain.credito.lgd_engine import calcular_lgd
+from domain.credito.pe_engine import calcular_perda_esperada
+from domain.credito.taxa_risco_engine import calcular_taxa_risco
+from storage.escrever_dados import escrever_conjunto_de_dados_silver
+
+def rodar_pipeline_risco(
+    context: AppContext,
+    df_exposicoes: pd.DataFrame,
+    fator_conversao_ead: float = 1.0,
+    config_lgd: dict[str, Any] | None = None
+) -> dict[str, Any]:
+    run_id = f"RSK_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    logger = obter_logger("bdc.risco", context.path("log_runner") / f"{run_id}__pipeline_risco.log")
+    logger.info("Iniciando Pipeline de Risco de Crédito (run_id=%s)", run_id)
+    
+    garantias_path = context.path("silver") / "garantias_silver" / "fato_garantia.parquet"
+    df_garantias = pd.read_parquet(garantias_path) if garantias_path.exists() else pd.DataFrame()
+
+    resultados_fatos = []
+    pe_total_carteira = 0.0
+    notional_total_carteira = 0.0
+    alertas = []
+
+    df_exposicoes["MTM_POSITIVO_TOTAL"] = pd.to_numeric(df_exposicoes.get("MTM_POSITIVO_TOTAL", 0), errors="coerce").fillna(0.0)
+    df_exposicoes["NOTIONAL_TOTAL"]     = pd.to_numeric(df_exposicoes.get("NOTIONAL_TOTAL", 0), errors="coerce").fillna(0.0)
+    # PD ausente (NaN) é preservada — não zeramos para não mascarar contrapartes sem rating.
+    df_exposicoes["PD_FINAL"] = pd.to_numeric(df_exposicoes.get("PD_FINAL"), errors="coerce")
+
+    # Garante CNPJ_RAIZ (8 dígitos) para o filtro de garantias por grupo econômico.
+    # Usa a coluna da Silver quando disponível; recalcula como fallback.
+    if "CNPJ_RAIZ" not in df_exposicoes.columns:
+        df_exposicoes["CNPJ_RAIZ"] = (
+            df_exposicoes["CNPJ"].astype(str).str.replace(r"\D", "", regex=True).str[:8]
+        )
+
+    for idx, row in df_exposicoes.iterrows():
+        cnpj      = row.get("CNPJ")
+        cnpj_raiz = str(row.get("CNPJ_RAIZ", str(cnpj)[:8]))
+        mtm_positivo = row.get("MTM_POSITIVO_TOTAL")
+        notional     = row.get("NOTIONAL_TOTAL")
+        segmento     = row.get("SEGMENTO_METODOLOGICO", "CGRUPO")
+        pd_final     = row.get("PD_FINAL")
+
+        cobertura_aplicada = 0.0
+        # Filtro de garantias por CNPJ_RAIZ (cobre Matriz e Filiais do mesmo grupo)
+        # e STATUS normalizado (strip + upper) para evitar falhas por espaços.
+        if not df_garantias.empty and "CNPJ_CONTRAPARTE" in df_garantias.columns:
+            filtro = (
+                df_garantias["CNPJ_CONTRAPARTE"].astype(str).str[:8] == cnpj_raiz
+            ) & (
+                df_garantias["STATUS"].astype(str).str.strip().str.upper() == "VIGENTE"
+                if "STATUS" in df_garantias.columns
+                else True
+            )
+            if filtro.any():
+                cobertura_calculada = df_garantias.loc[filtro, "PERCENTUAL_COBERTURA"].sum()
+                cobertura_aplicada  = min(float(cobertura_calculada), 1.0)
+
+        res_ead = calcular_ead(mtm_positivo_total=mtm_positivo, fator_conversao=fator_conversao_ead)
+        res_lgd = calcular_lgd(segmento=segmento, cobertura_garantias=cobertura_aplicada, config=config_lgd)
+        res_pe = calcular_perda_esperada(
+            ead=res_ead.get("ead_valor"), 
+            lgd_liquida=res_lgd.get("lgd_liquida"), 
+            pd_final=pd_final, 
+            notional=notional
+        )
+
+        pe_val = res_pe.get("pe_reais", 0.0)
+        if pe_val is not None: pe_total_carteira += float(pe_val)
+        if notional is not None: notional_total_carteira += float(notional)
+
+        fato = {
+            "RUN_ID": run_id, "CNPJ": cnpj, "SEGMENTO": segmento,
+            "DT_CALCULO": res_pe.get("dt_calculo"),
+            "CALCULO_ID_EAD": res_ead.get("calculo_id"), "EAD_VALOR": res_ead.get("ead_valor", 0.0),
+            "FATOR_CONVERSAO_EAD": res_ead.get("fator_conversao"), "CONFIG_SNAPSHOT_EAD": res_ead.get("config_snapshot_id"),
+            "CALCULO_ID_LGD": res_lgd.get("calculo_id"), "LGD_BRUTA": res_lgd.get("lgd_bruta"),
+            "LGD_LIQUIDA": res_lgd.get("lgd_liquida", 0.0), "COBERTURA_GARANTIAS": res_lgd.get("cobertura_garantias"),
+            "CONFIG_SNAPSHOT_LGD": res_lgd.get("config_snapshot_id"),
+            "PD_UTILIZADA": pd_final,
+            "CALCULO_ID_PE": res_pe.get("calculo_id"), "PE_REAIS": res_pe.get("pe_reais", 0.0),
+            "PE_PERCENTUAL": res_pe.get("pe_percentual", 0.0),
+        }
+        resultados_fatos.append(fato)
+
+    res_taxa = calcular_taxa_risco(pe_total=pe_total_carteira, notional_total=notional_total_carteira)
+    taxa_val = res_taxa.get("taxa_risco")
+    taxa_print = f"{taxa_val*100:.4f}%" if taxa_val is not None else "0.00% (Notional Zerado na Origem)"
+    
+    if res_taxa.get("alertas"): alertas.extend(res_taxa["alertas"])
+
+    if alertas:
+        df_alertas = pd.DataFrame(alertas)
+        df_alertas["RUN_ID"] = run_id
+        df_alertas["DATA_DETECCAO"] = datetime.now().isoformat(timespec="seconds")
+        df_alertas["STATUS_ALERTA"] = "ABERTO"
+        escrever_conjunto_de_dados_silver(records=df_alertas.to_dict(orient="records"), output_dir=context.path("silver") / "alertas_credito", filename=f"alertas_risco_{run_id}")
+
+    if resultados_fatos:
+        df_fatos = pd.DataFrame(resultados_fatos)
+        relational_dir = context.path("relational_facts")
+        relational_dir.mkdir(parents=True, exist_ok=True)
+        
+        escrever_conjunto_de_dados_silver(records=df_fatos.to_dict(orient="records"), output_dir=relational_dir, filename=f"fato_exposicao_risco_{run_id}")
+        escrever_conjunto_de_dados_silver(records=df_fatos.to_dict(orient="records"), output_dir=relational_dir, filename="fato_exposicao_risco_LATEST")
+        
+    logger.info("Pipeline de Risco concluído. Taxa Carteira: %s", taxa_print)
+
+    return {
+        "run_id": run_id, "linhas_processadas": len(resultados_fatos),
+        "taxa_risco_carteira": taxa_val, "pe_total_carteira": pe_total_carteira,
+        "notional_total_carteira": notional_total_carteira, "calculo_id_taxa": res_taxa.get("calculo_id")
+    }
+```
+
+
+---
+## src\domain\fichas\derivador_financeiro.py
+Linhas: 74
+Classes: -
+Funções: divisao_segura, calcular_indicadores_derivados
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+
+def divisao_segura(num, den):
+    if num is None or den is None:
+        return None
+    try:
+        f_num = float(num)
+        f_den = float(den)
+        if f_den == 0.0:
+            return None
+        return f_num / f_den
+    except (ValueError, TypeError):
+        return None
+
+def calcular_indicadores_derivados(record: dict) -> dict:
+    """
+    Calcula os indicadores derivados (DERIVED) de forma segura.
+    Princípio: PRESERVAÇÃO DO FATO. Se o campo já possui valor extraído, não sobrescreve.
+    """
+    
+    # Valores base
+    ativo_circulante = record.get("ATIVO_CIRCULANTE_AJUSTADO")
+    passivo_circulante = record.get("PASSIVO_CIRCULANTE_AJUSTADO")
+    ativo_total = record.get("ATIVO_TOTAL_AJUSTADO")
+    passivo_nao_circulante = record.get("PASSIVO_NAO_CIRCULANTE_FINANCEIRO_AJUSTADO")
+    lucro_liquido = record.get("LUCRO_LIQUIDO")
+    patrimonio_liquido = record.get("PATRIMONIO_LIQUIDO")
+    fluxo_caixa = record.get("FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS")
+    
+    rol = record.get("ROL")
+    vendas = record.get("VENDAS_LIQUIDAS")
+    receita_base = rol if rol is not None else vendas
+
+    # AC_PC
+    if record.get("AC_PC") is None:
+        val = divisao_segura(ativo_circulante, passivo_circulante)
+        if val is not None:
+            record["AC_PC"] = val
+            
+    # AT_PT
+    if record.get("AT_PT") is None:
+        if passivo_circulante is not None and passivo_nao_circulante is not None:
+            passivo_total = float(passivo_circulante) + float(passivo_nao_circulante)
+            val = divisao_segura(ativo_total, passivo_total)
+            if val is not None:
+                record["AT_PT"] = val
+                
+    # ROA
+    if record.get("ROA") is None:
+        val = divisao_segura(lucro_liquido, ativo_total)
+        if val is not None:
+            record["ROA"] = val
+            
+    # ROE
+    if record.get("ROE") is None:
+        val = divisao_segura(lucro_liquido, patrimonio_liquido)
+        if val is not None:
+            record["ROE"] = val
+            
+    # FCO
+    if record.get("FCO") is None:
+        val = divisao_segura(fluxo_caixa, receita_base)
+        if val is not None:
+            record["FCO"] = val
+            
+    # LUCRO_LIQUIDO_SOBRE_ROL
+    if record.get("LUCRO_LIQUIDO_SOBRE_ROL") is None:
+        val = divisao_segura(lucro_liquido, receita_base)
+        if val is not None:
+            record["LUCRO_LIQUIDO_SOBRE_ROL"] = val
+            
+    return record
+
+```
+
+
+---
+## src\domain\fichas\ficha_extractor.py
+Linhas: 424
+Classes: -
+Funções: analisar_data_com_seguranca, valor_extraido_limpo, _tipo_extraido_valido, busca_omnidirecional, extrair_registro, extrair_registro_do_vencedor, norm_tab
+```python
+# -*- coding: utf-8 -*-
+"""Serviço de extração de dados dinâmico e omnidirecional das fichas Excel."""
+
+from __future__ import annotations
+
+import re
+import math
+import logging
+from datetime import datetime
+from typing import Any, Dict, List, Optional, Tuple
+
+import openpyxl
+from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.utils.datetime import from_excel
+from openpyxl.utils import get_column_letter
+
+from common.excel import ler_celula
+
+logger = logging.getLogger(__name__)
+
+CUTOFF_DATE_LAYOUT_CHANGE = datetime(2025, 4, 30)
+
+# ==============================================================================
+# DICIONÁRIO DE INTELIGÊNCIA SEMÂNTICA UNIVERSAL (FALLBACK CONSUMIDORES)
+# Mantido apenas para garantir a retrocompatibilidade com fichas de consumidores
+# que ainda não foram migradas para o Master Catalog.
+# ==============================================================================
+MAPA_SEMANTICO_INTELIGENTE = {
+    "CNPJ": r"^\s*CNPJ\b(?!.*(?:BBCE|CONTROLADOR))",
+    "SIGLA": r"SIGLA",
+    "FCO": r"FCO|MARGEM\s*DE\s*FLUXO\s*DE\s*CAIXA",
+    "PATRIMONIO_LIQUIDO": r"PATRIM[OÔ]NIO\s*L[IÍ]QUIDO",
+    "LUCRO_LIQUIDO": r"LUCRO\s*L[IÍ]QUIDO|RESULTADO\s*L[IÍ]QUIDO|LUCRO/PREJUIZO DO EXERCICIO",
+    "PROBABILIDADE_DEFAULT": r"PROBABILIDADE\s*DEFAULT|PD\b|PD\s*=",
+    "DATA_DEMONSTRACAO_FINANCEIRA": r"DATA\s*DA\s*DEMONSTRA[CÇ][AÃ]O|DATA\s*BASE|DATA\s*DA\s*DF",
+    "RECEITA_LIQUIDA": r"RECEITA\s*L[IÍ]QUIDA|VENDAS\s*L[IÍ]QUIDAS|ROL",
+    "VENDAS_LIQUIDAS": r"VENDAS\s*L[IÍ]QUIDAS|ROL|RECEITA\s*OPERACIONAL\s*L[IÍ]QUIDA",
+    "ATIVO_TOTAL": r"ATIVO\s*TOTAL",
+    "PASSIVO_CIRCULANTE": r"PASSIVO\s*CIRCULANTE",
+    "ATIVO_CIRCULANTE": r"ATIVO\s*CIRCULANTE",
+    "LUCRO_BRUTO": r"LUCRO\s*BRUTO",
+    "LAJIR": r"LAJIR|RESULTADO\s*OPERACIONAL",
+    "LAIR": r"LAIR|LUCRO\s*ANTES\s*DO\s*IMPOSTO",
+    "ATIVO_CIRCULANTE_FINANCEIRO": r"ATIVO\s*CIRCULANTE\s*FINANCEIRO",
+    "PASSIVO_CIRCULANTE_FINANCEIRO": r"PASSIVO\s*CIRCULANTE\s*FINANCEIRO",
+    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO": r"PASSIVO\s*N[AÃ]O\s*CIRCULANTE\s*FINANCEIRO",
+    "EMPRESA": r"EMPRESA|RAZ[AÃ]O\s*SOCIAL",
+    "TIPO_COMERCIALIZADORA": r"TIPO\s*DE\s*COMERCIALIZADORA",
+    "DATA_ADESAO_CCEE": r"DATA\s*DE\s*ADES[AÃ]O",
+    "CODIGO_CCEE": r"C[OÓ]DIGO\s*CCEE",
+    "DATA_CALCULO": r"DATA\s*DA\s*FICHA",
+    "SCORE_BUREAU": r"SCORE\s*BUREAU|SCORE\b",
+    "QUANTIDADE_RESTRITIVOS": r"QUANTIDADE\s*DE\s*RESTRITIVOS",
+    "CAPITAL_SOCIAL": r"CAPITAL\s*SOCIAL",
+    "LUCROS_ACUMULADOS": r"LUCROS\s*ACUMULADOS",
+    "RESERVA_DE_LUCROS": r"RESERVA\s*DE\s*LUCROS",
+    "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": r"FLUXO\s*DE\s*CAIXA\s*OPERACIONAL|CAIXA\s*L[IÍ]QUIDO\s*GERADO",
+    "AGENCIA": r"AG[EÊ]NCIA",
+    "NOTA_CREDITO": r"NOTA\s*DE\s*CR[EÉ]DITO",
+    "ROL": r"RECEITA\s*OPERACIONAL\s*L[IÍ]QUIDA|ROL",
+    "AC_PC": r"AC\s*/\s*PC|ATIVO\s*CIRCULANTE\s*/\s*PASSIVO\s*CIRCULANTE",
+    "AT_PT": r"AT\s*/\s*PT|ATIVO\s*TOTAL\s*/\s*PASSIVO\s*TOTAL",
+    "MTM_TOTAL_PL": r"MTM\s*TOTAL\s*/\s*PL|MTM\s*/\s*PATRIM[OÔ]NIO",
+    "DIVIDENDOS_JCP_LUCRO_LIQUIDO": r"\(?DIVIDENDOS\s*\+\s*JCP\)?\s*/\s*LUCRO\s*L[IÍ]QUIDO|DIVIDENDOS\s*E\s*JCP",
+    "CAPITAL_CIRCULANTE_LIQUIDO": r"CAPITAL\s*CIRCULANTE\s*L[IÍ]QUIDO|CCL\b",
+    "RESTRITIVOS": r"RESTRITIVOS|APONTAMENTOS\s*RESTRITIVOS",
+    "CNAE": r"CNAE\b|C[OÓ]DIGO\s*DE\s*ATIVIDADE",
+    "NATUREZA_JURIDICA": r"NATUREZA\s*JUR[IÍ]DICA",
+    "ENDERECO": r"ENDERE[CÇ]O|LOGRADOURO",
+    "ROA": r"ROA\b|RETORNO\s*SOBRE\s*ATIVO",
+    "ROE": r"ROE\b|RETORNO\s*SOBRE\s*PATRIM[OÔ]NIO",
+    "FCO_ROL": r"FCO\s*/\s*ROL|FLUXO\s*DE\s*CAIXA\s*/\s*RECEITA",
+    "CNPJ_BBCE": r"CNPJ\s*BBCE",
+    "RATING_COPEL": r"RATING\s*COPEL",
+    "RATING_PUBLICO": r"RATING\s*P[UÚ]BLICO",
+    "SCORE_QUANTITATIVO": r"SCORE\s*QUANTITATIVO",
+    "SCORE_QUALITATIVO": r"SCORE\s*QUALITATIVO"
+}
+
+def analisar_data_com_seguranca(date_val: Any) -> Optional[datetime]:
+    if isinstance(date_val, datetime):
+        return date_val
+    if isinstance(date_val, (int, float)):
+        try:
+            return from_excel(date_val)
+        except Exception:
+            return None
+    if isinstance(date_val, str):
+        for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%Y%m%d", "%d-%m-%Y", "%Y/%m/%d"):
+            try:
+                return datetime.strptime(date_val.strip(), fmt)
+            except ValueError:
+                pass
+    return None
+
+def valor_extraido_limpo(val: Any, data_type: Optional[str] = None) -> Any:
+    """Higieniza o valor extraído e garante o casting correto."""
+    if val is None:
+        return None
+    
+    dt_str = str(data_type).lower() if data_type else ""
+    
+    if isinstance(val, str):
+        s_upper = val.strip().upper()
+        if not s_upper or s_upper.startswith("#") or s_upper in ("NAN", "NONE", "<NA>", "N/A", "NULL", "N/D", "-", "--"):
+            return None
+
+    if any(t in dt_str for t in ("float", "num", "dec", "int", "moeda", "percent", "taxa", "valor", "score")):
+        if isinstance(val, (int, float)):
+            if math.isnan(val) or math.isinf(val):
+                return None
+            return float(val)
+        
+        clean = str(val).strip()
+        # Notação contábil negativa (1.500) -> -1.500
+        if clean.startswith("(") and clean.endswith(")"):
+            clean = "-" + clean[1:-1].strip()
+        
+        # Limpa tudo que não for dígito, vírgula, ponto ou sinal de menos (remove R$, $, %, letras)
+        clean = re.sub(r"[^\d\,\.-]", "", clean)
+        
+        if not clean:
+            return None
+            
+        # Resolução de pontuação (milhar vs decimal)
+        last_comma = clean.rfind(",")
+        last_dot = clean.rfind(".")
+        
+        try:
+            if last_comma > last_dot:
+                # Padrão Brasileiro: 1.500,50 -> 1500.50
+                clean = clean.replace(".", "").replace(",", ".")
+            elif last_dot > last_comma:
+                # Padrão Americano: 1,500.50 -> 1500.50
+                if "," in clean:
+                    clean = clean.replace(",", "")
+                else:
+                    # Só tem ponto: "1.500" ou "1.5"
+                    if clean.count(".") > 1:
+                        # Vários pontos: "1.500.000" -> "1500000"
+                        clean = clean.replace(".", "")
+                    else:
+                        # Exatamente um ponto. Se tiver 3 dígitos depois do ponto, no Brasil quase sempre é milhar se a origem for string suja de excel.
+                        # Exceções: taxas ou percentuais (onde 1.500 pode ser 1.5%)
+                        parts = clean.split(".")
+                        if len(parts[1]) == 3 and not any(t in dt_str for t in ("percent", "taxa")):
+                            clean = clean.replace(".", "")
+            
+            return float(clean)
+        except ValueError:
+            return None
+
+    if any(t in dt_str for t in ("date", "data")):
+        return analisar_data_com_seguranca(val)
+
+    if isinstance(val, float) and val.is_integer():
+        val = int(val) 
+    return str(val).strip()
+
+def _tipo_extraido_valido(val: Any, data_type: str, field_name: str = "") -> bool:
+    if val is None:
+        return False
+    dt_str = str(data_type).lower() if data_type else ""
+    if any(t in dt_str for t in ("float", "num", "dec", "int", "moeda", "percent", "taxa", "valor", "score", "pd")):
+        return isinstance(val, (int, float))
+    if any(t in dt_str for t in ("date", "data")):
+        return isinstance(val, datetime)
+        
+    # Sanity checks for strings to avoid grabbing headers or explanatory text
+    if isinstance(val, str):
+        v = val.lower().strip()
+        if not v or v in ("tipo", "valor", "data", "descrição", "ajustado"):
+            return False
+        
+        fn_lower = field_name.lower()
+        
+        # Rejeitar strings maiores que 60 chars (rodapés, observações), exceto se for endereço
+        if len(v) > 60 and "endereco" not in fn_lower and "endereço" not in fn_lower:
+            return False
+            
+        # Rejeitar números disfarçados de string em campos puramente de texto
+        if fn_lower in ("auditor", "empresa", "sigla") and v.replace(".", "").replace(",", "").isdigit():
+            return False
+        
+        # Heurísticas específicas por campo para evitar falsos positivos
+        if "agencia" in fn_lower or "agência" in fn_lower:
+            if not any(k in v for k in ("fitch", "mood", "s&p", "sp", "standard")): 
+                return False
+        if "nota" in fn_lower or "rating" in fn_lower:
+            if len(v) > 5 or any(k in v for k in ("menor", "qualidade", "classificação", "agência", "risco")): 
+                return False
+        if "auditor" in fn_lower:
+            if len(v) > 40: return False
+            
+    return True
+
+def busca_omnidirecional(workbook: openpyxl.workbook.workbook.Workbook, search_pattern: str, data_type: str, sheet_hint: str = None, field_name: str = "", grid_cache: Dict[str, List[Tuple]] = None) -> Tuple[Any, dict]:
+    """
+    Caçador Universal (Refatorado para Performance in-memory RAM GRID):
+    Varre TODAS as abas do Excel atrás da Regex através de uma matriz em memória.
+    """
+    if grid_cache is None:
+        grid_cache = {}
+
+    try:
+        regex = re.compile(search_pattern, re.IGNORECASE)
+    except re.error:
+        return None, {}
+
+    sheet_names = workbook.sheetnames
+    if sheet_hint:
+        hint_clean = str(sheet_hint).replace(" ", "").lower()
+        sheet_names = sorted(sheet_names, key=lambda x: 0 if hint_clean in x.replace(" ", "").lower() else 1)
+
+    for sheet_name in sheet_names:
+        if sheet_name not in grid_cache:
+            ws = workbook[sheet_name]
+            # Convert worksheet to in-memory grid
+            grid_cache[sheet_name] = list(ws.iter_rows(min_row=1, max_row=150, min_col=1, max_col=30, values_only=True))
+            
+        grid = grid_cache[sheet_name]
+        
+        for r_idx, row_tuple in enumerate(grid):
+            for c_idx, cell_value in enumerate(row_tuple):
+                if cell_value and isinstance(cell_value, str):
+                    if regex.search(cell_value.strip()):
+                        # Alvos: até 6 colunas à direita, e até 2 linhas abaixo
+                        targets = [(r_idx, c_idx + offset) for offset in range(1, 7)]
+                        targets.extend([(r_idx + offset, c_idx) for offset in range(1, 3)])
+                        
+                        for tr, tc in targets:
+                            if 0 <= tr < len(grid) and 0 <= tc < len(grid[tr]):
+                                raw_val = grid[tr][tc]
+                                cleaned_val = valor_extraido_limpo(raw_val, data_type)
+                                
+                                if cleaned_val is not None and _tipo_extraido_valido(cleaned_val, data_type, field_name):
+                                    col_letter = get_column_letter(tc + 1)
+                                    coord = f"{col_letter}{tr + 1}"
+                                    return cleaned_val, {
+                                        "celula_origem": coord,
+                                        "aba_origem": sheet_name,
+                                        "metodo": "omnidirectional_regex"
+                                    }
+    return None, {}
+
+def extrair_registro(workbook: openpyxl.workbook.workbook.Workbook, layout_schema: Dict[str, Any], master_catalog: Dict[str, Any] = None, grid_cache: Dict[str, List[Tuple]] = None) -> Tuple[Dict[str, Any], List[dict[str, Any]]]:
+    extracted_data = {}
+    metadata_list = []
+    
+    fields_to_extract = {}
+    max_score = 0.0
+    gates_to_check = []
+    
+    # 3. PROTEÇÃO AO LEGADO (Fallback)
+    if master_catalog and "fields" in master_catalog:
+        for mc_field, mc_config in master_catalog["fields"].items():
+            if mc_config.get("nature") == "OBSERVED":
+                fields_to_extract[mc_field] = dict(mc_config)
+                max_score += float(mc_config.get("weight", 0))
+                if mc_config.get("criticality") == "GATE_ENGINE":
+                    gates_to_check.append(mc_field)
+    else:
+        # Fallback Consumidores
+        field_map = layout_schema.get("field_map", {})
+        fields_to_extract = dict(field_map)
+        for sm_field in MAPA_SEMANTICO_INTELIGENTE.keys():
+            if sm_field not in fields_to_extract:
+                fields_to_extract[sm_field] = {}
+        max_score = len(fields_to_extract) # each field weight = 1
+        
+    score_obtido = 0.0
+
+    for field_name, field_config in fields_to_extract.items():
+        data_type = field_config.get("data_type") or field_config.get("type")
+        if not data_type:
+            # Inferência de tipagem semântica para impedir que a busca omnidirecional aceite lixo (strings) no lugar de números
+            fn_lower = field_name.lower()
+            if any(t in fn_lower for t in ("ativo", "passivo", "lucro", "patrimonio", "capital", "venda", "receita", "lair", "lajir", "fco", "fluxo", "probabilidade", "pd", "rol", "reserva", "imposto", "resultado", "score", "ac_pc", "at_pt", "mtm", "dividendos")):
+                data_type = "float"
+            elif any(t in fn_lower for t in ("data", "dt")):
+                data_type = "date"
+            else:
+                data_type = "string"
+                
+        sheet_hint = field_config.get("sheet")
+        
+        # 2. INTEGRAÇÃO COM O MASTER CATALOG E SCORING PONDERADO
+        if master_catalog and "fields" in master_catalog:
+            patterns = field_config.get("search_patterns")
+            if patterns and isinstance(patterns, list) and len(patterns) > 0:
+                search_pattern = "|".join(patterns)
+            else:
+                search_pattern = field_name.replace("_", r"\s*")
+        else:
+            search_pattern = MAPA_SEMANTICO_INTELIGENTE.get(field_name) or field_config.get("search_pattern")
+            if not search_pattern:
+                search_pattern = field_name.replace("_", r"\s*")
+                
+        val, meta_inf = busca_omnidirecional(workbook, search_pattern, data_type, sheet_hint, field_name, grid_cache)
+        
+        meta = {
+            "campo": field_name,
+            "aba_origem": meta_inf.get("aba_origem"),
+            "celula_origem": meta_inf.get("celula_origem"),
+            "metodo": meta_inf.get("metodo", "falha_extracao"),
+            "valor": val
+        }
+        
+        # Se a busca dinâmica falhar miseravelmente, tenta a coordenada fixa cega como último recurso
+        # Isso ocorre apenas se não houver Master Catalog ou se o legacy mantiver coords.
+        if val is None and not (master_catalog and "fields" in master_catalog):
+            static_cell = field_config.get("value_cell") or field_config.get("cell")
+            if static_cell and str(static_cell).strip() not in ("0", ""):
+                try:
+                    # Usa a aba sugerida no JSON ou a ativa
+                    ws_estatico = workbook.active
+                    if sheet_hint:
+                        hint_clean = str(sheet_hint).replace(" ", "").lower()
+                        for aba_real in workbook.sheetnames:
+                            if hint_clean in aba_real.replace(" ", "").lower():
+                                ws_estatico = workbook[aba_real]
+                                break
+
+                    raw_val, static_meta = ler_celula(ws_estatico, static_cell, return_meta=True)
+                    clean_val = valor_extraido_limpo(raw_val, data_type)
+                    if clean_val is not None and _tipo_extraido_valido(clean_val, data_type, field_name):
+                        val = clean_val
+                        meta.update({
+                            "aba_origem": ws_estatico.title,
+                            "celula_origem": static_cell,
+                            "metodo": "estatico_fixo_fallback",
+                            "valor": val
+                        })
+                except Exception:
+                    pass
+
+        extracted_data[field_name] = val
+        if meta["metodo"] != "falha_extracao":
+            metadata_list.append(meta)
+            
+        if val is not None:
+            if master_catalog and "fields" in master_catalog:
+                score_obtido += float(field_config.get("weight", 0))
+            else:
+                score_obtido += 1
+
+    # Calcula a Integridade da Ficha
+    score = (score_obtido / max_score) * 100 if max_score > 0 else 0
+    extracted_data["INTEGRIDADE_EXTRAIDA_PERCENTUAL"] = round(score, 2)
+    
+    # 4. GATES de Segurança
+    falha_gate = False
+    for gate in gates_to_check:
+        if extracted_data.get(gate) is None:
+            falha_gate = True
+            logger.warning(f"[GATE_ENGINE] Falha Crítica! Campo {gate} (GATE) ausente.")
+            break
+            
+    extracted_data["_FALHA_GATE_CRITICO"] = falha_gate
+    
+    if falha_gate:
+        # Penaliza severamente (zera o score) se o gate crítico falhou
+        score = 0.0
+        extracted_data["INTEGRIDADE_EXTRAIDA_PERCENTUAL"] = 0.0
+        logger.warning("[INTEGRIDADE] Ficha recusada: Falha no GATE Crítico.")
+    elif score >= 40.0:
+        logger.info(f"[INTEGRIDADE] Ficha aprovada com {score:.2f}% de integridade (Score: {score_obtido}/{max_score}).")
+    else:
+        logger.warning(f"[INTEGRIDADE] Ficha recusada: apenas {score:.2f}% de integridade (Score: {score_obtido}/{max_score}).")
+
+    return extracted_data, metadata_list
+
+def extrair_registro_do_vencedor(
+    workbook: openpyxl.workbook.workbook.Workbook,
+    layouts: Dict[str, Any],
+    master_catalog: Dict[str, Any] = None,
+) -> Tuple[Dict[str, Any], List[dict[str, Any]], str]:
+    """
+    Motor Competitivo (Tournament Extraction):
+    Ignora classificação cega baseada em uma única célula. 
+    Testa a ficha contra TODOS os layouts e elege como 'Campeão' aquele que 
+    atingir a maior integridade (porcentagem de campos com match válido).
+    """
+    from silver.normalizadores import normalizar_string
+
+    # Veto por tipo de documento baseado em abas esperadas (Crítico #3)
+    expected_tabs_raw = {
+        "V0", "Para_Limite_Comercializadoras", "Premissas", 
+        "FichaIndividual", "Memória de Cálculo", "Conf. Puras_DRE", 
+        "Dados Gerais e Qualitativos", "DRE", "Dem.Fin."
+    }
+    
+    def norm_tab(t: str) -> str:
+        s = normalizar_string(t, upper=True)
+        return s.replace(" ", "") if s else ""
+        
+    expected_tabs_norm = {norm_tab(t) for t in expected_tabs_raw}
+    workbook_tabs_norm = {norm_tab(t) for t in workbook.sheetnames}
+    
+    if not expected_tabs_norm.intersection(workbook_tabs_norm):
+        logger.warning(f"[VETO] Documento rejeitado. Nenhuma aba bate com as abas de layout: {workbook.sheetnames}")
+        return {}, [], "DOC_001_ESTRUTURA_INCOMPATIVEL"
+
+    best_score = -1.0
+    champion_data = {}
+    champion_meta = []
+    champion_name = "NENHUM"
+    
+    grid_cache = {}
+
+    for layout_name, layout_schema in layouts.items():
+        extracted, metadata = extrair_registro(workbook, layout_schema, master_catalog, grid_cache, allow_semantic=True)
+        score = extracted.get("INTEGRIDADE_EXTRAIDA_PERCENTUAL", 0)
+        
+        logger.info(f"Challenger {layout_name} obteve score: {score:.2f}%")
+        
+        if score > best_score:
+            best_score = score
+            champion_data = extracted
+            champion_meta = metadata
+            champion_name = layout_name
+
+    logger.info(f"[CHAMPION] Torneio finalizado. Vencedor: '{champion_name}' com score de {best_score:.2f}%.")
+    return champion_data, champion_meta, champion_name
+```
+
+
+---
+## src\domain\mtm\__init__.py
+Linhas: 0
+Classes: -
+Funções: -
+```python
+
+```
+
+
+---
+## src\domain\mtm\servico_denodo_mtm_reconciliacao.py
 Linhas: 144
 Classes: ReconciliacaoDataError
 Funções: executar_reconciliacao_denodo_mtm
@@ -2611,9 +3053,9 @@ import numpy as np
 import pandas as pd
 
 from app.context import AppContext
-from common.logging_utils import get_logger
+from control.logger import obter_logger
 from domain.enums import StatusAlerta
-from storage.silver_store import write_silver_dataset
+from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
 
 class ReconciliacaoDataError(Exception):
@@ -2626,7 +3068,7 @@ def executar_reconciliacao_denodo_mtm(context: AppContext) -> dict[str, Any]:
     """
     run_id = f"REC_MTM_DENODO_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     log_file = context.path("log_runner") / f"{run_id}__reconciliacao.log"
-    logger = get_logger("bdc.reconciliacao", log_file)
+    logger = obter_logger("bdc.reconciliacao", log_file)
 
     try:
         logger.info("Iniciando reconciliação entre Denodo e MtM por Contraparte.")
@@ -2702,7 +3144,7 @@ def executar_reconciliacao_denodo_mtm(context: AppContext) -> dict[str, Any]:
             df_alertas["STATUS_ALERTA"] = StatusAlerta.ABERTO.value
             
             alertas_output_dir = context.path("silver") / "alertas_credito"
-            write_silver_dataset(
+            escrever_conjunto_de_dados_silver(
                 records=df_alertas.to_dict(orient="records"),
                 output_dir=alertas_output_dir,
                 filename=f"alertas_reconciliacao_{run_id}"
@@ -2722,7 +3164,7 @@ def executar_reconciliacao_denodo_mtm(context: AppContext) -> dict[str, Any]:
         df_reconciliacao["DT_PROCESSAMENTO"] = datetime.now().isoformat(timespec="seconds")
 
         reconciliacao_output_dir = context.path("silver") / "reconciliacao_contratos_mtm"
-        csv_path, parquet_path = write_silver_dataset(
+        csv_path, parquet_path = escrever_conjunto_de_dados_silver(
             records=df_reconciliacao.to_dict(orient="records"),
             output_dir=reconciliacao_output_dir,
             filename="fato_reconciliacao_contrato_mtm"
@@ -2748,10 +3190,420 @@ def executar_reconciliacao_denodo_mtm(context: AppContext) -> dict[str, Any]:
 
 
 ---
-## src\silver\field_type_normalizer.py
-Linhas: 136
+## src\domain\salesforce\servico_salesforce_reconciliacao.py
+Linhas: 124
 Classes: -
-Funções: _get_fields, normalize_data_demonstracao_financeira, normalize_record
+Funções: executar_reconciliacao_fichas_salesforce
+```python
+"""
+Serviço de Reconciliação: Fichas de Crédito vs Salesforce.
+Verifica se todas as contrapartes com ficha de crédito estão devidamente cadastradas no CRM.
+"""
+
+from __future__ import annotations
+
+import logging
+from datetime import datetime
+from typing import Any
+
+import pandas as pd
+
+from app.context import AppContext
+from storage.escrever_dados import escrever_conjunto_de_dados_silver
+
+LOGGER = logging.getLogger(__name__)
+
+def executar_reconciliacao_fichas_salesforce(context: AppContext) -> dict[str, Any]:
+    run_id = f"REC_SF_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    logger = logging.getLogger("bdc.reconciliacao_sf")
+    
+    silver_dir = context.path("silver")
+
+    # 1. Carregar Fichas (Busca ampla nas pastas conhecidas)
+    df_fichas = pd.DataFrame()
+    for segmento in ["fichas_comercializadoras_extraidas", "fichas_consumidores_extraidas"]:
+        path_seg = silver_dir / segmento
+        if path_seg.exists():
+            parquets = list(path_seg.glob("*.parquet"))
+            if parquets:
+                df_seg = pd.read_parquet(max(parquets, key=lambda f: f.stat().st_mtime))
+                df_fichas = pd.concat([df_fichas, df_seg], ignore_index=True)
+
+    # 2. Carregar Contas do Salesforce (Busca dinâmica e recursiva)
+    df_sf = pd.DataFrame()
+    
+    # Varre a camada Silver inteira atrás de qualquer arquivo Parquet de Account do Salesforce
+    arquivos_sf = list(silver_dir.rglob("account*.parquet"))
+    if not arquivos_sf:
+        # Tenta outro padrão comum de nomenclatura
+        arquivos_sf = list(silver_dir.rglob("*salesforce*account*.parquet"))
+        
+    if arquivos_sf:
+        arquivo_sf_mais_recente = max(arquivos_sf, key=lambda f: f.stat().st_mtime)
+        df_sf = pd.read_parquet(arquivo_sf_mais_recente)
+
+    # Validação Robusta
+    if df_fichas.empty:
+        print("\n[AVISO] Base de Fichas está vazia. Abortando reconciliação.")
+        return {"run_id": run_id, "status": "SEM_DADOS_FICHAS"}
+        
+    if df_sf.empty:
+        print("\n[AVISO] Base do Salesforce (Account) não foi encontrada na Silver. Abortando.")
+        return {"run_id": run_id, "status": "SEM_DADOS_SF"}
+
+    # 3. Normalização de CNPJs (Chave de Negócio)
+    df_fichas["CNPJ_FICHAS"] = df_fichas["CNPJ"].astype(str).str.replace(r"\D", "", regex=True).str.zfill(14)
+    df_fichas_unique = df_fichas.drop_duplicates(subset=["CNPJ_FICHAS"]).copy()
+
+    # Caça a coluna que guarda o CNPJ dentro do CRM
+    col_cnpj_sf = "CNPJ" if "CNPJ" in df_sf.columns else next((c for c in df_sf.columns if "CNPJ" in str(c).upper() or "DOCUMENTO" in str(c).upper()), None)
+    
+    if not col_cnpj_sf:
+        print("\n[AVISO] Coluna de CNPJ não encontrada na base do Salesforce.")
+        return {"run_id": run_id, "status": "FALHA_MAPEAMENTO_SF"}
+
+    df_sf["CNPJ_SF"] = df_sf[col_cnpj_sf].astype(str).str.replace(r"\D", "", regex=True).str.zfill(14)
+    df_sf_unique = df_sf.drop_duplicates(subset=["CNPJ_SF"]).copy()
+
+    # 4. Cruzamento Direcional (Left Join a partir das Fichas)
+    df_merge = pd.merge(df_fichas_unique, df_sf_unique, left_on="CNPJ_FICHAS", right_on="CNPJ_SF", how="left", indicator=True)
+    
+    # 5. Geração de Alertas (Fichas sem CRM)
+    alertas = []
+    df_missing_in_sf = df_merge[df_merge["_merge"] == "left_only"]
+    
+    for _, row in df_missing_in_sf.iterrows():
+        cnpj = row["CNPJ_FICHAS"]
+        if cnpj == "00000000000000": continue
+        
+        alertas.append({
+            "CODIGO": "SF_001",
+            "CNPJ": cnpj,
+            "MENSAGEM": "Contraparte possui Ficha de Crédito, mas NÃO foi encontrada na base de Contas do CRM (Salesforce).",
+            "SEVERIDADE": "MÉDIA",
+            "RUN_ID": run_id,
+            "DT_DETECCAO": datetime.now().isoformat(timespec="seconds"),
+            "STATUS_ALERTA": "ABERTO"
+        })
+
+    # 6. Salvar Tabela Fato de Reconciliação
+    relational_dir = context.path("relational_facts")
+    relational_dir.mkdir(parents=True, exist_ok=True)
+    
+    df_resultado = df_merge[["CNPJ_FICHAS", "CNPJ_SF", "_merge"]].copy()
+    df_resultado.columns = ["CNPJ", "CNPJ_SALESFORCE", "STATUS_RECONCILIACAO"]
+    df_resultado["STATUS_RECONCILIACAO"] = df_resultado["STATUS_RECONCILIACAO"].map({
+        "both": "SINCRONIZADO", 
+        "left_only": "PENDENTE_NO_SALESFORCE", 
+        "right_only": "SOMENTE_SALESFORCE"
+    })
+
+    df_resultado.to_csv(relational_dir / "fato_reconciliacao_fichas_salesforce.csv", index=False, sep=";", decimal=",")
+    df_resultado.to_parquet(relational_dir / "fato_reconciliacao_fichas_salesforce.parquet", index=False)
+
+    # 7. Disparo dos Alertas
+    if alertas:
+        df_alertas = pd.DataFrame(alertas)
+        escrever_conjunto_de_dados_silver(
+            records=df_alertas.to_dict(orient="records"), 
+            output_dir=silver_dir / "alertas_credito", 
+            filename=f"alertas_reconciliacao_sf_{run_id}"
+        )
+
+    # Imprime direto no console para você ver sem precisar abrir logs
+    print(f"\n[RECONCILIAÇÃO CRM] Concluída! {len(alertas)} Fichas aprovadas não possuem cadastro correspondente no Salesforce.")
+    
+    return {
+        "run_id": run_id, 
+        "status": "SUCESSO", 
+        "fichas_cruzadas": len(df_fichas_unique),
+        "alertas_gerados": len(alertas)
+    }
+```
+
+
+---
+## src\services\connectors\mtm_connector.py
+Linhas: 84
+Classes: MtmConnectionError
+Funções: _encontrar_arquivo_mtm_recente, buscar_mtm_consolidado
+```python
+"""Conector de integração com a base de MtM (Risco de Mercado)."""
+
+from __future__ import annotations
+from pathlib import Path
+from typing import Any
+from datetime import datetime
+import pandas as pd
+
+from silver.normalizadores import padronizar_cnpj
+
+class MtmConnectionError(Exception):
+    """Exceção levantada quando a base de MtM não pode ser obtida."""
+
+def _encontrar_arquivo_mtm_recente(diretorio: Path) -> Path:
+    arquivos = [f for f in diretorio.iterdir() if f.is_file() and f.suffix.lower() in {".xlsx", ".xls", ".csv"} and not f.name.startswith("~$")]
+    if not arquivos: raise FileNotFoundError(f"Nenhum arquivo de MtM encontrado na pasta: {diretorio}")
+    return max(arquivos, key=lambda f: f.stat().st_mtime)
+
+def buscar_mtm_consolidado(input_dir: Path | str, logger: Any | None = None) -> pd.DataFrame:
+    diretorio = Path(input_dir)
+    diretorio.mkdir(parents=True, exist_ok=True)
+    
+    try:
+        arquivo_fonte = _encontrar_arquivo_mtm_recente(diretorio)
+        if logger: logger.info("Lendo base de MtM a partir do arquivo local: %s", arquivo_fonte.name)
+        
+        if arquivo_fonte.suffix.lower() == ".csv":
+            df_bruto = pd.read_csv(arquivo_fonte, sep=";", encoding="utf-8-sig", dtype=str, low_memory=False)
+        else:
+            df_bruto = pd.read_excel(arquivo_fonte, dtype=str)
+
+        df_bruto.columns = [str(c).strip().upper() for c in df_bruto.columns]
+
+        # 1. CNPJ — via validador centralizado
+        col_cnpj = next((c for c in df_bruto.columns if "CNPJ" in c and "CONTROLADOR" not in c), None)
+        if col_cnpj:
+            parsed       = df_bruto[col_cnpj].map(padronizar_cnpj)
+            cnpj_series  = parsed.map(lambda t: t[0])
+            raiz_series  = parsed.map(lambda t: t[1])
+            status_series = parsed.map(lambda t: t[2])
+        else:
+            cnpj_series   = pd.Series(["00000000000000"] * len(df_bruto), name="CNPJ")
+            raiz_series   = pd.Series(["00000000"] * len(df_bruto), name="CNPJ_RAIZ")
+            status_series = pd.Series(["CNPJ_AUSENTE"] * len(df_bruto), name="STATUS_CNPJ")
+
+        # 2. MTM TOTAL (Reais)
+        if "MTM_TOTAL" in df_bruto.columns:
+            raw_mtm = df_bruto["MTM_TOTAL"].astype(str).str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
+            valores_mtm = pd.to_numeric(raw_mtm, errors="coerce").fillna(0.0)
+        else:
+            valores_mtm = pd.Series([0.0] * len(df_bruto), name="MTM_TOTAL")
+
+        # 3. NOTIONAL FINANCEIRO (MWh * Preço)
+        if "ENERGIA_MWH" in df_bruto.columns and "PRECO_REAJUSTADO" in df_bruto.columns:
+            vol = df_bruto["ENERGIA_MWH"].astype(str).str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
+            px = df_bruto["PRECO_REAJUSTADO"].astype(str).str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
+            valores_notional = pd.to_numeric(vol, errors="coerce").fillna(0.0) * pd.to_numeric(px, errors="coerce").fillna(0.0)
+        else:
+            valores_notional = pd.Series([0.0] * len(df_bruto), name="NOTIONAL")
+
+        # 4. Dados Base
+        contrato_series = df_bruto.get("COD_CONTRATO", pd.Series([None] * len(df_bruto)))
+        data_base_series = df_bruto.get("DATA_AVALIACAO", pd.Series([datetime.now().strftime("%Y-%m-%d")] * len(df_bruto)))
+
+        # 5. Output
+        df_resultado = pd.DataFrame({
+            "CNPJ":        cnpj_series,
+            "CNPJ_RAIZ":   raiz_series,
+            "STATUS_CNPJ": status_series,
+            "CONTRATO":    contrato_series,
+            "DATA_BASE":   data_base_series,
+            "MTM_TOTAL":   valores_mtm,
+            "NOTIONAL":    valores_notional
+        })
+
+        # Filtra registros com CNPJ inválido ou ausente
+        df_resultado = df_resultado[df_resultado["STATUS_CNPJ"] == "CNPJ_VALIDO"].copy()
+
+        if logger: logger.info("MtM lido. Notional convertido para Financeiro (R$).")
+        return df_resultado
+
+    except Exception as exc:
+        if logger: logger.exception("Falha ao processar o arquivo local de MtM.")
+        raise MtmConnectionError(f"Erro ao ler base de MtM: {exc}") from exc
+```
+
+
+---
+## src\services\connectors\risk3_connector.py
+Linhas: 130
+Classes: -
+Funções: _obter_token_auth, buscar_bureau_risk3
+```python
+"""Conector oficial para a API Expresso RISK3 (Bureau de Crédito)."""
+
+from __future__ import annotations
+
+import json
+import logging
+import os
+import time
+from datetime import datetime
+from pathlib import Path
+from typing import Any
+
+import pandas as pd
+import requests
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+from app.context import AppContext
+from silver.normalizadores import padronizar_cnpj
+
+LOGGER = logging.getLogger(__name__)
+
+def _obter_token_auth() -> str | None:
+    """Autentica na API da RISK3 e obtém um token de sessão via POST."""
+    base_url = os.getenv("RISK3_BASE_URL")
+    user = os.getenv("RISK3_USER")
+    pwd = os.getenv("RISK3_PWD")
+
+    if not all([base_url, user, pwd]):
+        LOGGER.warning("Credenciais RISK3_BASE_URL, RISK3_USER ou RISK3_PWD ausentes no .env")
+        return None
+
+    proxies = {"http": None, "https": None} # Tenta bypass de proxy local
+
+    try:
+        url = f"{base_url.rstrip('/')}/api/v0/login"
+        resp = requests.post(url, json={"username": user, "password": pwd}, timeout=15, verify=False, proxies=proxies)
+        
+        # Bloqueio de rede detectado
+        if "Acesso Bloqueado" in resp.text or "Netskope" in resp.text:
+            LOGGER.error("Conexão interceptada pelo Netskope/Firewall da Copel.")
+            return None
+
+        if resp.status_code == 200:
+            return resp.json().get("data")
+            
+        LOGGER.error("Falha na autenticação RISK3. HTTP %s", resp.status_code)
+        return None
+    except Exception as e:
+        LOGGER.error("Falha de conexão na RISK3: %s", e)
+        return None
+
+def buscar_bureau_risk3(cnpjs: list[str], context: AppContext) -> pd.DataFrame:
+    """Orquestra a consulta em lote na RISK3 utilizando cache local."""
+    cache_path = context.path("entradas") / "bureau" / "cache" / "risk3_cache.json"
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    cache = {}
+    if cache_path.exists():
+        try:
+            cache = json.loads(cache_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            pass
+
+    token = _obter_token_auth()
+    if not token:
+        LOGGER.warning("Sem token da RISK3. Abortando consulta de Bureau.")
+        return pd.DataFrame()
+
+    base_url = os.getenv("RISK3_BASE_URL", "").rstrip('/')
+    proxies = {"http": None, "https": None}
+    
+    cnpjs_unicos = sorted(list(set(padronizar_cnpj(c)[0] for c in cnpjs if padronizar_cnpj(c))))
+    results = []
+    
+    print(f"\n--- INICIANDO CONSULTA RISK3 BUREAU ({len(cnpjs_unicos)} CNPJs) ---")
+    
+    for i, cnpj in enumerate(cnpjs_unicos):
+        # Validação de Cache (30 dias para não gastar chamadas do contrato)
+        cached = cache.get(cnpj)
+        if cached and cached.get("STATUS") == "SUCESSO":
+            data_cons = cached.get("DATA_CONSULTA")
+            if data_cons:
+                if (datetime.now() - datetime.fromisoformat(data_cons)).days < 30:
+                    print(f"[{i + 1}/{len(cnpjs_unicos)}] CNPJ {cnpj} -> CACHE (Válido)")
+                    results.append(cached)
+                    continue
+
+        print(f"[{i + 1}/{len(cnpjs_unicos)}] CNPJ {cnpj} -> Consultando API...", end=" ", flush=True)
+        
+        url = f"{base_url}/api/v0/analises/cnpj/{cnpj}"
+        headers = {"Venidera-AuthToken": token}
+        
+        resultado = {
+            "CNPJ": cnpj,
+            "DATA_CONSULTA": datetime.now().isoformat(timespec="seconds"),
+            "STATUS": "FALHA"
+        }
+
+        try:
+            resp = requests.get(url, headers=headers, timeout=20, verify=False, proxies=proxies)
+            
+            if "Netskope" in resp.text or "Acesso Bloqueado" in resp.text:
+                resultado["STATUS"] = "BLOQUEIO_FIREWALL"
+                print("BLOQUEIO_FIREWALL")
+            elif resp.status_code == 200:
+                data_obj = resp.json().get("data", {})
+                resultado["RAW_DATA"] = json.dumps(data_obj, ensure_ascii=False)
+                resultado["STATUS"] = "SUCESSO"
+                print("SUCESSO")
+            elif resp.status_code in (404, 422):
+                resultado["STATUS"] = "NAO_ENCONTRADO"
+                print("NAO_ENCONTRADO")
+            else:
+                resultado["STATUS"] = f"ERRO_HTTP_{resp.status_code}"
+                print(f"ERRO_HTTP_{resp.status_code}")
+        except Exception:
+            resultado["STATUS"] = "ERRO_CONEXAO"
+            print("ERRO_CONEXAO")
+
+        if resultado["STATUS"] in ["SUCESSO", "NAO_ENCONTRADO"]:
+            cache[cnpj] = resultado
+            
+        results.append(resultado)
+        time.sleep(0.5)
+
+    if results:
+        cache_path.write_text(json.dumps(cache, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    return pd.DataFrame(results)
+```
+
+
+---
+## src\silver\__init__.py
+Linhas: 1
+Classes: -
+Funções: -
+```python
+"""Camada silver do sistema BDC."""
+
+```
+
+
+---
+## src\silver\documentos_classificados.py
+Linhas: 24
+Classes: -
+Funções: criar_documento_classificado
+```python
+"""Builders da camada silver para documentos classificados."""
+
+from __future__ import annotations
+
+
+def criar_documento_classificado(
+    documento_id: str,
+    run_id: str,
+    ambiente: str,
+    arquivo_nome: str,
+    versao_ficha: str,
+    tipo_ficha: str,
+    hash_arquivo: str,
+) -> dict[str, str]:
+    """Monta o registro silver de documento classificado."""
+    return {
+        "documento_id": documento_id,
+        "run_id": run_id,
+        "ambiente": ambiente,
+        "arquivo_nome": arquivo_nome,
+        "versao_ficha": versao_ficha,
+        "tipo_ficha": tipo_ficha,
+        "hash_arquivo": hash_arquivo,
+    }
+
+```
+
+
+---
+## src\silver\normalizador_de_tipo_de_campo.py
+Linhas: 140
+Classes: -
+Funções: _obter_campos, normalizar_registro
 ```python
 """Normalização técnica das fichas."""
 
@@ -2761,15 +3613,20 @@ import re
 from datetime import datetime
 from typing import Any
 
+from anyio import Path
+
 from app.context import AppContext
-from common.dates import normalize_date
-from common.io_json import read_json
-from common.strings import normalize_cnpj, normalize_string
-from common.types import normalize_float
-from control.field_types import get_field_type_config
+from silver.normalizadores import (
+    normalize_date,
+    normalize_string,
+    normalize_float,
+    normalize_data_demonstracao_financeira
+)
+from common.json import ler_json
+from control.field_types import obter_config_tipo_campo
 
 
-def _get_fields(field_types: dict[str, Any], key: str) -> list[str]:
+def _obter_campos(field_types: dict[str, Any], key: str) -> list[str]:
     """Obtém uma lista de campos do JSON de tipos (Usado apenas no fallback)."""
     value = field_types.get(key, [])
 
@@ -2785,33 +3642,7 @@ def _get_fields(field_types: dict[str, Any], key: str) -> list[str]:
     return [str(item).strip() for item in value if str(item).strip()]
 
 
-def normalize_data_demonstracao_financeira(value: Any) -> str | None:
-    """Normaliza DATA_DEMONSTRACAO_FINANCEIRA para dd/mm/aaaa."""
-    if value is None:
-        return None
-
-    text = str(value).strip()
-    if not text:
-        return None
-
-    if re.fullmatch(r"\d{4}", text):
-        return f"31/12/{text}"
-
-    text = text.split()[0]
-
-    formatos = ["%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y", "%Y/%m/%d"]
-
-    for fmt in formatos:
-        try:
-            dt = datetime.strptime(text, fmt)
-            return dt.strftime("%d/%m/%Y")
-        except ValueError:
-            continue
-
-    return None
-
-
-def normalize_record(
+def normalizar_registro(
     record: dict[str, Any],
     context: AppContext,
     slug: str,
@@ -2820,7 +3651,7 @@ def normalize_record(
     """Normaliza o registro bruto extraído da ficha."""
     try:
         # T1.3.1: Uso da Classe Python Tipada com prioridade sobre o JSON
-        config_class = get_field_type_config(slug)
+        config_class = obter_config_tipo_campo(slug)
 
         if config_class:
             if logger is not None:
@@ -2831,21 +3662,43 @@ def normalize_record(
             cnpj_fields = config_class.cnpj_fields
         else:
             if logger is not None:
-                logger.info("Classe Python não encontrada. Fallback para JSON: %s", slug)
-            field_types_path = context.control_file(slug)
-            field_types = read_json(field_types_path)
+                logger.info("Classe Python não encontrada. Fallback: %s", slug)
+            
+            if slug == "field_types_fichas_comercializadoras":
+                master_catalog_path = Path("ENTRADAS/control/quality/master_catalog_comercializadoras.json")
+                catalog = ler_json(master_catalog_path)
+                fields = catalog.get("fields", {})
+                date_fields = [k for k, v in fields.items() if v.get("type") == "date"]
+                float_fields = [k for k, v in fields.items() if v.get("type") == "float"]
+                text_fields = [k for k, v in fields.items() if v.get("type") == "string"]
+                cnpj_fields = [k for k, v in fields.items() if v.get("type") == "cnpj"]
+            else:
+                field_types_path = context.control_file(slug)
+                field_types = ler_json(field_types_path)
 
-            date_fields = _get_fields(field_types, "date_fields")
-            float_fields = _get_fields(field_types, "float_fields")
-            text_fields = _get_fields(field_types, "text_fields")
-            cnpj_fields = _get_fields(field_types, "cnpj_fields")
+                date_fields = _obter_campos(field_types, "date_fields")
+                float_fields = _obter_campos(field_types, "float_fields")
+                text_fields = _obter_campos(field_types, "text_fields")
+                cnpj_fields = _obter_campos(field_types, "cnpj_fields")
 
         out = dict(record)
 
+        from silver.normalizadores import padronizar_cnpj
+        
         for field in cnpj_fields:
             if field in out:
                 try:
-                    out[field] = normalize_cnpj(out.get(field))
+                    c_14, c_raiz, c_status = padronizar_cnpj(out.get(field))
+                    if c_14 is not None:
+                        out[field] = c_14
+                        if field == "CNPJ":
+                            out["CNPJ_RAIZ"] = c_raiz
+                            out["STATUS_CNPJ"] = c_status
+                    else:
+                        out[field] = None
+                        if field == "CNPJ":
+                            out["CNPJ_RAIZ"] = None
+                            out["STATUS_CNPJ"] = c_status
                 except Exception as exc:
                     if logger: logger.exception("Erro CNPJ: '%s'", field)
                     raise ValueError(f"Falha ao normalizar campo CNPJ '{field}'.") from exc
@@ -2854,7 +3707,10 @@ def normalize_record(
             if field in out:
                 try:
                     if field == "DATA_DEMONSTRACAO_FINANCEIRA":
-                        out[field] = normalize_data_demonstracao_financeira(out.get(field))
+                        val_norm, epoch_orig, was_corrected = normalize_data_demonstracao_financeira(out.get(field))
+                        out[field] = val_norm
+                        out["FLAG_DATA_DF_CORRIGIDA"] = was_corrected
+                        out["DATA_DF_EPOCH_ORIGINAL"] = epoch_orig
                     else:
                         out[field] = normalize_date(out.get(field))
                 except Exception as exc:
@@ -2893,487 +3749,104 @@ def normalize_record(
 
 
 ---
-## src\storage\state_store.py
-Linhas: 72
-Classes: DocumentManifest
-Funções: __post_init__, to_dict
+## src\storage\__init__.py
+Linhas: 1
+Classes: -
+Funções: -
 ```python
-"""Estruturas de estado e manifesto do processamento."""
+"""Camada de persistência física do sistema BDC."""
+
+```
+
+
+---
+## src\storage\armazenamento_manifest.py
+Linhas: 39
+Classes: -
+Funções: anexar_registro_de_manifesto, historico_de_ingestao_de_carga
+```python
+"""Persistência do manifest de ingestão em formato JSONL."""
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+import json
+from pathlib import Path
 from typing import Any
 
-from domain.enums import (
-    LoadMode,
-    StatusClassificacao,
-    StatusExtracao,
-    TipoFicha,
-)
 
-@dataclass
-class DocumentManifest:
-    """Representa o manifesto técnico de uma ficha processada."""
+def anexar_registro_de_manifesto(
+    output_file: str | Path,
+    record: dict[str, Any],
+) -> None:
+    """Acrescenta um registro no arquivo JSONL de ingestão."""
+    target = Path(output_file)
+    target.parent.mkdir(parents=True, exist_ok=True)
 
-    documento_id: str
-    run_id: str
-    ambiente: str
-    tipo_ficha: TipoFicha | str
-    arquivo_nome: str | None = None
-    caminho_origem: str | None = None
-    caminho_staging: str | None = None
-    caminho_bronze: str | None = None
-    hash_arquivo: str | None = None
-    versao_ficha: str | None = None
-    cnpj_extraido: str | None = None
-    data_demonstracao_financeira: str | None = None
-    data_calculo: str | None = None
-    status_classificacao: StatusClassificacao | str | None = None
-    status_extracao: StatusExtracao | str | None = None
-    load_mode: LoadMode | str | None = None
-    reprocessed: bool | None = None
-    previous_record_found: bool | None = None
-    erros: list[str] = field(default_factory=list)
-    avisos: list[str] = field(default_factory=list)
+    with target.open("a", encoding="utf-8") as file_obj:
+        file_obj.write(json.dumps(record, ensure_ascii=False) + "\n")
 
-    def __post_init__(self) -> None:
-        """Garante que os atributos controlados pertençam aos domínios nativos."""
-        if isinstance(self.tipo_ficha, str):
-            try:
-                self.tipo_ficha = TipoFicha(self.tipo_ficha.lower())
-            except ValueError:
-                raise ValueError(f"Valor rejeitado para tipo_ficha: '{self.tipo_ficha}'. Domínios válidos: {[e.value for e in TipoFicha]}")
 
-        if isinstance(self.status_classificacao, str):
-            try:
-                self.status_classificacao = StatusClassificacao(self.status_classificacao.upper())
-            except ValueError:
-                raise ValueError(f"Valor rejeitado para status_classificacao: '{self.status_classificacao}'. Domínios válidos: {[e.value for e in StatusClassificacao]}")
+def historico_de_ingestao_de_carga(
+    input_file: str | Path,
+) -> list[dict[str, Any]]:
+    """Carrega o histórico de ingestão a partir do arquivo JSONL."""
+    source = Path(input_file)
+    if not source.exists():
+        return []
 
-        if isinstance(self.status_extracao, str):
-            try:
-                self.status_extracao = StatusExtracao(self.status_extracao.upper())
-            except ValueError:
-                raise ValueError(f"Valor rejeitado para status_extracao: '{self.status_extracao}'. Domínios válidos: {[e.value for e in StatusExtracao]}")
-                
-        if isinstance(self.load_mode, str):
-            try:
-                self.load_mode = LoadMode(self.load_mode.lower())
-            except ValueError:
-                raise ValueError(f"Valor rejeitado para load_mode: '{self.load_mode}'. Domínios válidos: {[e.value for e in LoadMode]}")
+    history: list[dict[str, Any]] = []
 
-    def to_dict(self) -> dict[str, Any]:
-        """Serializa o manifesto convertendo os Enums para seus valores primitivos (strings)."""
-        manifest_dict = asdict(self)
-        for key, value in manifest_dict.items():
-            if hasattr(value, "value"):
-                manifest_dict[key] = value.value
-        return manifest_dict
+    with source.open("r", encoding="utf-8") as file_obj:
+        for line in file_obj:
+            line = line.strip()
+            if not line:
+                continue
+            history.append(json.loads(line))
+
+    return history
+
 ```
 
 
 ---
-## src\tests\test_denodo_connector.py
-Linhas: 27
+## src\storage\operacao_arquivo.py
+Linhas: 34
 Classes: -
-Funções: test_t211_leitura_denodo_local
+Funções: mover_arquivo_com_tentativa_adicional
 ```python
-import sys
-import pytest
-import pandas as pd
+"""Operações robustas de arquivo para ambiente Windows."""
+
+from __future__ import annotations
+
+import shutil
+import time
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from services.denodo_connector import fetch_contratos_competencia
+def mover_arquivo_com_tentativa_adicional(
+    source: str | Path,
+    target: str | Path,
+    attempts: int = 5,
+    wait_seconds: float = 0.5,
+) -> Path:
+    """Move um arquivo com novas tentativas em caso de bloqueio."""
+    source_path = Path(source)
+    target_path = Path(target)
+    target_path.parent.mkdir(parents=True, exist_ok=True)
 
-def test_t211_leitura_denodo_local():
-    """Garante que o conector offline formata o DataFrame estruturalmente."""
-    pasta_entradas = Path(__file__).resolve().parents[2] / "ENTRADAS" / "contratos_denodo"
-    
-    df = fetch_contratos_competencia("202608", input_dir=pasta_entradas)
-    
-    assert not df.empty, "O DataFrame não deveria estar vazio para 202608."
-    
-    colunas_esperadas = ["CNPJ", "CONTRATO", "COMPETENCIA", "VOLUME_MWM", "VIGENCIA_INICIO", "VIGENCIA_FIM", "STATUS"]
-    for col in colunas_esperadas:
-        assert col in df.columns, f"Coluna {col} ausente no DataFrame retornado."
-        
-    # Verifica se o filtro de competência funcionou perfeitamente
-    assert (df["COMPETENCIA"] == "202608").all(), "O filtro de competência falhou."
-    
-    # Verifica tipagem do Volume e CNPJ com as APIs modernas do Pandas
-    assert pd.api.types.is_numeric_dtype(df["VOLUME_MWM"]), "VOLUME_MWM não é numérico."
-    assert pd.api.types.is_string_dtype(df["CNPJ"]), "CNPJ deveria ser string."
-```
+    last_error: Exception | None = None
 
+    for _ in range(attempts):
+        try:
+            shutil.move(str(source_path), str(target_path))
+            return target_path
+        except PermissionError as exc:
+            last_error = exc
+            time.sleep(wait_seconds)
 
----
-## src\tests\test_dynamic_paths.py
-Linhas: 26
-Classes: -
-Funções: test_config_builder_sem_json_t122
-```python
-import sys
-import pytest
-from pathlib import Path
+    if last_error is not None:
+        raise last_error
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    return target_path
 
-from app.config_builder import AppConfigBuilder
-
-def test_config_builder_sem_json_t122(tmp_path):
-    """
-    Testa a resolução dinâmica sem depender da leitura do arquivo JSON em disco.
-    """
-    base_dir_simulado = tmp_path / "Z_DRIVE_CORPORATIVO"
-    
-    # Dicionário mock simulando a estrutura relativa contida no JSON
-    mock_paths = {
-        "entradas": "ENTRADAS",
-        "staging": "SAIDAS/staging"
-    }
-    
-    builder = AppConfigBuilder(base_dir_simulado)
-    resolved_paths = builder.resolve_dict(mock_paths)
-    
-    # Validações
-    assert resolved_paths["entradas"] == str(base_dir_simulado / "ENTRADAS")
-    assert resolved_paths["staging"] == str(base_dir_simulado / "SAIDAS" / "staging")
-```
-
-
----
-## src\tests\test_enums.py
-Linhas: 36
-Classes: -
-Funções: test_t133_rejeicao_valor_fora_do_dominio, test_t133_conversao_string_valida_para_enum
-```python
-import sys
-import pytest
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from storage.state_store import DocumentManifest
-
-def test_t133_rejeicao_valor_fora_do_dominio():
-    """Garante que o manifesto rejeita strings inválidas e levanta erro claro."""
-    with pytest.raises(ValueError) as exc:
-        DocumentManifest(
-            documento_id="123",
-            run_id="run_1",
-            ambiente="dev",
-            tipo_ficha="comercializadora",
-            status_extracao="FALHA_NA_PLANILHA" # Valor não mapeado no Enum
-        )
-    
-    assert "Valor rejeitado para status_extracao" in str(exc.value)
-    assert "ERRO_PROCESSAMENTO" in str(exc.value)
-
-def test_t133_conversao_string_valida_para_enum():
-    """Garante que strings minúsculas/maiúsculas sejam corrigidas para o Enum correspondente."""
-    manifest = DocumentManifest(
-        documento_id="123",
-        run_id="run_1",
-        ambiente="dev",
-        tipo_ficha="COMERCIALIZADORA", # Enviado maiúsculo, mas o Enum é minúsculo
-        status_extracao="sucesso" # Enviado minúsculo, mas o Enum é maiúsculo
-    )
-    
-    # O método to_dict extrai o valor consolidado correto para persistência
-    data = manifest.to_dict()
-    assert data["tipo_ficha"] == "comercializadora"
-    assert data["status_extracao"] == "SUCESSO"
-```
-
-
----
-## src\tests\test_layout_catalog.py
-Linhas: 46
-Classes: -
-Funções: test_cenario_1_layout_valido, test_cenario_2_layout_sem_field_map, test_cenario_3_layout_com_campo_vazio
-```python
-import sys
-import logging
-import pytest
-from pathlib import Path
-
-# Ajuste do path: como o arquivo está em src/tests/,
-# .parent é 'tests' e .parent.parent é a pasta 'src'.
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from control.layout_catalog import _validate_layout_structure
-
-# Criação de um logger simulado para o teste
-logger = logging.getLogger("test_logger")
-
-def test_cenario_1_layout_valido():
-    """Cenário 1: Layout possui field_map e campos com pelo menos uma âncora válida."""
-    layout_valido = {
-        "field_map": {
-            "CNPJ": {"value_cell": "B13"},
-            "DATA_DF": {"search_pattern": "^DATA"},
-            "MISTO": {"value_cell": "A1", "search_pattern": "PADRAO"}
-        }
-    }
-    # Se a validação passar, nenhuma exceção é lançada e o teste tem sucesso
-    _validate_layout_structure(layout_valido, "layout_mock_valido", logger)
-
-def test_cenario_2_layout_sem_field_map():
-    """Cenário 2: Layout está corrompido e perdeu a raiz 'field_map'."""
-    layout_invalido = {
-        "outra_chave": "valor_qualquer"
-    }
-    with pytest.raises(SystemExit) as e:
-        _validate_layout_structure(layout_invalido, "layout_mock_corrompido", logger)
-    assert e.value.code == 1
-
-def test_cenario_3_layout_com_campo_vazio():
-    """Cenário 3: Um campo específico perdeu as âncoras 'value_cell' e 'search_pattern'."""
-    layout_invalido = {
-        "field_map": {
-            "CNPJ": {"value_cell": "B13"},
-            "CAMPO_FALTANDO_ANCORA": {"alguma_outra_coisa": "X"} # Falha aqui
-        }
-    }
-    with pytest.raises(SystemExit) as e:
-        _validate_layout_structure(layout_invalido, "layout_mock_campo_vazio", logger)
-    assert e.value.code == 1
-```
-
-
----
-## src\tests\test_pd_consumidor_le5.py
-Linhas: 33
-Classes: -
-Funções: test_t142_calculo_pd_bureau_sem_restritivo, test_t142_calculo_pd_bureau_com_restritivo
-```python
-import sys
-import pytest
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from domain.credito.pd_consumidor_le5 import calcular_pd_final_consumidor_le5
-
-def test_t142_calculo_pd_bureau_sem_restritivo():
-    """Score 700 = Rating B (Faixa de B: 1% a 3%). Deve interpolar corretamente."""
-    pd_faixas = {
-        "CONSUMIDOR_LE_5": {
-            "B": {"min": 0.0100, "max": 0.0300}
-        }
-    }
-    registro = {"SCORE_BUREAU": 700.0, "QUANTIDADE_RESTRITIVOS": 0}
-    
-    res = calcular_pd_final_consumidor_le5(registro, pd_faixas)
-    
-    assert res["RATING_FINAL"] == "B"
-    assert res["PATRIMONIO_LIQUIDO"] == "NAO_APLICAVEL"
-    # Uso do pytest.approx para evitar quebra por conversão de floating point em binário
-    assert res["PD_FINAL"] == pytest.approx(0.02, abs=1e-5)
-
-def test_t142_calculo_pd_bureau_com_restritivo():
-    """Mesmo com score alto, se houver restritivo, vai para Rating E."""
-    pd_faixas = {"CONSUMIDOR_LE_5": {"E": {"min": 0.1100, "max": 1.0000}}}
-    registro = {"SCORE_BUREAU": 950.0, "QUANTIDADE_RESTRITIVOS": 2}
-    
-    res = calcular_pd_final_consumidor_le5(registro, pd_faixas)
-    
-    assert res["RATING_FINAL"] == "E"
-    assert res["PD_METODO"] == "SCORE_BUREAU"
-```
-
-
----
-## src\tests\test_reconciliacao_denodo_mtm.py
-Linhas: 97
-Classes: MockContext
-Funções: test_t223_reconciliacao_denodo_mtm_cenarios_completos, path
-```python
-import sys
-import pytest
-import pandas as pd
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from services.reconciliacao_denodo_mtm_service import executar_reconciliacao_denodo_mtm
-
-def test_t223_reconciliacao_denodo_mtm_cenarios_completos(tmp_path):
-    """
-    Testa a classificação de reconciliação cruzando Denodo x MtM e o disparo de alertas.
-    Cobre: CONCILIADO, CONTRATO_SEM_MTM (CTR_001) e MTM_SEM_CONTRATO (CTR_002).
-    """
-    
-    # 1. Estrutura mock de diretórios na Silver
-    silver_dir = tmp_path / "SAIDAS" / "silver"
-    dir_denodo = silver_dir / "denodo_contratos_silver"
-    dir_mtm = silver_dir / "mtm_consolidado_silver"
-    dir_denodo.mkdir(parents=True)
-    dir_mtm.mkdir(parents=True)
-
-    class MockContext:
-        def path(self, key):
-            if key == "silver":
-                return silver_dir
-            if key == "log_runner":
-                p = tmp_path / "LOGS"
-                p.mkdir(parents=True, exist_ok=True)
-                return p
-            return tmp_path
-
-    context = MockContext()
-
-    # 2. Criando massa de dados mockada
-    
-    # Base Denodo:
-    # C1 vai cruzar perfeitamente com o MtM.
-    # C2 existe só no Denodo (vai gerar CTR_001).
-    df_denodo = pd.DataFrame([
-        {"CNPJ": "11111111111111", "CONTRATO": "C1"},
-        {"CNPJ": "22222222222222", "CONTRATO": "C2"},
-    ])
-    df_denodo.to_parquet(dir_denodo / "contratos_correntes.parquet", index=False)
-
-    # Base MtM:
-    # C1 vai cruzar perfeitamente com o Denodo.
-    # C3 existe só no MtM (vai gerar CTR_002).
-    df_mtm = pd.DataFrame([
-        {
-            "CNPJ": "11111111111111", "CONTRATO": "C1", 
-            "MTM_POSITIVO_TOTAL": 1000.0, "MTM_NEGATIVO_TOTAL": 0.0, "NOTIONAL_TOTAL": 50.0
-        },
-        {
-            "CNPJ": "33333333333333", "CONTRATO": "C3", 
-            "MTM_POSITIVO_TOTAL": 500.0, "MTM_NEGATIVO_TOTAL": 10.0, "NOTIONAL_TOTAL": 20.0
-        },
-    ])
-    df_mtm.to_parquet(dir_mtm / "mtm_agregado_contraparte.parquet", index=False)
-
-    # 3. Executa o serviço de reconciliação
-    res = executar_reconciliacao_denodo_mtm(context)
-
-    # 4. Validações do dicionário de resposta
-    assert res["status"] == "SUCESSO"
-    assert res["linhas_conciliadas"] == 3  # Avaliou C1, C2 e C3 (Outer Join)
-    assert res["alertas_gerados_ctr001"] == 1
-    assert res["alertas_gerados_ctr002"] == 1
-
-    # 5. Validação da Tabela de Fatos da Reconciliação
-    path_reconciliacao = silver_dir / "reconciliacao_contratos_mtm" / "fato_reconciliacao_contrato_mtm.parquet"
-    assert path_reconciliacao.exists(), "Tabela de fatos de reconciliação não foi gerada."
-    
-    df_rec = pd.read_parquet(path_reconciliacao)
-
-    c1_status = df_rec.loc[df_rec["CONTRATO"] == "C1", "STATUS_CONCILIACAO"].iloc[0]
-    c2_status = df_rec.loc[df_rec["CONTRATO"] == "C2", "STATUS_CONCILIACAO"].iloc[0]
-    c3_status = df_rec.loc[df_rec["CONTRATO"] == "C3", "STATUS_CONCILIACAO"].iloc[0]
-
-    # Valida se a regra de Outer Join inferiu corretamente os domínios de negócio
-    assert c1_status == "CONCILIADO", "Contrato presente em ambas as pontas deveria estar CONCILIADO."
-    assert c2_status == "CONTRATO_SEM_MTM", "Contrato órfão do Denodo classificado incorretamente."
-    assert c3_status == "MTM_SEM_CONTRATO", "Contrato órfão do MtM classificado incorretamente."
-
-    # 6. Validação dos Alertas (CTR_001 e CTR_002)
-    path_alertas_dir = silver_dir / "alertas_credito"
-    arquivos_alerta = list(path_alertas_dir.glob("*.parquet"))
-    assert len(arquivos_alerta) == 1, "Arquivo físico de alertas não foi salvo."
-
-    df_alertas = pd.read_parquet(arquivos_alerta[0])
-    
-    # Precisam existir exatamente 2 alertas na nossa massa de dados (C2 e C3)
-    assert len(df_alertas) == 2 
-    codigos_alerta = df_alertas["CODIGO"].tolist()
-    
-    assert "CTR_001" in codigos_alerta
-    assert "CTR_002" in codigos_alerta
-```
-
-
----
-## src\tests\test_reconciliacao_fichas_salesforce.py
-Linhas: 78
-Classes: MockContext
-Funções: test_t232_reconciliacao_fichas_salesforce_cenarios, path
-```python
-import sys
-import pytest
-import pandas as pd
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
-from services.reconciliacao_fichas_salesforce_service import executar_reconciliacao_fichas_salesforce
-
-
-def test_t232_reconciliacao_fichas_salesforce_cenarios(tmp_path):
-    """
-    Testa o cruzamento entre Fichas e Salesforce.
-    Cobre a geração do alerta CAD_002 para divergência de Grupo Econômico 
-    e o armazenamento de ratings concorrentes.
-    """
-    
-    # 1. Estrutura mock
-    silver_dir = tmp_path / "SAIDAS" / "silver"
-    dir_fichas_com = silver_dir / "fichas_comercializadoras"
-    dir_sf_account = silver_dir / "salesforce_silver" / "account"
-    
-    dir_fichas_com.mkdir(parents=True)
-    dir_sf_account.mkdir(parents=True)
-
-    class MockContext:
-        def path(self, key):
-            if key == "silver":
-                return silver_dir
-            if key == "log_runner":
-                p = tmp_path / "LOGS"
-                p.mkdir(parents=True, exist_ok=True)
-                return p
-            return tmp_path
-
-    context = MockContext()
-
-    # 2. Mock de Fichas
-    # C1: Divergência de grupo. C2: Consistente.
-    df_fichas = pd.DataFrame([
-        {"CNPJ": "11111111111111", "GRUPO_ECONOMICO": "Grupo A", "RATING": "A"},
-        {"CNPJ": "22222222222222", "GRUPO_ECONOMICO": "Grupo B", "RATING": "B+"},
-    ])
-    df_fichas.to_parquet(dir_fichas_com / "fichas_padronizadas.parquet", index=False)
-
-    # 3. Mock de Salesforce (Account)
-    df_sf = pd.DataFrame([
-        {"CNPJ": "11111111111111", "Grupo_economico__c": "Grupo Diferente", "Risk3_Rating__c": "A-"},
-        {"CNPJ": "22222222222222", "Grupo_economico__c": "Grupo B", "Risk3_Rating__c": "B+"},
-        {"CNPJ": "33333333333333", "Grupo_economico__c": "Grupo C", "Risk3_Rating__c": "C"},
-    ])
-    df_sf.to_parquet(dir_sf_account / "salesforce_account.parquet", index=False)
-
-    # 4. Executa Reconciliação
-    res = executar_reconciliacao_fichas_salesforce(context)
-
-    # 5. Asserções
-    assert res["status"] == "SUCESSO"
-    assert res["linhas_conciliadas"] == 2  # Somente 111... e 222... (Inner join)
-    assert res["alertas_gerados_cad002"] == 1  # Divergência no 111...
-    
-    # Valida arquivo de alertas
-    path_alertas_dir = silver_dir / "alertas_credito"
-    arquivos_alerta = list(path_alertas_dir.glob("*.parquet"))
-    assert len(arquivos_alerta) == 1
-    
-    df_alertas = pd.read_parquet(arquivos_alerta[0])
-    assert df_alertas["CODIGO"].iloc[0] == "CAD_002"
-    assert df_alertas["CNPJ"].iloc[0] == "11111111111111"
-    
-    # Valida armazenamento de Rating Concorrente
-    path_ratings = silver_dir / "reconciliacao_fichas_salesforce" / "fato_concorrencia_rating.parquet"
-    assert path_ratings.exists()
-    
-    df_rating = pd.read_parquet(path_ratings)
-    assert len(df_rating) == 2
-    assert "RATING_FICHA" in df_rating.columns
-    assert "RATING_SF" in df_rating.columns
 ```

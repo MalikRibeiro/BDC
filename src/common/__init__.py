@@ -1,1 +1,1 @@
-"""Utilitários compartilhados do sistema BDC."""
+# Init para o pacote comum de domínios

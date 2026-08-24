@@ -11,7 +11,7 @@ from openpyxl.worksheet.worksheet import Worksheet
 from openpyxl.utils import get_column_letter
 
 
-def open_workbook(path: str | Path) -> Any:
+def abrir_pasta(path: str | Path) -> Any:
     """Abre um workbook Excel em modo somente leitura."""
     return load_workbook(
         filename=Path(path),
@@ -20,7 +20,7 @@ def open_workbook(path: str | Path) -> Any:
         keep_links=False,
     )
 
-def close_workbook_safely(workbook: Any) -> None:
+def fechar_pasta(workbook: Any) -> None:
     """Fecha um workbook ignorando falhas de liberação."""
     if workbook is None:
         return
@@ -29,7 +29,7 @@ def close_workbook_safely(workbook: Any) -> None:
     except Exception:
         return
 
-def read_cell(worksheet: Worksheet, cell_ref: str, return_meta: bool = False) -> Any:
+def ler_celula(worksheet: Worksheet, cell_ref: str, return_meta: bool = False) -> Any:
     """Lê o valor de uma célula a partir de uma referência A1 (ex: 'A19')."""
     if not cell_ref or cell_ref == "0":
         return (None, None) if return_meta else None
@@ -38,14 +38,7 @@ def read_cell(worksheet: Worksheet, cell_ref: str, return_meta: bool = False) ->
         return val, {"aba": worksheet.title, "celula": cell_ref}
     return val
 
-def normalize_label_text(text: Any) -> str:
-    """Normaliza o texto removendo espaços extras, acentos e marcadores."""
-    if text is None:
-        return ""
-    text_str = str(text).strip().lower()
-    return re.sub(r"\s+", " ", text_str)
-
-def find_cell_by_regex(
+def localizar_celula_por_regex(
     worksheet: Worksheet,
     search_pattern: str,
     offset_col: int = 1,

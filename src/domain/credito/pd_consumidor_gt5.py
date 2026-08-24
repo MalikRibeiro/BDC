@@ -12,7 +12,7 @@ from domain.credito.pd_exceptions import (
 )
 
 
-def _inv_t_approx(prob: float, df: float) -> float:
+def _inv_t_aproximado(prob: float, df: float) -> float:
     """Aproxima o quantil da t de Student a partir do quantil normal."""
     if not 0 < prob < 1:
         raise PdCalculationError(
@@ -71,7 +71,7 @@ def calcular_pd_final_consumidor_gt5(
 
         q_cap = min(1 - eps, max(eps, q))
 
-        z_t = _inv_t_approx(q_cap, df)
+        z_t = _inv_t_aproximado(q_cap, df)
         z = scale * z_t
         u = 1.0 / (1.0 + math.exp(-z))
 

@@ -185,6 +185,7 @@
     "LUCRO_LIQUIDO": {
       "sheet": "FichaIndividual",
       "label_cell": "K26",
+      "search_pattern": "LUCRO LIQUIDO|LUCRO/PREJUIZO DO EXERCICIO",
       "value_cell": "P26",
       "implemented": true
     },

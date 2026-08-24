@@ -1,0 +1,39 @@
+{
+  "entity": "domain_dictionaries",
+  "version": "1.0.0",
+  "AGENCIA": {
+    "FITCH": ["FITCH RATINGS", "FITCH", "F.I.T.C.H", "FITCH INC"],
+    "MOODYS": ["MOODY'S", "MOODYS", "MOODY S", "MOODY"],
+    "SP": ["STANDARD & POOR'S", "S&P", "STANDARD AND POORS", "STANDARD & POORS", "SP"]
+  },
+  "AUDITOR_PARA_NOTA": {
+    "A": ["DELOITTE", "PWC", "EY", "KPMG"],
+    "C": ["BDO", "GRANT THORNTON", "BAKER TILLY"],
+    "D": ["CROWE HORWATH", "NEXIA INTERNATIONAL", "RSM"],
+    "E": ["CONTADOR", "OUTRO"]
+  },
+  "NOTA_CREDITO": {
+    "AAA": ["AAA", "Aaa"],
+    "AA+": ["AA+", "Aa1"],
+    "AA": ["AA", "Aa2"],
+    "AA-": ["AA-", "Aa3"],
+    "A+": ["A+", "A1"],
+    "A": ["A", "A2"],
+    "A-": ["A-", "A3"],
+    "BBB+": ["BBB+", "Baa1"],
+    "BBB": ["BBB", "Baa2"],
+    "BBB-": ["BBB-", "Baa3"],
+    "BB+": ["BB+", "Ba1"],
+    "BB": ["BB", "Ba2"],
+    "BB-": ["BB-", "Ba3"],
+    "B+": ["B+", "B1"],
+    "B": ["B", "B2"],
+    "B-": ["B-", "B3"],
+    "CCC+": ["CCC+", "Caa1"],
+    "CCC": ["CCC", "Caa2"],
+    "CCC-": ["CCC-", "Caa3"],
+    "CC": ["CC", "Ca"],
+    "C": ["C"],
+    "D": ["D", "RD", "SD"]
+  }
+}

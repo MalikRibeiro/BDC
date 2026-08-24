@@ -39,7 +39,7 @@
     "PROBABILIDADE_DEFAULT",
     "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
     "AUDITOR",
-    "MFCO",
+    "FCO",
     "ROA",
     "ROE",
     "AGENCIA",
@@ -66,7 +66,18 @@
     "INDICE_AUTO_FINANCIAMENTO",
     "LIQUIDEZ_SECA",
     "INDICE_SOLVENCIA_GERAL",
-    "MARGEM_LIQUIDA"
+    "MARGEM_LIQUIDA",
+    "SITUACAO_CADASTRAL",
+    "NATUREZA_JURIDICA",
+    "CNAE",
+    "SCORE_QUANTITATIVO",
+    "SCORE_QUALITATIVO",
+    "NOTA_AUDITORIA",
+    "SCORE_PD",
+    "SCORE_FCO_ROL",
+    "SCORE_ROA",
+    "SCORE_ROE",
+    "LUCRO_LIQUIDO_SOBRE_ROL"
   ],
   "field_map": {
     "DADOS_CADASTRAIS": {
@@ -247,7 +258,7 @@
       "data_type": "text",
       "required": false
     },
-    "MFCO": {
+    "FCO": {
       "sheet": "Dados Gerais e Qualitativos",
       "label_cell": null,
       "value_cell": "G52",
@@ -471,6 +482,116 @@
       "implemented": true,
       "data_type": "float",
       "required": false
+    },
+    "SITUACAO_CADASTRAL": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A12",
+      "value_cell": "C12",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "STATUS|SITUACAO CADASTRAL",
+      "offset_col": 2
+    },
+    "NATUREZA_JURIDICA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A16",
+      "value_cell": "C16",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "NATUREZA JURIDICA",
+      "offset_col": 2
+    },
+    "CNAE": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A17",
+      "value_cell": "C17",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "ATIVIDADE ECONOMICA|CNAE",
+      "offset_col": 2
+    },
+    "SCORE_QUANTITATIVO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "C48",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "TOTAL QUANTITATIVO",
+      "offset_col": 2
+    },
+    "SCORE_QUALITATIVO": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "C42",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "TOTAL QUALITATIVO",
+      "offset_col": 2
+    },
+    "NOTA_AUDITORIA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": "A23",
+      "value_cell": "C23",
+      "implemented": true,
+      "data_type": "text",
+      "required": false,
+      "search_pattern": "NOTA AUDITORIA|AUDITORIA",
+      "offset_col": 2
+    },
+    "SCORE_PD": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "D27",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "PROBABILIDADE DE DEFAULT|^\\s*PD\\s*$",
+      "offset_col": 3
+    },
+    "SCORE_FCO_ROL": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "D28",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "^\\s*FCO/ROL\\s*$",
+      "offset_col": 3
+    },
+    "SCORE_ROA": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "D29",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "^\\s*ROA\\s*$",
+      "offset_col": 3
+    },
+    "SCORE_ROE": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "D30",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "^\\s*ROE\\s*$",
+      "offset_col": 3
+    },
+    "LUCRO_LIQUIDO_SOBRE_ROL": {
+      "sheet": "Dados Gerais e Qualitativos",
+      "label_cell": null,
+      "value_cell": "O34",
+      "implemented": true,
+      "data_type": "float",
+      "required": false,
+      "search_pattern": "MARGEM LIQUIDA",
+      "offset_col": 3
     }
   }
 }

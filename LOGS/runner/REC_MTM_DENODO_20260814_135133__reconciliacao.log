@@ -1,5 +1,0 @@
-2026-08-14 13:51:33 | INFO | bdc.reconciliacao | Iniciando reconciliação entre Denodo e MtM por Contraparte.
-2026-08-14 13:51:34 | INFO | bdc.reconciliacao | Gerados 1524 alertas de negócio na reconciliação.
-2026-08-14 13:51:34 | INFO | bdc.reconciliacao | Reconciliação Denodo x MtM finalizada. 2924 contrapartes cruzadas. Relatórios: 
- - fato_reconciliacao_contrato_mtm.csv
- - fato_reconciliacao_contrato_mtm.parquet

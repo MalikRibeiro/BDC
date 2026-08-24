@@ -11,36 +11,35 @@ from typing import Callable, NamedTuple, Any
 from datetime import datetime
 import pandas as pd
 
-# 1. PRIMEIRO ADICIONA O 'src' AO PATH DO PYTHON
 PROJECT_ROOT = Path(__file__).resolve().parent
 SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from app.bootstrap import load_context 
+from app.bootstrap import carregar_contexto 
 
 # --- IMPORTS DOS SERVIÇOS ---
-from cli import run_fichas_comercializadoras
-from cli import run_fichas_consumidores
-from services.contratos_denodo_service import ingest_contratos_denodo
-from services.enquadramento_service import calcular_enquadramento_consumidor
-from services.mtm_ingestion_service import ingest_mtm_data
-from services.reconciliacao_denodo_mtm_service import executar_reconciliacao_denodo_mtm
-from services.salesforce_ingestion_service import ingest_salesforce_data
-from services.reconciliacao_fichas_salesforce_service import executar_reconciliacao_fichas_salesforce
-from services.receita_ingestion_service import ingest_receita_data
-from services.garantias_service import ingest_garantias_data
-from services.pipeline_risco_service import run_pipeline_risco
-from services.dim_contraparte_service import build_dim_contraparte
-from services.fato_analise_credito_service import build_fato_analise_credito
-from services.carga_manual_service import ingest_carga_manual
-from services.override_service import processar_solicitacao_override
-from services.camada_gold_service import exportar_visao_consolidada_gold
-from services.audit_service import registrar_inicio_pipeline, registrar_fim_pipeline
+from cli import rodar_fichas_comercializadoras
+# from cli import rodar_fichas_consumidores
 
-# ==============================================================================
-# WRAPPERS PREPARADORES (Alimentam os motores com os dados da Silver)
-# ==============================================================================
+from domain.credito.servico_risco import rodar_pipeline_risco
+from domain.credito.servico_fato_analise_credito import construir_fato_analise_credito
+from domain.auditoria.servico_auditoria import registrar_inicio_pipeline, registrar_fim_pipeline
+
+# from domain.contratos.servico_contratos_denodo import processar_contratos_denodo
+# from domain.contrapartes.servico_enquadramento import calcular_enquadramento_consumidor
+# from domain.mtm.servico_mtm import inserir_dados_mtm
+# from domain.mtm.servico_denodo_mtm_reconciliacao import executar_reconciliacao_denodo_mtm
+# from domain.salesforce.servico_salesforce import inserir_dados_salesforce
+# from domain.salesforce.servico_salesforce_reconciliacao import executar_reconciliacao_fichas_salesforce
+# from domain.cadastro.servico_receita import inserir_dados_receita
+# from domain.garantias.servico_garantia import inserir_dados_garantias
+# from domain.carga_manual.servico_carga_manual import inserir_dados_carga_manual
+# from domain.credito.servico_override import processar_solicitacao_override
+# from gold.service_gold import exportar_visao_consolidada_gold
+# from domain.contrapartes.servico_dim_contraparte import criar_dim_contraparte
+# from domain.cadastro.servico_bureau import inserir_dados_bureau
+
 def preparar_e_rodar_risco(context):
     mtm_path = context.path("silver") / "mtm_consolidado_silver" / "mtm_agregado_contraparte.parquet"
     df_mtm = pd.read_parquet(mtm_path) if mtm_path.exists() else pd.DataFrame()
@@ -74,15 +73,35 @@ def preparar_e_rodar_risco(context):
             
     if "PD_FINAL" not in df_exposicoes.columns: df_exposicoes["PD_FINAL"] = None
     if "SEGMENTO_METODOLOGICO" not in df_exposicoes.columns: df_exposicoes["SEGMENTO_METODOLOGICO"] = "NAO_ENQUADRADO"
-    return run_pipeline_risco(context, df_exposicoes=df_exposicoes)
+    return rodar_pipeline_risco(context, df_exposicoes=df_exposicoes)
 
 def preparar_dim_contraparte(context):
     receita_path = context.path("silver") / "receita_silver" / "receita_cadastral_silver.parquet"
     enquadra_path = context.path("relational_configs") / f"enquadramento_consumidores_{datetime.now().strftime('%Y%m')}.csv"
+    salesforce_path = context.path("silver") / "salesforce_silver" / "account" / "salesforce_account.parquet"
+    
     df_receita = pd.read_parquet(receita_path) if receita_path.exists() else pd.DataFrame()
     df_seg = pd.read_csv(enquadra_path) if enquadra_path.exists() else pd.DataFrame()
-    return build_dim_contraparte(context, df_silver_receita=df_receita, df_silver_segmentacao=df_seg)
+    df_sf_account = pd.read_parquet(salesforce_path) if salesforce_path.exists() else pd.DataFrame()
+    
+    df_fichas = pd.DataFrame()
+    for segmento_dir in ["fichas_comercializadoras_extraidas", "fichas_consumidores_extraidas"]:
+        seg_path = context.path("silver") / segmento_dir
+        if seg_path.exists():
+            parquets = list(seg_path.glob("*.parquet"))
+            if parquets:
+                df_seg_fichas = pd.read_parquet(max(parquets, key=lambda f: f.stat().st_mtime))
+                df_fichas = pd.concat([df_fichas, df_seg_fichas], ignore_index=True)
 
+    from domain.contrapartes.servico_dim_contraparte import criar_dim_contraparte
+    return criar_dim_contraparte(
+        context, 
+        df_silver_receita=df_receita, 
+        df_silver_segmentacao=df_seg,
+        df_silver_salesforce_account=df_sf_account,
+        df_silver_fichas=df_fichas
+    )
+    
 def preparar_fato_analise(context):
     df_fichas = pd.DataFrame()
     for segmento_dir in ["fichas_comercializadoras_extraidas", "fichas_consumidores_extraidas"]:
@@ -97,7 +116,7 @@ def preparar_fato_analise(context):
     if not dim_path.exists():
         dim_path = context.path("saidas") / "relational" / "dimensions" / "dim_contraparte.parquet"
     df_dim = pd.read_parquet(dim_path) if dim_path.exists() else pd.DataFrame()
-    return build_fato_analise_credito(context, df_silver_analises=df_fichas, df_dim_contraparte=df_dim)
+    return construir_fato_analise_credito(context, df_silver_analises=df_fichas, df_dim_contraparte=df_dim)
 
 # ==============================================================================
 # PIPELINE OFICIAL
@@ -107,25 +126,23 @@ class PipelineStep(NamedTuple):
     func: Callable[[Any], Any]
 
 PIPELINE_STEPS = [
-    PipelineStep(name="Fichas Comercializadoras", func=lambda ctx: run_fichas_comercializadoras.main()),
-    PipelineStep(name="Fichas Consumidores", func=lambda ctx: run_fichas_consumidores.main()),
-    PipelineStep(name="Ingestão de Contratos (Denodo)", func=ingest_contratos_denodo),
-    PipelineStep(name="Enquadramento de Consumidores", func=lambda ctx: calcular_enquadramento_consumidor(datetime.now().strftime("%Y%m"), ctx)),
-    PipelineStep(name="Ingestão de MtM", func=ingest_mtm_data),
-    PipelineStep(name="Reconciliação Denodo x MtM", func=executar_reconciliacao_denodo_mtm),
-    PipelineStep(name="Ingestão do Salesforce", func=ingest_salesforce_data),
-    PipelineStep(name="Reconciliação Fichas x Salesforce", func=executar_reconciliacao_fichas_salesforce),
-    
-    # ATENÇÃO: Etapa da Receita Reativada!
-    PipelineStep(name="Ingestão da Receita Federal", func=ingest_receita_data),
-    
-    PipelineStep(name="Ingestão de Garantias", func=ingest_garantias_data),
-    PipelineStep(name="Pipeline de Risco de Crédito", func=preparar_e_rodar_risco),
-    PipelineStep(name="Dimensão Contraparte", func=preparar_dim_contraparte),
-    PipelineStep(name="Fato Análise de Crédito", func=preparar_fato_analise),
-    PipelineStep(name="Carga Manual (Log Eventos)", func=ingest_carga_manual),
-    PipelineStep(name="Solicitações de Override", func=processar_solicitacao_override),
-    PipelineStep(name="Visão Consolidada Gold", func=exportar_visao_consolidada_gold),
+    PipelineStep(name="Fichas Comercializadoras", func=lambda ctx: rodar_fichas_comercializadoras.main()),
+    # PipelineStep(name="Fichas Consumidores", func=lambda ctx: run_fichas_consumidores.main()),
+    # PipelineStep(name="Ingestão de Contratos (Denodo)", func=ingest_contratos_denodo),
+    # PipelineStep(name="Enquadramento de Consumidores", func=lambda ctx: calcular_enquadramento_consumidor(datetime.now().strftime("%Y%m"), ctx)),
+    # PipelineStep(name="Ingestão de MtM", func=ingest_mtm_data),
+    # PipelineStep(name="Reconciliação Denodo x MtM", func=executar_reconciliacao_denodo_mtm),
+    # PipelineStep(name="Ingestão do Salesforce", func=ingest_salesforce_data),
+    # PipelineStep(name="Reconciliação Fichas x Salesforce", func=executar_reconciliacao_fichas_salesforce),
+    # PipelineStep(name="Ingestão da Receita Federal", func=ingest_receita_data), 
+    # PipelineStep(name="Ingestão de Bureau (RISK3)", func=ingest_bureau_data),
+    # PipelineStep(name="Ingestão de Garantias", func=ingest_garantias_data),
+    # PipelineStep(name="Pipeline de Risco de Crédito", func=preparar_e_rodar_risco),
+    # PipelineStep(name="Dimensão Contraparte", func=preparar_dim_contraparte),
+    # PipelineStep(name="Fato Análise de Crédito", func=preparar_fato_analise),
+    # PipelineStep(name="Carga Manual (Log Eventos)", func=ingest_carga_manual),
+    # PipelineStep(name="Solicitações de Override", func=processar_solicitacao_override),
+    # PipelineStep(name="Visão Consolidada Gold", func=exportar_visao_consolidada_gold),
 ]
 
 def main() -> int:
@@ -134,7 +151,7 @@ def main() -> int:
     args = parser.parse_args()
 
     try:
-        context = load_context(Path(args.configs_dir))
+        context = carregar_contexto(Path(args.configs_dir))
     except Exception as e:
         print(f"[ERRO CRÍTICO] Falha ao inicializar: {e}")
         return 1
@@ -166,6 +183,10 @@ def main() -> int:
             import traceback
             traceback.print_exc()
             exit_codes.append(1)
+            
+            if step.name in ["Ingestão de Contratos (Denodo)", "Reconciliação Denodo x MtM"]:
+                print(f"[ERRO FATAL] Interrompendo pipeline devido à falha crítica em '{step.name}'.")
+                return 1
 
     etapas_ok = sum(1 for code in exit_codes if code == 0)
     etapas_falha = sum(1 for code in exit_codes if code != 0)
@@ -181,7 +202,9 @@ def main() -> int:
         print(f"2. Possuem Contrato Vigente:               {metricas_operacionais.get('contrato_vigente', 0)}")
         print(f"3. Possuem Contrato Futuro:                {metricas_operacionais.get('contrato_futuro', 0)}")
         print(f"4. Possuem Análise de Crédito Vigente:     {metricas_operacionais.get('analise_vigente', 0)}")
-        print(f"5. Contrato Vigente SEM Análise Vigente:   {metricas_operacionais.get('contrato_vig_sem_analise_vig', 0)} ⚠️  (Exposição Descoberta: R$ {metricas_operacionais.get('ead_descoberto', 0.0):,.2f})")
+        print(f"5. Contrato Vigente SEM Análise Vigente (Total): {metricas_operacionais.get('contrato_vig_sem_analise_vig', 0)} ⚠️")
+        print(f"   ├─ Irregulares (>= 5 MWm sem DF): {metricas_operacionais.get('contrato_irregular_sem_df', 0)} 🚨 (Exposição Descoberta: R$ {metricas_operacionais.get('ead_descoberto', 0.0):,.2f})")
+        print(f"   └─ Pendentes de Bureau (< 5 MWm): {metricas_operacionais.get('contrato_pendente_bureau', 0)} ⏳")
         print(f"6. Possuem Análise Vencida:                {metricas_operacionais.get('analise_vencida', 0)} ⏰ (Requer Revisão)")
         print(f"7. Possuem Ficha mas SEM Contrato:         {metricas_operacionais.get('ficha_sem_contrato', 0)}")
         print(f"8. Possuem Contrato mas NUNCA tiveram Ficha: {metricas_operacionais.get('contrato_sem_ficha', 0)} ⚠️")
