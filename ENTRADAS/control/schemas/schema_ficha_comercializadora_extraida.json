@@ -8,10 +8,12 @@
     "documento_id",
     "run_id",
     "ambiente",
-    "tipo_ficha",
+    "TIPO_FICHA",
     "versao_ficha",
     "arquivo_nome",
     "hash_arquivo",
+    "load_mode",
+    "dt_processamento",
     "SIGLA",
     "CNPJ",
     "DATA_DEMONSTRACAO_FINANCEIRA"
@@ -33,9 +35,9 @@
         "prod"
       ]
     },
-    "tipo_ficha": {
+    "TIPO_FICHA": {
       "type": "string",
-      "const": "comercializadora"
+      "const": "COMERCIALIZADORA"
     },
     "versao_ficha": {
       "type": "string",
@@ -56,6 +58,13 @@
     "hash_arquivo": {
       "type": "string",
       "pattern": "^[0-9a-fA-F]{64}$"
+    },
+    "load_mode": {
+      "type": "string"
+    },
+    "dt_processamento": {
+      "type": "string",
+      "format": "date-time"
     },
     "DATA_DEMONSTRACAO_FINANCEIRA": {
       "type": [
@@ -101,6 +110,13 @@
       "type": [
         "string",
         "null"
+      ],
+      "enum": [
+        "CPURA",
+        "CGRUPO",
+        "PURA",
+        "GRUPO",
+        null
       ]
     },
     "PATRIMONIO_LIQUIDO": {
@@ -297,7 +313,8 @@
       "type": [
         "string",
         "null"
-      ]
+      ],
+      "pattern": "^(?!.*X19|.*=|.*/|ATIVO TOTAL|PATRIMÔNIO LÍQUIDO).*$"
     },
     "CNPJ_CONTROLADOR": {
       "type": [
@@ -311,13 +328,6 @@
         "number",
         "null"
       ]
-    },
-    "dt_processamento": {
-      "type": [
-        "string",
-        "null"
-      ],
-      "format": "date-time"
     },
     "ROL": {
       "type": [
@@ -350,6 +360,78 @@
       ]
     },
     "PERCENTUAL_CONTROLADOR": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "CNPJ_RAIZ": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "INTEGRIDADE_EXTRAIDA_PERCENTUAL": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "AC_PC": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "AT_PT": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LUCRO_LIQUIDO_SOBRE_ROL": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "MATURIDADE_CALCULADA": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "CATEGORIA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "BUREAU": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "RATING_AUDITORIA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "SCORE_QUALITATIVO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "SCORE_QUANTITATIVO": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "MTM_TOTAL_SOBRE_PL": {
       "type": [
         "number",
         "null"

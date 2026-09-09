@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-"""Conector e cache da BrasilAPI para consulta cadastral de Receita Federal."""
-
 from __future__ import annotations
-from silver.normalizadores import padronizar_cnpj
+from common.identificadores import normalizar_cnpj
 
 import json
 import logging
@@ -35,9 +32,9 @@ def _load_cache(path: Path) -> dict[str, dict[str, Any]]:
     for cnpj, record in payload.items():
         if record.get("STATUS") == "OK_BYPASS" or "Simulacao" in str(record.get("NATUREZA_JURIDICA", "")):
             continue
-        normalized = padronizar_cnpj(cnpj)
-        if normalized and isinstance(record, dict):
-            cache[normalized[0]] = record
+        resultado = normalizar_cnpj(cnpj)
+        if resultado.valido and isinstance(record, dict):
+            cache[resultado.cnpj] = record
     return cache
 
 def _save_cache(path: Path, cache: dict[str, dict[str, Any]]) -> None:
@@ -45,11 +42,13 @@ def _save_cache(path: Path, cache: dict[str, dict[str, Any]]) -> None:
     ordered = {cnpj: cache[cnpj] for cnpj in sorted(cache)}
     path.write_text(json.dumps(ordered, ensure_ascii=False, indent=2), encoding="utf-8")
 
-def _is_same_day_cache(record: dict[str, Any]) -> bool:
+def _is_cache_valido(record: dict[str, Any], dias_validade: int = 30) -> bool:
+    """Retorna True se o registro de cache foi consultado dentro do período de validade."""
     quando = record.get("DATA_CONSULTA")
     if not quando: return False
     try:
-        return str(quando)[:10] == date.today().isoformat()
+        dt_consulta = datetime.fromisoformat(str(quando)[:19])
+        return (datetime.now() - dt_consulta).days < dias_validade
     except Exception: return False
 
 def _consultar_cnpj_brasilapi(cnpj: str, session: requests.Session) -> dict[str, Any]:
@@ -67,7 +66,7 @@ def _consultar_cnpj_brasilapi(cnpj: str, session: requests.Session) -> dict[str,
     }
     
     tentativas_maximas = 4
-    espera_base = 3.0 # Segundos
+    espera_base = 3.0
 
     for tentativa in range(1, tentativas_maximas + 1):
         try:
@@ -90,8 +89,8 @@ def _consultar_cnpj_brasilapi(cnpj: str, session: requests.Session) -> dict[str,
                 
             if resp.status_code == 429 or resp.status_code >= 500:
                 if tentativa < tentativas_maximas:
-                    tempo_espera = espera_base * (2 ** (tentativa - 1)) # Backoff Exponencial (3s, 6s, 12s...)
-                    print(f" [API bloqueou - HTTP {resp.status_code}] Pausando {tempo_espera}s...", end="", flush=True)
+                    tempo_espera = espera_base * (2 ** (tentativa - 1))
+                    LOGGER.warning("API bloqueou - HTTP %s. Pausando %ss...", resp.status_code, tempo_espera)
                     time.sleep(tempo_espera)
                     continue
                 else:
@@ -99,7 +98,6 @@ def _consultar_cnpj_brasilapi(cnpj: str, session: requests.Session) -> dict[str,
                     resultado["MENSAGEM"] = "Bloqueio persistente após múltiplas tentativas."
                     return resultado
 
-            # Outros erros HTTP (401, 403, etc)
             resultado["SITUACAO_CADASTRAL"] = f"ERRO_HTTP_{resp.status_code}"
             return resultado
 
@@ -119,17 +117,17 @@ def _consultar_cnpj_brasilapi(cnpj: str, session: requests.Session) -> dict[str,
 
     return resultado
 
-def buscar_receita_dados_lote(cnpjs: list[str], context: AppContext) -> pd.DataFrame:
+def buscar_receita_dados_lote(cnpjs: list[str], context: AppContext, logger: logging.Logger = LOGGER) -> pd.DataFrame:
     cache_path = _cache_path(context)
     cache = _load_cache(cache_path)
     
     list_normalizada = []
     seen = set()
     for cnpj in cnpjs or []:
-        normalized = padronizar_cnpj(cnpj)
-        if normalized and normalized not in seen:
-            seen.add(normalized)
-            list_normalizada.append(normalized)
+        resultado = normalizar_cnpj(cnpj)
+        if resultado.valido and resultado.cnpj not in seen:
+            seen.add(resultado.cnpj)
+            list_normalizada.append(resultado.cnpj)
 
     results = []
     total = len(list_normalizada)
@@ -137,25 +135,24 @@ def buscar_receita_dados_lote(cnpjs: list[str], context: AppContext) -> pd.DataF
     qtd_api = 0
     qtd_erro = 0
     
-    LOGGER.info("[RECEITA FEDERAL] Processando %d CNPJs...", total)
-    print(f"\n--- INICIANDO CONSULTA RECEITA FEDERAL ({total} CNPJs) ---")
+    logger.info("[RECEITA FEDERAL] Processando %d CNPJs...", total)
+    logger.info("--- INICIANDO CONSULTA RECEITA FEDERAL (%d CNPJs) ---", total)
 
-    # Usando Session para otimizar conexões TCP
     with requests.Session() as sessao:
         for index, cnpj in enumerate(list_normalizada):
             cached = cache.get(cnpj)
             
-            if cached and _is_same_day_cache(cached):
+            if cached and _is_cache_valido(cached):
                 if cached.get("SITUACAO_CADASTRAL") not in ["TIMEOUT", "RATE_LIMIT", "ERRO_CONEXAO", "ERRO_API"]:
-                    print(f"[{index + 1}/{total}] CNPJ {cnpj} -> CACHE ({cached.get('SITUACAO_CADASTRAL')})")
+                    logger.info("[%d/%d] CNPJ %s -> CACHE (%s)", index + 1, total, cnpj, cached.get('SITUACAO_CADASTRAL'))
                     results.append(cached)
                     qtd_cache += 1
                     continue
 
-            print(f"[{index + 1}/{total}] CNPJ {cnpj} -> Consultando API...", end=" ", flush=True)
+            logger.info("[%d/%d] CNPJ %s -> Consultando API...", index + 1, total, cnpj)
             api_result = _consultar_cnpj_brasilapi(cnpj, sessao)
             status_obtido = api_result.get("SITUACAO_CADASTRAL")
-            print(f"Resultado: {status_obtido}")
+            logger.info("Resultado: %s", status_obtido)
             
             qtd_api += 1
             if api_result.get("STATUS") == "FALHA":
@@ -166,7 +163,6 @@ def buscar_receita_dados_lote(cnpjs: list[str], context: AppContext) -> pd.DataF
                 
             results.append(api_result)
             
-            # Pausa padrão gentil de 0.8s entre requisições de sucesso para não irritar a BrasilAPI
             time.sleep(0.8)
 
             if qtd_api > 0 and qtd_api % 50 == 0:
@@ -175,7 +171,7 @@ def buscar_receita_dados_lote(cnpjs: list[str], context: AppContext) -> pd.DataF
     if qtd_api > 0:
         _save_cache(cache_path, cache)
 
-    print(f"\n--- RESUMO RECEITA: {qtd_cache} Cache | {qtd_api} API | {qtd_erro} Erros ---")
+    logger.info("--- RESUMO RECEITA: %d Cache | %d API | %d Erros ---", qtd_cache, qtd_api, qtd_erro)
 
     df = pd.DataFrame(results)
     return df.drop_duplicates(subset=["CNPJ"], keep="last").reset_index(drop=True)

@@ -1,5 +1,3 @@
-"""Operações robustas de arquivo para ambiente Windows."""
-
 from __future__ import annotations
 
 import shutil

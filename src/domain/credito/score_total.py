@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Cálculo do score total de CPURA."""
 
 from __future__ import annotations

@@ -8,6 +8,7 @@ Ref: §3.5, §11.6 do Planejamento Funcional.
 from __future__ import annotations
 
 import shutil
+from pathlib import Path
 from datetime import datetime
 from typing import Any
 
@@ -26,7 +27,7 @@ class MtmReconciliationError(Exception):
 def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
     """Orquestra a ingestão MtM: Bronze snapshot → Conector → Agregação → Reconciliação → Silver."""
     run_id = f"MTM_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    log_file = context.path("log_runner") / f"{run_id}__ingestao_mtm.log"
+    log_file = Path("LOGS/ingestao") / f"{run_id}__ingestao_mtm.log"
     logger = obter_logger("bdc.mtm", log_file)
 
     try:
@@ -35,7 +36,6 @@ def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
         input_dir = context.path("entradas") / "mtm"
         arquivo_bruto = _encontrar_arquivo_mtm_recente(input_dir)
 
-        # 1. Copia o snapshot bruto intacto para a Bronze (DoD T2.2.2 — §11.5)
         bronze_dir = context.path("bronze") / "snapshots_fontes" / "mtm"
         bronze_dir.mkdir(parents=True, exist_ok=True)
 
@@ -44,18 +44,15 @@ def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
         shutil.copy2(arquivo_bruto, caminho_bronze)
         logger.info("Snapshot bruto salvo na Bronze em: %s", caminho_bronze)
 
-        # 2. Leitura via Conector (T2.2.1)
         df_mtm = buscar_mtm_consolidado(input_dir=input_dir, logger=logger)
 
         if df_mtm.empty:
             logger.warning("Nenhum registro encontrado na base de MtM.")
             return {"run_id": run_id, "contrapartes_consolidadas": 0, "status": "SEM_DADOS"}
 
-        # Captura totais originais para controle de reconciliação
         soma_mtm_orig = float(df_mtm["MTM_TOTAL"].sum())
         soma_not_orig = float(df_mtm["NOTIONAL"].sum())
 
-        # 3. Agregação por contraparte (CNPJ) e DATA_BASE para a Silver
         if "DATA_BASE" not in df_mtm.columns:
             df_mtm["DATA_BASE"] = datetime.now().strftime("%Y-%m-%d")
 
@@ -71,7 +68,6 @@ def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
             })
         )
 
-        # Netting aplicado: derivar colunas positivo/negativo APÓS a soma por contraparte
         df_agregado["MTM_POSITIVO_TOTAL"] = df_agregado["MTM_TOTAL_NETTED"].apply(
             lambda x: x if x > 0 else 0.0
         )
@@ -79,15 +75,10 @@ def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
             lambda x: abs(x) if x < 0 else 0.0
         )
 
-        # Preserva STATUS_CNPJ (descartado pelo groupby) reinserindo via merge
         if "STATUS_CNPJ" in df_mtm.columns:
             status_map = df_mtm[["CNPJ", "STATUS_CNPJ"]].drop_duplicates(subset=["CNPJ"])
             df_agregado = pd.merge(df_agregado, status_map, on="CNPJ", how="left")
 
-        # 4. Reconciliação de integridade entre Bronze e Silver (§11.6)
-        # Compara apenas MTM_TOTAL e NOTIONAL brutos (soma algébrica), pois
-        # as colunas positivo/negativo pós-netting não têm equivalência linear
-        # com os valores linha a linha da origem.
         reconciliation_config = context.config.get("reconciliacao_mtm", {})
         tolerancia = reconciliation_config.get("tolerancia_absoluta", 0.01)
 
@@ -111,7 +102,6 @@ def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
 
         records = df_agregado.to_dict(orient="records")
 
-        # 5. Persistência na Silver (CSV + Parquet) — versionado por run_id (§1.5)
         silver_output_dir = context.path("silver") / "mtm_consolidado_silver"
         csv_path, parquet_path = escrever_conjunto_de_dados_silver(
             records=records,
@@ -119,7 +109,6 @@ def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
             filename=f"mtm_agregado_contraparte_{run_id}"
         )
 
-        # Ponteiro LATEST para consumo downstream (preserva versão anterior)
         latest_path = silver_output_dir / "mtm_agregado_contraparte.parquet"
         if latest_path.exists():
             ts = datetime.now().strftime("%Y%m%d_%H%M%S")

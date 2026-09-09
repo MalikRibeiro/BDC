@@ -143,17 +143,15 @@ def calcular_pd_ajustada(
 
         return resultado
 
-    except PdCalculationError as e:
+    except PdCalculationError:
         if logger is not None:
-            logger.error(
-                f"Erro controlado no cálculo de PD ajustada. CNPJ={registro.get('CNPJ')} SEGMENTO_PD={segmento_pd} - Motivo: {str(e)}"
-            )
+            logger.exception("Erro controlado no cálculo de PD ajustada. CNPJ=%s SEGMENTO_PD=%s", registro.get('CNPJ'), segmento_pd)
         raise
 
     except Exception:
         if logger is not None:
             logger.exception(
-                "Falha inesperada no cálculo de PD ajustada. "
+                "Falha crítica no cálculo de PD ajustada. "
                 "CNPJ=%s SEGMENTO_PD=%s",
                 registro.get("CNPJ"),
                 segmento_pd,

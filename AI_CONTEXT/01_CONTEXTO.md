@@ -1,6 +1,0 @@
-# CONTEXTO
-
-Python: 104
-
-JSON: 36
-

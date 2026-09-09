@@ -15,20 +15,9 @@ def _norm(value: Any) -> str:
 def _norm_agencia(value: Any) -> str:
     agencia = _norm(value)
 
-    mapa = {
-        "FITCH": "FITCH",
-        "FITCH RATINGS": "FITCH",
-        "MOODYS": "MOODYS",
-        "MOODY'S": "MOODYS",
-        "MOODY S": "MOODYS",
-        "SP": "SP",
-        "S&P": "SP",
-        "STANDARD & POOR'S": "SP",
-        "STANDARD & POORS": "SP",
-        "STANDARD AND POOR'S": "SP",
-        "STANDARD AND POORS": "SP",
-    }
-    return mapa.get(agencia, agencia)
+    # A normalização de aliases já ocorreu na camada Silver via domain_dictionaries.json.
+    # Aqui, garantimos apenas a consistência básica.
+    return agencia
 
 
 def _norm_rating(value: Any) -> str:

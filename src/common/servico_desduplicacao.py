@@ -5,7 +5,6 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-
 def tem_hash_duplicado(
     history: list[dict[str, Any]],
     hash_value: str | None,
@@ -15,7 +14,6 @@ def tem_hash_duplicado(
         return False
 
     return any(item.get("hash_arquivo") == hash_value for item in history)
-
 
 def tem_chave_de_negocio_duplicada(
     history: list[dict[str, Any]],
@@ -42,7 +40,6 @@ def tem_chave_de_negocio_duplicada(
         return True
 
     return False
-
 
 def virar_chave_de_negocio_no_historico(
     history: list[dict[str, Any]],

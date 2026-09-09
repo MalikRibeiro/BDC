@@ -11,7 +11,7 @@ from pathlib import Path
 
 from app.context import AppContext
 from common.json import ler_json
-from common.validador import validar_esquema_json
+from common.json import validar_esquema_json
 
 
 def _carregar_e_validar_regras_de_qualidade(
@@ -33,7 +33,6 @@ def _carregar_e_validar_regras_de_qualidade(
         content = ler_json(rules_path)
         schema = ler_json(schema_path)
 
-        # Validação Estrita (Fail-Fast)
         validar_esquema_json(instance=content, schema=schema, label=descricao)
 
         if not isinstance(content, dict):
@@ -64,10 +63,9 @@ def carregar_regras_de_qualidade_de_dados_consumidores(
     context: AppContext,
     logger: Any,
 ) -> dict[str, Any]:
-    """Carrega e valida as regras de qualidade das fichas de consumidores."""
-    return _carregar_e_validar_regras_de_qualidade(
-        rules_path=context.control_file("data_quality_rules_fichas_consumidores"),
-        schema_path=context.control_file("schema_data_quality_rules"),
-        descricao="Regras de Qualidade de Consumidores",
-        logger=logger,
-    )
+    """Carrega as regras de qualidade das fichas de consumidores usando o novo master_catalog."""
+    
+    master_catalog_path = context.path("control_quality") / "master_catalog_consumidores.json"
+    
+    logger.info("Lendo master catalog consumidores: %s", master_catalog_path)
+    return ler_json(master_catalog_path)

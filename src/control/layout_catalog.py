@@ -16,15 +16,12 @@ def validar_estrutura_do_layout(layout: dict[str, Any], versao: str, logger: Any
         sys.exit(1)
         
     for field_name, config in layout["field_map"].items():
-        # Ignora campos que explicitamente não estão implementados nos layouts antigos (v1 ao v6)
         if not config.get("implemented", True):
             continue
             
         has_static = "value_cell" in config and config["value_cell"] not in [None, "0", 0]
         has_dynamic = "search_pattern" in config and config["search_pattern"] not in [None, ""]
         
-        # Removemos o sys.exit(1) que estava quebrando os layouts antigos.
-        # O extrator já está preparado para retornar None quando a âncora não existe.
         if not has_static and not has_dynamic:
             logger.debug(
                 "Layout '%s' - Campo '%s': sem âncora estática ou dinâmica. Retornará vazio.", 
@@ -71,7 +68,6 @@ def carregar_layouts_comercializadoras(
 
             layout_data = ler_json(layout_path)
             
-            # Validação adaptada para não quebrar layouts antigos
             if logger is not None:
                 validar_estrutura_do_layout(layout_data, key, logger)
 
@@ -108,7 +104,6 @@ def carregar_layouts_consumidores(
 
             layout_data = ler_json(layout_path)
             
-            # Validação adaptada para não quebrar layouts antigos
             if logger is not None:
                 validar_estrutura_do_layout(layout_data, key, logger)
 

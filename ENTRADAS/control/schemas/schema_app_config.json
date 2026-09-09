@@ -71,6 +71,12 @@
     "control_files": {
       "type": "object",
       "minProperties": 1,
+      "properties": {
+        "domain_dictionaries": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
       "additionalProperties": {
         "type": "string",
         "minLength": 1

@@ -8,6 +8,7 @@ import pandas as pd
 
 from app.context import AppContext
 from domain.enums import StatusAprovacao
+from common.identificadores import normalizar_cnpj
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
 def processar_solicitacao_override(context: AppContext) -> dict[str, Any]:
@@ -48,6 +49,13 @@ def processar_solicitacao_override(context: AppContext) -> dict[str, Any]:
                 if not valido:
                     continue
 
+                res_cnpj = normalizar_cnpj(str(solicitacao["CNPJ"]))
+                if not res_cnpj.valido:
+                    logger.warning("CNPJ inválido no override: %s", solicitacao["CNPJ"])
+                    continue
+                
+                solicitacao["CNPJ"] = res_cnpj.cnpj
+
                 solicitante = str(solicitacao["SOLICITANTE"]).strip().upper()
                 aprovador = str(solicitacao["APROVADOR"]).strip().upper()
 
@@ -66,15 +74,15 @@ def processar_solicitacao_override(context: AppContext) -> dict[str, Any]:
                 registro["RUN_ID"] = run_id
                 processados.append(registro)
 
-            target_dir = context.path("entradas") / "overrides" / "processados"
+            target_dir = context.path("entradas") / "overrides" / "processadas"
             target_dir.mkdir(parents=True, exist_ok=True)
-            arquivo.rename(target_dir / arquivo.name)
+            arquivo.replace(target_dir / arquivo.name)
             
-        except Exception as e:
-            logger.error("Erro no arquivo %s: %s", arquivo.name, e)
-            target_dir = context.path("entradas") / "overrides" / "rejeitados"
+        except Exception:
+            logger.exception("Erro no arquivo %s", arquivo.name)
+            target_dir = context.path("entradas") / "overrides" / "rejeitadas"
             target_dir.mkdir(parents=True, exist_ok=True)
-            arquivo.rename(target_dir / arquivo.name)
+            arquivo.replace(target_dir / arquivo.name)
 
     if processados:
         silver_dir = context.path("silver") / "governanca_overrides"

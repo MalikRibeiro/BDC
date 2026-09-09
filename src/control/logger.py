@@ -22,19 +22,19 @@ def obter_logger(name: str, file_path: str | Path | None = None) -> logging.Logg
         datefmt="%Y-%m-%d %H:%M:%S",
     )
 
-    # 1. Handler do Console (Apenas INFO, limpa a sujeira do terminal)
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setLevel(logging.INFO)
     stream_handler.setFormatter(formatter)
     logger.addHandler(stream_handler)
 
-    # 2. Handler de Arquivo Centralizado (Salva tudo, incluindo DEBUG)
-    hoje = datetime.now().strftime("%Y-%m-%d")
-    log_dir = Path("LOGS/execucoes")
-    log_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Ignora o log_file legado passado pelo orquestrador e força o arquivo diário
-    target = log_dir / f"{hoje}_execucao_comercializadoras.log"
+    if file_path:
+        target = Path(file_path)
+    else:
+        hoje = datetime.now().strftime("%Y-%m-%d")
+        log_dir = Path("LOGS/general")
+        target = log_dir / f"{hoje}_general.log"
+        
+    target.parent.mkdir(parents=True, exist_ok=True)
     
     file_handler = logging.FileHandler(target, encoding="utf-8")
     file_handler.setLevel(logging.DEBUG)

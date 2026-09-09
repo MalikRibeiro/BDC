@@ -2,68 +2,102 @@
 
 from __future__ import annotations
 
-import logging
 from datetime import datetime
 from typing import Any
 import pandas as pd
 
 from app.context import AppContext
-from services.connectors.risk3_connector import buscar_bureau_risk3
+from pathlib import Path
+from control.logger import obter_logger
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
-
-LOGGER = logging.getLogger(__name__)
 
 def inserir_dados_bureau(context: AppContext) -> dict[str, Any]:
     run_id = f"BUR_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = logging.getLogger("bdc.bureau")
+    logger = obter_logger("bdc.bureau", Path("LOGS/ingestao") / f"{run_id}__ingestao_bureau.log")
+
+    path_enq = context.path("relational_configs")
+    arquivos = list(path_enq.glob("enquadramento_consumidores_*.csv"))
+    if not arquivos:
+        logger.warning("Nenhum enquadramento encontrado para guiar o Bureau.")
+        _gravar_silver_vazia(context, run_id)
+        return {"run_id": run_id, "status": "SEM_DADOS_ENQUADRAMENTO"}
+        
+    try:
+        df_enq = pd.read_csv(max(arquivos, key=lambda f: f.stat().st_mtime), sep=",", dtype={"CNPJ": str})
+    except Exception as e:
+        logger.critical("Falha ao ler arquivo de enquadramento: %s. Prosseguindo com DataFrame vazio.", e)
+        _gravar_silver_vazia(context, run_id)
+        return {"run_id": run_id, "status": "FALHA_LEITURA_ENQUADRAMENTO"}
+    
+    cnpjs_enquadrados = df_enq["CNPJ"].dropna().unique().tolist()
+    
+    path_contratos = context.path("silver") / "denodo_contratos_silver" / "contratos_correntes.parquet"
+    if not path_contratos.exists():
+        path_contratos = context.path("silver") / "denodo_contratos_padronizados" / "contratos_correntes.parquet"
+        
+    if path_contratos.exists():
+        df_contratos = pd.read_parquet(path_contratos)
+        status_excluidos = ["CANCELADO", "DISTRATADO", "ENCERRADO", "REJEITADO", "INATIVO"]
+        if "STATUS" in df_contratos.columns:
+            df_ativos = df_contratos[~df_contratos["STATUS"].astype(str).str.upper().isin(status_excluidos)]
+        else:
+            df_ativos = df_contratos
+        cnpjs_ativos = set(df_ativos["CNPJ"].dropna().unique())
+        cnpjs_alvo = [c for c in cnpjs_enquadrados if c in cnpjs_ativos]
+    else:
+        logger.warning("Base de contratos correntes não encontrada. Prosseguindo sem filtro de atividade.")
+        cnpjs_alvo = cnpjs_enquadrados
+
+    logger.info("Total de CNPJs elegíveis para consulta RISK3 (Enquadrados e Ativos): %d", len(cnpjs_alvo))
+    
+    if not cnpjs_alvo:
+        _gravar_silver_vazia(context, run_id)
+        return {"run_id": run_id, "status": "NENHUM_CLIENTE_ELEGIVEL"}
 
     try:
-        # 1. Busca Consumidores enquadrados no motor de volume
-        path_enq = context.path("relational_configs")
-        arquivos = list(path_enq.glob("enquadramento_consumidores_*.parquet"))
-        if not arquivos:
-            logger.warning("Nenhum enquadramento encontrado para guiar o Bureau.")
-            return {"run_id": run_id, "status": "SEM_DADOS_ENQUADRAMENTO"}
-            
-        df_enq = pd.read_parquet(max(arquivos, key=lambda f: f.stat().st_mtime))
-        
-        # 2. Filtra os clientes que exigem Bureau (< 5 MWm)
-        df_le5 = df_enq[df_enq["POSSUI_PELO_MENOS_5_MWM"] == False]
-        cnpjs_alvo = df_le5["CNPJ"].dropna().unique().tolist()
-        
-        if not cnpjs_alvo:
-            return {"run_id": run_id, "status": "NENHUM_CLIENTE_ELEGIVEL"}
-
-        # 3. Consulta a API RISK3
+        from services.connectors.risk3_connector import buscar_bureau_risk3
         df_bureau = buscar_bureau_risk3(cnpjs_alvo, context)
-
-        if df_bureau.empty:
-            return {"run_id": run_id, "status": "SEM_RETORNO_API"}
-
-        # 4. Salva Snapshot na Bronze
-        bronze_dir = context.path("bronze") / "snapshots_fontes" / "bureau"
-        bronze_dir.mkdir(parents=True, exist_ok=True)
-        df_bureau.to_parquet(bronze_dir / f"raw_bureau_{run_id}.parquet", index=False)
-
-        # 5. Salva Fato na Silver (Para consumo pela Camada Gold)
-        df_silver = df_bureau[df_bureau["STATUS"] == "SUCESSO"].copy()
-        
-        if df_silver.empty:
-            return {"run_id": run_id, "status": "FALHA_OU_BLOQUEIO_DE_REDE"}
-            
-        df_silver["RUN_ID"] = run_id
-        df_silver["DT_PROCESSAMENTO"] = datetime.now().isoformat(timespec="seconds")
-        
-        silver_dir = context.path("silver") / "fato_bureau_silver"
-        escrever_conjunto_de_dados_silver(
-            records=df_silver.to_dict(orient="records"), 
-            output_dir=silver_dir, 
-            filename="fato_bureau_silver"
-        )
-
-        logger.info("Ingestão do Bureau concluída. %d registros na Silver.", len(df_silver))
-        return {"run_id": run_id, "status": "SUCESSO", "linhas": len(df_silver)}
-
     except Exception as e:
-        logger.exception("Falha crítica na ingestão do Bureau RISK3.")
-        raise
+        logger.critical("API RISK3 indisponível ou falha de conexão: %s. Prosseguindo com Silver vazia.", e)
+        _gravar_silver_vazia(context, run_id)
+        return {"run_id": run_id, "status": "FALHA_API_RISK3"}
+
+    if df_bureau.empty:
+        logger.warning("Consulta RISK3 retornou DataFrame vazio.")
+        _gravar_silver_vazia(context, run_id)
+        return {"run_id": run_id, "status": "SEM_RETORNO_API"}
+
+    bronze_dir = context.path("bronze") / "snapshots_fontes" / "bureau"
+    bronze_dir.mkdir(parents=True, exist_ok=True)
+    df_bureau.to_parquet(bronze_dir / f"raw_bureau_{run_id}.parquet", index=False)
+
+    df_silver = df_bureau[df_bureau["STATUS"] == "SUCESSO"].copy()
+    
+    if df_silver.empty:
+        logger.warning("Nenhum registro com STATUS=SUCESSO retornado pelo Bureau.")
+        _gravar_silver_vazia(context, run_id)
+        return {"run_id": run_id, "status": "FALHA_OU_BLOQUEIO_DE_REDE"}
+        
+    df_silver["RUN_ID"] = run_id
+    df_silver["DT_PROCESSAMENTO"] = datetime.now().isoformat(timespec="seconds")
+    
+    silver_dir = context.path("silver") / "fato_bureau_silver"
+    escrever_conjunto_de_dados_silver(
+        records=df_silver.to_dict(orient="records"), 
+        output_dir=silver_dir, 
+        filename="fato_bureau_silver"
+    )
+
+    logger.info("Ingestão do Bureau concluída. %d registros na Silver.", len(df_silver))
+    return {"run_id": run_id, "status": "SUCESSO", "linhas": len(df_silver)}
+
+
+def _gravar_silver_vazia(context: AppContext, run_id: str) -> None:
+    silver_dir = context.path("silver") / "fato_bureau_silver"
+    silver_dir.mkdir(parents=True, exist_ok=True)
+    df_vazio = pd.DataFrame(columns=[
+        "CNPJ", "SCORE_BUREAU", "RATING_BUREAU", "PD_BUREAU",
+        "RESTRITIVOS", "DATA_CONSULTA", "DATA_VALIDADE",
+        "STATUS", "RAW_DATA", "RUN_ID", "DT_PROCESSAMENTO"
+    ])
+    df_vazio.to_parquet(silver_dir / "fato_bureau_silver.parquet", index=False)

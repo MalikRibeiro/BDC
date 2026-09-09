@@ -5,7 +5,7 @@ from typing import Optional, Union
 from src.app.context import AppContext, carregar_contexto
 from dotenv import load_dotenv
 
-load_dotenv()  # Carrega as variáveis do arquivo .env para o os.environ automaticamente
+load_dotenv()
 
 CONFIGS_DIR_ENV_VAR = "BDC_CONFIGS_DIR"
 
@@ -31,7 +31,6 @@ def resolve_configs_dir(explicit_path: Optional[Union[str, Path]] = None) -> Pat
     elif os.environ.get(CONFIGS_DIR_ENV_VAR):
         configs_dir = Path(os.environ[CONFIGS_DIR_ENV_VAR]).resolve()
     else:
-        # Calcula a raiz do projeto (src/app/bootstrap.py -> src/app -> src -> project_root)
         project_root = Path(__file__).resolve().parents[2]
         configs_dir = project_root / "ENTRADAS" / "configs"
 

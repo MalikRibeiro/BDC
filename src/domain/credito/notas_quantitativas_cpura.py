@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """Cálculo das notas quantitativas de CPURA."""
 
 from __future__ import annotations
 
 from typing import Any
 
-from silver.normalizadores import normalizar_float
+from common.numeros import to_float_br
 from domain.credito.pd_exceptions import (
     PdConfigurationError,
     PdInputValidationError,
@@ -17,7 +16,7 @@ def _obter_valor_numerico(
     campo: str,
 ) -> float:
     """Obtém e valida um valor numérico do registro."""
-    valor = normalizar_float(registro.get(campo))
+    valor = to_float_br(registro.get(campo))
 
     if valor is None:
         raise PdInputValidationError(
@@ -162,9 +161,7 @@ def calcular_notas_quantitativas_cpura(
 
         return resultado
 
-    except Exception as e:
+    except Exception:
         if logger is not None:
-            logger.error(
-                f"Falha no cálculo das notas quantitativas CPURA. CNPJ={registro.get('CNPJ')} - Motivo: {str(e)}"
-            )
+            logger.exception("Falha no cálculo das notas quantitativas CPURA. CNPJ=%s", registro.get('CNPJ'))
         raise

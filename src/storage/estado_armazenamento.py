@@ -41,7 +41,7 @@ class DocumentManifest:
         """Garante que os atributos controlados pertençam aos domínios nativos."""
         if isinstance(self.tipo_ficha, str):
             try:
-                self.tipo_ficha = TipoFicha(self.tipo_ficha.lower())
+                self.tipo_ficha = TipoFicha(self.tipo_ficha.upper())
             except ValueError:
                 raise ValueError(f"Valor rejeitado para tipo_ficha: '{self.tipo_ficha}'. Domínios válidos: {[e.value for e in TipoFicha]}")
 

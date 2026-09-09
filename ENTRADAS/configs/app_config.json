@@ -25,8 +25,8 @@
 
     "input_reprocessamento_comercializadoras_root": "ENTRADAS\\fichas\\comercializadoras\\reprocessamento",
     "input_reprocessamento_comercializadoras_pendentes": "ENTRADAS\\fichas\\comercializadoras\\reprocessamento\\pendentes",
-    "input_reprocessamento_comercializadoras_processados": "ENTRADAS\\fichas\\comercializadoras\\reprocessamento\\processados",
-    "input_reprocessamento_comercializadoras_rejeitados": "ENTRADAS\\fichas\\comercializadoras\\reprocessamento\\rejeitados",
+    "input_reprocessamento_comercializadoras_processadas": "ENTRADAS\\fichas\\comercializadoras\\reprocessamento\\processadas",
+    "input_reprocessamento_comercializadoras_rejeitadas": "ENTRADAS\\fichas\\comercializadoras\\reprocessamento\\rejeitadas",
 
     "input_fichas_consumidores_root": "ENTRADAS\\fichas\\consumidores",
     "input_fichas_consumidores_pendentes": "ENTRADAS\\fichas\\consumidores\\pendentes",
@@ -35,8 +35,8 @@
 
     "input_reprocessamento_consumidores_root": "ENTRADAS\\fichas\\consumidores\\reprocessamento",
     "input_reprocessamento_consumidores_pendentes": "ENTRADAS\\fichas\\consumidores\\reprocessamento\\pendentes",
-    "input_reprocessamento_consumidores_processados": "ENTRADAS\\fichas\\consumidores\\reprocessamento\\processados",
-    "input_reprocessamento_consumidores_rejeitados": "ENTRADAS\\fichas\\consumidores\\reprocessamento\\rejeitados",
+    "input_reprocessamento_consumidores_processadas": "ENTRADAS\\fichas\\consumidores\\reprocessamento\\processadas",
+    "input_reprocessamento_consumidores_rejeitadas": "ENTRADAS\\fichas\\consumidores\\reprocessamento\\rejeitadas",
 
     "staging": "SAIDAS\\staging",
 
@@ -96,10 +96,11 @@
 
     "data_quality_rules_fichas_consumidores": "ENTRADAS\\control\\quality\\data_quality_rules_fichas_consumidores.json",
     "field_types_fichas_consumidores": "ENTRADAS\\control\\quality\\field_types_fichas_consumidores.json",
+    "domain_dictionaries": "ENTRADAS\\control\\quality\\domain_dictionaries.json",
     
     "pd_faixas": "ENTRADAS\\control\\configs\\pd_faixas.json",
     "pd_cpura_config": "ENTRADAS\\control\\configs\\pd_cpura_config.json",
-    "pd_transform_rules": "ENTRADAS\\control\\rules\\pd_transform_rules.json",
+    "pd_transform_rules": "ENTRADAS\\control\\configs\\pd_transform_rules.json",
     
     "score_cpura_config": "ENTRADAS\\control\\configs\\score_cpura_config.json",
     

@@ -32,7 +32,6 @@ def buscar_salesforce_dados(
 
     resultados_df = {}
     
-    # Mapeamento das abas do Excel para os nomes lógicos exigidos pelo sistema
     mapa_abas = {
         "Conta": "Account",
         "Cotação": "Cotacao",
@@ -45,21 +44,14 @@ def buscar_salesforce_dados(
             if logger:
                 logger.info("Lendo aba '%s' do Salesforce...", aba_excel)
             
-            # Lendo tudo como string (dtype=str) para não corromper 'Id' e 'AccountId'
             df = pd.read_excel(arquivo_sf, sheet_name=aba_excel, dtype=str)
             
-            # Tratamento de nulos vindos do Excel (transforma "nan" string em real None ou string vazia)
             df = df.fillna("")
             df = df.replace("nan", "")
             
-            # Normalização específica da máscara de CNPJ na aba Conta
             if chave_dict == "Account" and "CNPJ__c" in df.columns:
-                df["CNPJ__c"] = (
-                    df["CNPJ__c"]
-                    .astype(str)
-                    .str.replace(r"\D", "", regex=True) # Remove pontos, traços e barras
-                    .str.zfill(14) # Garante os 14 dígitos com zeros à esquerda
-                )
+                from common.identificadores import normalizar_cnpj
+                df["CNPJ__c"] = df["CNPJ__c"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
             
             resultados_df[chave_dict] = df
             

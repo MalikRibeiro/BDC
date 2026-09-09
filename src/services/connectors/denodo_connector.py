@@ -18,12 +18,10 @@ import requests
 from requests.auth import HTTPBasicAuth
 import urllib3
 
-# Desativa alertas de certificado SSL interno da rede corporativa
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 LOGGER = logging.getLogger(__name__)
 
-# Parâmetros de retry (§3.4 — tratamento de indisponibilidade)
 MAX_RETRIES = 3
 BACKOFF_BASE_SECONDS = 2.0
 
@@ -57,7 +55,7 @@ def _solicitacao_com_tentativa(url: str, params, auth, max_retries: int = MAX_RE
                 time.sleep(wait)
             else:
                 LOGGER.error("Todas as %s tentativas falharam para '%s'.", max_retries, url)
-    raise last_exc  # type: ignore[misc]
+    raise last_exc
 
 
 def _encontrar_arquivo_bronze_recente(bronze_dir: Path, prefix: str = "raw_contratos") -> Path | None:
@@ -78,14 +76,6 @@ def buscar_denodo(
     params: dict[str, Any] | None = None,
     bronze_fallback_dir: Path | None = None,
 ) -> pd.DataFrame:
-    """
-    Consome uma view do Denodo via API REST (JSON).
-    Gerencia paginação automaticamente, retornando um DataFrame consolidado.
-
-    Se todas as tentativas falharem e `bronze_fallback_dir` for informado,
-    tenta ler o último snapshot Bronze disponível (§3.4 — fallback para
-    snapshot anterior em caso de indisponibilidade).
-    """
     base_url = os.getenv("DENODO_REST_BASE_URL", "https://vidgcpprd.copel.nt:9443/denodo-restfulws/com/views")
     url = f"{base_url}/{view_name}"
 
@@ -123,7 +113,7 @@ def buscar_denodo(
                 url = next_link
                 req_params = None
             else:
-                url = None  # type: ignore[assignment]
+                url = None
 
         LOGGER.info("Extração via REST finalizada. %s registros carregados.", len(all_elements))
         return pd.DataFrame(all_elements)
@@ -131,7 +121,6 @@ def buscar_denodo(
     except (requests.exceptions.RequestException, DenodoConnectionError) as exc:
         LOGGER.exception("Falha na comunicação com a API REST do Denodo.")
 
-        # Fallback: tenta ler último snapshot Bronze (§3.4)
         if bronze_fallback_dir:
             snapshot = _encontrar_arquivo_bronze_recente(bronze_fallback_dir)
             if snapshot:

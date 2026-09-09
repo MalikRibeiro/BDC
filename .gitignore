@@ -12,7 +12,6 @@
 *.parquet
 
 # Diretórios e arquivos de saída gerados pelo projeto
-# O script 0_obter_e_triar.py cria esta pasta.
 /arquivos_fichas/
 
 # Outros diretórios que parecem ser de saída de dados (bronze/silver/etc.)

@@ -8,7 +8,7 @@ from typing import Any
 
 from app.context import AppContext
 from common.json import ler_json
-from common.validador import validar_esquema_json
+from common.json import validar_esquema_json
 
 def carregar_e_validar_mapeamento(
     mapping_path: Path,
@@ -26,11 +26,9 @@ def carregar_e_validar_mapeamento(
         if not schema_path.exists():
             raise FileNotFoundError(f"Arquivo de schema não encontrado: {schema_path}")
 
-        # Leitura dos arquivos
         content = ler_json(mapping_path)
         schema = ler_json(schema_path)
 
-        # Validação Estrita (Fail-Fast)
         validar_esquema_json(instance=content, schema=schema, label=descricao)
 
         if not isinstance(content, list):

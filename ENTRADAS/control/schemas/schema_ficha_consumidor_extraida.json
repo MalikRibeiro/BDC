@@ -1,11 +1,54 @@
 {
   "type": "object",
   "required": [
+    "documento_id",
+    "run_id",
+    "ambiente",
+    "TIPO_FICHA",
+    "versao_ficha",
+    "arquivo_nome",
+    "hash_arquivo",
+    "load_mode",
+    "dt_processamento",
     "EMPRESA",
     "CNPJ",
     "DATA_DEMONSTRACAO_FINANCEIRA"
   ],
   "properties": {
+    "documento_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ambiente": {
+      "type": "string",
+      "enum": [
+        "dev",
+        "test",
+        "prod"
+      ]
+    },
+    "versao_ficha": {
+      "type": "string"
+    },
+    "arquivo_nome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "hash_arquivo": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$"
+    },
+    "load_mode": {
+      "type": "string"
+    },
+    "dt_processamento": {
+      "type": "string",
+      "format": "date-time"
+    },
     "DATA_DEMONSTRACAO_FINANCEIRA": {
       "type": [
         "string",
@@ -300,7 +343,193 @@
         "number",
         "null"
       ]
+    },
+    "TIPO_FICHA": {
+      "type": "string",
+      "const": "CONSUMIDOR"
+    },
+    "CNPJ_RAIZ": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "INTEGRIDADE_EXTRAIDA_PERCENTUAL": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "tipo_consumidor": {
+      "type": "string"
+    },
+    "presenca_df": {
+      "type": "boolean"
+    },
+    "tipo_analise_exigida": {
+      "type": "string"
+    },
+    "versao_layout": {
+      "type": "string"
+    },
+    "campos_obrigatorios": {
+      "type": "string"
+    },
+    "confianca_classificacao": {
+      "type": "string"
+    },
+    "compatibilidade_ficha_segmento": {
+      "type": "boolean"
+    },
+    "campos_df_nao_aplicavel": {
+      "type": "string"
+    },
+    "AC_PC": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "AT_PT": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "LUCRO_LIQUIDO_SOBRE_ROL": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "RAZAO_SOCIAL": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "SITUACAO_CADASTRAL": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "NATUREZA_JURIDICA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "CNAE": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "GRUPO_ECONOMICO": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "CONTRATO_CORRENTE": {
+      "type": [
+        "boolean",
+        "null",
+        "string"
+      ]
+    },
+    "VOLUME_CONTRATADO": {
+      "type": [
+        "number",
+        "null",
+        "string"
+      ]
+    },
+    "FONTE_ENQUADRAMENTO": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "RESULTADO_CONSULTA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "DATA_CONSULTA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "VALIDADE_CONSULTA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "VOLUME_ENQUADRAMENTO_MWM": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "COMPETENCIA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "CONTRATOS_CONSIDERADOS": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "FONTE_VOLUME": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "REGRA_ENQUADRAMENTO": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "VERSAO_REGRA": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "SEGMENTO_METODOLOGICO": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "QUALIFICACAO_DF": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "RATING_FINAL": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "SCORE_QUANTITATIVO": {
+      "type": [
+        "number",
+        "null"
+      ]
     }
   },
-  "additionalProperties": true
+  "additionalProperties": false
 }

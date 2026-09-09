@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from silver.normalizadores import normalizar_float
+from common.numeros import to_float_br
 from domain.credito.pd_exceptions import PdInputValidationError
 
 
@@ -14,10 +14,9 @@ def calcular_pd_base(
 ) -> float:
     """Calcula ou lê a PD base do registro."""
     valor = registro.get("PROBABILIDADE_DEFAULT")
-    pd_base = normalizar_float(valor)
+    pd_base = to_float_br(valor)
     
     if segmento_pd == "CONSUMIDOR_LE_5":
-        # Para consumidores abaixo de 5 MWm, a PD base não é utilizada
         return 0.0
     
     valor = registro.get("PROBABILIDADE_DEFAULT")

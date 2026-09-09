@@ -1,0 +1,52 @@
+{
+  "CGRUPO": {
+    "rating_externo": {
+      "agencias": {
+        "FITCH": {
+          "A": ["AAA", "AA+", "AA", "AA-", "A+", "A", "A-"],
+          "B": ["BBB+", "BBB", "BBB-"]
+        },
+        "MOODYS": {
+          "A": ["AAA", "AA1", "AA2", "AA3", "A1", "A2", "A3"],
+          "B": ["BAA1", "BAA2", "BAA3"]
+        },
+        "SP": {
+          "A": ["AAA", "AA+", "AA", "AA-", "A+", "A", "A-"],
+          "B": ["BBB+", "BBB", "BBB-"]
+        }
+      },
+      "short_term_or_default_markers": [
+        "F1", "F2", "F3", "B", "C", "RD", "D",
+        "P1", "P2", "P3", "NP",
+        "A1", "A2", "A3", "SD"
+      ],
+      "default_class": "E",
+      "worst_of_multiple_agencies": true
+    },
+    "pd_final_rules": {
+      "method": "clamp",
+      "fixed_pd_by_rating": {
+        "A": 0.005
+      },
+      "faixas_pd": {
+        "B": {
+          "min": 0.005,
+          "max": 0.10
+        },
+        "E": {
+          "min": 0.10,
+          "max": 1.0
+        }
+      }
+    }
+  },
+   "CONSUMIDOR_GT_5": {
+    "pd_final_rules": {
+      "method": "t_dist_logistic",
+      "df": 6,
+      "scale": 1.2,
+      "eps": 0.00000001,
+      "normalize_input_percent_if_gt_1": true
+    }
+  }
+}

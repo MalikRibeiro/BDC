@@ -1,5 +1,3 @@
-"""Utilitário simples para reiniciar o pipeline BDC e reprocessar as fichas."""
-
 from __future__ import annotations
 
 import shutil
@@ -8,6 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 ENTRADAS_DIR = ROOT / "ENTRADAS"
 SAIDAS_DIR = ROOT / "SAIDAS"
+LOGS_DIR = ROOT / "LOGS"
 
 
 def clear_directory_contents(dir_path: Path) -> int:
@@ -74,52 +73,68 @@ def move_files_back_to_pending(category: str) -> int:
 
     return moved
 
+def move_generic_back_to_pending(base_path: Path) -> int:
+    pendentes_dir = base_path / "pendentes"
+    processadas_dir = base_path / "processadas"
+    rejeitadas_dir = base_path / "rejeitadas"
+
+    pendentes_dir.mkdir(parents=True, exist_ok=True)
+    moved = 0
+
+    for source_dir in (processadas_dir, rejeitadas_dir):
+        if not source_dir.exists():
+            continue
+
+        for source_file in sorted(source_dir.rglob("*")):
+            if not source_file.is_file():
+                continue
+
+            rel_path = source_file.relative_to(source_dir)
+            destination = pendentes_dir / rel_path
+            destination.parent.mkdir(parents=True, exist_ok=True)
+
+            if destination.exists():
+                destination.unlink()
+
+            shutil.move(str(source_file), str(destination))
+            moved += 1
+
+    return moved
 
 def main() -> None:
-    print("🧹 Reiniciando o pipeline BDC...")
+    print("Reiniciando o pipeline BDC...")
 
     targets = [
-        SAIDAS_DIR / "staging" / "fichas_comercializadoras",
-        SAIDAS_DIR / "staging" / "fichas_consumidores",
+        SAIDAS_DIR / "staging",
         SAIDAS_DIR / "bronze" / "fichas_comercializadoras_raw",
         SAIDAS_DIR / "bronze" / "fichas_consumidores_raw",
         SAIDAS_DIR / "bronze" / "snapshots_fontes",
-        SAIDAS_DIR / "silver" / "fichas_comercializadoras_extraidas",
-        SAIDAS_DIR / "silver" / "fichas_consumidores_extraidas",
-        SAIDAS_DIR / "silver" / "documentos_classificados",
-        SAIDAS_DIR / "silver" / "mtm_consolidado_silver",
-        SAIDAS_DIR / "silver" / "denodo_contratos_silver",
-        SAIDAS_DIR / "silver" / "denodo_contratos_padronizados", 
-        SAIDAS_DIR / "silver" / "salesforce_silver",
-        SAIDAS_DIR / "silver" / "receita_silver", 
-        SAIDAS_DIR / "silver" / "garantias_silver", 
-        SAIDAS_DIR / "silver" / "reconciliacao_contratos_mtm",
-        SAIDAS_DIR / "silver" / "reconciliacao_fichas_salesforce",
-        SAIDAS_DIR / "silver" / "alertas_credito",
-        SAIDAS_DIR / "silver" / "governanca_carga_manual", 
-        SAIDAS_DIR / "silver" / "governanca_overrides", 
-        SAIDAS_DIR / "relational" / "facts",
-        SAIDAS_DIR / "relational" / "dimensions", 
-        SAIDAS_DIR / "relational" / "configs", 
-        SAIDAS_DIR / "gold" / "relatorio_credito_atual", 
-        SAIDAS_DIR / "output", 
+        SAIDAS_DIR / "silver",
+        SAIDAS_DIR / "relational",
+        SAIDAS_DIR / "gold",
+        SAIDAS_DIR / "output",
+        LOGS_DIR
     ]
 
     for path in targets:
         if path.exists():
             cleared = clear_directory_contents(path)
-            print(f"   - Limpo: {path} ({cleared} itens removidos)")
+            print(f"Limpo: {path} ({cleared} itens removidos)")
 
     ingestion_log_dir = SAIDAS_DIR / "bronze" / "ingestion_log"
     jsonl_removed = clear_jsonl_files(ingestion_log_dir)
-    print(f"   - Arquivos .jsonl removidos em {ingestion_log_dir}: {jsonl_removed}")
+    print(f"Arquivos .jsonl removidos em {ingestion_log_dir}: {jsonl_removed}")
 
     moved_comercializadoras = move_files_back_to_pending("comercializadoras")
     moved_consumidores = move_files_back_to_pending("consumidores")
+    moved_overrides = move_generic_back_to_pending(ENTRADAS_DIR / "overrides")
+    moved_manual = move_generic_back_to_pending(ENTRADAS_DIR / "atualizacoes_manuais")
 
-    print(f"   - Comercializadoras movidas para pendentes: {moved_comercializadoras}")
-    print(f"   - Consumidores movidos para pendentes: {moved_consumidores}")
-    print("✨ Reset concluído. Agora você pode executar novamente o main.py.")
+    print(f"Comercializadoras movidas para pendentes: {moved_comercializadoras}")
+    print(f"Consumidores movidos para pendentes: {moved_consumidores}")
+    print(f"Overrides movidos para pendentes: {moved_overrides}")
+    print(f"Carga Manual movidas para pendentes: {moved_manual}")
+    print("Reset concluído. Agora você pode executar novamente o main.py.")
 
 
 if __name__ == "__main__":

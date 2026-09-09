@@ -316,9 +316,9 @@
     },
     "CONTROLADOR": {
       "sheet": "FichaIndividual",
-      "label_cell": "F42",
-      "value_cell": "H42",
-      "implemented": true
+      "label_cell": "F8",
+      "value_cell": "H8",
+      "implemented": false
     }
 	,
     "CNPJ_CONTROLADOR": {

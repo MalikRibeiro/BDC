@@ -1,39 +1,26 @@
-"""Persistência do manifest de ingestão em formato JSONL."""
-
-from __future__ import annotations
-
 import json
 from pathlib import Path
 from typing import Any
 
-
-def anexar_registro_de_manifesto(
-    output_file: str | Path,
-    record: dict[str, Any],
-) -> None:
-    """Acrescenta um registro no arquivo JSONL de ingestão."""
-    target = Path(output_file)
+def anexar_registro_de_manifesto(file_path: str, record: dict[str, Any]) -> None:
+    """Anexa um novo manifesto em formato JSON Lines ao histórico."""
+    target = Path(file_path)
     target.parent.mkdir(parents=True, exist_ok=True)
-
+    
     with target.open("a", encoding="utf-8") as file_obj:
-        file_obj.write(json.dumps(record, ensure_ascii=False) + "\n")
+        file_obj.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
 
-
-def historico_de_ingestao_de_carga(
-    input_file: str | Path,
-) -> list[dict[str, Any]]:
-    """Carrega o histórico de ingestão a partir do arquivo JSONL."""
-    source = Path(input_file)
-    if not source.exists():
-        return []
-
-    history: list[dict[str, Any]] = []
-
-    with source.open("r", encoding="utf-8") as file_obj:
+def historico_de_ingestao_de_carga(file_path: Path) -> list[dict[str, Any]]:
+    """Lê o histórico completo de ingestão em formato JSONL."""
+    history = []
+    if not file_path.exists():
+        return history
+    
+    with file_path.open("r", encoding="utf-8") as file_obj:
         for line in file_obj:
-            line = line.strip()
-            if not line:
-                continue
-            history.append(json.loads(line))
-
+            if line.strip():
+                try:
+                    history.append(json.loads(line))
+                except json.JSONDecodeError:
+                    pass
     return history

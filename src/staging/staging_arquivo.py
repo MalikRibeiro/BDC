@@ -1,5 +1,3 @@
-"""Cópia de arquivos para a área de staging do sistema."""
-
 from __future__ import annotations
 
 import shutil

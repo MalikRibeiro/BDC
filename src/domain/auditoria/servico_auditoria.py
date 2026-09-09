@@ -18,10 +18,6 @@ from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
 LOGGER = logging.getLogger("bdc.auditoria")
 
-
-# ==============================================================================
-# ctl_run_pipeline — Uma linha por execução do pipeline
-# ==============================================================================
 def registrar_inicio_pipeline(
     run_id: str,
     etapas_planejadas: int,
@@ -57,7 +53,6 @@ def registrar_fim_pipeline(
 
     control_dir.mkdir(parents=True, exist_ok=True)
 
-    # Append-only: cada execução é uma nova linha no arquivo de controle
     ctl_path = control_dir / "ctl_run_pipeline.parquet"
     if ctl_path.exists():
         df_existing = pd.read_parquet(ctl_path)
@@ -77,10 +72,6 @@ def registrar_fim_pipeline(
     )
     return registro
 
-
-# ==============================================================================
-# ctl_documento — Uma linha por documento processado
-# ==============================================================================
 def registrar_documento(
     documento_id: str,
     run_id: str,
@@ -120,10 +111,6 @@ def registrar_documento(
     )
     return registro
 
-
-# ==============================================================================
-# ctl_campo_origem — Uma linha por campo extraído (Linhagem)
-# ==============================================================================
 def registrar_linhagem_campos(
     documento_id: str,
     run_id: str,

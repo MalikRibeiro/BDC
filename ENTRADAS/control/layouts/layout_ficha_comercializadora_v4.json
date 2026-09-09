@@ -89,7 +89,7 @@
       "sheet": "FichaIndividual",
       "label_cell": "A17",
       "value_cell": "B17",
-      "implemented": true
+      "implemented": false
     },
     "PATRIMONIO_LIQUIDO": {
       "sheet": "FichaIndividual",

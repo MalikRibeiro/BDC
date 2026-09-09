@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from silver.normalizadores import normalizar_string
+from common.texto import normalizar_texto
 from domain.credito.pd_exceptions import (
     PdConfigurationError,
     PdInputValidationError,
@@ -72,10 +72,10 @@ def _obter_rating_pronto(
             f"Registro sem rating para {segmento_pd}."
         )
 
-    rating_final = normalizar_string(rating, upper=True)
+    rating_final = normalizar_texto(rating)
 
-    validos = {"A", "B", "E"} if segmento_pd == "CGRUPO" else {
-        "A", "B", "C", "D", "E"
+    validos = {"A", "B","C", "D", "E"} if segmento_pd == "CGRUPO" else {
+        "A", "B", "C", "D", "E", "F"
     }
 
     if rating_final not in validos:

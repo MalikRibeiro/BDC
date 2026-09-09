@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 """Cálculo do score quantitativo para CPURA."""
 
 from __future__ import annotations
 
 from typing import Any
 
-from silver.normalizadores import normalizar_string
+from common.texto import normalizar_texto
 from domain.credito.pd_exceptions import (
     PdConfigurationError,
     PdInputValidationError,
@@ -18,7 +17,7 @@ def _obter_peso_nota(
     nome_campo: str,
 ) -> float:
     """Obtém o peso numérico da nota."""
-    nota_normalizada = normalizar_string(nota, upper=True)
+    nota_normalizada = normalizar_texto(nota)
 
     if not nota_normalizada:
         raise PdInputValidationError(

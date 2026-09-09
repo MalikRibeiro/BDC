@@ -4,23 +4,17 @@ from __future__ import annotations
 
 from typing import Any
 
-from silver.normalizadores import normalizar_string, normalizar_float
-
+from common.texto import normalizar_texto
+from common.numeros import to_float_br
 
 def definir_segmento_metodologico(
     registro: dict[str, Any],
 ) -> str:
     """Define o segmento metodológico da contraparte."""
-    tipo_ficha = normalizar_string(
-        registro.get("TIPO_FICHA"),
-        upper=True,
-    )
+    tipo_ficha = normalizar_texto(registro.get("TIPO_FICHA"))
     
     if tipo_ficha == "COMERCIALIZADORA":
-        tipo_comercializadora = normalizar_string(
-            registro.get("TIPO_COMERCIALIZADORA"),
-            upper=True,
-        )
+        tipo_comercializadora = normalizar_texto(registro.get("TIPO_COMERCIALIZADORA"))
         if tipo_comercializadora == "CPURA":
             return "CPURA"
 
@@ -32,14 +26,11 @@ def definir_segmento_metodologico(
         )
 
     if tipo_ficha == "CONSUMIDOR":
-        # Extrai o volume de enquadramento (em MWm)
-        volume_mwm = normalizar_float(registro.get("VOLUME_ENQUADRAMENTO_MWM"))
+        volume_mwm = to_float_br(registro.get("VOLUME_ENQUADRAMENTO_MWM"))
         
-        # Critério de Aceite: Consumidor sem volume retorna NAO_ENQUADRADO
         if volume_mwm is None:
             return "NAO_ENQUADRADO"
             
-        # Critério de Aceite: Bifurcação baseada no limite de 5 MWm
         if volume_mwm >= 5.0:
             return "CONSUMIDOR_GT_5"
         else:

@@ -1,52 +1,63 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Template de Carga Manual e Eventos de Negócio",
-  "description": "Schema para registrar eventos de carga manual com rastreabilidade completa (dupla temporalidade) — §4.3, §4.5 e Apêndice A.",
+  "description": "Schema para registrar eventos de carga manual com rastreabilidade completa.",
   "type": "object",
   "required": [
     "CNPJ",
-    "COMPETENCIA",
-    "CAMPO_ALTERADO",
-    "VALOR_APLICADO",
+    "DATA_DEMONSTRACAO_FINANCEIRA",
+    "CAMPO_AFETADO",
+    "VALOR_NOVO",
     "MOTIVO",
     "SOLICITANTE",
     "TIPO_EVENTO"
   ],
   "properties": {
     "CNPJ": {
-      "type": "string",
-      "pattern": "^[0-9]{14}$"
-    },
-    "COMPETENCIA": {
-      "type": "string",
-      "pattern": "^[0-9]{6}$",
-      "description": "Formato YYYYMM"
-    },
-    "CAMPO_ALTERADO": {
       "type": "string"
     },
-    "VALOR_APLICADO": {
-      "type": "number"
+    "DATA_DEMONSTRACAO_FINANCEIRA": {
+      "type": "string"
+    },
+    "CAMPO_AFETADO": {
+      "type": "string"
+    },
+    "VALOR_NOVO": {
+      "type": [
+        "number",
+        "string"
+      ]
     },
     "MOTIVO": {
       "type": "string",
-      "minLength": 10
+      "enum": [
+        "Correcao de Falhas na Origem",
+        "Atualizacao Historica",
+        "Intervencao de Alcada (Override)",
+        "Obtencao Tardia de Dados (Complementacao)",
+        "Omissao no Envio de Documentos (Ausencia de DF)",
+        "Outro"
+      ]
     },
     "EVIDENCIA": {
-      "type": "string",
-      "description": "Caminho ou protocolo de email comprovando a decisão"
+      "type": "string"
     },
     "SOLICITANTE": {
-      "type": "string"
+      "type": "string",
+      "enum": [
+        "Malik Ribeiro Mourad",
+        "Eduardo Suzuki Yamauti"
+      ]
     },
     "TIPO_EVENTO": {
       "type": "string",
-      "enum": ["AJUSTE_BALANCO", "RECLASSIFICACAO_SETORIAL", "RESTRITIVO_MANUAL", "OUTRO"]
-    },
-    "DATA_REFERENCIA_NEGOCIO": {
-      "type": "string",
-      "format": "date",
-      "description": "Data real em que o evento ocorreu no negócio"
+      "enum": [
+        "AJUSTE_BALANCO",
+        "RECLASSIFICACAO_SETORIAL",
+        "RESTRITIVO_MANUAL",
+        "CORRECAO",
+        "OUTRO"
+      ]
     }
   }
 }

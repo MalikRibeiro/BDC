@@ -1,7 +1,4 @@
-"""Builders da camada silver para documentos classificados."""
-
 from __future__ import annotations
-
 
 def criar_documento_classificado(
     documento_id: str,
@@ -9,7 +6,7 @@ def criar_documento_classificado(
     ambiente: str,
     arquivo_nome: str,
     versao_ficha: str,
-    tipo_ficha: str,
+    TIPO_FICHA: str,
     hash_arquivo: str,
 ) -> dict[str, str]:
     """Monta o registro silver de documento classificado."""
@@ -19,6 +16,6 @@ def criar_documento_classificado(
         "ambiente": ambiente,
         "arquivo_nome": arquivo_nome,
         "versao_ficha": versao_ficha,
-        "tipo_ficha": tipo_ficha,
+        "TIPO_FICHA": TIPO_FICHA,
         "hash_arquivo": hash_arquivo,
     }

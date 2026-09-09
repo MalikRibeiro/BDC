@@ -58,8 +58,6 @@ def localizar_celula_por_regex(
     except re.error:
         return (None, None) if return_meta else None
 
-    # OTIMIZAÇÃO CRÍTICA: Extrai o bloco de dados de uma vez só 
-    # para evitar travamentos de O(N^2) no modo read_only=True.
     max_r = max_search_rows + max(0, offset_row)
     max_c = max_search_cols + max(0, offset_col)
     

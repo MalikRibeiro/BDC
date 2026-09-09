@@ -12,8 +12,7 @@ from typing import Any
 from dotenv import load_dotenv
 
 from app.config_builder import AppConfigBuilder
-from common.json import ler_json
-from common.validador import validar_esquema_json
+from common.json import ler_json, validar_esquema_json
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +62,6 @@ def carregar_contexto(configs_dir: str | Path) -> AppContext:
         logger.critical("app_config.json malformado. Chave ausente: %s", e)
         sys.exit(1)
 
-    # Resolve os caminhos usando o Builder
     builder = AppConfigBuilder(base_dir_env)
     resolved_paths = builder.resolve_dict(raw_paths)
     resolved_control_files = builder.resolve_dict(raw_control_files)
@@ -78,11 +76,9 @@ def carregar_contexto(configs_dir: str | Path) -> AppContext:
     schema_app_config = ler_json(schema_app_config_path)
     schema_config = ler_json(schema_config_path)
 
-    # Validação estrutural do JSON original (Fail-Fast)
     validar_esquema_json(app_config, schema_app_config, "app_config.json")
     validar_esquema_json(config, schema_config, "config.json")
 
-    # Injeta valores resolvidos para manter coerência nos serviços
     app_config["base_dir"] = str(builder.base_dir)
     app_config["paths"] = resolved_paths
     app_config["control_files"] = resolved_control_files

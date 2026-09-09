@@ -1,5 +1,3 @@
-"""Publicação de arquivos válidos na camada bronze."""
-
 from __future__ import annotations
 
 import shutil

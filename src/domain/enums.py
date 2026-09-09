@@ -6,8 +6,8 @@ from enum import Enum, unique
 @unique
 class TipoFicha(str, Enum):
     """Domínio para os tipos de fichas processadas."""
-    COMERCIALIZADORA = "comercializadora"
-    CONSUMIDOR = "consumidor"
+    COMERCIALIZADORA = "COMERCIALIZADORA"
+    CONSUMIDOR = "CONSUMIDOR"
 
 
 @unique

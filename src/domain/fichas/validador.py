@@ -24,12 +24,10 @@ class DomainRuleEngine:
         errors: list[str] = []
         warnings: list[str] = []
 
-        # 1. Validação de Campos Obrigatórios (Estática)
         for field in required_fields:
             if _is_empty(record.get(field)):
                 errors.append(f"Campo obrigatório ausente: {field}")
 
-        # 2. Validações de Domínio Universais (Fallback / Plausibilidade Básica)
         pl = record.get("PATRIMONIO_LIQUIDO")
         if _is_empty(pl):
             warnings.append("PATRIMONIO_LIQUIDO não informado.")
@@ -43,7 +41,6 @@ class DomainRuleEngine:
         if _is_empty(data_calculo):
             warnings.append("DATA_CALCULO não informada.")
 
-        # Trata a PD se não houver regra dinâmica explícita (para não quebrar comercializadoras)
         has_pd_rule = any(r.get("field") == "PROBABILIDADE_DEFAULT" for r in self.dynamic_rules)
         if not has_pd_rule and "PROBABILIDADE_DEFAULT" in record:
             pd_val = record.get("PROBABILIDADE_DEFAULT")
@@ -54,7 +51,6 @@ class DomainRuleEngine:
             elif isinstance(pd_val, (int, float)) and (pd_val < 0 or pd_val > 100):
                 errors.append("PROBABILIDADE_DEFAULT inválida: fora do intervalo [0, 100].")
 
-        # 3. Validações Dinâmicas (Data Quality Rules JSON)
         for rule in self.dynamic_rules:
             field = rule.get("field")
             val = record.get(field)
@@ -85,11 +81,62 @@ class DomainRuleEngine:
         return errors, warnings
 
 
+import jsonschema
+import json
+from pathlib import Path
+
+def validar_schema(record: dict[str, Any], logger: Any | None = None) -> list[str]:
+    tipo_ficha = record.get("TIPO_FICHA")
+    if tipo_ficha == "CONSUMIDOR":
+        schema_path = Path("ENTRADAS/control/schemas/schema_ficha_consumidor_extraida.json")
+    elif tipo_ficha == "COMERCIALIZADORA":
+        schema_path = Path("ENTRADAS/control/schemas/schema_ficha_comercializadora_extraida.json")
+    else:
+        return []
+
+    if not schema_path.exists():
+        return []
+
+    try:
+        with open(schema_path, "r", encoding="utf-8") as f:
+            schema = json.load(f)
+        
+        # Chaves temporárias de runtime que NÃO pertencem ao contrato da Silver.
+        # São subprodutos do extrator/classificador e devem ser descartadas
+        # antes da validação de schema (Fail-Safe estrito).
+        _RUNTIME_KEYS = {
+            "DATA_DF_EPOCH_ORIGINAL",
+            "FLAG_DATA_DF_CORRIGIDA",
+            "STATUS_CNPJ",
+            "_FALHA_GATE_CRITICO",
+        }
+
+        clean_record = {}
+        from common.nulos import is_nulo_textual
+        import pandas as pd
+        for k, v in record.items():
+            if k in _RUNTIME_KEYS:
+                continue
+            if is_nulo_textual(v):
+                clean_record[k] = None
+            elif isinstance(v, pd.Timestamp):
+                clean_record[k] = v.strftime("%Y-%m-%d")
+            else:
+                clean_record[k] = v
+
+        jsonschema.validate(instance=clean_record, schema=schema)
+    except jsonschema.exceptions.ValidationError as e:
+        return [f"Violação de contrato (Schema): {e.message}"]
+    except Exception as e:
+        if logger:
+            logger.warning("Falha na validação de schema: %s", e)
+    return []
+
+
 def validar_registro(
     record: dict[str, Any],
     master_catalog: dict[str, Any] | None = None,
     logger: Any | None = None,
-    # Parâmetros Legados para Consumidores:
     required_fields: list[str] | None = None,
     quality_rules: dict[str, Any] | None = None,
 ) -> tuple[list[str], list[str]]:
@@ -105,13 +152,11 @@ def validar_registro(
         warnings: list[str] = []
 
         if master_catalog and "fields" in master_catalog:
-            # 1. LÓGICA DE GATES (Master Catalog)
             for field, config in master_catalog["fields"].items():
                 if config.get("criticality") == "GATE_ENGINE":
                     if _is_empty(record.get(field)):
                         errors.append(f"GATE_ENGINE ausente: {field}")
 
-            # 2. SANITY CHECK CONTÁBIL (Consistência)
             ativo_total = record.get("ATIVO_TOTAL_AJUSTADO")
             pl = record.get("PATRIMONIO_LIQUIDO")
             passivo_circulante = record.get("PASSIVO_CIRCULANTE_AJUSTADO")
@@ -129,7 +174,6 @@ def validar_registro(
                 if diferenca > (0.05 * ativo_t):
                     warnings.append(f"ALERTA_CONTABIL: Balanço não fecha. Ativo difere de Passivo+PL. (Diferença: {diferenca:.2f})")
         else:
-            # Fallback Legacy (Consumidores)
             engine = DomainRuleEngine(quality_rules)
             err, warn = engine.validate(record, required_fields or [])
             errors.extend(err)
@@ -144,8 +188,6 @@ def validar_registro(
             )
             if errors:
                 logger.warning("Erros de validação para CNPJ=%s: %s", record.get("CNPJ"), errors)
-            if warnings:
-                logger.warning("Avisos de validação para CNPJ=%s: %s", record.get("CNPJ"), warnings)
 
         return errors, warnings
 
@@ -157,10 +199,9 @@ def validar_registro(
 
 def validar_registro_consumidor(
     record: dict[str, Any],
-    required_fields: list[str],
+    master_catalog: dict[str, Any] | None = None,
     classificacao: Any | None = None,
     logger: Any | None = None,
-    quality_rules: dict[str, Any] | None = None,
 ) -> tuple[list[str], list[str]]:
     """Valida o registro de consumidor com regras condicionais por tipo de análise.
 
@@ -169,12 +210,10 @@ def validar_registro_consumidor(
     - <5 MWm (simplificada): valida que campos financeiros são NAO_APLICAVEL,
       e exige score de bureau.
     """
-    # Validação base (universal)
     errors, warnings = validar_registro(
         record=record,
-        required_fields=required_fields,
+        master_catalog=master_catalog,
         logger=logger,
-        quality_rules=quality_rules,
     )
 
     if classificacao is None:
@@ -183,7 +222,6 @@ def validar_registro_consumidor(
     tipo_analise = getattr(classificacao, "tipo_analise_exigida", None)
 
     if tipo_analise == "detalhada":
-        # Validar presença de campos financeiros obrigatórios para ≥5 MWm
         campos_financeiros_obrigatorios = [
             "PATRIMONIO_LIQUIDO", "ATIVO_CIRCULANTE", "ATIVO_TOTAL",
             "PASSIVO_CIRCULANTE", "LUCRO_LIQUIDO",
@@ -196,18 +234,15 @@ def validar_registro_consumidor(
                     f"Campo financeiro obrigatório ausente para consumidor ≥5 MWm: {campo}"
                 )
 
-        # Auditor deve estar presente em análise detalhada
         if _is_empty(record.get("AUDITOR")):
             warnings.append("AUDITOR não informado para consumidor ≥5 MWm.")
 
     elif tipo_analise == "simplificada":
-        # Score de bureau é obrigatório para <5 MWm
         if _is_empty(record.get("SCORE_BUREAU")):
             errors.append(
                 "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado."
             )
 
-        # Campos financeiros devem ser NAO_APLICAVEL ou vazios
         campos_df = [
             "ATIVO_CIRCULANTE", "ATIVO_TOTAL", "PASSIVO_CIRCULANTE",
             "LUCRO_LIQUIDO", "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
@@ -220,7 +255,6 @@ def validar_registro_consumidor(
                     f"Valor: {val}"
                 )
 
-    # Verificar compatibilidade ficha-segmento
     if hasattr(classificacao, "compatibilidade_ficha_segmento"):
         if not classificacao.compatibilidade_ficha_segmento:
             warnings.append(

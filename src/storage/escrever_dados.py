@@ -1,5 +1,3 @@
-"""Persistência de datasets padronizados da camada silver."""
-
 import json
 import warnings
 from pathlib import Path
@@ -35,21 +33,20 @@ def escrever_conjunto_de_dados_silver(
 
     df = pd.DataFrame(records)
 
-    # Conversão segura de tipos blindada para o PyArrow não quebrar
     for col in df.columns:
-        # 1. Serializa listas e dicionários. default=str previne o erro de datetime não serializável
         if df[col].apply(lambda x: isinstance(x, (list, dict))).any():
             df[col] = df[col].apply(lambda x: json.dumps(x, ensure_ascii=False, default=str) if isinstance(x, (list, dict)) else x)
             
-        # 2. Coerção de datas (Silencia o UserWarning do pandas)
         elif "data" in col.lower() or "date" in col.lower() or col.lower().startswith("dt_") or col.startswith("_DT_"):
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", UserWarning)
                 df[col] = pd.to_datetime(df[col], errors="coerce", dayfirst=True)
             
-        # 3. Coerção numérica
         elif not (pd.api.types.is_string_dtype(df[col]) or pd.api.types.is_object_dtype(df[col])):
             df[col] = pd.to_numeric(df[col], errors="coerce")
+            
+        elif pd.api.types.is_object_dtype(df[col]):
+            df[col] = df[col].apply(lambda x: str(x) if pd.notna(x) else None)
 
     target_dir = Path(output_dir)
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -57,7 +54,14 @@ def escrever_conjunto_de_dados_silver(
     csv_path = target_dir / f"{filename}.csv"
     parquet_path = target_dir / f"{filename}.parquet"
 
-    df.to_csv(csv_path, index=False, sep=sep, decimal=decimal, encoding=encoding)
+    df.to_csv(
+        csv_path, 
+        index=False, 
+        sep=sep, 
+        decimal=decimal, 
+        encoding=encoding, 
+        date_format="%d/%m/%Y"
+    )
     df.to_parquet(parquet_path, index=False, engine="pyarrow", compression="snappy")
 
     return csv_path, parquet_path
@@ -82,13 +86,10 @@ def mesclar_conjunto_de_dados_prata_por_chave_de_negocio(
     df_new = pd.DataFrame(records)
     df_new["_DT_CARGA"] = pd.Timestamp.now()
 
-    # PRÉ-PROCESSAMENTO: Aplica as coerções
     for col in df_new.columns:
-        # 1. Serializa dicionários e listas (com default=str para datas internas)
         if df_new[col].apply(lambda x: isinstance(x, (list, dict))).any():
             df_new[col] = df_new[col].apply(lambda x: json.dumps(x, ensure_ascii=False, default=str) if isinstance(x, (list, dict)) else x)
         
-        # 2. Coerção de datas do sistema (Silencia o UserWarning)
         if "data" in col.lower() or "date" in col.lower() or col.lower().startswith("dt_"):
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", UserWarning)
@@ -97,7 +98,6 @@ def mesclar_conjunto_de_dados_prata_por_chave_de_negocio(
     if parquet_path.exists():
         df_existing = pd.read_parquet(parquet_path)
 
-        # Garante colunas de controle no histórico legado
         if "_VERSAO_REGISTRO" not in df_existing.columns:
             df_existing["_VERSAO_REGISTRO"] = 1
         
@@ -111,7 +111,6 @@ def mesclar_conjunto_de_dados_prata_por_chave_de_negocio(
         if "_STATUS_REGISTRO" not in df_existing.columns:
             df_existing["_STATUS_REGISTRO"] = "VIGENTE"
 
-        # BLINDAGEM DE TIPOS NA CHAVE DE NEGÓCIO
         for b_key in business_keys:
             if b_key in df_existing.columns and b_key in df_new.columns:
                 if pd.api.types.is_datetime64_any_dtype(df_existing[b_key]) and not pd.api.types.is_datetime64_any_dtype(df_new[b_key]):
@@ -128,7 +127,6 @@ def mesclar_conjunto_de_dados_prata_por_chave_de_negocio(
         df_existing_keys = df_existing[business_keys].drop_duplicates()
         df_new_keys = df_new[business_keys].drop_duplicates()
         
-        # Rebaixa o status das chaves de negócio que sofrerão atualização
         keys_to_replace = pd.merge(df_existing_keys, df_new_keys, on=business_keys, how='inner')
         if not keys_to_replace.empty:
             cond_atualizacao = df_existing.set_index(business_keys).index.isin(keys_to_replace.set_index(business_keys).index)
@@ -147,16 +145,13 @@ def mesclar_conjunto_de_dados_prata_por_chave_de_negocio(
         df_existing = pd.DataFrame()
         df_new["_MAX_VERSAO"] = 0
 
-    # ORDENAÇÃO CRONOLÓGICA PARA GARANTIR SEQUÊNCIA EXATA
     if "dt_processamento" in df_new.columns:
         df_new = df_new.sort_values(by=business_keys + ["dt_processamento"])
 
-    # VERSIONAMENTO ATÔMICO DA SILVER
     df_new["rank_interno"] = df_new.groupby(business_keys).cumcount() + 1
     df_new["_VERSAO_REGISTRO"] = df_new["_MAX_VERSAO"] + df_new["rank_interno"]
     df_new = df_new.drop(columns=["_MAX_VERSAO", "rank_interno"])
 
-    # STATUS
     df_new["_STATUS_REGISTRO"] = "SUBSTITUIDO"
     idx_vigentes = df_new.groupby(business_keys)["_VERSAO_REGISTRO"].idxmax()
     df_new.loc[idx_vigentes, "_STATUS_REGISTRO"] = "VIGENTE"
@@ -166,7 +161,6 @@ def mesclar_conjunto_de_dados_prata_por_chave_de_negocio(
     else:
         df_combined = df_new
         
-    # STATUS
     df_new["_STATUS_REGISTRO"] = "SUBSTITUIDO"
     idx_vigentes = df_new.groupby(business_keys)["_VERSAO_REGISTRO"].idxmax()
     df_new.loc[idx_vigentes, "_STATUS_REGISTRO"] = "VIGENTE"
@@ -181,11 +175,7 @@ def mesclar_conjunto_de_dados_prata_por_chave_de_negocio(
     
     import logging
     temp_logger = logging.getLogger("bdc.comercializadoras")
-    temp_logger.info("Persistência Silver: Operação SCD2 concluída. %s novos registros inseridos, %s históricos atualizados (Vigente -> Substituído).", qtd_inseridos, qtd_atualizados)
-    temp_logger.debug("PyArrow Schema Previsto para gravação:\n%s", df_combined.dtypes.to_string())
 
-
-    # Exportamos direto pro to_dict nativo; o write_silver cuidará das tipagens de volta.
     return escrever_conjunto_de_dados_silver(
         records=df_combined.to_dict(orient="records"),
         output_dir=output_dir,

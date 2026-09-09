@@ -357,10 +357,10 @@
     },
     "CONTROLADOR": {
       "sheet": "FichaIndividual",
-      "label_cell": "F42",
+      "label_cell": "F8",
       "search_pattern": "CONTROLADOR|NOME DO CONTROLADOR:",
-      "value_cell": "H42",
-      "implemented": true
+      "value_cell": "H8",
+      "implemented": false
     },
     "CNPJ_CONTROLADOR": {
       "sheet": "FichaIndividual",

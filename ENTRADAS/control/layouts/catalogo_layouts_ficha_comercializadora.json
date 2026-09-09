@@ -8,49 +8,56 @@
       "arquivo_layout": "layout_ficha_comercializadora_v1.json",
       "score_minimo": 8,
       "required_match_ratio_min": 0.7,
-      "preferred": false
+      "preferred": false,
+      "expected_tabs": ["V0", "Para_Limite_Comercializadoras", "Premissas", "FichaIndividual", "Memória de Cálculo", "Conf. Puras_DRE", "Dados Gerais e Qualitativos", "DRE", "Dem.Fin."]
     },
     {
       "versao_ficha": "padrao_2",
       "arquivo_layout": "layout_ficha_comercializadora_v2.json",
       "score_minimo": 8,
       "required_match_ratio_min": 0.7,
-      "preferred": false
+      "preferred": false,
+      "expected_tabs": ["V0", "Para_Limite_Comercializadoras", "Premissas", "FichaIndividual", "Memória de Cálculo", "Conf. Puras_DRE", "Dados Gerais e Qualitativos", "DRE", "Dem.Fin."]
     },
     {
       "versao_ficha": "padrao_3",
       "arquivo_layout": "layout_ficha_comercializadora_v3.json",
       "score_minimo": 8,
       "required_match_ratio_min": 0.7,
-      "preferred": false
+      "preferred": false,
+      "expected_tabs": ["V0", "Para_Limite_Comercializadoras", "Premissas", "FichaIndividual", "Memória de Cálculo", "Conf. Puras_DRE", "Dados Gerais e Qualitativos", "DRE", "Dem.Fin."]
     },
     {
       "versao_ficha": "padrao_4",
       "arquivo_layout": "layout_ficha_comercializadora_v4.json",
       "score_minimo": 8,
       "required_match_ratio_min": 0.7,
-      "preferred": false
+      "preferred": false,
+      "expected_tabs": ["V0", "Para_Limite_Comercializadoras", "Premissas", "FichaIndividual", "Memória de Cálculo", "Conf. Puras_DRE", "Dados Gerais e Qualitativos", "DRE", "Dem.Fin."]
     },
     {
       "versao_ficha": "padrao_5",
       "arquivo_layout": "layout_ficha_comercializadora_v5.json",
       "score_minimo": 8,
       "required_match_ratio_min": 0.7,
-      "preferred": false
+      "preferred": false,
+      "expected_tabs": ["V0", "Para_Limite_Comercializadoras", "Premissas", "FichaIndividual", "Memória de Cálculo", "Conf. Puras_DRE", "Dados Gerais e Qualitativos", "DRE", "Dem.Fin."]
     },
     {
       "versao_ficha": "padrao_6",
       "arquivo_layout": "layout_ficha_comercializadora_v6.json",
       "score_minimo": 10,
       "required_match_ratio_min": 0.7,
-      "preferred": false
+      "preferred": false,
+      "expected_tabs": ["V0", "Para_Limite_Comercializadoras", "Premissas", "FichaIndividual", "Memória de Cálculo", "Conf. Puras_DRE", "Dados Gerais e Qualitativos", "DRE", "Dem.Fin."]
     },
     {
       "versao_ficha": "padrao_7",
       "arquivo_layout": "layout_ficha_comercializadora_v7.json",
       "score_minimo": 8,
       "required_match_ratio_min": 1.0,
-      "preferred": true
+      "preferred": true,
+      "expected_tabs": ["V0", "Para_Limite_Comercializadoras", "Premissas", "FichaIndividual", "Memória de Cálculo", "Conf. Puras_DRE", "Dados Gerais e Qualitativos", "DRE", "Dem.Fin."]
     }
   ]
 }

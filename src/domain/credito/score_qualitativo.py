@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from silver.normalizadores import normalizar_string
+from common.texto import normalizar_texto
 from domain.credito.pd_exceptions import (
     PdConfigurationError,
     PdInputValidationError,
@@ -16,7 +16,7 @@ def _obter_nota_auditoria(
     auditor_para_nota: dict[str, str],
 ) -> str:
     """Converte o auditor em nota qualitativa."""
-    auditor_normalizado = normalizar_string(auditor, upper=True)
+    auditor_normalizado = normalizar_texto(auditor)
 
     if not auditor_normalizado:
         raise PdInputValidationError("AUDITOR não informado.")
@@ -37,7 +37,7 @@ def _obter_peso_nota(
     nome_campo: str,
 ) -> float:
     """Obtém o peso numérico da nota qualitativa."""
-    nota_normalizada = normalizar_string(nota, upper=True)
+    nota_normalizada = normalizar_texto(nota)
 
     if not nota_normalizada:
         raise PdInputValidationError(

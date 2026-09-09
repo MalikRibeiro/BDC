@@ -134,9 +134,15 @@
             "type": "text",
             "criticality": "OPTIONAL",
             "weight": 10,
+            "allow_semantic": false,
+            "enum": ["CPURA", "CGRUPO", "PURA", "GRUPO"],
             "search_patterns": [
                 "TIPO\\s*DE\\s*COMERCIALIZADORA"
-            ]
+            ],
+            "value_mapping": {
+                "PURA": "CPURA",
+                "GRUPO": "CGRUPO"
+            }
         },
         "AGENCIA": {
             "nature": "OBSERVED",
@@ -350,6 +356,7 @@
             "type": "text",
             "criticality": "OPTIONAL",
             "weight": 10,
+            "allow_semantic": false,
             "search_patterns": [
                 "CONTROLADOR|NOME\\s*DO\\s*CONTROLADOR"
             ]
@@ -429,60 +436,6 @@
             "criticality": "OPTIONAL",
             "weight": 0,
             "search_patterns": []
-        },
-        "SCORE_QUANTITATIVO": {
-            "nature": "CALCULATED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 1,
-            "search_patterns": [
-                "SCORE\\s*QUANTITATIVO"
-            ]
-        },
-        "SCORE_QUALITATIVO": {
-            "nature": "CALCULATED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 1,
-            "search_patterns": [
-                "SCORE\\s*QUALITATIVO"
-            ]
-        },
-        "SCORE_PD": {
-            "nature": "CALCULATED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 1,
-            "search_patterns": [
-                "^\\s*PD\\s*$"
-            ]
-        },
-        "SCORE_FCO_ROL": {
-            "nature": "CALCULATED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 1,
-            "search_patterns": [
-                "^\\s*FCO/ROL\\s*$"
-            ]
-        },
-        "SCORE_ROA": {
-            "nature": "CALCULATED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 1,
-            "search_patterns": [
-                "^\\s*ROA\\s*$"
-            ]
-        },
-        "SCORE_ROE": {
-            "nature": "CALCULATED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 1,
-            "search_patterns": [
-                "^\\s*ROE\\s*$"
-            ]
         }
     }
 }

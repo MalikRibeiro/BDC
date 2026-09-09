@@ -12,7 +12,9 @@ from typing import Any
 import pandas as pd
 
 from app.context import AppContext
+from control.logger import obter_logger
 from domain.enums import StatusAlerta
+from relational.facts.fato_alerta_util import registrar_alerta
 from services.connectors.receita_connector import buscar_receita_dados_lote
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
@@ -26,7 +28,6 @@ def _listar_cnpjs_de_entrada(context: AppContext) -> list[str]:
     cnpjs = set()
     silver_dir = context.path("silver")
 
-    # 1. CNPJs das Fichas
     for segmento in ["fichas_comercializadoras_extraidas", "fichas_consumidores_extraidas"]:
         path = silver_dir / segmento / f"{segmento}.parquet"
         if path.exists():
@@ -34,19 +35,18 @@ def _listar_cnpjs_de_entrada(context: AppContext) -> list[str]:
             if "CNPJ" in df.columns:
                 cnpjs.update(df["CNPJ"].dropna().astype(str).str.strip().tolist())
 
-    # 2. CNPJs dos Contratos (Base completa do MVP)
     path_contratos = silver_dir / "denodo_contratos_silver" / "contratos_correntes.parquet"
     if path_contratos.exists():
         df_contratos = pd.read_parquet(path_contratos)
         if "CNPJ" in df_contratos.columns:
             cnpjs.update(df_contratos["CNPJ"].dropna().astype(str).str.strip().tolist())
 
-    # Limpeza e validação estrita dos 14 dígitos
+    from common.identificadores import normalizar_cnpj
     cnpjs_limpos = []
     for c in cnpjs:
-        c_limpo = re.sub(r"\D", "", str(c)).zfill(14)
-        if len(c_limpo) == 14 and c_limpo != "00000000000000":
-            cnpjs_limpos.append(c_limpo)
+        resultado = normalizar_cnpj(c)
+        if resultado.valido:
+            cnpjs_limpos.append(resultado.cnpj)
 
     return list(set(cnpjs_limpos))
 
@@ -58,9 +58,11 @@ def _salvar_instantaneo_bruto(context: AppContext, payload: list[dict[str, Any]]
     target.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
     return target
 
+from control.logger import obter_logger
+
 def inserir_dados_receita(context: AppContext) -> dict[str, Any]:
     run_id = f"REC_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = logging.getLogger("bdc.receita")
+    logger = obter_logger("bdc.receita", Path("LOGS/ingestao") / f"{run_id}__ingestao_receita.log")
 
     cnpjs = _listar_cnpjs_de_entrada(context)
     if not cnpjs:
@@ -68,7 +70,7 @@ def inserir_dados_receita(context: AppContext) -> dict[str, Any]:
         return {"run_id": run_id, "linhas_processadas": 0, "alertas_gerados_cad001": 0, "status": "SEM_DADOS"}
 
     logger.info("Iniciando consulta na BrasilAPI para %d CNPJ(s). Pode levar alguns minutos (Cache ativo)...", len(cnpjs))
-    df_receita = buscar_receita_dados_lote(cnpjs, context)
+    df_receita = buscar_receita_dados_lote(cnpjs, context, logger)
     
     if df_receita.empty:
         logger.warning("Consulta da Receita retornou DataFrame vazio.")
@@ -94,6 +96,19 @@ def inserir_dados_receita(context: AppContext) -> dict[str, Any]:
                 "DT_DETECCAO": datetime.now().isoformat(timespec="seconds"),
                 "STATUS_ALERTA": StatusAlerta.ABERTO.value,
             })
+            
+            registrar_alerta(
+                codigo="CAD_001",
+                severidade="ALTO",
+                regra="Situação Cadastral Irregular",
+                mensagem=f"CNPJ com situação cadastral irregular: {situacao}.",
+                campo_afetado="SITUACAO_CADASTRAL",
+                valor_observado=situacao,
+                limite_esperado="ATIVA",
+                contraparte_id=row.get("CNPJ"),
+                run_id=run_id,
+                context=context
+            )
 
     if alertas:
         df_alertas = pd.DataFrame(alertas)
@@ -110,7 +125,6 @@ def inserir_dados_receita(context: AppContext) -> dict[str, Any]:
         filename=f"receita_cadastral_silver_{run_id}",
     )
 
-    # Ponteiro LATEST
     import shutil
     latest_path = silver_dir / "receita_cadastral_silver.parquet"
     versioned_path = silver_dir / f"receita_cadastral_silver_{run_id}.parquet"
