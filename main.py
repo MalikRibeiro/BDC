@@ -35,6 +35,7 @@ from relational.facts.fato_reconciliacao_fichas_salesforce import executar_recon
 from relational.dimensions.dim_contraparte import criar_dim_contraparte
 from relational.facts.fato_reconciliacao_contrato_mtm import executar_reconciliacao_denodo_mtm
 from relational.facts.fato_alertas import gerar_fato_alertas_credito
+from relational.facts.fato_alertas_manuais import gerar_fato_alertas_manuais
 from relational.facts.fato_garantia import gerar_fato_garantia
 
 
@@ -126,32 +127,32 @@ class PipelineStep(NamedTuple):
 PIPELINE_STEPS = [
     # BLOCO 1: INGESTaO CORE E OVERRIDES (ATIVO)
     PipelineStep(name="Fichas Comercializadoras", func=lambda ctx: rodar_fichas_comercializadoras.main()),
-    # PipelineStep(name="Fichas Consumidores", func=lambda ctx: rodar_fichas_consumidores.main()),
+    PipelineStep(name="Fichas Consumidores", func=lambda ctx: rodar_fichas_consumidores.main()),
     
     # BLOCO 2: APIS EXTERNAS E CONECTORES
-    # PipelineStep(name="Ingestao de Contratos (Denodo)", func=processar_contratos_denodo),
-    # PipelineStep(name="Enquadramento de Consumidores", func=lambda ctx: calcular_enquadramento_consumidor(datetime.now().strftime("%Y%m"), ctx)),
-    # PipelineStep(name="Ingestao de MtM", func=inserir_dados_mtm),
-    # PipelineStep(name="Ingestao do Salesforce", func=inserir_dados_salesforce),
-    # PipelineStep(name="Ingestao da Receita Federal", func=inserir_dados_receita), 
-    # PipelineStep(name="Ingestao de Bureau (RISK3)", func=inserir_dados_bureau),
-    # PipelineStep(name="Ingestao de Garantias", func=inserir_dados_garantias),
-    # PipelineStep(name="Solicitacoes de Override", func=processar_solicitacao_override),
-    # PipelineStep(name="Carga Manual (Eventos e Overrides)", func=lambda ctx: inserir_dados_carga_manual(ctx)),
+    PipelineStep(name="Ingestao de Contratos (Denodo)", func=processar_contratos_denodo),
+    PipelineStep(name="Enquadramento de Consumidores", func=lambda ctx: calcular_enquadramento_consumidor(datetime.now().strftime("%Y%m"), ctx)),
+    PipelineStep(name="Ingestao de MtM", func=inserir_dados_mtm),
+    PipelineStep(name="Ingestao do Salesforce", func=inserir_dados_salesforce),
+    PipelineStep(name="Ingestao da Receita Federal", func=inserir_dados_receita), 
+    PipelineStep(name="Ingestao de Bureau (RISK3)", func=inserir_dados_bureau),
+    PipelineStep(name="Ingestao de Garantias", func=inserir_dados_garantias),
+    PipelineStep(name="Solicitacoes de Override", func=processar_solicitacao_override),
+    PipelineStep(name="Carga Manual (Eventos e Overrides)", func=lambda ctx: inserir_dados_carga_manual(ctx)),
 
     # BLOCO 3: MOTOR DE CRÉDITO E CAMADAS RELACIONAIS
-    # PipelineStep(name="Dimensao Contraparte", func=preparar_dim_contraparte),
-    # PipelineStep(name="Fato Analise de Credito", func=preparar_fato_analise),
-    # PipelineStep(name="Fato Garantia", func=gerar_fato_garantia),
-    # PipelineStep(name="Fato Exposicao de Risco", func=preparar_e_rodar_risco),
-    # PipelineStep(name="Fato Reconciliacao Denodo x MtM", func=executar_reconciliacao_denodo_mtm),
-    # PipelineStep(name="Fato Reconciliacao Fichas x Salesforce", func=executar_reconciliacao_fichas_salesforce),
-    # PipelineStep(name="Fato Alertas de Credito", func=gerar_fato_alertas_credito),
-
-    # PipelineStep(name="Visao Consolidada Gold", func=exportar_visao_consolidada_gold),
+    PipelineStep(name="Dimensao Contraparte", func=preparar_dim_contraparte),
+    PipelineStep(name="Fato Analise de Credito", func=preparar_fato_analise),
+    PipelineStep(name="Fato Garantia", func=gerar_fato_garantia),
+    PipelineStep(name="Fato Exposicao de Risco", func=preparar_e_rodar_risco),
+    PipelineStep(name="Fato Reconciliacao Denodo x MtM", func=executar_reconciliacao_denodo_mtm),
+    PipelineStep(name="Fato Reconciliacao Fichas x Salesforce", func=executar_reconciliacao_fichas_salesforce),
+    PipelineStep(name="Alertas de Carga Manual e Exceções", func=gerar_fato_alertas_manuais),
+    PipelineStep(name="Visao Consolidada Gold", func=exportar_visao_consolidada_gold),
+    PipelineStep(name="Fato Alertas de Credito", func=gerar_fato_alertas_credito),
 
     # BLOCO 4: INTERFACE
-    # PipelineStep(name="Interface Streamlit", func=lambda ctx: rodar_interface_streamlit()),
+    PipelineStep(name="Interface Streamlit", func=lambda ctx: rodar_interface_streamlit()),
 ]
 def main() -> int:
     parser = argparse.ArgumentParser()

@@ -23,7 +23,7 @@
         "DATA_DEMONSTRACAO_FINANCEIRA": {
             "nature": "OBSERVED",
             "type": "date",
-            "criticality": "GATE_ENGINE",
+            "criticality": "REQUIRED_FOR_CALCULATION",
             "weight": 50,
             "search_patterns": [
                 "DATA\\s*DA\\s*DEMONSTRA[CÇ][AÃ]O|DATA\\s*BASE|DATA\\s*DA\\s*DF|DATA\\s*DAS\\s*DEMONSTRACOES"
@@ -63,6 +63,15 @@
             "weight": 5,
             "search_patterns": [
                 "ENDERE[CÇ]O"
+            ]
+        },
+        "PROBABILIDADE_DEFAULT": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "search_patterns": [
+                "PROBABILIDADE\\s*DEFAULT|PD\\b"
             ]
         },
         "CAPITAL_SOCIAL": {
@@ -165,15 +174,6 @@
                 "VENDAS\\s*L[IÍ]QUIDAS"
             ]
         },
-        "PROBABILIDADE_DEFAULT": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "PROBABILIDADE\\s*DEFAULT|PD\\b"
-            ]
-        },
         "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": {
             "nature": "OBSERVED",
             "type": "float",
@@ -208,6 +208,15 @@
             "weight": 10,
             "search_patterns": [
                 "NOTA\\s*DE\\s*CR[EÉ]DITO"
+            ]
+        },
+        "DATA_RATING_AGENCIA": {
+            "nature": "OBSERVED",
+            "type": "date",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "search_patterns": [
+                "DATA\\s*DA\\s*PUBLICACAO\\s*DO\\s*RATING"
             ]
         },
         "NOTA_BOARD": {
@@ -305,6 +314,7 @@
             "type": "text",
             "criticality": "OPTIONAL",
             "weight": 10,
+            "allow_semantic": false,
             "search_patterns": [
                 "CONTROLADOR|NOME\\s*DO\\s*CONTROLADOR"
             ]
@@ -314,6 +324,7 @@
             "type": "cnpj",
             "criticality": "OPTIONAL",
             "weight": 10,
+            "allow_semantic": false,
             "search_patterns": [
                 "CNPJ\\s*CONTROLADOR"
             ]
@@ -336,33 +347,6 @@
                 "PERCENTUAL\\s*CONTROLADOR"
             ]
         },
-        "NOTA_CREDITO_CONTROLADOR": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "NOTA\\s*DE\\s*CR[EÉ]DITO\\s*DO\\s*CONTROLADOR"
-            ]
-        },
-        "AGENCIA_CONTROLADOR": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "AG[EÊ]NCIA\\s*DO\\s*CONTROLADOR"
-            ]
-        },
-        "DATA_RATING_CONTROLADOR": {
-            "nature": "OBSERVED",
-            "type": "date",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "DATA\\s*RATING\\s*CONTROLADOR"
-            ]
-        },
         "CAPITAL_CIRCULANTE_LIQUIDO": {
             "nature": "OBSERVED",
             "type": "float",
@@ -370,51 +354,6 @@
             "weight": 10,
             "search_patterns": [
                 "CAPITAL\\s*CIRCULANTE\\s*L[IÍ]QUIDO"
-            ]
-        },
-        "NECESSIDADE_CAPITAL_GIRO": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "NECESSIDADE\\s*DE\\s*CAPITAL\\s*DE\\s*GIRO"
-            ]
-        },
-        "INDICE_AUTO_FINANCIAMENTO": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "[ÍI]NDICE\\s*DE\\s*AUTO\\s*FINANCIAMENTO"
-            ]
-        },
-        "LIQUIDEZ_SECA": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "LIQUIDEZ\\s*SECA"
-            ]
-        },
-        "INDICE_SOLVENCIA_GERAL": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "[ÍI]NDICE\\s*DE\\s*SOLV[ÊE]NCIA\\s*GERAL"
-            ]
-        },
-        "MARGEM_LIQUIDA": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "MARGEM\\s*L[IÍ]QUIDA"
             ]
         },
         "FCO": {

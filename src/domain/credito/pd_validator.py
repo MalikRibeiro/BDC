@@ -77,7 +77,7 @@ def validar_insumos_pd(
             rating_normalizado = normalizar_texto(str(rating))
             ratings_validos = {"A", "B", "C", "D", "E"}
 
-            if rating_normalizado not in ratings_validos:
+            if rating_normalizado is not None and rating_normalizado not in ratings_validos:
                 raise PdInputValidationError(
                     f"Rating inválido para {segmento_pd}: {rating_normalizado!r}"
                 )

@@ -39,6 +39,24 @@ def gerar_fato_alertas_credito(context: Any) -> dict[str, Any]:
         vol_mwm = pd.to_numeric(row.get("VOLUME_MWM"), errors="coerce")
         if pd.isna(vol_mwm): vol_mwm = 0.0
 
+        status_calculo_pd = str(row.get("STATUS_CALCULO_PD", ""))
+
+        if status_calculo_pd == "PENDENTE":
+            alertas.append({
+                "CNPJ": cnpj,
+                "CODIGO_ALERTA": "PD_002",
+                "SEVERIDADE": "ALTO",
+                "REGRA": "Cálculo de PD Suspenso (Falta Insumo)",
+                "MENSAGEM_DESCRITIVA": "O motor de crédito suspendeu o cálculo da PD devido à falta de insumos obrigatórios (ex: Rating).",
+                "DATA_DETECCAO": agora,
+                "CAMPO_AFETADO": "STATUS_CALCULO_PD",
+                "VALOR_OBSERVADO": status_calculo_pd,
+                "LIMITE_ESPERADO": "CONCLUIDO",
+                "STATUS_TRATAMENTO": pd.NA,
+                "RESPONSAVEL": pd.NA,
+                "EVIDENCIA_ENCERRAMENTO": pd.NA
+            })
+
         if status_contratual == "CONTRATO_VIGENTE" and sit_analise == "VENCIDA":
             alertas.append({
                 "CNPJ": cnpj,
@@ -88,27 +106,31 @@ def gerar_fato_alertas_credito(context: Any) -> dict[str, Any]:
             })
 
     if alertas:
-        df_alertas = pd.DataFrame(alertas)
-    else:
-        df_alertas = pd.DataFrame(columns=colunas_exigidas)
+        from relational.facts.fato_alerta_util import registrar_alertas_em_lote
         
-    df_alertas = df_alertas[colunas_exigidas]
+        # Mapeando os dicionários para o formato esperado pelo registrar_alertas_em_lote
+        alertas_formatados = []
+        for alerta in alertas:
+            alertas_formatados.append({
+                "contraparte_id": alerta.get("CNPJ"),
+                "codigo": alerta.get("CODIGO_ALERTA"),
+                "severidade": alerta.get("SEVERIDADE"),
+                "regra": alerta.get("REGRA"),
+                "mensagem": alerta.get("MENSAGEM_DESCRITIVA"),
+                "campo_afetado": alerta.get("CAMPO_AFETADO"),
+                "valor_observado": alerta.get("VALOR_OBSERVADO"),
+                "limite_esperado": alerta.get("LIMITE_ESPERADO"),
+                "status_tratamento": alerta.get("STATUS_TRATAMENTO", "ABERTO"),
+                "responsavel": alerta.get("RESPONSAVEL"),
+                "evidencia_encerramento": alerta.get("EVIDENCIA_ENCERRAMENTO")
+            })
+            
+        registrar_alertas_em_lote(alertas_formatados, run_id, context)
 
-    out_dir = context.path("relational_facts") / "alertas"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    out_parquet = out_dir / "fato_alerta_credito.parquet"
-    
-    df_alertas.to_parquet(out_parquet, index=False)
-    
-    escrever_conjunto_de_dados_silver(
-        records=df_alertas.to_dict(orient="records"), 
-        output_dir=out_dir, 
-        filename="fato_alerta_credito"
-    )
-
-    logger.info(f"Fato Alerta gerada com sucesso. Total de alertas: {len(df_alertas)}")
+    logger.info(f"Fato Alerta gerada com sucesso. Total de alertas: {len(alertas)}")
     
     return {
         "status": "SUCESSO",
-        "total_alertas": len(df_alertas)
+        "total_alertas": len(alertas)
     }
+

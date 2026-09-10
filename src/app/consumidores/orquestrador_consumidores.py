@@ -14,6 +14,7 @@ from common.hashing import arquivo_hash
 from common.json import ler_json
 from control.logger import obter_logger
 from common.identificadores import normalizar_cnpj
+from common.nulos import is_nulo_textual
 
 from control.layout_catalog import carregar_layouts_consumidores
 from control.carregador_de_mapeamento import mapeamento_de_carga_fichas_consumidores
@@ -304,13 +305,21 @@ def processar_arquivo_individual(
             classificacao.confianca_classificacao,
         )
 
+        campos_financeiros_globais = [
+            "ATIVO_CIRCULANTE", "ATIVO_TOTAL", "PASSIVO_CIRCULANTE", "PATRIMONIO_LIQUIDO",
+            "LUCRO_LIQUIDO", "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS", "ROA", "ROE", "FCO_ROL", "FCO"
+        ]
+
         if getattr(classificacao, "tipo_analise_exigida", "") == "simplificada":
-            campos_df = [
-                "ATIVO_CIRCULANTE", "ATIVO_TOTAL", "PASSIVO_CIRCULANTE", "PATRIMONIO_LIQUIDO",
-                "LUCRO_LIQUIDO", "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS", "ROA", "ROE", "FCO_ROL"
-            ]
-            for campo in campos_df:
-                if campo not in normalized or normalized[campo] is None:
+            for campo in campos_financeiros_globais:
+                normalized[campo] = None
+                
+        # Regra 14.8 (Global para qualquer consumidor, detalhada ou não): 
+        # Se DF for nula ou não aplicável, garante que 0.0 vire nulo para não mascarar score.
+        dt_df = normalized.get("DATA_DEMONSTRACAO_FINANCEIRA")
+        if not dt_df or str(dt_df).upper() == "NAO_APLICAVEL" or is_nulo_textual(dt_df):
+            for campo in campos_financeiros_globais:
+                if normalized.get(campo) == 0.0 or normalized.get(campo) == 0:
                     normalized[campo] = None
 
         errors, warnings = validar_registro_consumidor(

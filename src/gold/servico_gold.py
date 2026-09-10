@@ -54,6 +54,13 @@ def carregar_entradas_gold(context: Any, logger: logging.Logger) -> dict[str, pd
         logger.warning(f"Base opcional de risco ausente: {path_risco}. Prosseguindo sem risco.")
         df_risco = pd.DataFrame()
 
+    path_reconciliacao = rel_fact_dir / "reconciliacao" / "fato_reconciliacao_contrato_mtm.parquet"
+    if path_reconciliacao.exists():
+        df_reconciliacao = pd.read_parquet(path_reconciliacao)
+    else:
+        logger.warning(f"Base de reconciliação ausente: {path_reconciliacao}. Prosseguindo sem reconciliação.")
+        df_reconciliacao = pd.DataFrame()
+
     if path_eventos_manuais.exists():
         df_eventos = pd.read_parquet(path_eventos_manuais)
     else:
@@ -71,7 +78,8 @@ def carregar_entradas_gold(context: Any, logger: logging.Logger) -> dict[str, pd
         "analises": df_analises,
         "risco": df_risco,
         "eventos": df_eventos,
-        "bureau": df_bureau
+        "bureau": df_bureau,
+        "reconciliacao": df_reconciliacao
     }
 
 def salvar_visao_gold(context: Any, df_gold: pd.DataFrame, hoje: datetime, run_id: str, logger: logging.Logger):
@@ -97,6 +105,7 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
     df_risco = dfs["risco"]
     df_eventos = dfs.get("eventos", pd.DataFrame())
     df_bureau = dfs.get("bureau", pd.DataFrame())
+    df_reconciliacao = dfs.get("reconciliacao", pd.DataFrame())
 
     if df_contraparte.empty:
         raise ValueError("O DataFrame obrigatório 'contraparte' não pode estar vazio.")
@@ -199,7 +208,7 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
             c for c in [
                 "SITUACAO_ANALISE", "SITUACAO_DF", "RATING_FINAL", "PD_FINAL", 
                 "MODELO_METODOLOGICO", "PATRIMONIO_LIQUIDO", "DATA_ANALISE", "DATA_BALANCO_USADO", "TEM_ANALISE",
-                "MOTIVO_AUSENCIA_DF", "TIPO_EVENTO_MANUAL", "ORIGEM_REGISTRO", "VALIDADE_EXCECAO"
+                "MOTIVO_AUSENCIA_DF", "TIPO_EVENTO_MANUAL", "ORIGEM_REGISTRO", "VALIDADE_EXCECAO", "STATUS_CALCULO_PD"
             ] if c in df_analises.columns
         ]
 
@@ -311,6 +320,28 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
             if col_mtm:
                 df_gold = pd.merge(df_gold, df_risco[["CNPJ", col_mtm]].rename(columns={col_mtm: "EAD_VALOR"}), on="CNPJ", how="left")
                 df_gold["PE_REAIS"] = 0.0
+
+    if not df_reconciliacao.empty:
+        erros = validar_coluna_cnpj_canonica(df_reconciliacao)
+        if erros:
+            raise ValueError("Dataset Silver fora do contrato (reconciliacao): " + "; ".join(erros))
+        checar_contrato_obrigatorio(df_reconciliacao, ["CNPJ"], "reconciliacao")
+        df_reconciliacao = df_reconciliacao.drop_duplicates(subset=["CNPJ"], keep="last")
+        
+        cols_recon = [c for c in ["CNPJ", "STATUS_CONCILIACAO", "MTM_POSITIVO_TOTAL"] if c in df_reconciliacao.columns]
+        df_gold = pd.merge(df_gold, df_reconciliacao[cols_recon], on="CNPJ", how="left")
+        
+        if "MTM_POSITIVO_TOTAL" in df_gold.columns:
+            df_gold["POSICAO_MTM_MW"] = pd.to_numeric(df_gold["MTM_POSITIVO_TOTAL"], errors="coerce").fillna(0.0)
+            df_gold = df_gold.drop(columns=["MTM_POSITIVO_TOTAL"])
+        else:
+            df_gold["POSICAO_MTM_MW"] = 0.0
+            
+        if "STATUS_CONCILIACAO" not in df_gold.columns:
+            df_gold["STATUS_CONCILIACAO"] = "DIVERGENTE"
+    else:
+        df_gold["POSICAO_MTM_MW"] = 0.0
+        df_gold["STATUS_CONCILIACAO"] = "DIVERGENTE"
 
     colunas_esperadas = [
         "VOLUME_MWM", "EAD_VALOR", "PE_REAIS", "PATRIMONIO_LIQUIDO", "QUANTIDADE_CONTRATOS", 

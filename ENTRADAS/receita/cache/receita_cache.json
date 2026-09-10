@@ -17829,6 +17829,16 @@
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
+  "33641663000144": {
+    "CNPJ": "33641663000144",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "1967-02-16",
+    "CNAE_PRINCIPAL": "8532500",
+    "NATUREZA_JURIDICA": "Fundação Privada",
+    "DATA_CONSULTA": "2026-09-09T15:02:18",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
   "33664228000135": {
     "CNPJ": "33664228000135",
     "SITUACAO_CADASTRAL": "ATIVA",
@@ -19746,6 +19756,16 @@
     "CNAE_PRINCIPAL": "2865800",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
     "DATA_CONSULTA": "2026-08-26T16:31:35",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
+  "43446434000122": {
+    "CNPJ": "43446434000122",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "1972-10-13",
+    "CNAE_PRINCIPAL": "9329899",
+    "NATUREZA_JURIDICA": "Associação Privada",
+    "DATA_CONSULTA": "2026-09-09T15:02:19",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -24639,6 +24659,16 @@
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
+  "76093731002649": {
+    "CNPJ": "76093731002649",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "2002-03-19",
+    "CNAE_PRINCIPAL": "5211701",
+    "NATUREZA_JURIDICA": "Cooperativa",
+    "DATA_CONSULTA": "2026-09-09T15:02:20",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
   "76093731008256": {
     "CNPJ": "76093731008256",
     "SITUACAO_CADASTRAL": "ATIVA",
@@ -28836,6 +28866,16 @@
     "CNAE_PRINCIPAL": "8610101",
     "NATUREZA_JURIDICA": "Associação Privada",
     "DATA_CONSULTA": "2026-08-26T15:47:45",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
+  "92091891000157": {
+    "CNPJ": "92091891000157",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "1988-04-20",
+    "CNAE_PRINCIPAL": "4691500",
+    "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
+    "DATA_CONSULTA": "2026-09-09T15:02:17",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },

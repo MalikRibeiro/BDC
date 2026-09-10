@@ -107,7 +107,7 @@ def carregar_layouts_consumidores(
             if logger is not None:
                 validar_estrutura_do_layout(layout_data, key, logger)
 
-            layouts[f"v{version}"] = layout_data
+            layouts[f"padrao_{version}"] = layout_data
 
         if logger is not None:
             logger.info(

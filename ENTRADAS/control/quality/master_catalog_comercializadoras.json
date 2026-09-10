@@ -11,6 +11,15 @@
                 "^\\s*CNPJ\\b(?!.*(?:BBCE|CONTROLADOR))"
             ]
         },
+        "SIGLA": {
+            "nature": "OBSERVED",
+            "type": "text",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "search_patterns": [
+                "SIGLA"
+            ]
+        },
         "DATA_DEMONSTRACAO_FINANCEIRA": {
             "nature": "OBSERVED",
             "type": "date",
@@ -29,176 +38,16 @@
                 "PROBABILIDADE\\s*DEFAULT|PD\\b|PD\\s*="
             ]
         },
-        "FCO": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "REQUIRED_FOR_CALCULATION",
-            "weight": 20,
-            "search_patterns": [
-                "FCO|MARGEM\\s*DE\\s*FLUXO\\s*DE\\s*CAIXA"
-            ]
-        },
-        "ROA": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "REQUIRED_FOR_CALCULATION",
-            "weight": 20,
-            "search_patterns": [
-                "ROA\\b|RETORNO\\s*SOBRE\\s*ATIVO"
-            ]
-        },
-        "ROE": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "REQUIRED_FOR_CALCULATION",
-            "weight": 20,
-            "search_patterns": [
-                "ROE\\b|RETORNO\\s*SOBRE\\s*PATRIM[OÔ]NIO"
-            ]
-        },
-        "NOTA_BOARD": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "REQUIRED_FOR_CALCULATION",
-            "weight": 20,
-            "search_patterns": [
-                "NOTA\\s*BOARD"
-            ]
-        },
-        "NOTA_BUREAU": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "REQUIRED_FOR_CALCULATION",
-            "weight": 20,
-            "search_patterns": [
-                "NOTA\\s*BUREAU|SCORE\\s*BUREAU"
-            ]
-        },
-        "AUDITOR": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "REQUIRED_FOR_CALCULATION",
-            "weight": 20,
-            "search_patterns": [
-                "AUDITOR(IA)?\\b|QUALIFICACAO DAS DEMONSTRACOES FINANCEIRAS"
-            ]
-        },
-        "PATRIMONIO_LIQUIDO": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "REQUIRED_FOR_CALCULATION",
-            "weight": 20,
-            "search_patterns": [
-                "^TOTAL\\s*PATRIM[OÔ]NIO\\s*L[IÍ]QUIDO$",
-                "^PATRIM[OÔ]NIO\\s*L[IÍ]QUIDO$"
-            ]
-        },
-        "SIGLA": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "SIGLA"
-            ]
-        },
-        "CNPJ_BBCE": {
-            "nature": "OBSERVED",
-            "type": "cnpj",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "CNPJ\\s*BBCE"
-            ]
-        },
-        "CODIGO_CCEE": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "C[OÓ]DIGO\\s*CCEE"
-            ]
-        },
-        "DATA_ADESAO_CCEE": {
-            "nature": "OBSERVED",
-            "type": "date",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "DATA\\s*DE\\s*ADES[AÃ]O"
-            ]
-        },
-        "TIPO_COMERCIALIZADORA": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "allow_semantic": false,
-            "enum": ["CPURA", "CGRUPO", "PURA", "GRUPO"],
-            "search_patterns": [
-                "TIPO\\s*DE\\s*COMERCIALIZADORA"
-            ],
-            "value_mapping": {
-                "PURA": "CPURA",
-                "GRUPO": "CGRUPO"
-            }
-        },
-        "AGENCIA": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "AG[EÊ]NCIA"
-            ]
-        },
-        "NOTA_CREDITO": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "NOTA\\s*DE\\s*CR[EÉ]DITO"
-            ]
-        },
-        "RATING_COPEL": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "RATING\\s*COPEL"
-            ]
-        },
-        "DATA_RATING_AGENCIA": {
-            "nature": "OBSERVED",
-            "type": "date",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "DATA\\s*DA\\s*PUBLICACAO\\s*DO\\s*RATING"
-            ]
-        },
-        "DATA_CALCULO": {
-            "nature": "OBSERVED",
-            "type": "date",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "DATA\\s*DA\\s*FICHA"
-            ]
-        },
-        "ATIVO_TOTAL_AJUSTADO": {
+        "CAPITAL_SOCIAL": {
             "nature": "OBSERVED",
             "type": "float",
             "criticality": "OPTIONAL",
             "weight": 10,
             "search_patterns": [
-                "ATIVO\\s*TOTAL"
+                "CAPITAL\\s*SOCIAL"
             ]
         },
-        "ATIVO_CIRCULANTE_AJUSTADO": {
+        "ATIVO_CIRCULANTE": {
             "nature": "OBSERVED",
             "type": "float",
             "criticality": "OPTIONAL",
@@ -216,7 +65,16 @@
                 "ATIVO\\s*CIRCULANTE\\s*FINANCEIRO"
             ]
         },
-        "PASSIVO_CIRCULANTE_AJUSTADO": {
+        "ATIVO_TOTAL": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "search_patterns": [
+                "ATIVO\\s*TOTAL"
+            ]
+        },
+        "PASSIVO_CIRCULANTE": {
             "nature": "OBSERVED",
             "type": "float",
             "criticality": "OPTIONAL",
@@ -225,7 +83,7 @@
                 "PASSIVO\\s*CIRCULANTE(?!.*FINANCEIRO)"
             ]
         },
-        "PASSIVO_CIRCULANTE_FINANCEIRO_AJUSTADO": {
+        "PASSIVO_CIRCULANTE_FINANCEIRO": {
             "nature": "OBSERVED",
             "type": "float",
             "criticality": "OPTIONAL",
@@ -234,7 +92,7 @@
                 "PASSIVO\\s*CIRCULANTE\\s*FINANCEIRO"
             ]
         },
-        "PASSIVO_NAO_CIRCULANTE_FINANCEIRO_AJUSTADO": {
+        "PASSIVO_NAO_CIRCULANTE_FINANCEIRO": {
             "nature": "OBSERVED",
             "type": "float",
             "criticality": "OPTIONAL",
@@ -243,13 +101,14 @@
                 "PASSIVO\\s*N[AÃ]O\\s*CIRCULANTE\\s*FINANCEIRO"
             ]
         },
-        "CAPITAL_SOCIAL": {
+        "PATRIMONIO_LIQUIDO": {
             "nature": "OBSERVED",
             "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
+            "criticality": "REQUIRED_FOR_CALCULATION",
+            "weight": 20,
             "search_patterns": [
-                "CAPITAL\\s*SOCIAL"
+                "^TOTAL\\s*PATRIM[OÔ]NIO\\s*L[IÍ]QUIDO$",
+                "^PATRIM[OÔ]NIO\\s*L[IÍ]QUIDO$"
             ]
         },
         "LUCROS_ACUMULADOS": {
@@ -279,15 +138,6 @@
                 "VENDAS\\s*L[IÍ]QUIDAS"
             ]
         },
-        "LUCRO_LIQUIDO": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "LUCRO\\s*L[IÍ]QUIDO|RESULTADO\\s*L[IÍ]QUIDO|LUCRO/PREJUIZO DO EXERCICIO"
-            ]
-        },
         "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": {
             "nature": "OBSERVED",
             "type": "float",
@@ -295,6 +145,51 @@
             "weight": 10,
             "search_patterns": [
                 "FLUXO\\s*DE\\s*CAIXA\\s*OPERACIONAL|CAIXA\\s*L[IÍ]QUIDO\\s*GERADO|FLUXO\\s*DE\\s*CAIXA\\s*DAS\\s*ATIVIDADES\\s*OPERACIONAIS"
+            ]
+        },
+        "AUDITOR": {
+            "nature": "OBSERVED",
+            "type": "text",
+            "criticality": "REQUIRED_FOR_CALCULATION",
+            "weight": 20,
+            "search_patterns": [
+                "AUDITOR(IA)?\\b|QUALIFICACAO DAS DEMONSTRACOES FINANCEIRAS"
+            ]
+        },
+        "NOTA_CREDITO": {
+            "nature": "OBSERVED",
+            "type": "text",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "search_patterns": [
+                "NOTA\\s*DE\\s*CR[EÉ]DITO"
+            ]
+        },
+        "NOTA_BOARD": {
+            "nature": "OBSERVED",
+            "type": "text",
+            "criticality": "REQUIRED_FOR_CALCULATION",
+            "weight": 20,
+            "search_patterns": [
+                "NOTA\\s*BOARD"
+            ]
+        },
+        "NOTA_BUREAU": {
+            "nature": "OBSERVED",
+            "type": "text",
+            "criticality": "REQUIRED_FOR_CALCULATION",
+            "weight": 20,
+            "search_patterns": [
+                "NOTA\\s*BUREAU|SCORE\\s*BUREAU"
+            ]
+        },
+        "RATING_COPEL": {
+            "nature": "OBSERVED",
+            "type": "text",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "search_patterns": [
+                "RATING\\s*COPEL"
             ]
         },
         "ROL": {
@@ -306,31 +201,13 @@
                 "RECEITA\\s*OPERACIONAL\\s*L[IÍ]QUIDA|ROL\\b"
             ]
         },
-        "LUCRO_BRUTO": {
+        "LUCRO_LIQUIDO": {
             "nature": "OBSERVED",
             "type": "float",
             "criticality": "OPTIONAL",
             "weight": 10,
             "search_patterns": [
-                "LUCRO\\s*BRUTO"
-            ]
-        },
-        "LAJIR": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "LAJIR|RESULTADO\\s*OPERACIONAL"
-            ]
-        },
-        "LAIR": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "LAIR|LUCRO\\s*ANTES\\s*DO\\s*IMPOSTO"
+                "LUCRO\\s*L[IÍ]QUIDO|RESULTADO\\s*L[IÍ]QUIDO|LUCRO/PREJUIZO DO EXERCICIO"
             ]
         },
         "SCORE_BUREAU": {
@@ -351,41 +228,38 @@
                 "QUANTIDADE\\s*DE\\s*RESTRITIVOS"
             ]
         },
-        "CONTROLADOR": {
-            "nature": "OBSERVED",
-            "type": "text",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "allow_semantic": false,
-            "search_patterns": [
-                "CONTROLADOR|NOME\\s*DO\\s*CONTROLADOR"
-            ]
-        },
-        "CNPJ_CONTROLADOR": {
-            "nature": "OBSERVED",
-            "type": "cnpj",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "CNPJ\\s*CONTROLADOR"
-            ]
-        },
-        "PL_CONTROLADOR": {
-            "nature": "OBSERVED",
+        "CAPITAL_CIRCULANTE_LIQUIDO_AJUSTADO": {
+            "nature": "DERIVED",
             "type": "float",
             "criticality": "OPTIONAL",
-            "weight": 10,
-            "search_patterns": [
-                "PL\\s*CONTROLADOR"
-            ]
+            "weight": 0,
+            "search_patterns": []
         },
-        "PERCENTUAL_CONTROLADOR": {
+        "FCO": {
             "nature": "OBSERVED",
             "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
+            "criticality": "REQUIRED_FOR_CALCULATION",
+            "weight": 20,
             "search_patterns": [
-                "PERCENTUAL\\s*CONTROLADOR"
+                "FCO|MARGEM\\s*DE\\s*FLUXO\\s*DE\\s*CAIXA"
+            ]
+        },
+        "ROA": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "REQUIRED_FOR_CALCULATION",
+            "weight": 20,
+            "search_patterns": [
+                "ROA\\b|RETORNO\\s*SOBRE\\s*ATIVO"
+            ]
+        },
+        "ROE": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "REQUIRED_FOR_CALCULATION",
+            "weight": 20,
+            "search_patterns": [
+                "ROE\\b|RETORNO\\s*SOBRE\\s*PATRIM[OÔ]NIO"
             ]
         },
         "AC_PC": {
@@ -402,40 +276,219 @@
             "weight": 0,
             "search_patterns": []
         },
-        "LIQUIDEZ_CORRENTE_AJUSTADO": {
-            "nature": "DERIVED",
-            "type": "float",
+        "TIPO_COMERCIALIZADORA": {
+            "nature": "OBSERVED",
+            "type": "text",
             "criticality": "OPTIONAL",
-            "weight": 0,
-            "search_patterns": []
+            "weight": 10,
+            "allow_semantic": false,
+            "enum": [
+                "CPURA",
+                "CGRUPO",
+                "PURA",
+                "GRUPO"
+            ],
+            "search_patterns": [
+                "TIPO\\s*DE\\s*COMERCIALIZADORA"
+            ],
+            "value_mapping": {
+                "PURA": "CPURA",
+                "GRUPO": "CGRUPO"
+            }
         },
-        "INDICE_SOLVENCIA_GERAL_AJUSTADO": {
-            "nature": "DERIVED",
-            "type": "float",
+        "CNPJ_BBCE": {
+            "nature": "OBSERVED",
+            "type": "string",
             "criticality": "OPTIONAL",
-            "weight": 0,
-            "search_patterns": []
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "CNPJ\\s*BBCE",
+                "BBCE"
+            ]
         },
-        "INDICE_COBERTURA_DE_DESPESA_COM_PESSOAL": {
-            "nature": "DERIVED",
-            "type": "float",
+        "CODIGO_CCEE": {
+            "nature": "OBSERVED",
+            "type": "string",
             "criticality": "OPTIONAL",
-            "weight": 0,
-            "search_patterns": []
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "C[OÓ]DIGO\\s*CCEE",
+                "CCEE"
+            ]
         },
-        "PAYOUT_AJUSTADO": {
-            "nature": "DERIVED",
-            "type": "float",
+        "DATA_ADESAO_CCEE": {
+            "nature": "OBSERVED",
+            "type": "date",
             "criticality": "OPTIONAL",
-            "weight": 0,
-            "search_patterns": []
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "DATA\\s*ADES[AÃ]O",
+                "ADES[AÃ]O\\s*CCEE"
+            ]
         },
-        "CAPITAL_CIRCULANTE_LIQUIDO_AJUSTADO": {
-            "nature": "DERIVED",
+        "MATURIDADE_CALCULADA": {
+            "nature": "OBSERVED",
             "type": "float",
             "criticality": "OPTIONAL",
-            "weight": 0,
-            "search_patterns": []
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "MATURIDADE",
+                "MATURIDADE\\s*CALCULADA"
+            ]
+        },
+        "CATEGORIA": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "CATEGORIA"
+            ]
+        },
+        "RATING_PUBLICO": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "RATING\\s*P[UÚ]BLICO",
+                "RATING\\s*AG[EÊ]NCIA"
+            ]
+        },
+        "SCORES_INDIVIDUAIS": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "SCORES\\s*INDIVIDUAIS"
+            ]
+        },
+        "SCORE_QUANTITATIVO": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "SCORE\\s*QUANTITATIVO",
+                "SCORE\\s*QUANT"
+            ]
+        },
+        "DEMONSTRACOES_FINANCEIRAS_AUDITADAS": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "DEMONSTRA[CÇ][OÕ]ES.*AUDITADAS",
+                "DF.*AUDITADA"
+            ]
+        },
+        "RATING_SCORE_DE_AUDITORIA": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "RATING.*AUDITORIA",
+                "SCORE.*AUDITORIA"
+            ]
+        },
+        "RATING_SCORE_DE_BUREAU": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "RATING.*BUREAU",
+                "SCORE.*BUREAU"
+            ]
+        },
+        "RESTRITIVOS": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "RESTRITIVOS",
+                "APONTA.*RESTRITIVOS"
+            ]
+        },
+        "SCORE_QUALITATIVO": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "SCORE\\s*QUALITATIVO",
+                "SCORE\\s*QUAL"
+            ]
+        },
+        "MARGEM_DESPESA_PESSOAL": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "MARGEM\\s*DESPESA",
+                "RECEITA.*CUSTO.*PESSOAL"
+            ]
+        },
+        "MTM_TOTAL_PL": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "MTM.*PL",
+                "MTM.*PATRIM[OÔ]NIO"
+            ]
+        },
+        "DIVIDENDOS_LUCRO_LIQUIDO": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "DIVIDENDOS.*LUCRO",
+                "JCP.*LUCRO"
+            ]
+        },
+        "CAPITAL_CIRCULANTE_LIQUIDO": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "CAPITAL\\s*CIRCULANTE\\s*L[IÍ]QUIDO",
+                "CCL\\b"
+            ]
+        },
+        "DATA_CALCULO": {
+            "nature": "OBSERVED",
+            "type": "date",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "search_patterns": [
+                "DATA\\s*DA\\s*FICHA"
+            ]
         }
     }
 }

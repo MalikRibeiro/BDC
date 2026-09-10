@@ -1,5 +1,3 @@
-"""Orquestração do cálculo de PD ajustada."""
-
 from __future__ import annotations
 
 from typing import Any
@@ -13,11 +11,12 @@ from domain.credito.pd_exceptions import (
     PdConfigurationError,
 )
 from domain.credito.pd_transform import transformar_pd_por_segmento
-from domain.credito.pd_validator import validar_insumos_pd
+from domain.credito.pd_validator import validar_insumos_pd, _is_blank
 from domain.credito.rating import calcular_rating_final
 from domain.credito.score_qualitativo import calcular_score_qualitativo_cpura
 from domain.credito.score_quantitativo import calcular_score_quantitativo_cpura
 from domain.credito.score_total import calcular_score_total_cpura
+from common.texto import normalizar_texto
 
 
 def calcular_pd_ajustada(
@@ -60,6 +59,19 @@ def calcular_pd_ajustada(
                 raise PdConfigurationError(
                     "pd_cpura_config não informado para CPURA."
                 )
+
+            # --- FAIL-SAFE PARA RATING NULO ---
+            rating_raw = registro_calculo.get("RATING_FINAL") or registro_calculo.get("RATING_COPEL") or registro_calculo.get("NOTA_CREDITO")
+            rating_norm = normalizar_texto(str(rating_raw)) if not _is_blank(rating_raw) else None
+            
+            if rating_norm is None:
+                if logger is not None:
+                    logger.warning("Cálculo CPURA suspenso por Falha Segura. Rating nulo. CNPJ=%s", registro.get("CNPJ"))
+                resultado_fail = dict(registro_calculo)
+                resultado_fail["STATUS_CALCULO_PD"] = "PENDENTE"
+                resultado_fail["PD_FINAL"] = None
+                resultado_fail["RATING_FINAL"] = None
+                return resultado_fail
 
             notas_quant_info = calcular_notas_quantitativas_cpura(
                 registro=registro_calculo,
@@ -105,6 +117,8 @@ def calcular_pd_ajustada(
             raise PdConfigurationError(
                 f"pd_transform_rules não informado para {segmento_pd}."
             )
+        
+        # Só transformamos se não tivermos abortado lá em cima
         resultado_transformacao = transformar_pd_por_segmento(
             registro=registro_calculo,
             segmento_pd=segmento_pd,
@@ -123,6 +137,7 @@ def calcular_pd_ajustada(
         resultado = {
             "SEGMENTO_PD": segmento_pd,
             "PD_BASE": pd_base,
+            "STATUS_CALCULO_PD": "CONCLUIDO",
             **resultado_scores,
             **resultado_transformacao,
         }

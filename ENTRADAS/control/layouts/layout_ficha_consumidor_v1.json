@@ -1,6 +1,6 @@
 {
   "tipo_ficha": "consumidor",
-  "versao_ficha": "v1",
+  "versao_ficha": "padrao_1",
   "layout_id": "ficha_consumidor_v1",
   "descricao": "Layout v1 da ficha de consumidor",
   "sheet_aliases": [

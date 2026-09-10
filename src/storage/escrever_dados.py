@@ -37,7 +37,7 @@ def escrever_conjunto_de_dados_silver(
         if df[col].apply(lambda x: isinstance(x, (list, dict))).any():
             df[col] = df[col].apply(lambda x: json.dumps(x, ensure_ascii=False, default=str) if isinstance(x, (list, dict)) else x)
             
-        elif "data" in col.lower() or "date" in col.lower() or col.lower().startswith("dt_") or col.startswith("_DT_"):
+        elif pd.api.types.is_datetime64_any_dtype(df[col]) or "data" in col.lower() or "date" in col.lower() or col.lower().startswith("dt_") or col.startswith("_DT_") or "vencimento" in col.lower():
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", UserWarning)
                 df[col] = pd.to_datetime(df[col], errors="coerce", dayfirst=True)

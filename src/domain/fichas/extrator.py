@@ -49,6 +49,8 @@ def analisar_data_com_seguranca(date_val: Any) -> Optional[datetime]:
     if isinstance(date_val, datetime):
         return date_val
     if isinstance(date_val, (int, float)):
+        if 1990 <= date_val <= 2100:
+            return datetime(int(date_val), 12, 31)
         try:
             return from_excel(date_val)
         except Exception:
@@ -71,7 +73,7 @@ def valor_extraido_limpo(val: Any, data_type: Optional[str] = None) -> Any:
     if isinstance(val, str):
         s_upper = val.strip().upper()
         
-        if not s_upper or s_upper.startswith("#") or is_nulo_textual(val):
+        if not s_upper or s_upper.startswith("#") or is_nulo_textual(val) or s_upper == "-":
             return None
 
     if any(t in dt_str for t in ("float", "num", "dec", "int", "moeda", "percent", "taxa", "valor", "score")):
@@ -431,18 +433,6 @@ def avaliar_vencedor_por_grid(leitor: LeitorPlanilha, layouts: Dict[str, Any], m
     
     logger.info("Extração (Schema): Arquivo lido. %s colunas, %s linhas identificadas na aba '%s'.", colunas_lidas, linhas_lidas, aba_ativa)
 
-    data_df = None
-    search_regex = r"DATA\s*DA\s*DEMONSTRA[CÇ][AÃ]O|DATA\s*BASE|DATA\s*DA\s*DF"
-    if master_catalog and "DATA_DEMONSTRACAO_FINANCEIRA" in master_catalog.get("fields", {}):
-        patterns = master_catalog["fields"]["DATA_DEMONSTRACAO_FINANCEIRA"].get("search_patterns")
-        if patterns:
-            search_regex = "|".join(patterns)
-            
-    val_date, _ = busca_omnidirecional(leitor, search_regex, "date", None, "DATA_DEMONSTRACAO_FINANCEIRA")
-    
-    if isinstance(val_date, datetime):
-        data_df = val_date
-        
     layouts_to_test = list(layouts.items())
     allow_semantic = True
 

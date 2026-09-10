@@ -34,12 +34,6 @@ class DomainRuleEngine:
         elif str(pl).upper() != "NAO_APLICAVEL" and not isinstance(pl, (int, float)):
             errors.append("PATRIMONIO_LIQUIDO inválido: valor não numérico.")
 
-        data_df = record.get("DATA_DEMONSTRACAO_FINANCEIRA")
-        data_calculo = record.get("DATA_CALCULO")
-        if _is_empty(data_df):
-            warnings.append("DATA_DEMONSTRACAO_FINANCEIRA não informada.")
-        if _is_empty(data_calculo):
-            warnings.append("DATA_CALCULO não informada.")
 
         has_pd_rule = any(r.get("field") == "PROBABILIDADE_DEFAULT" for r in self.dynamic_rules)
         if not has_pd_rule and "PROBABILIDADE_DEFAULT" in record:
@@ -238,6 +232,11 @@ def validar_registro_consumidor(
             warnings.append("AUDITOR não informado para consumidor ≥5 MWm.")
 
     elif tipo_analise == "simplificada":
+        if _is_empty(record.get("DATA_DEMONSTRACAO_FINANCEIRA")):
+            record["DATA_DEMONSTRACAO_FINANCEIRA"] = "NAO_APLICAVEL"
+            if "DATA_DEMONSTRACAO_FINANCEIRA não informada." in warnings:
+                warnings.remove("DATA_DEMONSTRACAO_FINANCEIRA não informada.")
+
         if _is_empty(record.get("SCORE_BUREAU")):
             errors.append(
                 "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado."

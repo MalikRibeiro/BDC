@@ -44,9 +44,8 @@ def carregar_dados_carteira() -> pd.DataFrame:
     if df_gold.empty:
         raise FileNotFoundError("Base Gold consolidada não encontrada em SAIDAS/gold/visao_operacional_negocio.")
         
-    # Filtra apenas quem tem contrato (Ativo ou Futuro) validado pelo Master Join
-    if "STATUS_CONTRATUAL" in df_gold.columns:
-        df_gold = df_gold[df_gold["STATUS_CONTRATUAL"].isin(["CONTRATO_VIGENTE", "CONTRATO_FUTURO"])]
+    # Remove a trava para permitir exibir todos (Com Contrato, Sem Contrato)
+    pass
         
     linhas_carteira = []
     
@@ -116,6 +115,8 @@ def carregar_dados_carteira() -> pd.DataFrame:
             "Data da Analise": data_df if data_df and data_df.lower() != "nat" else None,
             "Tipo de analise": tipo_analise,
             "Status_Fornecimento": status_fornecimento,
+            "Posicao_MtM_MW": float(row.get("POSICAO_MTM_MW", 0.0)) if pd.notna(row.get("POSICAO_MTM_MW")) else 0.0,
+            "Status_Conciliacao": str(row.get("STATUS_CONCILIACAO", "DIVERGENTE")).strip(),
             "Ano_Inicio": row.get("ANO_INICIO_CONTRATO", 0),
             "Vigencia_Inicio": vigencia_inicio,
             "Vigencia_Fim": vigencia_fim
@@ -167,21 +168,24 @@ def render_visao_carteira():
 
     # ---------------- FILTROS SUPERIORES ----------------
     st.markdown("Filtros de Carteira")
-    f1, f2, f3, f4 = st.columns([1.5, 1.5, 1.5, 2.5])
+    f1, f2, f3, f4, f5 = st.columns([1, 1, 1, 1.2, 2])
     
     anos_disponiveis = sorted([int(a) for a in df_carteira["Ano_Inicio"].unique() if a > 0])
     with f1:
-        anos_sel = st.multiselect("Ano Início Suprimento:", anos_disponiveis, default=[])
+        anos_sel = st.multiselect("Ano Início:", anos_disponiveis, default=[])
         
     tipos_analise_disponiveis = ["Todos"] + sorted(list(df_carteira["Tipo de analise"].unique()))
     with f2:
         tipo_sel = st.selectbox("Tipo de Análise:", tipos_analise_disponiveis)
         
     with f3:
-        status_sel = st.selectbox("Status Fornecimento:", ["Todos", "Em Fornecimento", "A Fornecer"])
-        
+        status_sel = st.selectbox("Fornecimento:", ["Todos", "Em Fornecimento", "A Fornecer", "Sem Contrato"])
+
     with f4:
-        busca = st.text_input("Buscar por Contraparte, CNPJ ou Contrato:", placeholder="Digite para filtrar...")
+        mtm_sel = st.selectbox("Status MtM:", ["Todos", "Com MtM", "Sem MtM", "Análise Sem Contrato"])
+        
+    with f5:
+        busca = st.text_input("Buscar por Contraparte/CNPJ:", placeholder="Filtrar...")
 
     # Aplicação dos Filtros
     df_filtrado = df_carteira.copy()
@@ -194,6 +198,16 @@ def render_visao_carteira():
         
     if status_sel != "Todos":
         df_filtrado = df_filtrado[df_filtrado["Status_Fornecimento"] == status_sel]
+        
+    if mtm_sel == "Com MtM":
+        df_filtrado = df_filtrado[df_filtrado["Posicao_MtM_MW"] > 0]
+    elif mtm_sel == "Sem MtM":
+        df_filtrado = df_filtrado[df_filtrado["Posicao_MtM_MW"] == 0]
+    elif mtm_sel == "Análise Sem Contrato":
+        df_filtrado = df_filtrado[
+            (df_filtrado["Tipo de analise"] != "Sem Análise") & 
+            (df_filtrado["Status_Fornecimento"] == "Sem Contrato")
+        ]
         
     if busca.strip():
         termo = busca.strip().lower()
@@ -241,6 +255,8 @@ def render_visao_carteira():
         "Data da Analise",
         "Tipo de analise",
         "Status_Fornecimento",
+        "Posicao_MtM_MW",
+        "Status_Conciliacao",
         "Vigencia_Inicio",
         "Vigencia_Fim"
     ]
@@ -253,6 +269,10 @@ def render_visao_carteira():
             "Probabilidade de default": st.column_config.NumberColumn(
                 "PD (%)",
                 format="%.4f%%"
+            ),
+            "Posicao_MtM_MW": st.column_config.NumberColumn(
+                "MtM (MWm)",
+                format="%.2f"
             )
         }
     )
