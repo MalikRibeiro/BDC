@@ -1,4 +1,0 @@
-2026-09-10 15:45:44 | INFO | bdc.fato_garantia | Iniciando construção da Fato Garantia (run_id=F_GAR_20260910_154544)
-2026-09-10 15:45:47 | INFO | bdc.fato_garantia | Gerados 19221 alertas de garantias na Silver.
-2026-09-10 15:45:48 | INFO | bdc.fato_garantia | Registrados 19221 alertas de garantias no Fato Alertas.
-2026-09-10 15:45:53 | INFO | bdc.fato_garantia | Construção da Fato Garantia concluída. Registros salvos: 36251

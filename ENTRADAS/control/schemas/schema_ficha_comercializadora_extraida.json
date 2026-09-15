@@ -145,12 +145,6 @@
                 "null"
             ]
         },
-        "ROL": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
         "LUCRO_LIQUIDO": {
             "type": [
                 "number",
@@ -218,14 +212,6 @@
             ]
         },
         "STATUS_CNPJ": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "FLAG_DATA_DF_CORRIGIDA": {
             "type": [
                 "string",
                 "null",
@@ -425,14 +411,6 @@
                 "integer"
             ]
         },
-        "LUCRO_LIQUIDO_SOBRE_ROL": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
         "TIPO_FICHA": {
             "type": [
                 "string",
@@ -535,13 +513,13 @@
                 "null"
             ]
         },
-        "RATING_PUBLICO": {
+        "AGENCIA": {
             "type": [
                 "string",
                 "null"
             ]
         },
-        "SCORES_INDIVIDUAIS": {
+        "RATING_PUBLICO": {
             "type": [
                 "string",
                 "null"
@@ -553,25 +531,7 @@
                 "null"
             ]
         },
-        "DEMONSTRACOES_FINANCEIRAS_AUDITADAS": {
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "RATING_SCORE_DE_AUDITORIA": {
-            "type": [
-                "string",
-                "null"
-            ]
-        },
         "RATING_SCORE_DE_BUREAU": {
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "RESTRITIVOS": {
             "type": [
                 "string",
                 "null"
@@ -583,33 +543,100 @@
                 "null"
             ]
         },
-        "MARGEM_DESPESA_PESSOAL": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
-        "MTM_TOTAL_PL": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
         "DIVIDENDOS_LUCRO_LIQUIDO": {
             "type": [
                 "number",
                 "null"
             ]
         },
-        "CAPITAL_CIRCULANTE_LIQUIDO": {
+        "DEMONSTRACOES_FINANCEIRAS_AUDITADAS": {
             "type": [
-                "number",
+                "string",
                 "null"
             ]
         },
         "DATA_CALCULO": {
             "type": [
                 "string",
+                "null"
+            ]
+        },
+        "ROL": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "SCORE_FCO_ROL": {
+            "type": [
+                "number",
+                "string",
+                "null"
+            ]
+        },
+        "CONTROLADOR": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "CNPJ_CONTROLADOR": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "PERCENTUAL_CONTROLADOR": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "PL_CONTROLADOR": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "NOTA_PD": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "NOTA_FCO_ROL": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "NOTA_ROA": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "NOTA_ROE": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "SCORE_PD": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "SCORE_ROA": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "SCORE_ROE": {
+            "type": [
+                "number",
                 "null"
             ]
         }

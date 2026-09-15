@@ -147,8 +147,7 @@ def _tipo_extraido_valido(val: Any, data_type: str, field_name: str = "") -> boo
         if val == 0.0 and any(k in fn_lower for k in campos_nao_zeraveis):
             return False
             
-        campos_indicadores = ("roa", "roe", "fco", "fco_rol", "margem")
-        if val == -10.0 and any(k in fn_lower for k in campos_indicadores):
+        if val == -10.0:
             return False
 
         if any(k in fn_lower for k in ("probabilidade", "pd")):
@@ -261,34 +260,14 @@ def extrair_registro(leitor: LeitorPlanilha, layout_schema: Dict[str, Any], mast
         data_type = field_config.get("data_type") or field_config.get("type")
         if not data_type:
             fn_lower = field_name.lower()
-            if any(t in fn_lower for t in ("ativo", "passivo", "lucro", "patrimonio", "capital", "venda", "receita", "lair", "lajir", "fco", "fluxo", "probabilidade", "pd", "rol", "reserva", "imposto", "resultado", "score", "ac_pc", "at_pt", "mtm", "dividendos")):
+            if any(t in fn_lower for t in ("ativo", "passivo", "lucro", "patrimonio", "capital", "venda", "receita", "lair", "lajir", "fco", "fluxo", "probabilidade", "pd", "rol", "reserva", "imposto", "resultado", "score", "ac_pc", "at_pt", "mtm")):
                 data_type = "float"
             elif any(t in fn_lower for t in ("data", "dt")):
                 data_type = "date"
             else:
                 data_type = "string"
                 
-        LEGADO_MAPEAMENTO = {
-            "FCO": ["SCORE_FCO_ROL", "FCO_ROL", "MARGEM_FLUXO_CAIXA"],
-            "ROA": ["SCORE_ROA"],
-            "ROE": ["SCORE_ROE"],
-            "PATRIMONIO_LIQUIDO": ["PL", "TOTAL_PATRIMONIO_LIQUIDO"],
-            "ATIVO_TOTAL_AJUSTADO": ["ATIVO_TOTAL", "TOTAL_ATIVOS"],
-            "ATIVO_CIRCULANTE_AJUSTADO": ["ATIVO_CIRCULANTE"],
-            "PASSIVO_CIRCULANTE_AJUSTADO": ["PASSIVO_CIRCULANTE"],
-            "PASSIVO_NAO_CIRCULANTE_FINANCEIRO_AJUSTADO": ["PASSIVO_NAO_CIRCULANTE", "PASSIVO_N_CIRCULANTE"],
-            "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": ["FCO", "FLUXO_DE_CAIXA_OPERACIONAL"],
-            "LUCRO_LIQUIDO": ["RESULTADO_LIQUIDO", "LUCRO_PREJUIZO"],
-            "ROL": ["RECEITA_OPERACIONAL_LIQUIDA", "RECEITA_LIQUIDA"]
-        }
-
         layout_field_config = layout_schema.get("field_map", {}).get(field_name)
-        
-        if not layout_field_config and field_name in LEGADO_MAPEAMENTO:
-            for alias in LEGADO_MAPEAMENTO[field_name]:
-                layout_field_config = layout_schema.get("field_map", {}).get(alias)
-                if layout_field_config:
-                    break
                     
         layout_field_config = layout_field_config or {}
         
@@ -384,9 +363,7 @@ def extrair_registro(leitor: LeitorPlanilha, layout_schema: Dict[str, Any], mast
             falha_gate = True
             logger.debug("[GATE_ENGINE] Layout candidato descartado. Campo %s (GATE) ausente.", gate)
             break
-            
-    extracted_data["_FALHA_GATE_CRITICO"] = falha_gate
-    
+                
     if falha_gate:
         score = 0.0
         extracted_data["INTEGRIDADE_EXTRAIDA_PERCENTUAL"] = 0.0

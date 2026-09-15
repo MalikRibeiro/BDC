@@ -1,3 +1,0 @@
-2026-09-10 15:46:07 | INFO | bdc.alertas_manuais | Iniciando varredura da camada Silver para Alertas de Carga Manual...
-2026-09-10 15:46:07 | INFO | bdc.alertas_manuais | Total de registros a varrer na Silver: 1308
-2026-09-10 15:46:08 | INFO | bdc.alertas_manuais | Varredura concluída. Foram gravados 4 alertas de Carga Manual/Exceção.

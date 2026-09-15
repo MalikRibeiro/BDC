@@ -57,8 +57,6 @@ def normalizar_registro(
                     if field == "DATA_DEMONSTRACAO_FINANCEIRA":
                         val_norm, epoch_orig, was_corrected = normalizar_data_demonstracao_financeira(out.get(field))
                         out[field] = val_norm
-                        out["FLAG_DATA_DF_CORRIGIDA"] = was_corrected
-                        out["DATA_DF_EPOCH_ORIGINAL"] = epoch_orig
                     else:
                         out[field] = normalizar_data(out.get(field))
                 except Exception as exc:
@@ -83,6 +81,45 @@ def normalizar_registro(
                 except Exception as exc:
                     if logger: logger.exception("Erro Texto: '%s'", field)
                     raise ValueError(f"Falha ao normalizar campo textual '{field}'.") from exc
+
+        if "CODIGO_CCEE" in out and out["CODIGO_CCEE"]:
+            val = str(out["CODIGO_CCEE"]).strip()
+            if not val.isnumeric():
+                out["CODIGO_CCEE"] = None
+            else:
+                out["CODIGO_CCEE"] = val
+
+        if "QUANTIDADE_RESTRITIVOS" in out and out["QUANTIDADE_RESTRITIVOS"] is not None:
+            try:
+                out["QUANTIDADE_RESTRITIVOS"] = int(float(out["QUANTIDADE_RESTRITIVOS"]))
+            except (ValueError, TypeError):
+                out["QUANTIDADE_RESTRITIVOS"] = None
+
+        if "CATEGORIA" in out and out.get("CATEGORIA"):
+            tipo_comercializadora = str(out.get("TIPO_COMERCIALIZADORA", "")).strip().upper()
+            if tipo_comercializadora == "CPURA":
+                out["CATEGORIA"] = None
+            elif tipo_comercializadora == "CGRUPO":
+                valor_categoria = str(out["CATEGORIA"]).strip().upper()
+                try:
+                    import json
+                    from app.context import AppContext
+                    domain_file = Path(r"C:\Users\C807951\Desktop\BDC\ENTRADAS\control\quality\domain_dictionaries.json")
+                    if domain_file.exists():
+                        domains = json.loads(domain_file.read_text(encoding="utf-8"))
+                        categoria_dict = domains.get("CATEGORIA_GRUPO", {})
+                        
+                        encontrado = False
+                        for chave, sinonimos in categoria_dict.items():
+                            if any(sin in valor_categoria for sin in sinonimos):
+                                out["CATEGORIA"] = chave
+                                encontrado = True
+                                break
+                        
+                        if not encontrado:
+                            out["CATEGORIA"] = "DESCONHECIDO"
+                except Exception as e:
+                    if logger: logger.warning("Nao foi possivel carregar domain_dictionaries.json para normalizar CATEGORIA: %s", e)
 
         if logger is not None:
             logger.info("Registro normalizado (Entrada: %s, Saída: %s).", len(record), len(out))

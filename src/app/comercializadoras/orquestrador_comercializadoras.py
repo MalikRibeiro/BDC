@@ -229,14 +229,6 @@ def processar_arquivo_individual(
             return None
             
         score_campeao = raw_record.get("INTEGRIDADE_EXTRAIDA_PERCENTUAL", 0)
-        
-        if raw_record.get("_FALHA_GATE_CRITICO"):
-            manifest.status_classificacao = "REJEITADO"
-            manifest.status_extracao = "ERRO_DADOS_CRITICOS_AUSENTES"
-            manifest.erros.append("Ficha falhou nos GATES de segurança (Campos obrigatórios ausentes).")
-            fechar_pasta(workbook)
-            mover_para_rejeitados(source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir)
-            return None
             
         if not winner_layout or winner_layout == "NENHUM" or score_campeao < 40.0:
             manifest.status_classificacao = "REJEITADO"
@@ -378,7 +370,16 @@ def processar_fichas_comercializadoras(context: AppContext) -> dict[str, Any]:
     overrides_dict = carregar_overrides_manuais(eventos_manuais_path, logger)
 
     queue = criar_fila_processamento(context, "comercializadoras")
-    logger.info("Iniciando processamento: %s fichas detectadas.", len(queue))
+    
+    normal_count = sum(1 for _, mode, _, _ in queue if mode == "incremental")
+    
+    reprocess_count = sum(1 for _, mode, _, _ in queue if mode == "reprocess")
+    logger.info(
+        "Iniciando processamento de %s fichas (%s normais, %s reprocessamento).",
+        len(queue),
+        normal_count,
+        reprocess_count,
+    )
 
     for source_file, load_mode, processed_dir, rejected_dir in queue:
         result = processar_arquivo_individual(
@@ -408,10 +409,11 @@ def processar_fichas_comercializadoras(context: AppContext) -> dict[str, Any]:
         )
 
     summary = {
-        "run_id": run_id, "arquivos_recebidos": len(queue), "registros_silver": len(silver_records),
-        "metricas_qualidade": {
-            "cobertura_fco": f"{(sum(1 for r in silver_records if r.get('FCO') is not None) / len(silver_records) * 100):.1f}%" if silver_records else "0%"
-        }
+        "run_id": run_id,
+        "arquivos_recebidos": len(queue),
+        "arquivos_reprocessamento": reprocess_count,
+        "registros_silver": len(silver_records),
     }
+
     logger.info("Resumo do processamento: %s", summary)
     return summary

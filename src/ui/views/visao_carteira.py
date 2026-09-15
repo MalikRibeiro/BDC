@@ -51,7 +51,16 @@ def carregar_dados_carteira() -> pd.DataFrame:
     
     for _, row in df_gold.iterrows():
         cnpj_c = str(row.get("CNPJ", "")).strip()
-        contraparte = str(row.get("NOME") or row.get("SIGLA") or f"CNPJ {cnpj_c}").strip()
+        
+        nome_val = str(row.get("NOME", "")).strip()
+        sigla_val = str(row.get("SIGLA", "")).strip()
+        
+        if nome_val.lower() == "nan" or not nome_val:
+            nome_val = ""
+        if sigla_val.lower() == "nan" or not sigla_val:
+            sigla_val = ""
+            
+        contraparte = nome_val or sigla_val or f"CNPJ {cnpj_c}"
         
         # Mapeamentos De -> Para diretos da Gold
         rating = str(row.get("RATING_FINAL", "")).strip()
@@ -83,7 +92,7 @@ def carregar_dados_carteira() -> pd.DataFrame:
         elif status_ctr == "CONTRATO_FUTURO":
             status_fornecimento = "A Fornecer"
         else:
-            status_fornecimento = "Desconhecido"
+            status_fornecimento = "Sem Contrato"
             
         # Tipo de Análise direto da Metodologia Exigida da Gold
         metodologia = str(row.get("METODOLOGIA_EXIGIDA", "")).strip().upper()
@@ -91,8 +100,7 @@ def carregar_dados_carteira() -> pd.DataFrame:
             tipo_analise = "Análise DF"
         elif metodologia == "BUREAU":
             tipo_analise = "Análise Bureau"
-        elif metodologia == "DISPENSADA":
-            tipo_analise = "Dispensada"
+
         else:
             tipo_analise = "Sem Análise"
             
@@ -103,6 +111,12 @@ def carregar_dados_carteira() -> pd.DataFrame:
         vigencia_inicio = pd.to_datetime(dt_inicio).strftime("%d/%m/%Y") if pd.notna(dt_inicio) else None
         vigencia_fim = pd.to_datetime(dt_fim).strftime("%d/%m/%Y") if pd.notna(dt_fim) else None
         
+        posicao_mtm = float(row.get("POSICAO_MTM", 0.0)) if pd.notna(row.get("POSICAO_MTM")) else 0.0
+        
+        # Filtro de ruído: Ocultar contrapartes sem contrato, sem análise válida e sem exposição MtM
+        if status_fornecimento == "Sem Contrato" and tipo_analise in ["Dispensada", "Sem Análise"] and posicao_mtm == 0.0:
+            continue
+            
         linhas_carteira.append({
             "CNPJ": cnpj_c,
             "Contraparte": contraparte,
@@ -115,7 +129,7 @@ def carregar_dados_carteira() -> pd.DataFrame:
             "Data da Analise": data_df if data_df and data_df.lower() != "nat" else None,
             "Tipo de analise": tipo_analise,
             "Status_Fornecimento": status_fornecimento,
-            "Posicao_MtM_MW": float(row.get("POSICAO_MTM_MW", 0.0)) if pd.notna(row.get("POSICAO_MTM_MW")) else 0.0,
+            "Posicao_MtM": posicao_mtm,
             "Status_Conciliacao": str(row.get("STATUS_CONCILIACAO", "DIVERGENTE")).strip(),
             "Ano_Inicio": row.get("ANO_INICIO_CONTRATO", 0),
             "Vigencia_Inicio": vigencia_inicio,
@@ -200,9 +214,9 @@ def render_visao_carteira():
         df_filtrado = df_filtrado[df_filtrado["Status_Fornecimento"] == status_sel]
         
     if mtm_sel == "Com MtM":
-        df_filtrado = df_filtrado[df_filtrado["Posicao_MtM_MW"] > 0]
+        df_filtrado = df_filtrado[df_filtrado["Posicao_MtM"] > 0]
     elif mtm_sel == "Sem MtM":
-        df_filtrado = df_filtrado[df_filtrado["Posicao_MtM_MW"] == 0]
+        df_filtrado = df_filtrado[df_filtrado["Posicao_MtM"] == 0]
     elif mtm_sel == "Análise Sem Contrato":
         df_filtrado = df_filtrado[
             (df_filtrado["Tipo de analise"] != "Sem Análise") & 
@@ -255,7 +269,7 @@ def render_visao_carteira():
         "Data da Analise",
         "Tipo de analise",
         "Status_Fornecimento",
-        "Posicao_MtM_MW",
+        "Posicao_MtM",
         "Status_Conciliacao",
         "Vigencia_Inicio",
         "Vigencia_Fim"
@@ -270,8 +284,8 @@ def render_visao_carteira():
                 "PD (%)",
                 format="%.4f%%"
             ),
-            "Posicao_MtM_MW": st.column_config.NumberColumn(
-                "MtM (MWm)",
+            "Posicao_MtM": st.column_config.NumberColumn(
+                "MtM (R$)",
                 format="%.2f"
             )
         }

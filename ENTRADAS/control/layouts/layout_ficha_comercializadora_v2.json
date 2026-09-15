@@ -1,210 +1,218 @@
 {
-  "tipo_ficha": "comercializadora",
-  "versao_ficha": "padrao_2",
-  "layout_id": "ficha_comercializadora_padrao_2",
-  "descricao": "Layout 2 da ficha de comercializadora",
-  "sheet_aliases": [
-    "FichaIndividual",
-    "Para_Limite_Comercializadoras"
-  ],
-  "required_fields": [
-    "SIGLA",
-    "CNPJ",
-    "DATA_DEMONSTRACAO_FINANCEIRA",
-    "DATA_CALCULO",
-    "PATRIMONIO_LIQUIDO"
-  ],
-  "key_fields": [
-    "SIGLA",
-    "CNPJ",
-    "DATA_DEMONSTRACAO_FINANCEIRA",
-    "DATA_CALCULO",
-    "PATRIMONIO_LIQUIDO"
-  ],
-  "optional_fields": [
-    "ATIVO_CIRCULANTE_AJUSTADO",
-    "ATIVO_CIRCULANTE_FINANCEIRO",
-    "ATIVO_TOTAL_AJUSTADO",
-    "AUDITOR",
-    "CAPITAL_SOCIAL",
-    "CODIGO_CCEE",
-    "DATA_ADESAO_CCEE",
-    "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
-    "LUCROS_ACUMULADOS",
-    "LUCRO_LIQUIDO",
-    "PASSIVO_CIRCULANTE_AJUSTADO",
-    "PASSIVO_CIRCULANTE_FINANCEIRO_AJUSTADO",
-    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO_AJUSTADO",
-    "PROBABILIDADE_DEFAULT",
-    "RESERVA_DE_LUCROS",
-    "TIPO_COMERCIALIZADORA",
-    "VENDAS_LIQUIDAS",
-	"ROL",
-	"LUCRO_BRUTO",
-	"LAJIR",
-	"LAIR"
-  ],
+    "tipo_ficha": "comercializadora",
+    "versao_ficha": "padrao_2",
+    "layout_id": "ficha_comercializadora_padrao_2",
+    "descricao": "Layout 2 da ficha de comercializadora",
+    "sheet_aliases": [
+        "FichaIndividual",
+        "Para_Limite_Comercializadoras"
+    ],
+    "required_fields": [
+        "SIGLA",
+        "CNPJ",
+        "DATA_DEMONSTRACAO_FINANCEIRA",
+        "DATA_CALCULO",
+        "PATRIMONIO_LIQUIDO"
+    ],
+    "key_fields": [
+        "SIGLA",
+        "CNPJ",
+        "DATA_DEMONSTRACAO_FINANCEIRA",
+        "DATA_CALCULO",
+        "PATRIMONIO_LIQUIDO"
+    ],
+    "optional_fields": [
+        "AGENCIA",
+        "ATIVO_CIRCULANTE",
+        "ATIVO_CIRCULANTE_FINANCEIRO",
+        "ATIVO_TOTAL",
+        "AUDITOR",
+        "CAPITAL_SOCIAL",
+        "CATEGORIA",
+        "CNPJ_BBCE",
+        "CODIGO_CCEE",
+        "DATA_ADESAO_CCEE",
+        "FCO",
+        "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+        "LAIR",
+        "LAJIR",
+        "LUCROS_ACUMULADOS",
+        "LUCRO_BRUTO",
+        "LUCRO_LIQUIDO",
+        "MATURIDADE_CALCULADA",
+        "NOTA_BOARD",
+        "NOTA_BUREAU",
+        "NOTA_CREDITO",
+        "PASSIVO_CIRCULANTE",
+        "PASSIVO_CIRCULANTE_FINANCEIRO",
+        "PASSIVO_NAO_CIRCULANTE_FINANCEIRO",
+        "PROBABILIDADE_DEFAULT",
+        "QUANTIDADE_RESTRITIVOS",
+        "RATING_COPEL",
+        "RATING_PUBLICO",
+        "RATING_SCORE_DE_BUREAU",
+        "RESERVA_DE_LUCROS",
+        "ROA",
+        "ROE",
+        "SCORE_BUREAU",
+        "TIPO_COMERCIALIZADORA",
+        "VENDAS_LIQUIDAS"
+    ],
     "verify_fields": [
-    "CNPJ"
-  ],
-  "field_map": {
-    "DATA_DEMONSTRACAO_FINANCEIRA": {
-      "sheet": "FichaIndividual",
-      "label_cell": "A3",
-      "value_cell": "D3",
-      "implemented": true
-    },
-    "SIGLA": {
-      "sheet": "FichaIndividual",
-      "label_cell": "A5",
-      "value_cell": "D5",
-      "implemented": true
-    },
-    "CNPJ": {
-      "sheet": "FichaIndividual",
-      "label_cell": "A7",
-	  "expected_label": "CNPJ",
-      "value_cell": "D7",
-      "implemented": true
-    },
-    "CODIGO_CCEE": {
-      "sheet": "FichaIndividual",
-      "label_cell": "A9",
-      "value_cell": "D9",
-      "implemented": true
-    },
-    "DATA_ADESAO_CCEE": {
-      "sheet": "FichaIndividual",
-      "label_cell": "A11",
-      "value_cell": "D11",
-      "implemented": true
-    },
-    "AUDITOR": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M20",
-      "value_cell": "U20",
-      "implemented": true
-    },
-    "TIPO_COMERCIALIZADORA": {
-      "sheet": "Para_Limite_Comercializadoras",
-      "label_cell": "L1",
-      "value_cell": "L2",
-      "implemented": true
-    },
-    "PATRIMONIO_LIQUIDO": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M15",
-	  "value_cell": "Y15",
-      "implemented": true
-    },
-    "ATIVO_CIRCULANTE_FINANCEIRO": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M10",
-      "value_cell": "Y10",
-      "implemented": true
-    },
-    "CAPITAL_SOCIAL": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M16",
-      "value_cell": "Y16",
-      "implemented": true
-    },
-    "PROBABILIDADE_DEFAULT": {
-      "sheet": "FichaIndividual",
-      "label_cell": "U37",
-      "value_cell": "U37",
-      "implemented": true
-    },
-    "DATA_CALCULO": {
-      "sheet": "FichaIndividual",
-      "label_cell": "A1",
-      "value_cell": "E1",
-      "implemented": true
-    },
-    "ATIVO_CIRCULANTE_AJUSTADO": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M9",
-      "value_cell": "Y9",
-      "implemented": true
-    },
-    "ATIVO_TOTAL_AJUSTADO": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M11",
-      "value_cell": "Y11",
-      "implemented": true
-    },
-    "PASSIVO_CIRCULANTE_AJUSTADO": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M12",
-      "value_cell": "Y12",
-      "implemented": true
-    },
-    "PASSIVO_CIRCULANTE_FINANCEIRO_AJUSTADO": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M13",
-      "value_cell": "Y13",
-      "implemented": true
-    },
-    "PASSIVO_NAO_CIRCULANTE_FINANCEIRO_AJUSTADO": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M14",
-      "value_cell": "Y14",
-      "implemented": true
-    },
-    "LUCROS_ACUMULADOS": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M17",
-      "value_cell": "Y17",
-      "implemented": true
-    },
-    "RESERVA_DE_LUCROS": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M18",
-      "value_cell": "Y18",
-      "implemented": true
-    },
-    "VENDAS_LIQUIDAS": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M19",
-      "value_cell": "Y19",
-      "implemented": true
-    },
-    "LUCRO_LIQUIDO": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M20",
-      "search_pattern": "LUCRO LIQUIDO|LUCRO/PREJUIZO DO EXERCICIO",
-      "value_cell": "Y20",
-      "implemented": true
-    },
-    "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": {
-      "sheet": "FichaIndividual",
-      "label_cell": "M21",
-      "value_cell": "Y21",
-      "implemented": true
-    },
-    "ROL": {
-      "sheet": "Memória de Cálculo",
-      "label_cell": "A4",
-      "value_cell": "C4",
-      "implemented": true
-    },
-    "LUCRO_BRUTO": {
-      "sheet": "Memória de Cálculo",
-      "label_cell": "A6",
-      "value_cell": "C6",
-      "implemented": true
-    },
-    "LAJIR": {
-      "sheet": "Memória de Cálculo",
-      "label_cell": "A12",
-      "value_cell": "C12",
-      "implemented": true
-    },
-    "LAIR": {
-      "sheet": "Memória de Cálculo",
-      "label_cell": "A16",
-      "value_cell": "C16",
-      "implemented": true
+        "CNPJ"
+    ],
+    "field_map": {
+        "DATA_DEMONSTRACAO_FINANCEIRA": {
+            "sheet": "FichaIndividual",
+            "label_cell": "A3",
+            "value_cell": "D3",
+            "implemented": true
+        },
+        "SIGLA": {
+            "sheet": "FichaIndividual",
+            "label_cell": "A5",
+            "value_cell": "D5",
+            "implemented": true
+        },
+        "CNPJ": {
+            "sheet": "FichaIndividual",
+            "label_cell": "A7",
+            "expected_label": "CNPJ",
+            "value_cell": "D7",
+            "implemented": true
+        },
+        "CODIGO_CCEE": {
+            "sheet": "FichaIndividual",
+            "label_cell": "A9",
+            "value_cell": "D9",
+            "implemented": true
+        },
+        "DATA_ADESAO_CCEE": {
+            "sheet": "FichaIndividual",
+            "label_cell": "A11",
+            "value_cell": "D11",
+            "implemented": true
+        },
+        "AUDITOR": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M20",
+            "value_cell": "U20",
+            "implemented": true
+        },
+        "TIPO_COMERCIALIZADORA": {
+            "sheet": "Para_Limite_Comercializadoras",
+            "label_cell": "L1",
+            "value_cell": "L2",
+            "implemented": true
+        },
+        "PATRIMONIO_LIQUIDO": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M15",
+            "value_cell": "Y15",
+            "implemented": true
+        },
+        "ATIVO_CIRCULANTE_FINANCEIRO": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M10",
+            "value_cell": "Y10",
+            "implemented": true
+        },
+        "CAPITAL_SOCIAL": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M16",
+            "value_cell": "Y16",
+            "implemented": true
+        },
+        "PROBABILIDADE_DEFAULT": {
+            "sheet": "FichaIndividual",
+            "label_cell": "U37",
+            "value_cell": "U37",
+            "implemented": true
+        },
+        "DATA_CALCULO": {
+            "sheet": "FichaIndividual",
+            "label_cell": "A1",
+            "value_cell": "E1",
+            "implemented": true
+        },
+        "ATIVO_CIRCULANTE": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M9",
+            "value_cell": "Y9",
+            "implemented": true
+        },
+        "ATIVO_TOTAL": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M11",
+            "value_cell": "Y11",
+            "implemented": true
+        },
+        "PASSIVO_CIRCULANTE": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M12",
+            "value_cell": "Y12",
+            "implemented": true
+        },
+        "PASSIVO_CIRCULANTE_FINANCEIRO": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M13",
+            "value_cell": "Y13",
+            "implemented": true
+        },
+        "PASSIVO_NAO_CIRCULANTE_FINANCEIRO": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M14",
+            "value_cell": "Y14",
+            "implemented": true
+        },
+        "LUCROS_ACUMULADOS": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M17",
+            "value_cell": "Y17",
+            "implemented": true
+        },
+        "RESERVA_DE_LUCROS": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M18",
+            "value_cell": "Y18",
+            "implemented": true
+        },
+        "VENDAS_LIQUIDAS": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M19",
+            "value_cell": "Y19",
+            "implemented": true
+        },
+        "LUCRO_LIQUIDO": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M20",
+            "search_pattern": "LUCRO LIQUIDO|LUCRO/PREJUIZO DO EXERCICIO",
+            "value_cell": "Y20",
+            "implemented": true
+        },
+        "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": {
+            "sheet": "FichaIndividual",
+            "label_cell": "M21",
+            "value_cell": "Y21",
+            "implemented": true
+        },
+        "LUCRO_BRUTO": {
+            "sheet": "Memória de Cálculo",
+            "label_cell": "A6",
+            "value_cell": "C6",
+            "implemented": true
+        },
+        "LAJIR": {
+            "sheet": "Memória de Cálculo",
+            "label_cell": "A12",
+            "value_cell": "C12",
+            "implemented": true
+        },
+        "LAIR": {
+            "sheet": "Memória de Cálculo",
+            "label_cell": "A16",
+            "value_cell": "C16",
+            "implemented": true
+        }
     }
-  }
 }

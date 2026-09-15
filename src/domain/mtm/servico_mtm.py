@@ -33,8 +33,38 @@ def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
     try:
         logger.info("Iniciando processo de ingestão e agregação da base de MtM.")
 
+        import os
         input_dir = context.path("entradas") / "mtm"
-        arquivo_bruto = _encontrar_arquivo_mtm_recente(input_dir)
+        dir_vigente = input_dir / "vigente"
+        dir_processadas = input_dir / "processadas"
+        
+        dir_vigente.mkdir(parents=True, exist_ok=True)
+        dir_processadas.mkdir(parents=True, exist_ok=True)
+        
+        network_path_str = os.getenv("MTM_NETWORK_PATH")
+        if network_path_str:
+            network_path = Path(network_path_str)
+            if network_path.exists() and network_path.is_file():
+                try:
+                    arq_vigente_local = _encontrar_arquivo_mtm_recente(dir_vigente)
+                    local_mtime = arq_vigente_local.stat().st_mtime
+                except FileNotFoundError:
+                    local_mtime = 0
+                    arq_vigente_local = None
+                    
+                net_mtime = network_path.stat().st_mtime
+                if net_mtime > local_mtime:
+                    logger.info("Arquivo de rede mais recente encontrado. Copiando e quebrando cache preguiçoso...")
+                    hoje_str = datetime.now().strftime("%d%m%Y_%H%M%S")
+                    
+                    if arq_vigente_local:
+                        arq_processado = dir_processadas / f"{arq_vigente_local.stem}_{hoje_str}{arq_vigente_local.suffix}"
+                        shutil.move(str(arq_vigente_local), str(arq_processado))
+                    
+                    novo_local = dir_vigente / network_path.name
+                    shutil.copy2(str(network_path), str(novo_local))
+                    
+        arquivo_bruto = _encontrar_arquivo_mtm_recente(dir_vigente)
 
         bronze_dir = context.path("bronze") / "snapshots_fontes" / "mtm"
         bronze_dir.mkdir(parents=True, exist_ok=True)
@@ -44,7 +74,7 @@ def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
         shutil.copy2(arquivo_bruto, caminho_bronze)
         logger.info("Snapshot bruto salvo na Bronze em: %s", caminho_bronze)
 
-        df_mtm = buscar_mtm_consolidado(input_dir=input_dir, logger=logger)
+        df_mtm = buscar_mtm_consolidado(input_dir=dir_vigente, logger=logger)
 
         if df_mtm.empty:
             logger.warning("Nenhum registro encontrado na base de MtM.")

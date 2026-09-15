@@ -39,36 +39,6 @@
                 "null"
             ]
         },
-        "DATA_ABERTURA": {
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "CEP": {
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "ENDERECO": {
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "PROBABILIDADE_DEFAULT": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
-        "CAPITAL_SOCIAL": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
         "ATIVO_CIRCULANTE": {
             "type": [
                 "number",
@@ -129,6 +99,12 @@
                 "null"
             ]
         },
+        "PROBABILIDADE_DEFAULT": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
         "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": {
             "type": [
                 "number",
@@ -141,6 +117,24 @@
                 "null"
             ]
         },
+        "FCO": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "ROA": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "ROE": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
         "AGENCIA": {
             "type": [
                 "string",
@@ -148,12 +142,6 @@
             ]
         },
         "NOTA_CREDITO": {
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "DATA_RATING_AGENCIA": {
             "type": [
                 "string",
                 "null"
@@ -177,33 +165,57 @@
                 "null"
             ]
         },
+        "LUCRO_LIQUIDO": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
         "ROL": {
             "type": [
                 "number",
                 "null"
             ]
         },
-        "LUCRO_BRUTO": {
+        "SITUACAO_CADASTRAL": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "NATUREZA_JURIDICA": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "CNAE": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "DATA_ABERTURA": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "ENDERECO": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "CAPITAL_SOCIAL": {
             "type": [
                 "number",
                 "null"
             ]
         },
-        "LAJIR": {
+        "CEP": {
             "type": [
-                "number",
-                "null"
-            ]
-        },
-        "LAIR": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
-        "LUCRO_LIQUIDO": {
-            "type": [
-                "number",
+                "string",
                 "null"
             ]
         },
@@ -213,346 +225,60 @@
                 "null"
             ]
         },
+        "RESTRITIVOS": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
         "QUANTIDADE_RESTRITIVOS": {
             "type": [
                 "number",
                 "null"
             ]
         },
-        "CONTROLADOR": {
+        "RESULTADO_CONSULTA": {
             "type": [
                 "string",
                 "null"
             ]
         },
-        "CNPJ_CONTROLADOR": {
+        "RATING_BUREAU": {
             "type": [
                 "string",
                 "null"
             ]
         },
-        "PL_CONTROLADOR": {
+        "PD_ASSOCIADA": {
             "type": [
                 "number",
                 "null"
             ]
         },
-        "PERCENTUAL_CONTROLADOR": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
-        "CAPITAL_CIRCULANTE_LIQUIDO": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
-        "FCO": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
-        "ROA": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
-        "ROE": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
-        "AC_PC": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
-        "AT_PT": {
-            "type": [
-                "number",
-                "null"
-            ]
-        },
-        "CNPJ_RAIZ": {
+        "DATA_VALIDADE_CONSULTA": {
             "type": [
                 "string",
                 "null"
             ]
         },
-        "STATUS_CNPJ": {
+        "GRUPO_ECONOMICO": {
             "type": [
                 "string",
-                "null",
-                "number",
-                "integer"
+                "null"
             ]
         },
-        "FLAG_DATA_DF_CORRIGIDA": {
+        "CONTRATO_CORRENTE": {
             "type": [
                 "string",
-                "null",
-                "number",
-                "integer"
+                "null"
             ]
         },
-        "versao_layout": {
-            "type": "string"
-        },
-        "tipo_consumidor": {
-            "type": "string"
-        },
-        "presenca_df": {
-            "type": "boolean"
-        },
-        "tipo_analise_exigida": {
-            "type": "string"
-        },
-        "_VERSAO_REGISTRO": {
+        "VOLUME_CONTRATADO": {
             "type": [
-                "string",
-                "null",
                 "number",
-                "integer"
-            ]
-        },
-        "_STATUS_REGISTRO": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "_DT_CARGA": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "DT_PROCESSAMENTO": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "RUN_ID": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "RANK_INTERNO": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "STATUS": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "MENSAGEM_DESCRITIVA": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "SEVERIDADE": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "DATA_DETECCAO": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "REGRA": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "CAMPO_AFETADO": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "VALOR_OBSERVADO": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "LIMITE_ESPERADO": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "STATUS_TRATAMENTO": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "RESPONSAVEL": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "EVIDENCIA_ENCERRAMENTO": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "CODIGO_ALERTA": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "CODIGO": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "INTEGRIDADE_EXTRAIDA_PERCENTUAL": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "LUCRO_LIQUIDO_SOBRE_ROL": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "TIPO_FICHA": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "ambiente": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "arquivo_nome": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "documento_id": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "dt_processamento": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "hash_arquivo": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "load_mode": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "run_id": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
-            ]
-        },
-        "versao_ficha": {
-            "type": [
-                "string",
-                "null",
-                "number",
-                "integer"
+                "null"
             ]
         }
     },
-    "additionalProperties": false
+    "additionalProperties": true
 }

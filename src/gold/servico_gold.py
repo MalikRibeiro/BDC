@@ -13,6 +13,8 @@ from gold.regras_gold import (
     status_metodologia,
     checar_contrato_obrigatorio
 )
+from src.domain.controlador.servico_controlador import herdar_risco_controladoras
+from src.services.connectors.controlador_connector import buscar_planilha_controlador
 
 def carregar_entradas_gold(context: Any, logger: logging.Logger) -> dict[str, pd.DataFrame]:
     silver_dir = context.path("silver")
@@ -208,7 +210,8 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
             c for c in [
                 "SITUACAO_ANALISE", "SITUACAO_DF", "RATING_FINAL", "PD_FINAL", 
                 "MODELO_METODOLOGICO", "PATRIMONIO_LIQUIDO", "DATA_ANALISE", "DATA_BALANCO_USADO", "TEM_ANALISE",
-                "MOTIVO_AUSENCIA_DF", "TIPO_EVENTO_MANUAL", "ORIGEM_REGISTRO", "VALIDADE_EXCECAO", "STATUS_CALCULO_PD"
+                "MOTIVO_AUSENCIA_DF", "TIPO_EVENTO_MANUAL", "ORIGEM_REGISTRO", "VALIDADE_EXCECAO", "STATUS_CALCULO_PD",
+                "FCO", "LUCRO_LIQUIDO", "ROA", "QUANTIDADE_RESTRITIVOS", "SCORE_BUREAU"
             ] if c in df_analises.columns
         ]
 
@@ -281,12 +284,15 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
         )
         df_contratos["EH_FUTURO"] = (df_contratos["DT_INICIO"] > hoje)
 
+        col_nome_contrato = "CONTRAPARTE_APELIDO" if "CONTRAPARTE_APELIDO" in df_contratos.columns else "CNPJ"
+        
         resumo_contratos = df_contratos.groupby("CNPJ").agg(
             QUANTIDADE_CONTRATOS=(col_id, "nunique") if col_id in df_contratos.columns else ("CNPJ", "count"),
             NUMERACAO_CONTRATOS=(col_id, lambda x: ", ".join(x.dropna().astype(str).unique())) if col_id in df_contratos.columns else ("CNPJ", lambda x: ""),
             STATUS_CONTRATUAL=("EH_VIGENTE", lambda x: "CONTRATO_VIGENTE" if x.any() else ("CONTRATO_FUTURO" if df_contratos.loc[x.index, "EH_FUTURO"].any() else "SEM_CONTRATO")),
             PROXIMO_INICIO=("DT_INICIO", "min"),
-            PROXIMO_FIM=("DT_FIM", "max")
+            PROXIMO_FIM=("DT_FIM", "max"),
+            NOME_CONTRATO_FALLBACK=(col_nome_contrato, lambda x: next((v for v in x.dropna() if str(v).strip() != ""), ""))
         ).reset_index()
 
         resumo_contratos["ANO_INICIO_CONTRATO"] = resumo_contratos["PROXIMO_INICIO"].dt.year.fillna(0).astype(int)
@@ -294,6 +300,12 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
         resumo_contratos["CNPJ_RAIZ"] = resumo_contratos["CNPJ"].str[:8]
         df_contratos_gold = pd.merge(resumo_contratos, df_vol_enquadramento[["CNPJ_RAIZ", "VOLUME_MWM"]], on="CNPJ_RAIZ", how="left")
         df_gold = pd.merge(df_gold, df_contratos_gold, on="CNPJ", how="left")
+        
+        # Fallback de NOME com base no CONTRAPARTE_APELIDO do contrato
+        if "NOME_CONTRATO_FALLBACK" in df_gold.columns:
+            mask_nome_vazio = df_gold["NOME"].isna() | (df_gold["NOME"].astype(str).str.strip() == "") | (df_gold["NOME"].astype(str).str.lower() == "nan")
+            df_gold.loc[mask_nome_vazio, "NOME"] = df_gold.loc[mask_nome_vazio, "NOME_CONTRATO_FALLBACK"]
+            df_gold = df_gold.drop(columns=["NOME_CONTRATO_FALLBACK"])
     else:
         df_gold["STATUS_CONTRATUAL"] = "SEM_CONTRATO"
         df_gold["VOLUME_MWM"] = 0.0
@@ -332,15 +344,15 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
         df_gold = pd.merge(df_gold, df_reconciliacao[cols_recon], on="CNPJ", how="left")
         
         if "MTM_POSITIVO_TOTAL" in df_gold.columns:
-            df_gold["POSICAO_MTM_MW"] = pd.to_numeric(df_gold["MTM_POSITIVO_TOTAL"], errors="coerce").fillna(0.0)
+            df_gold["POSICAO_MTM"] = pd.to_numeric(df_gold["MTM_POSITIVO_TOTAL"], errors="coerce").fillna(0.0)
             df_gold = df_gold.drop(columns=["MTM_POSITIVO_TOTAL"])
         else:
-            df_gold["POSICAO_MTM_MW"] = 0.0
+            df_gold["POSICAO_MTM"] = 0.0
             
         if "STATUS_CONCILIACAO" not in df_gold.columns:
             df_gold["STATUS_CONCILIACAO"] = "DIVERGENTE"
     else:
-        df_gold["POSICAO_MTM_MW"] = 0.0
+        df_gold["POSICAO_MTM"] = 0.0
         df_gold["STATUS_CONCILIACAO"] = "DIVERGENTE"
 
     colunas_esperadas = [
@@ -470,6 +482,23 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
     if "METODOLOGIA_EXIGIDA" in df_gold.columns and "DATA_CONSULTA" in df_gold.columns:
         mask_bureau = df_gold["METODOLOGIA_EXIGIDA"] == "BUREAU"
         df_gold.loc[mask_bureau, "DATA_DA_ANALISE"] = df_gold.loc[mask_bureau, "DATA_CONSULTA"]
+
+    df_controlador = pd.DataFrame()
+    
+    try:
+        df_controlador = buscar_planilha_controlador()
+    except Exception as e:
+        logger.warning(f"Não foi possível carregar a base de Controladoras: {e}. Prosseguindo sem herança de dados.")
+
+    if not df_controlador.empty and "CNPJ" in df_gold.columns:
+        try:
+            df_gold = herdar_risco_controladoras(df_gold, df_controlador, col_cnpj_carteira="CNPJ")
+            logger.info("Herança de risco de Controladoras concluída com sucesso.")
+        except Exception as e:
+            logger.error(f"Erro na aplicação das regras de herança de Controladoras: {e}")
+            logger.warning("Continuando sem herança de Controladoras.")
+    elif df_controlador.empty:
+        logger.info("Base de Controladoras vazia ou não disponível. Prosseguindo sem herança de dados.")
 
     return df_gold
 

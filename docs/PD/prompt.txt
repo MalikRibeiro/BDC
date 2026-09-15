@@ -1,0 +1,33 @@
+# ORDEM DE IMPLEMENTAÇÃO: REFATORAÇÃO DO NÚCLEO MATEMÁTICO (PD BASE E LE 5 MWm)
+
+Atue como Engenheiro de Dados Sênior e Quant de Risco. O seu relatório de auditoria foi validado. A decisão arquitetural é reconstruir a fundação matemática primeiro (Eixos 1 e 3). Não faz sentido aplicar travas de validade (fallbacks) sobre uma $PD$ calculada incorretamente.
+
+Nesta iteração, vamos arrancar a dependência das fórmulas do Excel e internalizar o modelo estatístico de Assaf Neto no Python, além de corrigir o enquadramento de grandes consumidores.
+
+**AÇÃO OBRIGATÓRIA:**
+Refatore e me entregue o código completo de dois arquivos: `src/domain/credito/pd_base.py` e `src/domain/credito/pd_consumidor_le5.py`.
+
+### 1. Refatoração de `pd_base.py` (Modelo Contábil Z-Score)
+- Abandone a leitura direta do campo `PROBABILIDADE_DEFAULT` da Silver.
+- Implemente uma função que calcule a $PD_{base}$ nativamente usando os indicadores financeiros brutos extraídos da Silver:
+  - $X_{12} = (\text{LUCRO\_LIQUIDO} + \text{RESERVA\_DE\_LUCROS}) / \text{ATIVO\_TOTAL}$
+  - $X_{16} = (\text{PASSIVO\_CIRCULANTE\_FINANCEIRO} + \text{PASSIVO\_NAO\_CIRCULANTE\_FINANCEIRO}) / \text{ATIVO\_TOTAL}$
+  - $X_{19} = (\text{ATIVO\_CIRCULANTE} - \text{PASSIVO\_CIRCULANTE}) / \text{ATIVO\_TOTAL}$
+  - $X_{22} = (\text{ATIVO\_CIRCULANTE\_FINANCEIRO} - \text{PASSIVO\_CIRCULANTE\_FINANCEIRO}) / \text{VENDAS\_LIQUIDAS}$
+- Calcule o score linear: $z = -4.03 - 3.70(X_{12}) + 11.66(X_{16}) - 7.86(X_{19}) - 11.33(X_{22})$
+- Transforme para PD: $PD_{base} = 1 / (1 + \exp(-z))$
+- Adicione tratamento de divisão por zero (retornando `None` ou `np.nan` caso os denominadores sejam 0 ou nulos).
+
+### 2. Refatoração de `pd_consumidor_le5.py` (Consumidores <= 5 MWm)
+- Remova COMPLETAMENTE a lógica que forja um "Rating Copel" a partir do Score Bureau. A Nota Técnica é clara: "não há Rating Copel nem reenquadramento em faixa interna".
+- Remova qualquer chamada de função de interpolação intrafaixa neste arquivo.
+- O arquivo deve simplesmente garantir que a $PD_{final}$ receba diretamente o valor da $PD_{Risk3}$ (ou calculá-la pela fórmula do bureau, se necessário, mas adotar o valor direto e bruto da fonte).
+
+**ENTREGÁVEIS:**
+1. Código Python completo de `src/domain/credito/pd_base.py`.
+2. Código Python completo de `src/domain/credito/pd_consumidor_le5.py`.
+
+**REGRAS:**
+- NÃO execute comandos de terminal.
+- Não altere as interpolações da CPURA ou Consumidores > 5 MWm nesta rodada.
+- Aguarde que eu aplique os códigos e teste a compilação do motor.

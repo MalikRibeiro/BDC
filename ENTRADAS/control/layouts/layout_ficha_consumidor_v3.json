@@ -23,10 +23,6 @@
   ],
   "optional_fields": [
     "DATA_CALCULO",
-    "DATA_ABERTURA",
-    "CEP",
-    "ENDERECO",
-    "CAPITAL_SOCIAL",
     "ATIVO_CIRCULANTE",
     "ATIVO_CIRCULANTE_FINANCEIRO",
     "ATIVO_TOTAL",
@@ -47,37 +43,25 @@
     "NOTA_BOARD",
     "NOTA_BUREAU",
     "RATING_COPEL",
-    "ROL",
-    "LUCRO_BRUTO",
-    "LAJIR",
-    "LAIR",
     "LUCRO_LIQUIDO",
-    "SCORE_BUREAU",
-    "QUANTIDADE_RESTRITIVOS",
-    "CONTROLADOR",
-    "CNPJ_CONTROLADOR",
-    "PL_CONTROLADOR",
-    "PERCENTUAL_CONTROLADOR",
-    "NOTA_CREDITO_CONTROLADOR",
-    "AGENCIA_CONTROLADOR",
-    "DATA_RATING_CONTROLADOR",
-    "CAPITAL_CIRCULANTE_LIQUIDO",
-    "NECESSIDADE_CAPITAL_GIRO",
-    "INDICE_AUTO_FINANCIAMENTO",
-    "LIQUIDEZ_SECA",
-    "INDICE_SOLVENCIA_GERAL",
-    "MARGEM_LIQUIDA",
+    "ROL",
     "SITUACAO_CADASTRAL",
     "NATUREZA_JURIDICA",
     "CNAE",
-    "SCORE_QUANTITATIVO",
-    "SCORE_QUALITATIVO",
-    "NOTA_AUDITORIA",
-    "SCORE_PD",
-    "SCORE_FCO_ROL",
-    "SCORE_ROA",
-    "SCORE_ROE",
-    "LUCRO_LIQUIDO_SOBRE_ROL"
+    "DATA_ABERTURA",
+    "ENDERECO",
+    "CAPITAL_SOCIAL",
+    "CEP",
+    "SCORE_BUREAU",
+    "RESTRITIVOS",
+    "QUANTIDADE_RESTRITIVOS",
+    "RESULTADO_CONSULTA",
+    "RATING_BUREAU",
+    "PD_ASSOCIADA",
+    "DATA_VALIDADE_CONSULTA",
+    "GRUPO_ECONOMICO",
+    "CONTRATO_CORRENTE",
+    "VOLUME_CONTRATADO"
   ],
   "field_map": {
     "DADOS_CADASTRAIS": {
@@ -361,33 +345,6 @@
       "required": false,
       "search_pattern": "RECEITA OPERACIONAL LIQUIDA|ROL"
     },
-    "LUCRO_BRUTO": {
-      "sheet": "DRE",
-      "label_cell": "A11",
-      "value_cell": "B11",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "LUCRO BRUTO"
-    },
-    "LAJIR": {
-      "sheet": "DRE",
-      "label_cell": "A20",
-      "value_cell": "B20",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "RESULTADO OPERACIONAL|LAJIR"
-    },
-    "LAIR": {
-      "sheet": "DRE",
-      "label_cell": "A28",
-      "value_cell": "B28",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "LAIR|LUCRO ANTES DO IMPOSTO DE RENDA"
-    },
     "LUCRO_LIQUIDO": {
       "sheet": "DRE",
       "label_cell": "A34",
@@ -414,124 +371,6 @@
       "data_type": "float",
       "required": false,
       "search_pattern": "QUANTIDADE DE RESTRITIVOS"
-    },
-    "CONTROLADOR": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "H68",
-      "value_cell": "I68",
-      "implemented": true,
-      "data_type": "text",
-      "required": false,
-      "search_pattern": "RAZAO SOCIAL|CONTROLADOR"
-    },
-    "CNPJ_CONTROLADOR": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "H69",
-      "value_cell": "I69",
-      "implemented": true,
-      "data_type": "cnpj",
-      "required": false,
-      "search_pattern": "CNPJ CONTROLADOR|CNPJ DO CONTROLADOR"
-    },
-    "PL_CONTROLADOR": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "H71",
-      "value_cell": "I71",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "PATRIMONIO LIQUIDO CONTROLADOR|PL CONTROLADOR"
-    },
-    "PERCENTUAL_CONTROLADOR": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "H70",
-      "value_cell": "I70",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "PORCENTAGEM DO CAPITAL SOCIAL|PERCENTUAL DO CONTROLADOR"
-    },
-    "NOTA_CREDITO_CONTROLADOR": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "H72",
-      "value_cell": "I72",
-      "implemented": true,
-      "data_type": "text",
-      "required": false,
-      "search_pattern": "RATING PUBLICO CONTROLADOR|NOTA DE CREDITO CONTROLADOR"
-    },
-    "AGENCIA_CONTROLADOR": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "H73",
-      "value_cell": "I73",
-      "implemented": true,
-      "data_type": "text",
-      "required": false,
-      "search_pattern": "AGENCIA|AGENCIA CONTROLADOR"
-    },
-    "DATA_RATING_CONTROLADOR": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "H74",
-      "value_cell": "I74",
-      "implemented": true,
-      "data_type": "date",
-      "required": false,
-      "year_only_rule": "end_of_year",
-      "search_pattern": "DATA DO RATING|DATA RATING CONTROLADOR"
-    },
-    "CAPITAL_CIRCULANTE_LIQUIDO": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "N11",
-      "value_cell": "Q11",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "CAPITAL CIRCULANTE LIQUIDO|CCL"
-    },
-    "NECESSIDADE_CAPITAL_GIRO": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "N15",
-      "value_cell": "Q15",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "NECESSIDADE DE CAPITAL DE GIRO"
-    },
-    "INDICE_AUTO_FINANCIAMENTO": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "N19",
-      "value_cell": "Q19",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "INDICE DE AUTO FINANCIAMENTO|INDICE DE AUTOFINANCIAMENTO"
-    },
-    "LIQUIDEZ_SECA": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "N23",
-      "value_cell": "Q23",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "LIQUIDEZ SECA"
-    },
-    "INDICE_SOLVENCIA_GERAL": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "N30",
-      "value_cell": "Q30",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "INDICE DE SOLVENCIA GERAL|SOLVENCIA GERAL"
-    },
-    "MARGEM_LIQUIDA": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "N34",
-      "value_cell": "Q34",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "MARGEM LIQUIDA"
     },
     "SITUACAO_CADASTRAL": {
       "sheet": "Dados Gerais e Qualitativos",
@@ -562,86 +401,6 @@
       "required": false,
       "search_pattern": "ATIVIDADE ECONOMICA|CNAE",
       "offset_col": 2
-    },
-    "SCORE_QUANTITATIVO": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": null,
-      "value_cell": "C48",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "TOTAL QUANTITATIVO",
-      "offset_col": 2
-    },
-    "SCORE_QUALITATIVO": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": null,
-      "value_cell": "C42",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "TOTAL QUALITATIVO",
-      "offset_col": 2
-    },
-    "NOTA_AUDITORIA": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": "A23",
-      "value_cell": "C23",
-      "implemented": true,
-      "data_type": "text",
-      "required": false,
-      "search_pattern": "NOTA AUDITORIA|AUDITORIA",
-      "offset_col": 2
-    },
-    "SCORE_PD": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": null,
-      "value_cell": "D27",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "PROBABILIDADE DE DEFAULT|^\\s*PD\\s*$",
-      "offset_col": 3
-    },
-    "SCORE_FCO_ROL": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": null,
-      "value_cell": "D28",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "^\\s*FCO/ROL\\s*$",
-      "offset_col": 3
-    },
-    "SCORE_ROA": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": null,
-      "value_cell": "D29",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "^\\s*ROA\\s*$",
-      "offset_col": 3
-    },
-    "SCORE_ROE": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": null,
-      "value_cell": "D30",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "^\\s*ROE\\s*$",
-      "offset_col": 3
-    },
-    "LUCRO_LIQUIDO_SOBRE_ROL": {
-      "sheet": "Dados Gerais e Qualitativos",
-      "label_cell": null,
-      "value_cell": "O34",
-      "implemented": true,
-      "data_type": "float",
-      "required": false,
-      "search_pattern": "MARGEM LIQUIDA",
-      "offset_col": 3
     }
   }
 }

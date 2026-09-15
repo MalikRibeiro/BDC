@@ -25,22 +25,27 @@ except Exception:
     MOTIVOS_PERMITIDOS = ["Correção de Falhas na Origem", "Atualização Histórica", "Intervenção de Alçada (Override)", "Outro"]
     SOLICITANTES_PERMITIDOS = ["Malik Ribeiro Mourad", "Eduardo Suzuki Yamauti"]
 
-def ler_arquivo_silver(caminho_base: Path, nome_arquivo: str) -> pd.DataFrame | None:
-    parquet_path = caminho_base / f"{nome_arquivo}.parquet"
-    csv_path = caminho_base / f"{nome_arquivo}.csv"
+def ler_arquivo_silver(caminho_base: Path, nome_arquivo_opcional: str = None) -> pd.DataFrame | None:
+    if not caminho_base.exists():
+        return None
+
+    arquivos = list(caminho_base.glob("*.parquet")) + list(caminho_base.glob("*.csv"))
     
-    if parquet_path.exists():
-        try:
-            return pd.read_parquet(parquet_path)
-        except Exception:
-            pass
-            
-    if csv_path.exists():
-        try:
-            return pd.read_csv(csv_path, sep=";", encoding="utf-8-sig", dtype=str)
-        except Exception:
-            pass
-            
+    for arquivo in arquivos:
+        if arquivo.suffix == ".parquet":
+            try:
+                return pd.read_parquet(arquivo)
+            except Exception:
+                continue
+        elif arquivo.suffix == ".csv":
+            try:
+                return pd.read_csv(arquivo, sep=";", encoding="utf-8-sig", dtype=str)
+            except Exception:
+                try:
+                    return pd.read_csv(arquivo, sep=",", encoding="utf-8-sig", dtype=str)
+                except Exception:
+                    continue
+                    
     return None
 
 def registrar_correcao_rascunho(cnpj: str, data_df: str, empresa: str, campo: str, valor_novo: str, motivo: str, solicitante: str):
@@ -130,12 +135,15 @@ def render_visao_silver():
     busca = st.text_input("Buscar por Contraparte, CNPJ ou Contrato:", placeholder="Digite um termo para filtrar em todas as bases...")
 
     # Abas de Consulta dos Datasets
-    tab_com, tab_cons, tab_denodo, tab_sf, tab_rec = st.tabs([
+    tab_com, tab_cons, tab_denodo, tab_sf, tab_rec, tab_mtm, tab_bureau, tab_garantias = st.tabs([
         "Comercializadoras",
         "Consumidores",
         "Denodo (Contratos)",
         "Salesforce (Accounts)",
-        "Receita Federal"
+        "Receita Federal",
+        "MTM",
+        "Bureau (Risk3)",
+        "Garantias"
     ])
 
     silver_base = BASE_DIR / "SAIDAS" / "silver"
@@ -206,3 +214,30 @@ def render_visao_silver():
             st.dataframe(df_filtrado, use_container_width=True)
         else:
             st.warning("Base da Receita Federal não encontrada em SAIDAS/silver/receita_silver. Execute o pipeline primeiro.")
+
+    with tab_mtm:
+        df = ler_arquivo_silver(silver_base / "mtm_consolidado_silver", "mtm_consolidado")
+        if df is not None and not df.empty:
+            df_filtrado = aplicar_filtro(df)
+            st.metric("Total de Registros MTM", len(df_filtrado))
+            st.dataframe(df_filtrado, use_container_width=True)
+        else:
+            st.warning("Base de MTM não encontrada em SAIDAS/silver/mtm_consolidado_silver. Execute o pipeline primeiro.")
+
+    with tab_bureau:
+        df = ler_arquivo_silver(silver_base / "fato_bureau_silver", "fato_bureau")
+        if df is not None and not df.empty:
+            df_filtrado = aplicar_filtro(df)
+            st.metric("Total de Registros Bureau", len(df_filtrado))
+            st.dataframe(df_filtrado, use_container_width=True)
+        else:
+            st.warning("Base de Bureau não encontrada em SAIDAS/silver/fato_bureau_silver. Execute o pipeline primeiro.")
+
+    with tab_garantias:
+        df = ler_arquivo_silver(silver_base / "garantias_silver", "garantias")
+        if df is not None and not df.empty:
+            df_filtrado = aplicar_filtro(df)
+            st.metric("Total de Registros de Garantias", len(df_filtrado))
+            st.dataframe(df_filtrado, use_container_width=True)
+        else:
+            st.warning("Base de Garantias não encontrada em SAIDAS/silver/garantias_silver. Execute o pipeline primeiro.")

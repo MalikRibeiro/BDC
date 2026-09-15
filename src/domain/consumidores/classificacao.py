@@ -23,9 +23,7 @@ class ClassificacaoDocumental:
     tipo_analise_exigida: str
     versao_layout: str    
     campos_obrigatorios: list[str]   
-    confianca_classificacao: str
     compatibilidade_ficha_segmento: bool
-    campos_df_nao_aplicavel: list[str]
 
 
 CAMPOS_DF_COMPLETA = [
@@ -154,9 +152,7 @@ def classificar_consumidor(
         tipo_analise_exigida=tipo_analise,
         versao_layout=versao_layout,
         campos_obrigatorios=campos_obrigatorios,
-        confianca_classificacao=confianca,
         compatibilidade_ficha_segmento=compativel,
-        campos_df_nao_aplicavel=campos_nao_aplicavel,
     )
 
 
@@ -170,7 +166,5 @@ def criar_classificacao_registro(
         "tipo_analise_exigida": classificacao.tipo_analise_exigida,
         "versao_layout": classificacao.versao_layout,
         "campos_obrigatorios": ",".join(classificacao.campos_obrigatorios),
-        "confianca_classificacao": classificacao.confianca_classificacao,
         "compatibilidade_ficha_segmento": classificacao.compatibilidade_ficha_segmento,
-        "campos_df_nao_aplicavel": ",".join(classificacao.campos_df_nao_aplicavel),
     }

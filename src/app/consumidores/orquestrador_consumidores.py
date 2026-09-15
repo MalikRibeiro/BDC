@@ -298,16 +298,15 @@ def processar_arquivo_individual(
         )
 
         logger.info(
-            "Classificação documental para %s: tipo=%s analise=%s confianca=%s",
+            "Classificação documental para %s: tipo=%s analise=%s",
             source_file.name,
             classificacao.tipo_consumidor,
             classificacao.tipo_analise_exigida,
-            classificacao.confianca_classificacao,
         )
 
         campos_financeiros_globais = [
             "ATIVO_CIRCULANTE", "ATIVO_TOTAL", "PASSIVO_CIRCULANTE", "PATRIMONIO_LIQUIDO",
-            "LUCRO_LIQUIDO", "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS", "ROA", "ROE", "FCO_ROL", "FCO"
+            "LUCRO_LIQUIDO", "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS", "ROA", "ROE", "FCO"
         ]
 
         if getattr(classificacao, "tipo_analise_exigida", "") == "simplificada":
@@ -315,12 +314,11 @@ def processar_arquivo_individual(
                 normalized[campo] = None
                 
         # Regra 14.8 (Global para qualquer consumidor, detalhada ou não): 
-        # Se DF for nula ou não aplicável, garante que 0.0 vire nulo para não mascarar score.
-        dt_df = normalized.get("DATA_DEMONSTRACAO_FINANCEIRA")
-        if not dt_df or str(dt_df).upper() == "NAO_APLICAVEL" or is_nulo_textual(dt_df):
-            for campo in campos_financeiros_globais:
-                if normalized.get(campo) == 0.0 or normalized.get(campo) == 0:
-                    normalized[campo] = None
+        # Células vazias lidas como 0.0 não são valores reais para DFs. Anular.
+        for campo in campos_financeiros_globais:
+            val = normalized.get(campo)
+            if val == 0.0 or val == 0 or val == "0" or val == "0.0":
+                normalized[campo] = None
 
         errors, warnings = validar_registro_consumidor(
             record=normalized,
@@ -595,10 +593,8 @@ def processar_fichas_consumidores(
     summary = {
         "run_id": run_id,
         "arquivos_recebidos": len(queue),
-        "arquivos_normais": normal_count,
         "arquivos_reprocessamento": reprocess_count,
         "registros_silver": len(silver_records),
-        "documentos_classificados": len(classified_documents),
     }
 
     logger.info("Resumo do processamento: %s", summary)

@@ -40,7 +40,7 @@ def escrever_conjunto_de_dados_silver(
         elif pd.api.types.is_datetime64_any_dtype(df[col]) or "data" in col.lower() or "date" in col.lower() or col.lower().startswith("dt_") or col.startswith("_DT_") or "vencimento" in col.lower():
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", UserWarning)
-                df[col] = pd.to_datetime(df[col], errors="coerce", dayfirst=True)
+                df[col] = pd.to_datetime(df[col], errors="coerce", dayfirst=True).dt.strftime("%Y-%m-%d")
             
         elif not (pd.api.types.is_string_dtype(df[col]) or pd.api.types.is_object_dtype(df[col])):
             df[col] = pd.to_numeric(df[col], errors="coerce")

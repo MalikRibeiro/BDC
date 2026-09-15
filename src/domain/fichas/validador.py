@@ -99,10 +99,7 @@ def validar_schema(record: dict[str, Any], logger: Any | None = None) -> list[st
         # São subprodutos do extrator/classificador e devem ser descartadas
         # antes da validação de schema (Fail-Safe estrito).
         _RUNTIME_KEYS = {
-            "DATA_DF_EPOCH_ORIGINAL",
-            "FLAG_DATA_DF_CORRIGIDA",
             "STATUS_CNPJ",
-            "_FALHA_GATE_CRITICO",
         }
 
         clean_record = {}
@@ -151,10 +148,10 @@ def validar_registro(
                     if _is_empty(record.get(field)):
                         errors.append(f"GATE_ENGINE ausente: {field}")
 
-            ativo_total = record.get("ATIVO_TOTAL_AJUSTADO")
+            ativo_total = record.get("ATIVO_TOTAL")
             pl = record.get("PATRIMONIO_LIQUIDO")
-            passivo_circulante = record.get("PASSIVO_CIRCULANTE_AJUSTADO")
-            passivo_nao_circulante = record.get("PASSIVO_NAO_CIRCULANTE_FINANCEIRO_AJUSTADO")
+            passivo_circulante = record.get("PASSIVO_CIRCULANTE")
+            passivo_nao_circulante = record.get("PASSIVO_NAO_CIRCULANTE_FINANCEIRO")
             
             if ativo_total is not None and pl is not None:
                 pc = float(passivo_circulante) if passivo_circulante is not None else 0.0
@@ -259,7 +256,6 @@ def validar_registro_consumidor(
             warnings.append(
                 f"Incompatibilidade detectada: ficha para tipo "
                 f"'{classificacao.tipo_consumidor}' não contém os dados esperados. "
-                f"Confiança: {classificacao.confianca_classificacao}."
             )
 
     if logger is not None:

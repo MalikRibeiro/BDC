@@ -95,12 +95,12 @@ def registrar_alertas_em_lote(alertas_list: list[dict], run_id: str, context: An
             "REGRA": str(alerta.get("regra")),
             "MENSAGEM_DESCRITIVA": str(alerta.get("mensagem")),
             "DATA_DETECCAO": agora,
-            "CAMPO_AFETADO": str(alerta.get("campo_afetado")) if alerta.get("campo_afetado") else None,
-            "VALOR_OBSERVADO": str(alerta.get("valor_observado")) if alerta.get("valor_observado") is not None else None,
-            "LIMITE_ESPERADO": str(alerta.get("limite_esperado")) if alerta.get("limite_esperado") is not None else None,
+            "CAMPO_AFETADO": str(alerta.get("campo_afetado")) if pd.notna(alerta.get("campo_afetado")) and alerta.get("campo_afetado") is not None else None,
+            "VALOR_OBSERVADO": str(alerta.get("valor_observado")) if pd.notna(alerta.get("valor_observado")) and alerta.get("valor_observado") is not None else None,
+            "LIMITE_ESPERADO": str(alerta.get("limite_esperado")) if pd.notna(alerta.get("limite_esperado")) and alerta.get("limite_esperado") is not None else None,
             "STATUS_TRATAMENTO": str(alerta.get("status_tratamento", "ABERTO")),
-            "RESPONSAVEL": str(alerta.get("responsavel")) if alerta.get("responsavel") else None,
-            "EVIDENCIA_ENCERRAMENTO": str(alerta.get("evidencia_encerramento")) if alerta.get("evidencia_encerramento") else None,
+            "RESPONSAVEL": str(alerta.get("responsavel")) if pd.notna(alerta.get("responsavel")) and alerta.get("responsavel") is not None else None,
+            "EVIDENCIA_ENCERRAMENTO": str(alerta.get("evidencia_encerramento")) if pd.notna(alerta.get("evidencia_encerramento")) and alerta.get("evidencia_encerramento") is not None else None,
             "RUN_ID": str(run_id)
         })
         

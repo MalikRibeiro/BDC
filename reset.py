@@ -134,7 +134,7 @@ def main() -> None:
     print(f"Consumidores movidos para pendentes: {moved_consumidores}")
     print(f"Overrides movidos para pendentes: {moved_overrides}")
     print(f"Carga Manual movidas para pendentes: {moved_manual}")
-    print("Reset concluído. Agora você pode executar novamente o main.py.")
+    print("Reset concluído. Agora você pode executar novamente o 'python main.py'")
 
 
 if __name__ == "__main__":

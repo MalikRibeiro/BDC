@@ -17,7 +17,7 @@
             "criticality": "OPTIONAL",
             "weight": 10,
             "search_patterns": [
-                "SIGLA"
+                "^\\s*SIGLA\\b"
             ]
         },
         "DATA_DEMONSTRACAO_FINANCEIRA": {
@@ -35,8 +35,23 @@
             "criticality": "REQUIRED_FOR_CALCULATION",
             "weight": 20,
             "search_patterns": [
+                "^\\s*Probabilidade de Default\\s*$",
                 "PROBABILIDADE\\s*DEFAULT|PD\\b|PD\\s*="
             ]
+        },
+        "NOTA_PD": {
+            "nature": "OBSERVED",
+            "type": "text",
+            "criticality": "OPTIONAL",
+            "weight": 0,
+            "search_patterns": []
+        },
+        "SCORE_PD": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 0,
+            "search_patterns": []
         },
         "CAPITAL_SOCIAL": {
             "nature": "OBSERVED",
@@ -144,7 +159,7 @@
             "criticality": "OPTIONAL",
             "weight": 10,
             "search_patterns": [
-                "FLUXO\\s*DE\\s*CAIXA\\s*OPERACIONAL|CAIXA\\s*L[IÍ]QUIDO\\s*GERADO|FLUXO\\s*DE\\s*CAIXA\\s*DAS\\s*ATIVIDADES\\s*OPERACIONAIS"
+                "^\\s*FLUXO\\s*DE\\s*CAIXA\\s*OPERACIONAL|^\\s*CAIXA\\s*L[IÍ]QUIDO\\s*GERADO|^\\s*FLUXO\\s*DE\\s*CAIXA\\s*DAS\\s*ATIVIDADES\\s*OPERACIONAIS"
             ]
         },
         "AUDITOR": {
@@ -198,7 +213,7 @@
             "criticality": "OPTIONAL",
             "weight": 10,
             "search_patterns": [
-                "RECEITA\\s*OPERACIONAL\\s*L[IÍ]QUIDA|ROL\\b"
+                "^\\s*RECEITA\\s*OPERACIONAL\\s*L[IÍ]QUIDA|^\\s*ROL\\b"
             ]
         },
         "LUCRO_LIQUIDO": {
@@ -207,7 +222,7 @@
             "criticality": "OPTIONAL",
             "weight": 10,
             "search_patterns": [
-                "LUCRO\\s*L[IÍ]QUIDO|RESULTADO\\s*L[IÍ]QUIDO|LUCRO/PREJUIZO DO EXERCICIO"
+                "^\\s*LUCRO\\s*L[IÍ]QUIDO|^\\s*RESULTADO\\s*L[IÍ]QUIDO|^\\s*LUCRO/PREJUIZO DO EXERCICIO"
             ]
         },
         "SCORE_BUREAU": {
@@ -244,6 +259,20 @@
                 "FCO|MARGEM\\s*DE\\s*FLUXO\\s*DE\\s*CAIXA"
             ]
         },
+        "NOTA_FCO_ROL": {
+            "nature": "OBSERVED",
+            "type": "text",
+            "criticality": "OPTIONAL",
+            "weight": 0,
+            "search_patterns": []
+        },
+        "SCORE_FCO_ROL": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 0,
+            "search_patterns": []
+        },
         "ROA": {
             "nature": "OBSERVED",
             "type": "float",
@@ -253,6 +282,20 @@
                 "ROA\\b|RETORNO\\s*SOBRE\\s*ATIVO"
             ]
         },
+        "NOTA_ROA": {
+            "nature": "OBSERVED",
+            "type": "text",
+            "criticality": "OPTIONAL",
+            "weight": 0,
+            "search_patterns": []
+        },
+        "SCORE_ROA": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 0,
+            "search_patterns": []
+        },
         "ROE": {
             "nature": "OBSERVED",
             "type": "float",
@@ -261,6 +304,20 @@
             "search_patterns": [
                 "ROE\\b|RETORNO\\s*SOBRE\\s*PATRIM[OÔ]NIO"
             ]
+        },
+        "NOTA_ROE": {
+            "nature": "OBSERVED",
+            "type": "text",
+            "criticality": "OPTIONAL",
+            "weight": 0,
+            "search_patterns": []
+        },
+        "SCORE_ROE": {
+            "nature": "OBSERVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 0,
+            "search_patterns": []
         },
         "AC_PC": {
             "nature": "DERIVED",
@@ -298,7 +355,7 @@
         },
         "CNPJ_BBCE": {
             "nature": "OBSERVED",
-            "type": "string",
+            "type": "cnpj",
             "criticality": "OPTIONAL",
             "weight": 10,
             "allow_semantic": true,
@@ -350,6 +407,16 @@
                 "CATEGORIA"
             ]
         },
+        "AGENCIA": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10,
+            "allow_semantic": true,
+            "search_patterns": [
+                "AG[EÊ]NCIA"
+            ]
+        },
         "RATING_PUBLICO": {
             "nature": "OBSERVED",
             "type": "string",
@@ -359,49 +426,6 @@
             "search_patterns": [
                 "RATING\\s*P[UÚ]BLICO",
                 "RATING\\s*AG[EÊ]NCIA"
-            ]
-        },
-        "SCORES_INDIVIDUAIS": {
-            "nature": "OBSERVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "allow_semantic": true,
-            "search_patterns": [
-                "SCORES\\s*INDIVIDUAIS"
-            ]
-        },
-        "SCORE_QUANTITATIVO": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "allow_semantic": true,
-            "search_patterns": [
-                "SCORE\\s*QUANTITATIVO",
-                "SCORE\\s*QUANT"
-            ]
-        },
-        "DEMONSTRACOES_FINANCEIRAS_AUDITADAS": {
-            "nature": "OBSERVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "allow_semantic": true,
-            "search_patterns": [
-                "DEMONSTRA[CÇ][OÕ]ES.*AUDITADAS",
-                "DF.*AUDITADA"
-            ]
-        },
-        "RATING_SCORE_DE_AUDITORIA": {
-            "nature": "OBSERVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "allow_semantic": true,
-            "search_patterns": [
-                "RATING.*AUDITORIA",
-                "SCORE.*AUDITORIA"
             ]
         },
         "RATING_SCORE_DE_BUREAU": {
@@ -415,17 +439,6 @@
                 "SCORE.*BUREAU"
             ]
         },
-        "RESTRITIVOS": {
-            "nature": "OBSERVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "allow_semantic": true,
-            "search_patterns": [
-                "RESTRITIVOS",
-                "APONTA.*RESTRITIVOS"
-            ]
-        },
         "SCORE_QUALITATIVO": {
             "nature": "OBSERVED",
             "type": "float",
@@ -437,55 +450,12 @@
                 "SCORE\\s*QUAL"
             ]
         },
-        "MARGEM_DESPESA_PESSOAL": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "allow_semantic": true,
-            "search_patterns": [
-                "MARGEM\\s*DESPESA",
-                "RECEITA.*CUSTO.*PESSOAL"
-            ]
-        },
-        "MTM_TOTAL_PL": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "allow_semantic": true,
-            "search_patterns": [
-                "MTM.*PL",
-                "MTM.*PATRIM[OÔ]NIO"
-            ]
-        },
-        "DIVIDENDOS_LUCRO_LIQUIDO": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "allow_semantic": true,
-            "search_patterns": [
-                "DIVIDENDOS.*LUCRO",
-                "JCP.*LUCRO"
-            ]
-        },
-        "CAPITAL_CIRCULANTE_LIQUIDO": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 10,
-            "allow_semantic": true,
-            "search_patterns": [
-                "CAPITAL\\s*CIRCULANTE\\s*L[IÍ]QUIDO",
-                "CCL\\b"
-            ]
-        },
         "DATA_CALCULO": {
             "nature": "OBSERVED",
             "type": "date",
             "criticality": "OPTIONAL",
             "weight": 10,
+            "allow_semantic": true,
             "search_patterns": [
                 "DATA\\s*DA\\s*FICHA"
             ]

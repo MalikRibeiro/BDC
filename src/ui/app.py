@@ -8,6 +8,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from ui.views.visao_orquestrador import render_visao_orquestrador
 from ui.views.visao_carga_manual import render_visao_carga_manual
 from ui.views.visao_carteira import render_visao_carteira
+from ui.views.visao_rating import render_visao_rating
 from ui.views.visao_silver import render_visao_silver
 
 st.set_page_config(
@@ -25,6 +26,7 @@ def main():
             [
                 "Orquestrador",
                 "Visão da Carteira",
+                "Evolução do Rating",
                 "Carga Manual",
                 "Visão Silver",
             ],
@@ -36,6 +38,8 @@ def main():
         render_visao_orquestrador()
     elif menu == "Visão da Carteira":
         render_visao_carteira()
+    elif menu == "Evolução do Rating":
+        render_visao_rating()
     elif menu == "Carga Manual":
         render_visao_carga_manual()
     elif menu == "Visão Silver":
