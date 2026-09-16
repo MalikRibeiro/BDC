@@ -1,0 +1,1847 @@
+[
+    {
+        "timestamp": "2026-09-16T13:33:26.640541",
+        "arquivo": "AES BRASIL 09_05_2022 TESTE GRUPO.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:33:37.893273",
+        "arquivo": "ATVOS PART. 03082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:33:38.192809",
+        "arquivo": "AUREN (VOTENER) 06_05_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:33:40.325507",
+        "arquivo": "BANCO BOCOM BBM 25_05_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:33:42.606650",
+        "arquivo": "BEP 09072025.xlsx",
+        "status": "ERRO_DUPLICIDADE_HASH",
+        "erros": [
+            "Hash já processado anteriormente."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:33:51.709292",
+        "arquivo": "BTG PACTUAL (BANCO)_08-11_2021.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:33:53.194491",
+        "arquivo": "Bravo_2024.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:33:53.774544",
+        "arquivo": "CANADIAN RARTING 26022026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:33:54.206360",
+        "arquivo": "CANADIAN SOLAR_06_10_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:33:57.931307",
+        "arquivo": "CDVSA 12082026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:33:58.320695",
+        "arquivo": "CDV_SIMULACAO.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:33:58.808094",
+        "arquivo": "CEESAM 23072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:34:00.530950",
+        "arquivo": "CEMIG H COMERCIALIZAÇÃO_23_02_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.36%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:34:24.075663",
+        "arquivo": "ENEL 22_06_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:34:40.889955",
+        "arquivo": "Fibra_2024.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:34:41.058650",
+        "arquivo": "Ficha Padrão Backup.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:34:41.256228",
+        "arquivo": "Ficha Padrão.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:34:41.815389",
+        "arquivo": "GALAPAGOS 30102025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:34:51.816488",
+        "arquivo": "ICAL ENERGIA 16042026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:34:57.259358",
+        "arquivo": "ITAMBÉ ENERGÉTICA.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:34:57.823381",
+        "arquivo": "ITAU COM 02_05_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:34:58.782235",
+        "arquivo": "J&F 0108025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:02.736671",
+        "arquivo": "LDC 30062025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:02.897642",
+        "arquivo": "LDC BRASIL 29102025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:19.686901",
+        "arquivo": "Matrix -grupo- 03042025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:20.305704",
+        "arquivo": "NC ENERGIA 21_06_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:24.898943",
+        "arquivo": "NOVA - 03042025.xlsx",
+        "status": "ERRO_DUPLICIDADE_HASH",
+        "erros": [
+            "Hash já processado anteriormente."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:26.982181",
+        "arquivo": "OMEGA 13_07_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:31.208759",
+        "arquivo": "PCH VERDE 2 ENERGETICA RATING 23012026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:34.720912",
+        "arquivo": "Passo_5_Sao_Martinho_Rating_Final.xlsx",
+        "status": "ERRO_LAYOUT",
+        "erros": [
+            "DOC_001_ESTRUTURA_INCOMPATIVEL: Nenhuma aba compativel com o layout esperada foi encontrada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:37.806446",
+        "arquivo": "RIO ENERGY (GRUPO) 23_08_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.36%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:41.341644",
+        "arquivo": "SAFIRA Holding 2023.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:41.584318",
+        "arquivo": "SAFIRA Holding.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:52.252295",
+        "arquivo": "SPIC BRASIL 01_12_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.36%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:52.500605",
+        "arquivo": "SPIC BRASIL 07052026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:54.476046",
+        "arquivo": "STATKRAFT 24_06_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:35:56.721241",
+        "arquivo": "SUZANO_COPILOT.xlsx",
+        "status": "ERRO_LAYOUT",
+        "erros": [
+            "DOC_001_ESTRUTURA_INCOMPATIVEL: Nenhuma aba compativel com o layout esperada foi encontrada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:00.021671",
+        "arquivo": "TEREOS 15072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:02.548379",
+        "arquivo": "TIMBRO TRADING 15072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.36%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:08.188101",
+        "arquivo": "UHE SAO SIMAO 29082025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:13.225172",
+        "arquivo": "VOTENER (GRUPO)_14_10_2021.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 38.18%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:19.099097",
+        "arquivo": "3R PETROLEUM RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:20.380644",
+        "arquivo": "AEGEA RATING 09122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:21.029601",
+        "arquivo": "AEROPORTO DE GUARULHOS 28082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:21.176454",
+        "arquivo": "AEROPORTO DE GUARULHOS RATING 04112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:22.013537",
+        "arquivo": "AHLSTROM-MUNKSJO 27052026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:22.093964",
+        "arquivo": "AIR LIQUIDE 06072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:22.539479",
+        "arquivo": "ALBRAS RATING 05012026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:23.006042",
+        "arquivo": "ALCOA ALUMINIO RATING 01122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:23.128220",
+        "arquivo": "ALCOA WORLD 13052026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:23.906431",
+        "arquivo": "ALIANÇA GERAÇÃO RATING 28012026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:26.068071",
+        "arquivo": "ARCELORMITTAL PECEM 17072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:26.852659",
+        "arquivo": "ASCENTY RATING 13102023.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:27.285318",
+        "arquivo": "ASUN RATING 24102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:27.900330",
+        "arquivo": "ATVOS BIOENERGIA RIO CLARO RATING 23122025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:30.487328",
+        "arquivo": "BASF 23062026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:30.799696",
+        "arquivo": "BASF RATING 14102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:31.571766",
+        "arquivo": "BERNECK 08102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:33.299285",
+        "arquivo": "BOZEL RATING 31102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:33.592667",
+        "arquivo": "BRACELL RATING 02122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:33.733913",
+        "arquivo": "BRACELL RATING 10032025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:34.773362",
+        "arquivo": "BRASKEM RATING 24102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:36.052438",
+        "arquivo": "BUNGE 09102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:38.711392",
+        "arquivo": "CANDEIAS 15102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:39.231470",
+        "arquivo": "CARGILL RATING 13102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:39.478839",
+        "arquivo": "CBA 08102025 RATING RETIFICADO.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:39.589462",
+        "arquivo": "CBA 08102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:39.896455",
+        "arquivo": "CBA CIA BRASILEIRA DE ALUMINIO 30052025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:40.542670",
+        "arquivo": "CEESAM 11-12-2025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:41.226000",
+        "arquivo": "CEPASA RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:41.331944",
+        "arquivo": "CERMISSOES 17082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:42.515501",
+        "arquivo": "CJ DO BRASIL 01072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:42.618709",
+        "arquivo": "CJ do Brasil_13042023.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: EMPRESA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:42.878478",
+        "arquivo": "CMPC 14072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:44.683509",
+        "arquivo": "COMPANHIA RIOGRANDENSE DE SANEAMENTO 18082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:44.826060",
+        "arquivo": "COMPANHIA RIOGRANDENSE DE SANEAMENTO 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:45.077620",
+        "arquivo": "CONSORCIO TRANSVIDA RATING 18022026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:46.309065",
+        "arquivo": "COOPERLUZ 14082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:46.875959",
+        "arquivo": "COPACOL RATING 24102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:48.417429",
+        "arquivo": "CPTM RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:49.343408",
+        "arquivo": "CSN CIMENTOS RATING 31102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:49.454592",
+        "arquivo": "CSN MATRIZ RATING 06012026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:49.540140",
+        "arquivo": "CSN MINERACAO 20072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:49.836938",
+        "arquivo": "CSN MINERAÇÃO 22082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:49.962435",
+        "arquivo": "CSN MINERAÇÃO RATING 03112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:51.234585",
+        "arquivo": "Coca-cola FEMSA 05032024.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:51.868588",
+        "arquivo": "Cooper Barras 29_09_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: EMPRESA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:53.239801",
+        "arquivo": "DEXCO RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:53.773051",
+        "arquivo": "DITIN 14072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:53.827115",
+        "arquivo": "DOW BRASIL RATING 21012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:54.724560",
+        "arquivo": "EATON LTDA RATING 12032026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:54.925082",
+        "arquivo": "EBAZAR 18062026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:55.304365",
+        "arquivo": "EDF 24072025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:55.448730",
+        "arquivo": "EDF RATING 24122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:56.488957",
+        "arquivo": "EMBASA RATING 01122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:58.134693",
+        "arquivo": "EVONIK RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:36:59.986773",
+        "arquivo": "FERBASA RATING 03122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:00.239299",
+        "arquivo": "FGV 15102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:00.329146",
+        "arquivo": "FIBRAPLAC 22102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:00.761596",
+        "arquivo": "FICHA MODELO NOVA DDMMAA.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:01.871708",
+        "arquivo": "FICHA_CONSUMIDORES_V1_CEESAM_PREENCHIDA 1.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:03.122654",
+        "arquivo": "GAZIT 05022024.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:03.739396",
+        "arquivo": "GERDAU AÇOMINAS 13062025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:04.021307",
+        "arquivo": "GERDAU AÇOS LONGOS RATING 15102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:04.181949",
+        "arquivo": "GERDAU AÇOS LONGOS RATING 27032026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:04.927989",
+        "arquivo": "GERDAU SA RATING 12122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:05.099801",
+        "arquivo": "GM RATING 16012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:05.447765",
+        "arquivo": "GPA RATING 10032026.xlsx",
+        "status": "ERRO_DUPLICIDADE_HASH",
+        "erros": [
+            "Hash já processado anteriormente."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:06.334016",
+        "arquivo": "GTFOODS RATING 26052026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:06.799999",
+        "arquivo": "GWEST RATING 03022026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:08.806234",
+        "arquivo": "HAVAN RATING 03112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:11.796432",
+        "arquivo": "INDEMIL RATING 23032026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:11.893134",
+        "arquivo": "INDUPA 14072025.xlsx",
+        "status": "ERRO_SEM_CNPJ",
+        "erros": [
+            "Ficha sem CNPJ válido."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:12.874661",
+        "arquivo": "INTERCEMENT RATING 13102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:13.516170",
+        "arquivo": "IRGOVEL 28072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:14.041966",
+        "arquivo": "ITAMBE MATRIZ - 17092025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:14.205575",
+        "arquivo": "ITAMBE MATRIZ RATING 16102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:14.350466",
+        "arquivo": "Incepa 20052024.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:15.608236",
+        "arquivo": "JBS SA RATING 06112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:16.417061",
+        "arquivo": "KARSTEN SA 09102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:17.704930",
+        "arquivo": "Kimberly-Clark análises.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: EMPRESA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:17.831268",
+        "arquivo": "Klabin 03112023.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:18.282898",
+        "arquivo": "Klabin Rating 17102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:18.675846",
+        "arquivo": "LAR COOPERATIVA RATING 18112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:18.770372",
+        "arquivo": "LAVANDERIA JUSSARA 05052026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:18.843257",
+        "arquivo": "LDC 09102025 RATING.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:19.536269",
+        "arquivo": "LDC SUCOS RATING 13112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:19.630755",
+        "arquivo": "LDC TES 10102025 RATING.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:20.319163",
+        "arquivo": "LIASA RATING 29102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:21.234843",
+        "arquivo": "LINHAS 8 E 9 07072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:21.784133",
+        "arquivo": "Laticínios Ruhban 09102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:22.401031",
+        "arquivo": "M DIAS BRANCO 15082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:22.525295",
+        "arquivo": "M DIAS BRANCO RATING 03112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:23.276583",
+        "arquivo": "MARINGA FERRO LIGA RATING 31102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:24.162947",
+        "arquivo": "MESSES GASES RATING 12112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:24.488553",
+        "arquivo": "METAL LEVE RATING 18022026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:24.619312",
+        "arquivo": "METAL LEVE RATING 31102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:25.072279",
+        "arquivo": "METRO BAHIA 08102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:25.423033",
+        "arquivo": "METRO BAHIA RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:25.560840",
+        "arquivo": "METRO RATING 26112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:25.919886",
+        "arquivo": "METRO RIO RATING 03112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:26.403668",
+        "arquivo": "MICHELIN RATING 15012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:26.774881",
+        "arquivo": "MILI SA 05082025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:28.371822",
+        "arquivo": "MOSAIC FERTILIZANTES RATING 21012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:28.449163",
+        "arquivo": "MOTIVA 19062026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:28.948259",
+        "arquivo": "MOTIVA SA 23062026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:30.360362",
+        "arquivo": "NADIR FIGUEIREDO 21072026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:30.666584",
+        "arquivo": "NC COMUNICACOES RATING 27022026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:30.817841",
+        "arquivo": "NEXA 05012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:31.123365",
+        "arquivo": "NEXA RATING 05012026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:32.896624",
+        "arquivo": "ORIZON RATING 25112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:33.630314",
+        "arquivo": "PARACATU RATING 04032026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:33.932040",
+        "arquivo": "PARAGOMINAS RATING 18112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:36.367899",
+        "arquivo": "QAIR BRASIL RATING 09012026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:36.559536",
+        "arquivo": "RAIZEN 16042026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:38.722751",
+        "arquivo": "ROMI RATING 31102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:38.821026",
+        "arquivo": "ROMI_24062025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:39.606560",
+        "arquivo": "SABESP 23062026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:39.688895",
+        "arquivo": "SABESP RATING 10112025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:39.788016",
+        "arquivo": "SABESP_27052025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: EMPRESA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:40.157598",
+        "arquivo": "SALOBO METAIS RATING 12112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:40.236142",
+        "arquivo": "SAMARCO 13102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:40.576189",
+        "arquivo": "SAMARCO 25082025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:41.198907",
+        "arquivo": "SANEPAR RATING 17102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:41.383450",
+        "arquivo": "SANSUY 10062025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:41.837713",
+        "arquivo": "SAVOY MATRIZ 27042026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:42.241688",
+        "arquivo": "SCALA DATA CENTERS RATING 18112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:43.934262",
+        "arquivo": "SOFTYS BRASIL RATING 03122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:44.508310",
+        "arquivo": "SOLAR ENERGIAS RATING 12122025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:44.997250",
+        "arquivo": "SOUTH32 RATING 09122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:45.812662",
+        "arquivo": "SUZANO_26062025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:46.208962",
+        "arquivo": "Santander 02012024.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 38.1% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:48.701695",
+        "arquivo": "TERNIUM RATING 27102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:49.777214",
+        "arquivo": "TRANSPETRO 25082025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:49.888359",
+        "arquivo": "TRANSPETRO 25082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:50.007777",
+        "arquivo": "TRANSPETRO RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:50.395712",
+        "arquivo": "TRENS DE SP 21082025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: EMPRESA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:50.821931",
+        "arquivo": "TUPY RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:52.625632",
+        "arquivo": "URUCUIA GERAÇÃO 20082025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:53.200561",
+        "arquivo": "USIMINAS RATING 05112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:53.430665",
+        "arquivo": "USINAGEM TIMBO RATING 05022026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:53.909079",
+        "arquivo": "VALE 20072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:54.163807",
+        "arquivo": "VALE RATING 04112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:54.550236",
+        "arquivo": "VALLOUREC TUBOS RATING 08012025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:56.008913",
+        "arquivo": "VOLKSWAGEN RATING 08012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:56.405442",
+        "arquivo": "VOTORANTIM CIMENTOS RATING.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:56.644079",
+        "arquivo": "VOTORANTIM NNE 20082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:56.756718",
+        "arquivo": "VOTORANTIM NNE RATING 22122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:56.870063",
+        "arquivo": "VOTORANTIM RATING 05112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:57.103789",
+        "arquivo": "VTAL Rede Neutra 23072025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:57.308591",
+        "arquivo": "Vista Foods 15122023.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:58.399077",
+        "arquivo": "WEG RATING 04112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:59.135337",
+        "arquivo": "WHITE MARTINS RATING 30102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:59.195122",
+        "arquivo": "YARA 13072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-16T13:37:59.422031",
+        "arquivo": "ZILOR 27052026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: EMPRESA",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    }
+]

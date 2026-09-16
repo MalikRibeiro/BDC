@@ -5,6 +5,8 @@ from __future__ import annotations
 import logging
 import calendar
 import pandas as pd
+import shutil
+import uuid
 
 from datetime import datetime
 from pathlib import Path
@@ -12,6 +14,9 @@ from typing import Any
 
 from app.context import AppContext
 from common.dados import normalizar_coluna_cnpj
+from common.hashing import arquivo_hash
+from common.servico_desduplicacao import tem_hash_duplicado
+from storage.armazenamento_manifest import historico_de_ingestao_de_carga, anexar_registro_de_manifesto
 from services.connectors.denodo_connector import buscar_denodo
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
@@ -78,32 +83,90 @@ def processar_contratos_denodo(context: AppContext) -> dict[str, Any]:
 
     try:
         input_dir = context.path("entradas") / "contratos_denodo"
-        arquivos_locais = list(input_dir.glob("*.csv"))
+        vigente_dir = input_dir / "vigente"
+        processadas_dir = input_dir / "processadas"
+        rejeitadas_dir = input_dir / "rejeitadas"
+        
+        vigente_dir.mkdir(parents=True, exist_ok=True)
+        processadas_dir.mkdir(parents=True, exist_ok=True)
+        rejeitadas_dir.mkdir(parents=True, exist_ok=True)
+        
+        staging_dir = context.path("staging") / "denodo"
+        staging_dir.mkdir(parents=True, exist_ok=True)
+
+        ingestion_log_path = context.path("bronze_ingestion_log") / "contratos_denodo_ingestion.jsonl"
+        history = historico_de_ingestao_de_carga(ingestion_log_path)
+
+        # Checa se existe um arquivo manual ou legado solto em entradas/contratos_denodo
+        arquivos_legado = list(input_dir.glob("*.csv"))
+        if arquivos_legado:
+            for al in arquivos_legado:
+                shutil.move(str(al), str(vigente_dir / al.name))
+
+        arquivos_locais = list(vigente_dir.glob("*.csv"))
         
         df_raw = pd.DataFrame()
+        source_file = None
+        staging_file = None
+        
         if arquivos_locais:
-            arquivo = max(arquivos_locais, key=lambda f: f.stat().st_mtime)
-            logger.info("Lendo contratos de arquivo local: %s (Ignorando API para evitar timeout da rede)", arquivo.name)
-            try:
-                df_raw = pd.read_csv(arquivo, sep=",", dtype=str)
-                if len(df_raw.columns) < 5:
-                    df_raw = pd.read_csv(arquivo, sep=";", dtype=str)
-            except Exception:
-                df_raw = pd.read_csv(arquivo, sep=";", dtype=str)
+            source_file = max(arquivos_locais, key=lambda f: f.stat().st_mtime)
+            logger.info("Lendo contratos de arquivo local: %s (Ignorando API)", source_file.name)
+            staging_file = staging_dir / source_file.name
+            shutil.copy2(source_file, staging_file)
         else:
-            logger.info("Iniciando extração da view vwi_exportar_contrato via REST.")
+            logger.info("Iniciando extração da view vwi_exportar_contrato via REST (Staging File Proxy).")
             colunas_necessarias = "ano,mes,ncdempresaproprietaria,id_parte,id_tipo_contrato,id_contraparte,contrato_vinculado,id_status,quant_contratada,quant_sazonalizada,parte_apelido,contraparte_apelido,contraparte_cnpj,nome_contrato,suprimento_inicio,suprimento_termino,status"
             parametros_api = {
                 "$select": colunas_necessarias, 
                 "$filter": "ano >= 2024 AND parte_apelido = 'COPEL COM' AND id_parte = 297 AND ncdempresaproprietaria = 297"
             }
-            df_raw = buscar_denodo("vwi_exportar_contrato", params=parametros_api)
+            df_api = buscar_denodo("vwi_exportar_contrato", params=parametros_api)
+            
+            if df_api.empty:
+                return {"run_id": run_id, "status": "SEM_DADOS", "linhas": 0}
+                
+            staging_file = staging_dir / f"api_snapshot_{run_id}.parquet"
+            df_api.to_parquet(staging_file, index=False)
+            source_file = staging_file
+
+        hash_arquivo = arquivo_hash(staging_file)
         
-        if df_raw.empty: return {"run_id": run_id, "status": "SEM_DADOS", "linhas": 0}
+        silver_dir_check = context.path("silver") / "denodo_contratos_silver"
+        silver_file_check = silver_dir_check / "contratos_correntes.parquet"
+
+        if tem_hash_duplicado(history, hash_arquivo) and silver_file_check.exists():
+            logger.info("Hash de Contratos Denodo duplicado (%s). Ignorando pipeline por idempotência.", hash_arquivo)
+            if arquivos_locais and source_file:
+                shutil.move(str(source_file), str(processadas_dir / source_file.name))
+            return {"run_id": run_id, "status": "IGNORADO_DUPLICADO", "linhas": 0}
+
+        manifest_record = {
+            "documento_id": str(uuid.uuid4()),
+            "run_id": run_id,
+            "tipo_ficha": "DENODO_CONTRATOS",
+            "arquivo_nome": source_file.name,
+            "hash_arquivo": hash_arquivo,
+            "data_processamento": datetime.now().isoformat(timespec="seconds"),
+            "status_extracao": "SUCESSO"
+        }
 
         bronze_dir = context.path("bronze") / "snapshots_fontes" / "denodo"
         bronze_dir.mkdir(parents=True, exist_ok=True)
-        df_raw.to_parquet(bronze_dir / f"raw_contratos_{run_id}.parquet", index=False)
+        bronze_file = bronze_dir / f"raw_contratos_{run_id}{staging_file.suffix}"
+        shutil.copy2(staging_file, bronze_file)
+        
+        anexar_registro_de_manifesto(str(ingestion_log_path), manifest_record)
+
+        if staging_file.suffix == ".parquet":
+            df_raw = pd.read_parquet(staging_file)
+        else:
+            try:
+                df_raw = pd.read_csv(staging_file, sep=",", dtype=str)
+                if len(df_raw.columns) < 5:
+                    df_raw = pd.read_csv(staging_file, sep=";", dtype=str)
+            except Exception:
+                df_raw = pd.read_csv(staging_file, sep=";", dtype=str)
 
         df_silver = aplicar_regras_negocio_pandas(df_raw)
         df_silver.columns = [str(c).strip().upper() for c in df_silver.columns]
@@ -152,8 +215,13 @@ def processar_contratos_denodo(context: AppContext) -> dict[str, Any]:
         dir_reconciliacao = context.path("silver") / "denodo_contratos_silver"
         escrever_conjunto_de_dados_silver(records=df_silver_final.to_dict(orient="records"), output_dir=dir_reconciliacao, filename="contratos_correntes")
         
+        if arquivos_locais and source_file:
+            shutil.move(str(source_file), str(processadas_dir / source_file.name))
+
         logger.info("Contratos agregados e sem duplicidades salvos. %d registros limpos", len(df_silver_final))
         return {"run_id": run_id, "linhas_processadas": len(df_silver_final), "status": "SUCESSO"}
     except Exception as exc:
         logger.exception("Falha crítica na ingestão de contratos do Denodo.")
+        if 'source_file' in locals() and arquivos_locais and source_file:
+             shutil.move(str(source_file), str(rejeitadas_dir / source_file.name))
         raise Exception(f"Erro na ingestão Denodo: {exc}") from exc

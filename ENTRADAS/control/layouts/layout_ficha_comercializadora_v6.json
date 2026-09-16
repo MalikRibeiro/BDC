@@ -337,7 +337,6 @@
         "MATURIDADE_CALCULADA": {
             "sheet": "FichaIndividual",
             "label_cell": "A16",
-            "search_pattern": "MATURIDADE",
             "value_cell": "B16",
             "data_type": "float",
             "implemented": true
@@ -345,7 +344,6 @@
         "CATEGORIA_CPURA": {
             "sheet": "FichaIndividual",
             "label_cell": "A20",
-            "search_pattern": "CATEGORIA.*COMERCIALIZADORA.*PURA|CATEGORIA.*PURA",
             "value_cell": "B20",
             "data_type": "text",
             "implemented": true
@@ -353,7 +351,6 @@
         "CATEGORIA_GRUPO": {
             "sheet": "FichaIndividual",
             "label_cell": "A21",
-            "search_pattern": "CATEGORIA.*COMERCIALIZADORA.*GRUPO|CATEGORIA.*GRUPO",
             "value_cell": "B21",
             "data_type": "text",
             "implemented": true
@@ -361,7 +358,6 @@
         "NOTA_AUDITORIA": {
             "sheet": "FichaIndividual",
             "label_cell": "L68",
-            "search_pattern": "DEMONSTRACOES FINANCEIRAS AUDITADAS.*REDUCAO|AUDITADAS.*REDUCAO",
             "value_cell": "M68",
             "data_type": "text",
             "implemented": true
@@ -369,7 +365,6 @@
         "SCORE_PD": {
             "sheet": "FichaIndividual",
             "label_cell": "L72",
-            "search_pattern": "^\\s*Probabilidade de Default\\s*$",
             "value_cell": "N72",
             "data_type": "float",
             "implemented": true
@@ -377,7 +372,6 @@
         "SCORE_FCO_ROL": {
             "sheet": "FichaIndividual",
             "label_cell": "L73",
-            "search_pattern": "^\\s*FCO/ROL\\s*$",
             "value_cell": "N73",
             "data_type": "float",
             "implemented": true
@@ -385,7 +379,6 @@
         "SCORE_ROA": {
             "sheet": "FichaIndividual",
             "label_cell": "L74",
-            "search_pattern": "^\\s*ROA\\s*$",
             "value_cell": "N74",
             "data_type": "float",
             "implemented": true
@@ -393,7 +386,6 @@
         "SCORE_ROE": {
             "sheet": "FichaIndividual",
             "label_cell": "L75",
-            "search_pattern": "^\\s*ROE\\s*$",
             "value_cell": "N75",
             "data_type": "float",
             "implemented": true
@@ -401,7 +393,6 @@
         "NOTA_PD": {
             "sheet": "FichaIndividual",
             "label_cell": "L72",
-            "search_pattern": "^\\s*Probabilidade de Default\\s*$",
             "value_cell": "M72",
             "data_type": "text",
             "implemented": true
@@ -409,7 +400,6 @@
         "NOTA_FCO_ROL": {
             "sheet": "FichaIndividual",
             "label_cell": "L73",
-            "search_pattern": "^\\s*FCO/ROL\\s*$",
             "value_cell": "M73",
             "data_type": "text",
             "implemented": true
@@ -417,7 +407,6 @@
         "NOTA_ROA": {
             "sheet": "FichaIndividual",
             "label_cell": "L74",
-            "search_pattern": "^\\s*ROA\\s*$",
             "value_cell": "M74",
             "data_type": "text",
             "implemented": true
@@ -425,7 +414,6 @@
         "NOTA_ROE": {
             "sheet": "FichaIndividual",
             "label_cell": "L75",
-            "search_pattern": "^\\s*ROE\\s*$",
             "value_cell": "M75",
             "data_type": "text",
             "implemented": true

@@ -13,8 +13,6 @@ from gold.regras_gold import (
     status_metodologia,
     checar_contrato_obrigatorio
 )
-from src.domain.controlador.servico_controlador import herdar_risco_controladoras
-from src.services.connectors.controlador_connector import buscar_planilha_controlador
 
 def carregar_entradas_gold(context: Any, logger: logging.Logger) -> dict[str, pd.DataFrame]:
     silver_dir = context.path("silver")
@@ -88,6 +86,9 @@ def salvar_visao_gold(context: Any, df_gold: pd.DataFrame, hoje: datetime, run_i
     gold_dir = context.path("saidas") / "gold" / "visao_operacional_negocio"
     gold_dir.mkdir(parents=True, exist_ok=True)
     
+    # Prevenção e correção de Nulos Literais vazados por astype(str)
+    df_gold = df_gold.replace(["None", "nan", "<NA>", "NaN", "NaT", "N/A"], pd.NA)
+    
     out_parquet = gold_dir / f"Visao_Operacional_BDC_{hoje.strftime('%Y%m%d')}.parquet"
     out_latest = gold_dir / "Visao_Operacional_BDC_LATEST.parquet"
     out_csv = gold_dir / f"Visao_Operacional_BDC_{hoje.strftime('%Y%m%d')}.csv"
@@ -121,240 +122,19 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
     cols_contra = [c for c in ["CNPJ", "CNPJ_RAIZ", "SIGLA", "NOME", "SEGMENTO_METODOLOGICO", "SITUACAO_CADASTRAL"] if c in df_contraparte.columns]
     df_gold = df_contraparte[cols_contra].copy()
 
-    # Garante que todo CNPJ com contrato sobreviva na Gold (mesmo sem contraparte mapeada)
-    if not df_contratos.empty:
-        cnpjs_contratos = set(df_contratos["CNPJ"].dropna().unique())
-        cnpjs_gold = set(df_gold["CNPJ"].dropna().unique())
-        cnpjs_faltantes = cnpjs_contratos - cnpjs_gold
-        if cnpjs_faltantes:
-            df_missing = pd.DataFrame({"CNPJ": list(cnpjs_faltantes)})
-            df_missing["CNPJ_RAIZ"] = df_missing["CNPJ"].str[:8]
-            df_gold = pd.concat([df_gold, df_missing], ignore_index=True)
+    # 1. Integrar Contratos (Denodo e Volume Enquadramento)
+    from gold.servico_contratos import integrar_contratos_gold
+    df_gold = integrar_contratos_gold(df_gold, df_contratos, hoje)
 
-    if not df_analises.empty:
-        erros = validar_coluna_cnpj_canonica(df_analises)
-        if erros:
-            raise ValueError("Dataset Silver fora do contrato (analises): " + "; ".join(erros))
-        checar_contrato_obrigatorio(df_analises, ["CNPJ"], "analises")
-        
-        if "DATA_CALCULO" in df_analises.columns and "DATA_ANALISE" not in df_analises.columns:
-            df_analises["DATA_ANALISE"] = df_analises["DATA_CALCULO"]
-        if "DATA_DEMONSTRACAO_FINANCEIRA" in df_analises.columns and "DATA_BALANCO_USADO" not in df_analises.columns:
-            df_analises["DATA_BALANCO_USADO"] = df_analises["DATA_DEMONSTRACAO_FINANCEIRA"]
-        if "DATA_DF" in df_analises.columns and "DATA_BALANCO_USADO" not in df_analises.columns:
-            df_analises["DATA_BALANCO_USADO"] = df_analises["DATA_DF"]
-            
-        def extrair_rating_valido(row):
-            from common.nulos import is_nulo_textual
-            for col in ["RATING_COPEL", "NOTA_CREDITO", "NOTA_BOARD", "RATING"]:
-                val = row.get(col)
-                if pd.notna(val) and not is_nulo_textual(val):
-                    return str(val).strip().upper()
-            return pd.NA
+    # 2. Integrar Análises de Crédito (PD, Rating, Validades)
+    from gold.servico_analises import integrar_analises_gold, integrar_bureau_gold
+    df_gold = integrar_analises_gold(df_gold, df_analises, hoje)
 
-        def extrair_pd_valido(row):
-            from common.nulos import is_nulo_textual
-            for col in ["PROBABILIDADE_DEFAULT", "PD_PERCENTUAL", "PD"]:
-                val = row.get(col)
-                if pd.notna(val) and not is_nulo_textual(val):
-                    return val
-            return pd.NA
+    # 3. Integrar Risco e Reconciliação (MtM)
+    from gold.servico_risco import integrar_risco_gold
+    df_gold = integrar_risco_gold(df_gold, df_risco, df_reconciliacao)
 
-        if "RATING_FINAL" not in df_analises.columns:
-            df_analises["RATING_FINAL"] = df_analises.apply(extrair_rating_valido, axis=1)
-            
-        if "PD_FINAL" not in df_analises.columns:
-            df_analises["PD_FINAL"] = df_analises.apply(extrair_pd_valido, axis=1)
-            
-        if "MODELO" in df_analises.columns and "MODELO_METODOLOGICO" not in df_analises.columns:
-            df_analises["MODELO_METODOLOGICO"] = df_analises["MODELO"]
-        if "versao_ficha" in df_analises.columns and "MODELO_METODOLOGICO" not in df_analises.columns:
-            df_analises["MODELO_METODOLOGICO"] = df_analises["versao_ficha"]
-
-        col_sort = "DATA_ANALISE" if "DATA_ANALISE" in df_analises.columns else ("DATA_BALANCO_USADO" if "DATA_BALANCO_USADO" in df_analises.columns else "CNPJ")
-        if col_sort in df_analises.columns and col_sort != "CNPJ":
-            df_analises["_DT_SORT"] = pd.to_datetime(df_analises[col_sort], errors="coerce")
-            df_analises = df_analises.sort_values("_DT_SORT", na_position="first").drop_duplicates("CNPJ", keep="last")
-        else:
-            df_analises = df_analises.drop_duplicates("CNPJ", keep="last")
-
-        dt_balanco = pd.to_datetime(df_analises.get("DATA_BALANCO_USADO"), errors="coerce")
-        dt_analise = pd.to_datetime(df_analises.get("DATA_ANALISE"), errors="coerce")
-        
-        mask_balanco = (dt_balanco.dt.year > 1900) & (dt_balanco.notna())
-        mask_analise = (dt_analise.dt.year > 1900) & (dt_analise.notna())
-        
-        df_analises["VALIDADE_DT"] = pd.NaT
-        df_analises.loc[mask_balanco, "VALIDADE_DT"] = dt_balanco.loc[mask_balanco] + pd.DateOffset(years=1, months=4)
-        df_analises.loc[~mask_balanco & mask_analise, "VALIDADE_DT"] = dt_analise.loc[~mask_balanco & mask_analise] + pd.DateOffset(years=1)
-
-        if "SITUACAO_ANALISE" not in df_analises.columns:
-            df_analises["SITUACAO_ANALISE"] = df_analises["VALIDADE_DT"].apply(
-                lambda dt: "VIGENTE" if pd.notnull(dt) and dt >= hoje else ("VENCIDA" if pd.notnull(dt) else "VENCIDA")
-            )
-        else:
-            mask_null = df_analises["SITUACAO_ANALISE"].isna() | (df_analises["SITUACAO_ANALISE"].astype(str).str.strip().isin(["", "None", "nan", "<NA>"]))
-            df_analises.loc[mask_null, "SITUACAO_ANALISE"] = df_analises.loc[mask_null, "VALIDADE_DT"].apply(
-                lambda dt: "VIGENTE" if pd.notnull(dt) and dt >= hoje else ("VENCIDA" if pd.notnull(dt) else "VENCIDA")
-            )
-
-        if "SITUACAO_DF" not in df_analises.columns:
-            df_analises["SITUACAO_DF"] = "RECEBIDA"
-        else:
-            df_analises["SITUACAO_DF"] = df_analises["SITUACAO_DF"].fillna("RECEBIDA")
-
-
-        df_analises["TEM_ANALISE"] = "SIM"
-            
-        cols_analise_payload = [
-            c for c in [
-                "SITUACAO_ANALISE", "SITUACAO_DF", "RATING_FINAL", "PD_FINAL", 
-                "MODELO_METODOLOGICO", "PATRIMONIO_LIQUIDO", "DATA_ANALISE", "DATA_BALANCO_USADO", "TEM_ANALISE",
-                "MOTIVO_AUSENCIA_DF", "TIPO_EVENTO_MANUAL", "ORIGEM_REGISTRO", "VALIDADE_EXCECAO", "STATUS_CALCULO_PD",
-                "FCO", "LUCRO_LIQUIDO", "ROA", "QUANTIDADE_RESTRITIVOS", "SCORE_BUREAU"
-            ] if c in df_analises.columns
-        ]
-
-        df_gold = pd.merge(
-            df_gold, 
-            df_analises[["CNPJ"] + cols_analise_payload], 
-            on="CNPJ", 
-            how="left"
-        )
-
-        df_analises["_EH_MATRIZ"] = df_analises["CNPJ"].str[8:12] == "0001"
-        sort_raiz = ["_EH_MATRIZ"]
-        if "_DT_SORT" in df_analises.columns:
-            sort_raiz.append("_DT_SORT")
-            
-        df_analises_raiz = (
-            df_analises.sort_values(sort_raiz, ascending=[True] * len(sort_raiz))
-            .drop_duplicates(subset=["CNPJ_RAIZ"], keep="last")
-        )
-        
-        df_fallback = df_analises_raiz[["CNPJ_RAIZ"] + cols_analise_payload].copy()
-        df_fallback.columns = ["CNPJ_RAIZ"] + [f"{c}_RAIZ" for c in cols_analise_payload]
-
-        if "CNPJ_RAIZ" in df_gold.columns:
-            df_gold = pd.merge(df_gold, df_fallback, on="CNPJ_RAIZ", how="left")
-            for col in cols_analise_payload:
-                col_raiz = f"{col}_RAIZ"
-                if col_raiz in df_gold.columns:
-                    df_gold[col] = df_gold[col].combine_first(df_gold[col_raiz])
-                    df_gold = df_gold.drop(columns=[col_raiz])
-    
-    if "TEM_ANALISE" not in df_gold.columns:
-        df_gold["TEM_ANALISE"] = "NÃO"
-    df_gold["TEM_ANALISE"] = df_gold["TEM_ANALISE"].fillna("NÃO")
-
-    if not df_contratos.empty:
-        erros = validar_coluna_cnpj_canonica(df_contratos)
-        if erros:
-            raise ValueError("Dataset Silver fora do contrato (contratos): " + "; ".join(erros))
-        checar_contrato_obrigatorio(df_contratos, ["CNPJ_RAIZ"], "contratos")
-
-        col_vol = "VOLUME_CONTRATADO_MENSAL_MWM" if "VOLUME_CONTRATADO_MENSAL_MWM" in df_contratos.columns else "VOLUME_MWM"
-        if col_vol in df_contratos.columns:
-            df_contratos["VOLUME_MWM"] = pd.to_numeric(df_contratos[col_vol], errors="coerce").fillna(0.0)
-        else:
-            df_contratos["VOLUME_MWM"] = 0.0
-        
-        if "ano" in df_contratos.columns and "mes" in df_contratos.columns:
-            df_mensal = df_contratos.groupby(["CNPJ_RAIZ", "ano", "mes"], as_index=False)["VOLUME_MWM"].sum()
-            df_vol_enquadramento = df_mensal.groupby("CNPJ_RAIZ", as_index=False)["VOLUME_MWM"].max()
-        else:
-            df_vol_enquadramento = df_contratos.groupby("CNPJ_RAIZ", as_index=False)["VOLUME_MWM"].max()
-
-        col_id = "NUMERO_REFERENCIA_CONTRATO"
-        col_in = "SUPRIMENTO_INICIO"
-        if col_in not in df_contratos.columns:
-            col_in = "VIGENCIA_INICIO" if "VIGENCIA_INICIO" in df_contratos.columns else "inicio_suprimento"
-            
-        col_out = "SUPRIMENTO_TERMINO"
-        if col_out not in df_contratos.columns:
-            col_out = "VIGENCIA_FIM" if "VIGENCIA_FIM" in df_contratos.columns else "fim_suprimento"
-
-        df_contratos["DT_INICIO"] = pd.to_datetime(df_contratos.get(col_in), errors="coerce")
-        df_contratos["DT_FIM"] = pd.to_datetime(df_contratos.get(col_out), errors="coerce")
-        
-        df_contratos["EH_VIGENTE"] = (
-            (df_contratos.get("STATUS", df_contratos.get("id_status", "")).astype(str).str.upper().str.contains("ATIVO|EM SUPRIMENTO|2")) &
-            (df_contratos["DT_INICIO"] <= hoje) &
-            (df_contratos["DT_FIM"] >= hoje)
-        )
-        df_contratos["EH_FUTURO"] = (df_contratos["DT_INICIO"] > hoje)
-
-        col_nome_contrato = "CONTRAPARTE_APELIDO" if "CONTRAPARTE_APELIDO" in df_contratos.columns else "CNPJ"
-        
-        resumo_contratos = df_contratos.groupby("CNPJ").agg(
-            QUANTIDADE_CONTRATOS=(col_id, "nunique") if col_id in df_contratos.columns else ("CNPJ", "count"),
-            NUMERACAO_CONTRATOS=(col_id, lambda x: ", ".join(x.dropna().astype(str).unique())) if col_id in df_contratos.columns else ("CNPJ", lambda x: ""),
-            STATUS_CONTRATUAL=("EH_VIGENTE", lambda x: "CONTRATO_VIGENTE" if x.any() else ("CONTRATO_FUTURO" if df_contratos.loc[x.index, "EH_FUTURO"].any() else "SEM_CONTRATO")),
-            PROXIMO_INICIO=("DT_INICIO", "min"),
-            PROXIMO_FIM=("DT_FIM", "max"),
-            NOME_CONTRATO_FALLBACK=(col_nome_contrato, lambda x: next((v for v in x.dropna() if str(v).strip() != ""), ""))
-        ).reset_index()
-
-        resumo_contratos["ANO_INICIO_CONTRATO"] = resumo_contratos["PROXIMO_INICIO"].dt.year.fillna(0).astype(int)
-
-        resumo_contratos["CNPJ_RAIZ"] = resumo_contratos["CNPJ"].str[:8]
-        df_contratos_gold = pd.merge(resumo_contratos, df_vol_enquadramento[["CNPJ_RAIZ", "VOLUME_MWM"]], on="CNPJ_RAIZ", how="left")
-        df_gold = pd.merge(df_gold, df_contratos_gold, on="CNPJ", how="left")
-        
-        # Fallback de NOME com base no CONTRAPARTE_APELIDO do contrato
-        if "NOME_CONTRATO_FALLBACK" in df_gold.columns:
-            mask_nome_vazio = df_gold["NOME"].isna() | (df_gold["NOME"].astype(str).str.strip() == "") | (df_gold["NOME"].astype(str).str.lower() == "nan")
-            df_gold.loc[mask_nome_vazio, "NOME"] = df_gold.loc[mask_nome_vazio, "NOME_CONTRATO_FALLBACK"]
-            df_gold = df_gold.drop(columns=["NOME_CONTRATO_FALLBACK"])
-    else:
-        df_gold["STATUS_CONTRATUAL"] = "SEM_CONTRATO"
-        df_gold["VOLUME_MWM"] = 0.0
-        df_gold["NUMERACAO_CONTRATOS"] = ""
-        df_gold["QUANTIDADE_CONTRATOS"] = 0
-        df_gold["ANO_INICIO_CONTRATO"] = 0
-        df_gold["PROXIMO_INICIO"] = pd.NaT
-        df_gold["PROXIMO_FIM"] = pd.NaT
-        
-    df_gold["TEM_CONTRATO"] = df_gold["STATUS_CONTRATUAL"].apply(lambda x: "SIM" if x in ["CONTRATO_VIGENTE", "CONTRATO_FUTURO"] else "NÃO")
-
-    if not df_risco.empty:
-        erros = validar_coluna_cnpj_canonica(df_risco)
-        if erros:
-            raise ValueError("Dataset Silver fora do contrato (risco): " + "; ".join(erros))
-        checar_contrato_obrigatorio(df_risco, ["CNPJ"], "risco")
-        df_risco = df_risco.drop_duplicates(subset=["CNPJ"], keep="last")
-        
-        if "PE_REAIS" in df_risco.columns:
-            cols_risco = [c for c in ["CNPJ", "EAD_VALOR", "LGD_LIQUIDA", "PE_REAIS"] if c in df_risco.columns]
-            df_gold = pd.merge(df_gold, df_risco[cols_risco], on="CNPJ", how="left")
-        else:
-            col_mtm = "FINANCEIRO_MTM" if "FINANCEIRO_MTM" in df_risco.columns else ("MTM" if "MTM" in df_risco.columns else None)
-            if col_mtm:
-                df_gold = pd.merge(df_gold, df_risco[["CNPJ", col_mtm]].rename(columns={col_mtm: "EAD_VALOR"}), on="CNPJ", how="left")
-                df_gold["PE_REAIS"] = 0.0
-
-    if not df_reconciliacao.empty:
-        erros = validar_coluna_cnpj_canonica(df_reconciliacao)
-        if erros:
-            raise ValueError("Dataset Silver fora do contrato (reconciliacao): " + "; ".join(erros))
-        checar_contrato_obrigatorio(df_reconciliacao, ["CNPJ"], "reconciliacao")
-        df_reconciliacao = df_reconciliacao.drop_duplicates(subset=["CNPJ"], keep="last")
-        
-        cols_recon = [c for c in ["CNPJ", "STATUS_CONCILIACAO", "MTM_POSITIVO_TOTAL"] if c in df_reconciliacao.columns]
-        df_gold = pd.merge(df_gold, df_reconciliacao[cols_recon], on="CNPJ", how="left")
-        
-        if "MTM_POSITIVO_TOTAL" in df_gold.columns:
-            df_gold["POSICAO_MTM"] = pd.to_numeric(df_gold["MTM_POSITIVO_TOTAL"], errors="coerce").fillna(0.0)
-            df_gold = df_gold.drop(columns=["MTM_POSITIVO_TOTAL"])
-        else:
-            df_gold["POSICAO_MTM"] = 0.0
-            
-        if "STATUS_CONCILIACAO" not in df_gold.columns:
-            df_gold["STATUS_CONCILIACAO"] = "DIVERGENTE"
-    else:
-        df_gold["POSICAO_MTM"] = 0.0
-        df_gold["STATUS_CONCILIACAO"] = "DIVERGENTE"
-
+    # 4. Finalização e Regras de Negócio Básicas
     colunas_esperadas = [
         "VOLUME_MWM", "EAD_VALOR", "PE_REAIS", "PATRIMONIO_LIQUIDO", "QUANTIDADE_CONTRATOS", 
         "STATUS_CONTRATUAL", "SITUACAO_ANALISE", "SITUACAO_DF", "SITUACAO_CADASTRAL"
@@ -386,55 +166,19 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
     if "MOTIVO_AUSENCIA_DF" not in df_gold.columns:
         df_gold["MOTIVO_AUSENCIA_DF"] = df_gold["SITUACAO_DF"].apply(lambda x: "NAO_ENVIADA_PELA_CONTRAPARTE" if x == "NAO_RECEBIDA" else pd.NA)
 
-    if not df_eventos.empty and "CNPJ" in df_eventos.columns:
-        from common.identificadores import normalizar_cnpj
-        
-        df_ev_vigentes = df_eventos[df_eventos["STATUS_EVENTO"] == "VIGENTE"].copy() if "STATUS_EVENTO" in df_eventos.columns else df_eventos.copy()
-        df_ev_vigentes["CNPJ"] = df_ev_vigentes["CNPJ"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
-        df_ev_vigentes = df_ev_vigentes.dropna(subset=["CNPJ"])
-        
-        cnpjs_manuais = set(df_ev_vigentes["CNPJ"].unique())
-        df_gold["INDICADOR_DADO_MANUAL"] = df_gold["CNPJ"].apply(lambda x: "SIM" if x in cnpjs_manuais else "NÃO")
-        
-        if not df_ev_vigentes.empty and "CAMPO_AFETADO" in df_ev_vigentes.columns and "VALOR_NOVO" in df_ev_vigentes.columns:
-            df_ev_vigentes["CAMPO_AFETADO"] = df_ev_vigentes["CAMPO_AFETADO"].replace({
-                "NOTA_CREDITO": "RATING_FINAL",
-                "RATING": "RATING_FINAL",
-                "NOTA_BOARD": "RATING_FINAL",
-                "NOTA_BUREAU": "RATING_FINAL",
-                "PD": "PD_FINAL",
-                "PROBABILIDADE_DEFAULT": "PD_FINAL"
-            })
-            
-            df_ev_dedup = df_ev_vigentes.drop_duplicates(subset=["CNPJ", "CAMPO_AFETADO"], keep="last")
-            df_ev_pivot = df_ev_dedup.pivot(index="CNPJ", columns="CAMPO_AFETADO", values="VALOR_NOVO").reset_index()
-            
-            for col in df_ev_pivot.columns:
-                if col != "CNPJ" and col in df_gold.columns:
-                    df_gold = pd.merge(df_gold, df_ev_pivot[["CNPJ", col]], on="CNPJ", how="left", suffixes=("", "_MANUAL"))
-                    
-                    col_manual = f"{col}_MANUAL"
-                    if col_manual in df_gold.columns:
-                        mask_manual = df_gold[col_manual].notna() & (df_gold[col_manual].astype(str).str.strip().str.upper() != "NONE")
-                        mask_none = df_gold[col_manual].astype(str).str.strip().str.upper() == "NONE"
-                        
-                        if mask_manual.any():
-                            if pd.api.types.is_numeric_dtype(df_gold[col]):
-                                valores_convertidos = pd.to_numeric(df_gold.loc[mask_manual, col_manual], errors="coerce")
-                                df_gold.loc[mask_manual, col] = valores_convertidos.astype(df_gold[col].dtype)
-                            else:
-                                df_gold.loc[mask_manual, col] = df_gold.loc[mask_manual, col_manual]
-                        if mask_none.any():
-                            df_gold.loc[mask_none, col] = pd.NA
-                            
-                        df_gold = df_gold.drop(columns=[col_manual])
-    else:
-        df_gold["INDICADOR_DADO_MANUAL"] = "NÃO"
+    # 5. Aplicar Eventos Manuais (Overrides)
+    from gold.servico_eventos_manuais import integrar_eventos_manuais_gold
+    df_gold = integrar_eventos_manuais_gold(df_gold, df_eventos)
 
-    if "ORIGEM_REGISTRO" in df_gold.columns:
-        df_gold["ORIGEM_ANALISE"] = df_gold["ORIGEM_REGISTRO"].fillna("FICHA")
+    if "ORIGEM_ANALISE" not in df_gold.columns:
+        if "ORIGEM_REGISTRO" in df_gold.columns:
+            df_gold["ORIGEM_ANALISE"] = df_gold["ORIGEM_REGISTRO"].fillna("FICHA")
+        else:
+            df_gold["ORIGEM_ANALISE"] = "FICHA"
     else:
-        df_gold["ORIGEM_ANALISE"] = "FICHA"
+        df_gold["ORIGEM_ANALISE"] = df_gold["ORIGEM_ANALISE"].fillna(
+            df_gold["ORIGEM_REGISTRO"] if "ORIGEM_REGISTRO" in df_gold.columns else "FICHA"
+        )
 
     if "VALIDADE_EXCECAO" not in df_gold.columns:
         df_gold["VALIDADE_EXCECAO"] = pd.NaT
@@ -444,37 +188,9 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
     else:
         df_gold["PATRIMONIO_LIQUIDO_AJUSTADO"] = pd.NA
 
-    if not df_bureau.empty and "CNPJ" in df_bureau.columns:
-        df_b_unique = df_bureau.drop_duplicates("CNPJ", keep="last").copy()
-        
-        colunas_bureau = ["CNPJ"]
-        for col in ["RATING_BUREAU", "PD_BUREAU", "SCORE_BUREAU", "RESTRITIVOS", "DATA_CONSULTA"]:
-            if col in df_b_unique.columns:
-                colunas_bureau.append(col)
-                
-        df_gold = pd.merge(df_gold, df_b_unique[colunas_bureau], on="CNPJ", how="left")
-        
-        if "METODOLOGIA_EXIGIDA" in df_gold.columns:
-            mask_bureau = df_gold["METODOLOGIA_EXIGIDA"] == "BUREAU"
-            
-            if "RATING_BUREAU" in df_gold.columns:
-                if "RATING_FINAL" not in df_gold.columns:
-                    df_gold["RATING_FINAL"] = pd.NA
-                df_gold.loc[mask_bureau, "RATING_FINAL"] = df_gold.loc[mask_bureau, "RATING_BUREAU"]
-                    
-            if "PD_BUREAU" in df_gold.columns:
-                df_gold["PD_BUREAU"] = pd.to_numeric(df_gold["PD_BUREAU"], errors="coerce")
-                if "PD_FINAL" not in df_gold.columns:
-                    df_gold["PD_FINAL"] = pd.NA
-                df_gold["PD_FINAL"] = pd.to_numeric(df_gold["PD_FINAL"], errors="coerce")
-                df_gold.loc[mask_bureau, "PD_FINAL"] = df_gold.loc[mask_bureau, "PD_BUREAU"]
+    # 6. Integrar Bureau RISK3 (Local e Herança)
+    df_gold = integrar_bureau_gold(df_gold, df_bureau)
 
-        if "SCORE_BUREAU" not in df_gold.columns: df_gold["SCORE_BUREAU"] = pd.NA
-        if "RESTRITIVOS" not in df_gold.columns: df_gold["RESTRITIVOS"] = pd.NA
-    else:
-        df_gold["SCORE_BUREAU"] = pd.NA
-        df_gold["RESTRITIVOS"] = pd.NA
-        
     df_gold["DATA_DA_ANALISE"] = pd.NA
     if "DATA_BALANCO_USADO" in df_gold.columns:
         df_gold["DATA_DA_ANALISE"] = df_gold["DATA_BALANCO_USADO"]
@@ -483,22 +199,8 @@ def construir_visao_consolidada(dfs: dict[str, pd.DataFrame], run_id: str, hoje:
         mask_bureau = df_gold["METODOLOGIA_EXIGIDA"] == "BUREAU"
         df_gold.loc[mask_bureau, "DATA_DA_ANALISE"] = df_gold.loc[mask_bureau, "DATA_CONSULTA"]
 
-    df_controlador = pd.DataFrame()
-    
-    try:
-        df_controlador = buscar_planilha_controlador()
-    except Exception as e:
-        logger.warning(f"Não foi possível carregar a base de Controladoras: {e}. Prosseguindo sem herança de dados.")
-
-    if not df_controlador.empty and "CNPJ" in df_gold.columns:
-        try:
-            df_gold = herdar_risco_controladoras(df_gold, df_controlador, col_cnpj_carteira="CNPJ")
-            logger.info("Herança de risco de Controladoras concluída com sucesso.")
-        except Exception as e:
-            logger.error(f"Erro na aplicação das regras de herança de Controladoras: {e}")
-            logger.warning("Continuando sem herança de Controladoras.")
-    elif df_controlador.empty:
-        logger.info("Base de Controladoras vazia ou não disponível. Prosseguindo sem herança de dados.")
+    # A Herança de Controladoras agora ocorre nativamente na Camada Relacional (fato_analise_credito)
+    # garantindo o Single Source of Truth para todas as visões.
 
     return df_gold
 

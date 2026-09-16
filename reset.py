@@ -73,8 +73,8 @@ def move_files_back_to_pending(category: str) -> int:
 
     return moved
 
-def move_generic_back_to_pending(base_path: Path) -> int:
-    pendentes_dir = base_path / "pendentes"
+def move_generic_back_to_pending(base_path: Path, target_dir_name: str = "pendentes") -> int:
+    pendentes_dir = base_path / target_dir_name
     processadas_dir = base_path / "processadas"
     rejeitadas_dir = base_path / "rejeitadas"
 
@@ -129,11 +129,22 @@ def main() -> None:
     moved_consumidores = move_files_back_to_pending("consumidores")
     moved_overrides = move_generic_back_to_pending(ENTRADAS_DIR / "overrides")
     moved_manual = move_generic_back_to_pending(ENTRADAS_DIR / "atualizacoes_manuais")
+    
+    # Fontes com pasta "vigente"
+    moved_denodo = move_generic_back_to_pending(ENTRADAS_DIR / "contratos_denodo", "vigente")
+    moved_mtm = move_generic_back_to_pending(ENTRADAS_DIR / "mtm", "vigente")
+    moved_salesforce = move_generic_back_to_pending(ENTRADAS_DIR / "salesforce", "vigente")
+    moved_receita = move_generic_back_to_pending(ENTRADAS_DIR / "receita_federal", "vigente")
 
     print(f"Comercializadoras movidas para pendentes: {moved_comercializadoras}")
     print(f"Consumidores movidos para pendentes: {moved_consumidores}")
     print(f"Overrides movidos para pendentes: {moved_overrides}")
     print(f"Carga Manual movidas para pendentes: {moved_manual}")
+    print(f"Contratos Denodo movidos para vigente: {moved_denodo}")
+    print(f"MtM movidos para vigente: {moved_mtm}")
+    print(f"Salesforce movidos para vigente: {moved_salesforce}")
+    print(f"Receita movidos para vigente: {moved_receita}")
+    
     print("Reset concluído. Agora você pode executar novamente o 'python main.py'")
 
 

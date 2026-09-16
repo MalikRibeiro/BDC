@@ -28,6 +28,7 @@ from domain.garantias.servico_garantia import inserir_dados_garantias
 from domain.carga_manual.servico_carga_manual import inserir_dados_carga_manual
 from domain.credito.servico_override import processar_solicitacao_override
 from domain.cadastro.servico_bureau import inserir_dados_bureau
+from domain.controlador.servico_controlador import inserir_dados_controladoras
 from gold.servico_gold import exportar_visao_consolidada_gold
 from relational.facts.fato_exposicao_risco import construir_fato_exposicao_risco
 from relational.facts.fato_analise_credito import construir_fato_analise_credito
@@ -37,7 +38,10 @@ from relational.facts.fato_reconciliacao_contrato_mtm import executar_reconcilia
 from relational.facts.fato_alertas import gerar_fato_alertas_credito
 from relational.facts.fato_alertas_manuais import gerar_fato_alertas_manuais
 from relational.facts.fato_garantia import gerar_fato_garantia
-
+from relational.dimensions.dim_contraparte import processar_dim_contraparte
+from relational.facts.fato_analise_credito import processar_fato_analise_credito
+from relational.facts.fato_exposicao_risco import processar_fato_exposicao_risco
+from gold.servico_limites import exportar_arquivo_limites
 
 def rodar_interface_streamlit():
     app_path = PROJECT_ROOT / "src" / "ui" / "app.py"
@@ -45,84 +49,11 @@ def rodar_interface_streamlit():
         sys.executable, "-m", "streamlit", "run", str(app_path)
     ])
 
-def preparar_e_rodar_risco(context):
-    mtm_path = context.path("silver") / "mtm_consolidado_silver" / "mtm_agregado_contraparte.parquet"
-    df_mtm = pd.read_parquet(mtm_path) if mtm_path.exists() else pd.DataFrame()
-    if df_mtm.empty: return
-        
-    fato_path = context.path("relational_facts") / "fato_analise_credito.parquet"
-    df_fichas = pd.read_parquet(fato_path) if fato_path.exists() else pd.DataFrame()
-
-    df_mtm["CNPJ"] = df_mtm["CNPJ"].astype(str).str.zfill(14)
-    df_exposicoes = df_mtm.copy()
-    
-    if not df_fichas.empty and "CNPJ" in df_fichas.columns:
-        df_fichas["CNPJ"] = df_fichas["CNPJ"].astype(str).str.zfill(14)
-        if "DATA_ANALISE" in df_fichas.columns:
-            df_fichas = df_fichas.sort_values("DATA_ANALISE").drop_duplicates("CNPJ", keep="last")
-            
-        cols_ficha = ["CNPJ"]
-        if "PD_PERCENTUAL" in df_fichas.columns: cols_ficha.append("PD_PERCENTUAL")
-        if "SEGMENTO_METODOLOGICO_FICHA" in df_fichas.columns: cols_ficha.append("SEGMENTO_METODOLOGICO_FICHA")
-        
-        df_exposicoes = pd.merge(df_exposicoes, df_fichas[cols_ficha], on="CNPJ", how="left")
-        
-        if "PD_PERCENTUAL" in df_exposicoes.columns:
-            df_exposicoes["PD_FINAL"] = df_exposicoes["PD_PERCENTUAL"]
-        if "SEGMENTO_METODOLOGICO_FICHA" in df_exposicoes.columns:
-            df_exposicoes["SEGMENTO_METODOLOGICO"] = df_exposicoes["SEGMENTO_METODOLOGICO_FICHA"]
-            
-    if "PD_FINAL" not in df_exposicoes.columns: df_exposicoes["PD_FINAL"] = None
-    if "SEGMENTO_METODOLOGICO" not in df_exposicoes.columns: df_exposicoes["SEGMENTO_METODOLOGICO"] = "NAO_ENQUADRADO"
-    
-    return construir_fato_exposicao_risco(context, df_exposicoes=df_exposicoes)
-
-def preparar_dim_contraparte(context):
-    receita_path = context.path("silver") / "receita_silver" / "receita_cadastral_silver.parquet"
-    enquadra_path = context.path("relational_configs") / f"enquadramento_consumidores_{datetime.now().strftime('%Y%m')}.csv"
-    salesforce_path = context.path("silver") / "salesforce_silver" / "account" / "salesforce_account.parquet"
-    
-    df_receita = pd.read_parquet(receita_path) if receita_path.exists() else pd.DataFrame()
-    df_seg = pd.read_csv(enquadra_path) if enquadra_path.exists() else pd.DataFrame()
-    df_sf_account = pd.read_parquet(salesforce_path) if salesforce_path.exists() else pd.DataFrame()
-    
-    df_fichas = pd.DataFrame()
-    for segmento_dir in ["fichas_comercializadoras_extraidas", "fichas_consumidores_extraidas"]:
-        seg_path = context.path("silver") / segmento_dir
-        if seg_path.exists():
-            parquets = list(seg_path.glob("*.parquet"))
-            if parquets:
-                df_seg_fichas = pd.read_parquet(max(parquets, key=lambda f: f.stat().st_mtime))
-                df_fichas = pd.concat([df_fichas, df_seg_fichas], ignore_index=True)
-
-    from relational.dimensions.dim_contraparte import criar_dim_contraparte
-    return criar_dim_contraparte(
-        context, 
-        df_silver_receita=df_receita, 
-        df_silver_segmentacao=df_seg,
-        df_silver_salesforce_account=df_sf_account,
-        df_silver_fichas=df_fichas
-    )
-    
-def preparar_fato_analise(context):
-    df_fichas = pd.DataFrame()
-    for segmento_dir in ["fichas_comercializadoras_extraidas", "fichas_consumidores_extraidas"]:
-        seg_path = context.path("silver") / segmento_dir
-        if seg_path.exists():
-            parquets = list(seg_path.glob("*.parquet"))
-            if parquets:
-                df_seg = pd.read_parquet(max(parquets, key=lambda f: f.stat().st_mtime))
-                df_fichas = pd.concat([df_fichas, df_seg], ignore_index=True)
-                
-    dim_path = context.path("relational_dimensions") / "dim_contraparte.parquet"
-    if not dim_path.exists():
-        dim_path = context.path("saidas") / "relational" / "dimensions" / "dim_contraparte.parquet"
-    df_dim = pd.read_parquet(dim_path) if dim_path.exists() else pd.DataFrame()
-    return construir_fato_analise_credito(context, df_silver_analises=df_fichas, df_dim_contraparte=df_dim)
-
 class PipelineStep(NamedTuple):
     name: str
     func: Callable[[Any], Any]
+    is_critical: bool = False
+    allow_degraded: bool = False
 
 PIPELINE_STEPS = [
     # BLOCO 1: INGESTaO CORE E OVERRIDES (ATIVO)
@@ -130,26 +61,28 @@ PIPELINE_STEPS = [
     PipelineStep(name="Fichas Consumidores", func=lambda ctx: rodar_fichas_consumidores.main()),
     
     # BLOCO 2: APIS EXTERNAS E CONECTORES
-    PipelineStep(name="Ingestao de Contratos (Denodo)", func=processar_contratos_denodo),
+    PipelineStep(name="Ingestao de Contratos (Denodo)", func=processar_contratos_denodo, is_critical=True),
     PipelineStep(name="Enquadramento de Consumidores", func=lambda ctx: calcular_enquadramento_consumidor(datetime.now().strftime("%Y%m"), ctx)),
     PipelineStep(name="Ingestao de MtM", func=inserir_dados_mtm),
     PipelineStep(name="Ingestao do Salesforce", func=inserir_dados_salesforce),
     PipelineStep(name="Ingestao da Receita Federal", func=inserir_dados_receita), 
     PipelineStep(name="Ingestao de Bureau (RISK3)", func=inserir_dados_bureau),
+    PipelineStep(name="Ingestao de Controladoras", func=inserir_dados_controladoras, allow_degraded=True),
     PipelineStep(name="Ingestao de Garantias", func=inserir_dados_garantias),
     PipelineStep(name="Solicitacoes de Override", func=processar_solicitacao_override),
     PipelineStep(name="Carga Manual (Eventos e Overrides)", func=lambda ctx: inserir_dados_carga_manual(ctx)),
 
     # BLOCO 3: MOTOR DE CRÉDITO E CAMADAS RELACIONAIS
-    PipelineStep(name="Dimensao Contraparte", func=preparar_dim_contraparte),
-    PipelineStep(name="Fato Analise de Credito", func=preparar_fato_analise),
+    PipelineStep(name="Dimensao Contraparte", func=processar_dim_contraparte),
+    PipelineStep(name="Fato Analise de Credito", func=processar_fato_analise_credito),
     PipelineStep(name="Fato Garantia", func=gerar_fato_garantia),
-    PipelineStep(name="Fato Exposicao de Risco", func=preparar_e_rodar_risco),
-    PipelineStep(name="Fato Reconciliacao Denodo x MtM", func=executar_reconciliacao_denodo_mtm),
+    PipelineStep(name="Fato Exposicao de Risco", func=processar_fato_exposicao_risco),
+    PipelineStep(name="Fato Reconciliacao Denodo x MtM", func=executar_reconciliacao_denodo_mtm, is_critical=True),
     PipelineStep(name="Fato Reconciliacao Fichas x Salesforce", func=executar_reconciliacao_fichas_salesforce),
     PipelineStep(name="Alertas de Carga Manual e Exceções", func=gerar_fato_alertas_manuais),
     PipelineStep(name="Visao Consolidada Gold", func=exportar_visao_consolidada_gold),
     PipelineStep(name="Fato Alertas de Credito", func=gerar_fato_alertas_credito),
+    PipelineStep(name="Exportacao de Limites", func=exportar_arquivo_limites),
 
     # BLOCO 4: INTERFACE
     PipelineStep(name="Interface Streamlit", func=lambda ctx: rodar_interface_streamlit()),
@@ -183,23 +116,25 @@ def main() -> int:
     for step in PIPELINE_STEPS:
         try:
             logger_runner.info(f"\n{'=' * 60}\nExecutando Etapa: {step.name}\n{'=' * 60}")
-            import inspect
-            sig = inspect.signature(step.func)
-            if len(sig.parameters) > 0:
-                result = step.func(context)
-            else:
-                result = step.func()
-                
-            if step.name == "Visao Consolidada Gold" and isinstance(result, dict):
-                metricas_operacionais = result
+            
+            result = step.func(context)
                 
             logger_runner.info(f"[OK] '{step.name}' concluido com sucesso.")
             exit_codes.append(0)
+            
         except Exception as e:
+            if step.allow_degraded:
+                logger_runner.warning(
+                    f"[DEGRADADO] A etapa '{step.name}' falhou. "
+                    f"O pipeline operará em modo degradado. Erro: {e}"
+                )
+                exit_codes.append(1)
+                continue
+                
             logger_runner.error(f"[ERRO] '{step.name}' falhou com a excecao: {e}", exc_info=True)
             exit_codes.append(1)
             
-            if step.name in ["Ingestao de Contratos (Denodo)", "Reconciliacao Denodo x MtM"]:
+            if step.is_critical:
                 logger_runner.error(f"[ERRO FATAL] Interrompendo pipeline devido a falha critica em '{step.name}'.")
                 return 1
 

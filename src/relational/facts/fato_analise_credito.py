@@ -14,6 +14,25 @@ from domain.contrapartes.segmentacao import definir_segmento_metodologico
 from domain.credito.pd_motor import calcular_pd_ajustada
 from domain.credito.pd_exceptions import PdInputValidationError
 
+def processar_fato_analise_credito(context: AppContext) -> dict[str, Any]:
+    """Orquestra a leitura de dependências e construção da Fato de Análise de Crédito."""
+    df_fichas = pd.DataFrame()
+    for segmento_dir in ["fichas_comercializadoras_extraidas", "fichas_consumidores_extraidas"]:
+        seg_path = context.path("silver") / segmento_dir
+        if seg_path.exists():
+            parquets = list(seg_path.glob("*.parquet"))
+            if parquets:
+                df_seg = pd.read_parquet(max(parquets, key=lambda f: f.stat().st_mtime))
+                df_fichas = pd.concat([df_fichas, df_seg], ignore_index=True)
+                
+    dim_path = context.path("relational_dimensions") / "dim_contraparte.parquet"
+    if not dim_path.exists():
+        dim_path = context.path("saidas") / "relational" / "dimensions" / "dim_contraparte.parquet"
+    df_dim = pd.read_parquet(dim_path) if dim_path.exists() else pd.DataFrame()
+    
+    return construir_fato_analise_credito(context, df_silver_analises=df_fichas, df_dim_contraparte=df_dim)
+
+
 def construir_fato_analise_credito(
     context: AppContext,
     df_silver_analises: pd.DataFrame,
@@ -117,7 +136,7 @@ def construir_fato_analise_credito(
         registrar_alertas_em_lote(alertas_db, run_id, context)
 
     df_processado = pd.DataFrame(resultados)
-
+    
     if "DATA_CALCULO" in df_processado.columns and "DATA_ANALISE" not in df_processado.columns:
         df_processado["DATA_ANALISE"] = df_processado["DATA_CALCULO"]
     if "RATING_FINAL" not in df_processado.columns and "RATING_COPEL" in df_processado.columns:
@@ -125,7 +144,31 @@ def construir_fato_analise_credito(
     if "MODELO_METODOLOGICO" not in df_processado.columns and "versao_ficha" in df_processado.columns:
         df_processado["MODELO_METODOLOGICO"] = df_processado["versao_ficha"]
 
-    for col in ["ANALISE_ID", "DATA_ANALISE", "RATING_FINAL", "PD_FINAL", "SCORE_TOTAL", "CLASSE_RISCO", "MODELO_METODOLOGICO", "DATA_DEMONSTRACAO_FINANCEIRA", "SEGMENTO_PD", "TIPO_FICHA", "PATRIMONIO_LIQUIDO", "SITUACAO_DF", "SITUACAO_ANALISE", "CNPJ_RAIZ", "STATUS_CALCULO_PD"]:
+    # --- HERANÇA DE RISCO DE CONTROLADORAS ---
+    try:
+        from domain.controlador.servico_controlador import herdar_risco_controladoras
+        
+        ctrl_path = context.path("silver") / "mapeamento_controladoras" / "mapeamento_controladoras.parquet"
+        df_controladoras = pd.read_parquet(ctrl_path) if ctrl_path.exists() else pd.DataFrame()
+        
+        if not df_controladoras.empty:
+            if "_STATUS_REGISTRO" in df_controladoras.columns:
+                df_controladoras = df_controladoras[df_controladoras["_STATUS_REGISTRO"] == "VIGENTE"]
+            df_processado = herdar_risco_controladoras(df_processado, df_controladoras, col_cnpj="CNPJ")
+            
+        from domain.controlador.servico_controlador import herdar_risco_filiais
+        
+        path_contratos = context.path("silver") / "denodo_contratos_silver" / "contratos_correntes.parquet"
+        if not path_contratos.exists():
+            path_contratos = context.path("silver") / "denodo_contratos_padronizados" / "contratos_correntes.parquet"
+            
+        df_contratos = pd.read_parquet(path_contratos) if path_contratos.exists() else pd.DataFrame()
+        df_processado = herdar_risco_filiais(df_processado, df_contratos)
+    except Exception as e:
+        logger.warning(f"Bypass Herança de Risco: Não foi possível aplicar herança de controladoras/filiais ({e})")
+    # -----------------------------------------
+
+    for col in ["ANALISE_ID", "DATA_ANALISE", "RATING_FINAL", "PD_FINAL", "SCORE_TOTAL", "CLASSE_RISCO", "MODELO_METODOLOGICO", "DATA_DEMONSTRACAO_FINANCEIRA", "SEGMENTO_PD", "TIPO_FICHA", "PATRIMONIO_LIQUIDO", "SITUACAO_DF", "SITUACAO_ANALISE", "CNPJ_RAIZ", "STATUS_CALCULO_PD", "RESTRITIVOS", "TIPO_ANALISE"]:
         if col not in df_processado.columns:
             df_processado[col] = None
 
@@ -135,7 +178,9 @@ def construir_fato_analise_credito(
         "MODELO_METODOLOGICO": "MODELO", "DATA_DEMONSTRACAO_FINANCEIRA": "DATA_BALANCO_USADO",
         "SEGMENTO_PD": "SEGMENTO_METODOLOGICO_FICHA", "TIPO_FICHA": "TIPO_FICHA",
         "PATRIMONIO_LIQUIDO": "PATRIMONIO_LIQUIDO", "SITUACAO_DF": "SITUACAO_DF",
-        "SITUACAO_ANALISE": "SITUACAO_ANALISE", "STATUS_CALCULO_PD": "STATUS_CALCULO_PD"
+        "SITUACAO_ANALISE": "SITUACAO_ANALISE", "STATUS_CALCULO_PD": "STATUS_CALCULO_PD",
+        "ANALISE_HERDADA": "ANALISE_HERDADA", "ORIGEM_ANALISE": "ORIGEM_ANALISE",
+        "TIPO_ANALISE": "TIPO_ANALISE", "RESTRITIVOS": "RESTRITIVOS"
     }
 
     df_final = df_processado[[c for c in rename_map.keys() if c in df_processado.columns]].rename(columns=rename_map).copy()

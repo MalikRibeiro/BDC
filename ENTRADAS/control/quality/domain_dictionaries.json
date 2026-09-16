@@ -1,301 +1,301 @@
 {
-  "entity": "domain_dictionaries",
-  "version": "1.0.1",
-  "CATEGORIA_GRUPO": {
-    "GERADORA": [
-      "GERADORA",
-      "GERACAO"
-    ],
-    "BANCO": [
-      "BANCO"
-    ],
-    "PETROLEO_E_GAS": [
-      "PETROLEO E GAS",
-      "PETRÓLEO",
-      "OLEO E GAS"
-    ],
-    "MADURA": [
-      "MADURA",
-      "COMERCIALIZADORA MADURA",
-      "CGRUPO MADURA"
-    ],
-    "INICIANTE": [
-      "INICIANTE",
-      "COMERCIALIZADORA INICIANTE"
-    ],
-    "SIDERURGIA": [
-      "SIDERURGIA",
-      "SIDERURGICA",
-      "AÇO"
-    ]
-  },
-  "AGENCIA": {
-    "FITCH": [
-      "FITCH RATINGS",
-      "FITCH",
-      "F.I.T.C.H",
-      "FITCH INC"
-    ],
-    "MOODYS": [
-      "MOODY'S",
-      "MOODYS",
-      "MOODY S",
-      "MOODY"
-    ],
-    "SP": [
-      "STANDARD & POOR'S",
-      "S&P",
-      "STANDARD AND POORS",
-      "STANDARD & POORS",
-      "SP"
-    ]
-  },
-  "AUDITOR": {
-    "DELOITTE": [
-      "DELOITTE",
-      "DELOITTE BRASIL",
-      "DELOITTE TOUCHE",
-      "DELOITTE TOUCHE TOHMATSU",
-      "DELOITTE TOUCHE TOHMATSU AUDITORES INDEPENDENTES"
-    ],
-    "PWC": [
-      "PWC",
-      "PRICEWATERHOUSECOOPERS",
-      "PRICE WATERHOUSE COOPERS"
-    ],
-    "EY": [
-      "EY",
-      "ERNST YOUNG",
-      "ERNST AND YOUNG",
-      "ERNST & YOUNG",
-      "ERNST & YOUNG TERCO"
-    ],
-    "KPMG": [
-      "KPMG",
-      "KPMG AUDITORES",
-      "KPMG AUDITORES INDEPENDENTES",
-      "KPMG BRASIL"
-    ],
-    "BDO": [
-      "BDO",
-      "BDO RCS",
-      "BDO BRASIL"
-    ],
-    "GRANT THORNTON": [
-      "GRANT THORNTON",
-      "GRANT THORNTON BRASIL"
-    ],
-    "BAKER TILLY": [
-      "BAKER TILLY",
-      "BAKER TILLY BRASIL"
-    ],
-    "CROWE HORWATH": [
-      "CROWE",
-      "CROWE HORWATH",
-      "CROWE MACRO"
-    ],
-    "NEXIA INTERNATIONAL": [
-      "NEXIA",
-      "NEXIA INTERNATIONAL",
-      "PP&C"
-    ],
-    "RSM": [
-      "RSM",
-      "RSM BRASIL"
-    ],
-    "CONTADOR": [
-      "CONTADOR"
-    ],
-    "OUTRO": [
-      "OUTRO"
-    ]
-  },
-  "NOTA_CREDITO": {
-    "AAA": [
-      "AAA",
-      "Aaa"
-    ],
-    "AA+": [
-      "AA+",
-      "Aa1"
-    ],
-    "AA": [
-      "AA",
-      "Aa2"
-    ],
-    "AA-": [
-      "AA-",
-      "Aa3"
-    ],
-    "A+": [
-      "A+",
-      "A1"
-    ],
-    "A": [
-      "A",
-      "A2"
-    ],
-    "A-": [
-      "A-",
-      "A3"
-    ],
-    "BBB+": [
-      "BBB+",
-      "Baa1"
-    ],
-    "BBB": [
-      "BBB",
-      "Baa2"
-    ],
-    "BBB-": [
-      "BBB-",
-      "Baa3"
-    ],
-    "BB+": [
-      "BB+",
-      "Ba1"
-    ],
-    "BB": [
-      "BB",
-      "Ba2"
-    ],
-    "BB-": [
-      "BB-",
-      "Ba3"
-    ],
-    "B+": [
-      "B+",
-      "B1"
-    ],
-    "B": [
-      "B",
-      "B2"
-    ],
-    "B-": [
-      "B-",
-      "B3"
-    ],
-    "CCC+": [
-      "CCC+",
-      "Caa1"
-    ],
-    "CCC": [
-      "CCC",
-      "Caa2"
-    ],
-    "CCC-": [
-      "CCC-",
-      "Caa3"
-    ],
-    "CC": [
-      "CC",
-      "Ca"
-    ],
-    "C": [
-      "C"
-    ],
-    "D": [
-      "D",
-      "RD",
-      "SD"
-    ]
-  },
-  "RATING_COPEL": {
-    "A": [
-      "A"
-    ],
-    "B": [
-      "B"
-    ],
-    "C": [
-      "C"
-    ],
-    "D": [
-      "D"
-    ],
-    "E": [
-      "E"
-    ],
-    "F": [
-      "F"
-    ]
-  },
-  "NOTA_BOARD": {
-    "A": [
-      "A"
-    ],
-    "B": [
-      "B"
-    ],
-    "C": [
-      "C"
-    ],
-    "D": [
-      "D"
-    ],
-    "E": [
-      "E"
-    ],
-    "F": [
-      "F"
-    ]
-  },
-  "NOTA_BUREAU": {
-    "A": [
-      "A"
-    ],
-    "B": [
-      "B"
-    ],
-    "C": [
-      "C"
-    ],
-    "D": [
-      "D"
-    ],
-    "E": [
-      "E"
-    ],
-    "F": [
-      "F"
-    ]
-  },
-  "STATUS_CONTRATUAL": {
-    "CONTRATO_VIGENTE": [
-      "CONTRATO_VIGENTE",
-      "VIGENTE",
-      "SIM"
-    ],
-    "CONTRATO_FUTURO": [
-      "CONTRATO_FUTURO",
-      "FUTURO"
-    ],
-    "SEM_CONTRATO": [
-      "SEM_CONTRATO",
-      "NÃO",
-      "NAO"
-    ]
-  },
-  "SITUACAO_DF": {
-    "RECEBIDA": [
-      "RECEBIDA"
-    ],
-    "NAO_RECEBIDA": [
-      "NAO_RECEBIDA"
-    ],
-    "DISPENSADA": [
-      "DISPENSADA"
-    ]
-  },
-  "SITUACAO_ANALISE": {
-    "VIGENTE": [
-      "VIGENTE"
-    ],
-    "VENCIDA": [
-      "VENCIDA"
-    ],
-    "NAO_POSSUI": [
-      "NAO_POSSUI"
-    ]
-  }
+    "entity": "domain_dictionaries",
+    "version": "1.0.1",
+    "CATEGORIA_GRUPO": {
+        "GERADORA": [
+            "GERADORA",
+            "GERACAO"
+        ],
+        "BANCO": [
+            "BANCO"
+        ],
+        "PETROLEO_E_GAS": [
+            "PETROLEO E GAS",
+            "PETRÓLEO",
+            "OLEO E GAS"
+        ],
+        "MADURA": [
+            "MADURA",
+            "COMERCIALIZADORA MADURA",
+            "CGRUPO MADURA"
+        ],
+        "INICIANTE": [
+            "INICIANTE",
+            "COMERCIALIZADORA INICIANTE"
+        ],
+        "SIDERURGIA": [
+            "SIDERURGIA",
+            "SIDERURGICA",
+            "AÇO"
+        ]
+    },
+    "AGENCIA": {
+        "FITCH": [
+            "FITCH RATINGS",
+            "FITCH",
+            "F.I.T.C.H",
+            "FITCH INC"
+        ],
+        "MOODYS": [
+            "MOODY'S",
+            "MOODYS",
+            "MOODY S",
+            "MOODY"
+        ],
+        "SP": [
+            "STANDARD & POOR'S",
+            "S&P",
+            "STANDARD AND POORS",
+            "STANDARD & POORS",
+            "SP"
+        ]
+    },
+    "AUDITOR": {
+        "DELOITTE": [
+            "DELOITTE",
+            "DELOITTE BRASIL",
+            "DELOITTE TOUCHE",
+            "DELOITTE TOUCHE TOHMATSU",
+            "DELOITTE TOUCHE TOHMATSU AUDITORES INDEPENDENTES"
+        ],
+        "PWC": [
+            "PWC",
+            "PRICEWATERHOUSECOOPERS",
+            "PRICE WATERHOUSE COOPERS"
+        ],
+        "EY": [
+            "EY",
+            "ERNST YOUNG",
+            "ERNST AND YOUNG",
+            "ERNST & YOUNG",
+            "ERNST & YOUNG TERCO"
+        ],
+        "KPMG": [
+            "KPMG",
+            "KPMG AUDITORES",
+            "KPMG AUDITORES INDEPENDENTES",
+            "KPMG BRASIL"
+        ],
+        "BDO": [
+            "BDO",
+            "BDO RCS",
+            "BDO BRASIL"
+        ],
+        "GRANT THORNTON": [
+            "GRANT THORNTON",
+            "GRANT THORNTON BRASIL"
+        ],
+        "BAKER TILLY": [
+            "BAKER TILLY",
+            "BAKER TILLY BRASIL"
+        ],
+        "CROWE HORWATH": [
+            "CROWE",
+            "CROWE HORWATH",
+            "CROWE MACRO"
+        ],
+        "NEXIA INTERNATIONAL": [
+            "NEXIA",
+            "NEXIA INTERNATIONAL",
+            "PP&C"
+        ],
+        "RSM": [
+            "RSM",
+            "RSM BRASIL"
+        ],
+        "CONTADOR": [
+            "CONTADOR"
+        ],
+        "OUTRO": [
+            "OUTRO"
+        ]
+    },
+    "NOTA_CREDITO": {
+        "AAA": [
+            "AAA",
+            "Aaa"
+        ],
+        "AA+": [
+            "AA+",
+            "Aa1"
+        ],
+        "AA": [
+            "AA",
+            "Aa2"
+        ],
+        "AA-": [
+            "AA-",
+            "Aa3"
+        ],
+        "A+": [
+            "A+",
+            "A1"
+        ],
+        "A": [
+            "A",
+            "A2"
+        ],
+        "A-": [
+            "A-",
+            "A3"
+        ],
+        "BBB+": [
+            "BBB+",
+            "Baa1"
+        ],
+        "BBB": [
+            "BBB",
+            "Baa2"
+        ],
+        "BBB-": [
+            "BBB-",
+            "Baa3"
+        ],
+        "BB+": [
+            "BB+",
+            "Ba1"
+        ],
+        "BB": [
+            "BB",
+            "Ba2"
+        ],
+        "BB-": [
+            "BB-",
+            "Ba3"
+        ],
+        "B+": [
+            "B+",
+            "B1"
+        ],
+        "B": [
+            "B",
+            "B2"
+        ],
+        "B-": [
+            "B-",
+            "B3"
+        ],
+        "CCC+": [
+            "CCC+",
+            "Caa1"
+        ],
+        "CCC": [
+            "CCC",
+            "Caa2"
+        ],
+        "CCC-": [
+            "CCC-",
+            "Caa3"
+        ],
+        "CC": [
+            "CC",
+            "Ca"
+        ],
+        "C": [
+            "C"
+        ],
+        "D": [
+            "D",
+            "RD",
+            "SD"
+        ]
+    },
+    "RATING_COPEL": {
+        "A": [
+            "A"
+        ],
+        "B": [
+            "B"
+        ],
+        "C": [
+            "C"
+        ],
+        "D": [
+            "D"
+        ],
+        "E": [
+            "E"
+        ],
+        "F": [
+            "F"
+        ]
+    },
+    "NOTA_BOARD": {
+        "A": [
+            "A"
+        ],
+        "B": [
+            "B"
+        ],
+        "C": [
+            "C"
+        ],
+        "D": [
+            "D"
+        ],
+        "E": [
+            "E"
+        ],
+        "F": [
+            "F"
+        ]
+    },
+    "NOTA_BUREAU": {
+        "A": [
+            "A"
+        ],
+        "B": [
+            "B"
+        ],
+        "C": [
+            "C"
+        ],
+        "D": [
+            "D"
+        ],
+        "E": [
+            "E"
+        ],
+        "F": [
+            "F"
+        ]
+    },
+    "STATUS_CONTRATUAL": {
+        "CONTRATO_VIGENTE": [
+            "CONTRATO_VIGENTE",
+            "VIGENTE",
+            "SIM"
+        ],
+        "CONTRATO_FUTURO": [
+            "CONTRATO_FUTURO",
+            "FUTURO"
+        ],
+        "SEM_CONTRATO": [
+            "SEM_CONTRATO",
+            "NÃO",
+            "NAO"
+        ]
+    },
+    "SITUACAO_DF": {
+        "RECEBIDA": [
+            "RECEBIDA"
+        ],
+        "NAO_RECEBIDA": [
+            "NAO_RECEBIDA"
+        ],
+        "DISPENSADA": [
+            "DISPENSADA"
+        ]
+    },
+    "SITUACAO_ANALISE": {
+        "VIGENTE": [
+            "VIGENTE"
+        ],
+        "VENCIDA": [
+            "VENCIDA"
+        ],
+        "NAO_POSSUI": [
+            "NAO_POSSUI"
+        ]
+    }
 }

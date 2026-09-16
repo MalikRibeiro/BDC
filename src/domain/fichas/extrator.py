@@ -191,52 +191,8 @@ def _tipo_extraido_valido(val: Any, data_type: str, field_name: str = "") -> boo
             
     return True
 
-def busca_omnidirecional(leitor: LeitorPlanilha, search_pattern: str, data_type: str, sheet_hint: str = None, field_name: str = "", offset_col: int = None, offset_row: int = None) -> Tuple[Any, dict]:
-    try:
-        regex = re.compile(search_pattern, re.IGNORECASE)
-    except re.error:
-        return None, {}
 
-    sheet_names = leitor.abas_nomes
-    if sheet_hint:
-        hint_clean = str(sheet_hint).replace(" ", "").lower()
-        sheet_names = sorted(sheet_names, key=lambda x: 0 if hint_clean in x.replace(" ", "").lower() else 1)
-
-    for sheet_name in sheet_names:
-        grid = leitor.abas_grid.get(sheet_name, [])
-        for r_idx, row_tuple in enumerate(grid):
-            for c_idx, cell_value in enumerate(row_tuple):
-                if cell_value and isinstance(cell_value, str):
-                    if regex.search(cell_value.strip()):
-                        targets = []
-                        if offset_col is not None or offset_row is not None:
-                            o_col = int(offset_col) if offset_col is not None else 0
-                            o_row = int(offset_row) if offset_row is not None else 0
-                            targets.append((r_idx + o_row, c_idx + o_col))
-                            
-                        default_targets = [(r_idx, c_idx + offset) for offset in range(1, 7)]
-                        default_targets.extend([(r_idx + offset, c_idx) for offset in range(1, 3)])
-                        
-                        for dt in default_targets:
-                            if dt not in targets:
-                                targets.append(dt)
-                        
-                        for tr, tc in targets:
-                            if 0 <= tr < len(grid) and 0 <= tc < len(grid[tr]):
-                                raw_val = grid[tr][tc]
-                                cleaned_val = valor_extraido_limpo(raw_val, data_type)
-                                
-                                if cleaned_val is not None and _tipo_extraido_valido(cleaned_val, data_type, field_name):
-                                    col_letter = get_column_letter(tc + 1)
-                                    coord = f"{col_letter}{tr + 1}"
-                                    return cleaned_val, {
-                                        "celula_origem": coord,
-                                        "aba_origem": sheet_name,
-                                        "metodo": "omnidirectional_regex"
-                                    }
-    return None, {}
-
-def extrair_registro(leitor: LeitorPlanilha, layout_schema: Dict[str, Any], master_catalog: Dict[str, Any] = None, allow_semantic: bool = True) -> Tuple[Dict[str, Any], List[dict[str, Any]]]:
+def extrair_registro(leitor: LeitorPlanilha, layout_schema: Dict[str, Any], master_catalog: Dict[str, Any] = None) -> Tuple[Dict[str, Any], List[dict[str, Any]]]:
     extracted_data = {}
     metadata_list = []
     
@@ -272,9 +228,6 @@ def extrair_registro(leitor: LeitorPlanilha, layout_schema: Dict[str, Any], mast
         layout_field_config = layout_field_config or {}
         
         sheet_hint = layout_field_config.get("sheet") or field_config.get("sheet")
-        offset_col = layout_field_config.get("offset_col")
-        offset_row = layout_field_config.get("offset_row")
-        
         celula_estatica = layout_field_config.get("value_cell") or layout_field_config.get("cell") or field_config.get("value_cell") or field_config.get("cell")
         
         val = None
@@ -297,6 +250,7 @@ def extrair_registro(leitor: LeitorPlanilha, layout_schema: Dict[str, Any], mast
 
                 raw_val = leitor.ler_celula(aba_estatica, celula_estatica)
                 clean_val = valor_extraido_limpo(raw_val, data_type)
+                
                 if clean_val is not None and _tipo_extraido_valido(clean_val, data_type, field_name):
                     val = clean_val
                     meta.update({
@@ -308,33 +262,6 @@ def extrair_registro(leitor: LeitorPlanilha, layout_schema: Dict[str, Any], mast
             except Exception:
                 pass
                 
-        field_allow_semantic = field_config.get("allow_semantic", True)
-
-        if val is None and allow_semantic and field_allow_semantic:
-            patterns = field_config.get("search_patterns")
-            if patterns and isinstance(patterns, list) and len(patterns) > 0:
-                search_pattern = "|".join(patterns)
-            else:
-                search_pattern = field_name.replace("_", r"\s*")
-                    
-            val_dinamico, meta_inf = busca_omnidirecional(
-                leitor, 
-                search_pattern, 
-                data_type, 
-                sheet_hint, 
-                field_name, 
-                offset_col=offset_col,
-                offset_row=offset_row
-            )
-            if val_dinamico is not None:
-                val = val_dinamico
-                meta.update({
-                    "aba_origem": meta_inf.get("aba_origem"),
-                    "celula_origem": meta_inf.get("celula_origem"),
-                    "metodo": meta_inf.get("metodo", "omnidirectional_regex"),
-                    "valor": val
-                })
-
         value_mapping = field_config.get("value_mapping")
         if val is not None and value_mapping:
             val_upper = str(val).strip().upper()
@@ -377,7 +304,6 @@ def extrair_registro(leitor: LeitorPlanilha, layout_schema: Dict[str, Any], mast
 
 def avaliar_vencedor_por_grid(leitor: LeitorPlanilha, layouts: Dict[str, Any], master_catalog: Dict[str, Any] = None) -> Tuple[Dict[str, Any], List[dict[str, Any]], str]:
     
-
     if not master_catalog or "fields" not in master_catalog:
         raise ValueError("master_catalog é obrigatório.")
 
@@ -411,7 +337,6 @@ def avaliar_vencedor_por_grid(leitor: LeitorPlanilha, layouts: Dict[str, Any], m
     logger.info("Extração (Schema): Arquivo lido. %s colunas, %s linhas identificadas na aba '%s'.", colunas_lidas, linhas_lidas, aba_ativa)
 
     layouts_to_test = list(layouts.items())
-    allow_semantic = True
 
     melhor_score = -1.0
     vencedor_dados = {}
@@ -421,7 +346,7 @@ def avaliar_vencedor_por_grid(leitor: LeitorPlanilha, layouts: Dict[str, Any], m
     inicio_extracao = time.perf_counter()
     
     for layout_name, layout_schema in layouts_to_test:
-        extracted, metadata = extrair_registro(leitor, layout_schema, master_catalog, allow_semantic=allow_semantic)
+        extracted, metadata = extrair_registro(leitor, layout_schema, master_catalog)
         score = extracted.get("INTEGRIDADE_EXTRAIDA_PERCENTUAL", 0)
         
         if score > melhor_score:

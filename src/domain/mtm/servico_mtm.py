@@ -8,6 +8,7 @@ Ref: §3.5, §11.6 do Planejamento Funcional.
 from __future__ import annotations
 
 import shutil
+import uuid
 from pathlib import Path
 from datetime import datetime
 from typing import Any
@@ -18,6 +19,9 @@ from app.context import AppContext
 from control.logger import obter_logger
 from services.connectors.mtm_connector import buscar_mtm_consolidado, _encontrar_arquivo_mtm_recente
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
+from common.hashing import arquivo_hash
+from common.servico_desduplicacao import tem_hash_duplicado
+from storage.armazenamento_manifest import historico_de_ingestao_de_carga, anexar_registro_de_manifesto
 
 
 class MtmReconciliationError(Exception):
@@ -64,15 +68,46 @@ def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
                     novo_local = dir_vigente / network_path.name
                     shutil.copy2(str(network_path), str(novo_local))
                     
-        arquivo_bruto = _encontrar_arquivo_mtm_recente(dir_vigente)
+        try:
+            arquivo_bruto = _encontrar_arquivo_mtm_recente(dir_vigente)
+        except FileNotFoundError:
+            logger.warning("Nenhum arquivo de MtM encontrado em vigente.")
+            return {"run_id": run_id, "contrapartes_consolidadas": 0, "status": "SEM_DADOS"}
+
+        # Staging Proxy Pattern
+        staging_dir = context.path("staging") / "mtm"
+        staging_dir.mkdir(parents=True, exist_ok=True)
+        staging_file = staging_dir / arquivo_bruto.name
+        shutil.copy2(arquivo_bruto, staging_file)
+
+        ingestion_log_path = context.path("bronze_ingestion_log") / "mtm_ingestion.jsonl"
+        history = historico_de_ingestao_de_carga(ingestion_log_path)
+        
+        hash_arquivo = arquivo_hash(staging_file)
+        
+        if tem_hash_duplicado(history, hash_arquivo):
+            logger.info("Hash de MtM duplicado (%s). Ignorando pipeline por idempotência.", hash_arquivo)
+            return {"run_id": run_id, "contrapartes_consolidadas": 0, "status": "IGNORADO_DUPLICADO"}
+
+        manifest_record = {
+            "documento_id": str(uuid.uuid4()),
+            "run_id": run_id,
+            "tipo_ficha": "MTM_ARQUIVO",
+            "arquivo_nome": staging_file.name,
+            "hash_arquivo": hash_arquivo,
+            "data_processamento": datetime.now().isoformat(timespec="seconds"),
+            "status_extracao": "SUCESSO"
+        }
 
         bronze_dir = context.path("bronze") / "snapshots_fontes" / "mtm"
         bronze_dir.mkdir(parents=True, exist_ok=True)
 
         nome_bronze = f"raw_mtm_{datetime.now().strftime('%Y%m%d')}_{arquivo_bruto.name}"
         caminho_bronze = bronze_dir / nome_bronze
-        shutil.copy2(arquivo_bruto, caminho_bronze)
+        shutil.copy2(staging_file, caminho_bronze)
         logger.info("Snapshot bruto salvo na Bronze em: %s", caminho_bronze)
+        
+        anexar_registro_de_manifesto(str(ingestion_log_path), manifest_record)
 
         df_mtm = buscar_mtm_consolidado(input_dir=dir_vigente, logger=logger)
 

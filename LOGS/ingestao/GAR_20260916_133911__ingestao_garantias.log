@@ -1,0 +1,3 @@
+2026-09-16 13:39:11 | INFO | bdc.garantias | Iniciando ingestão de Garantias (Modo CSV Local).
+2026-09-16 13:39:11 | INFO | bdc.garantias | Lendo garantias do arquivo local: garantias.csv
+2026-09-16 13:39:14 | INFO | bdc.garantias | Ingestão de garantias na Silver concluída. Registros salvos: 36251

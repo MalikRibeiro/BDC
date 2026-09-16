@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import shutil
+import uuid
 from pathlib import Path
 from datetime import datetime
 from typing import Any
@@ -13,7 +14,9 @@ from app.context import AppContext
 from control.logger import obter_logger
 from services.connectors.salesforce_connector import buscar_salesforce_dados
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
-
+from common.hashing import arquivo_hash
+from common.servico_desduplicacao import tem_hash_duplicado
+from storage.armazenamento_manifest import historico_de_ingestao_de_carga, anexar_registro_de_manifesto
 
 class SalesforceIngestionError(Exception):
     """Exceção para falhas na ingestão da base do Salesforce."""
@@ -33,21 +36,63 @@ def inserir_dados_salesforce(context: AppContext) -> dict[str, Any]:
         logger.info("Iniciando processo de ingestão da base do Salesforce.")
 
         input_dir = context.path("entradas") / "salesforce"
-        arquivo_bruto = input_dir / "salesforce.xlsx"
+        vigente_dir = input_dir / "vigente"
+        processadas_dir = input_dir / "processadas"
+        
+        vigente_dir.mkdir(parents=True, exist_ok=True)
+        processadas_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Move arquivo legado solto
+        arquivo_legado = input_dir / "salesforce.xlsx"
+        if arquivo_legado.exists():
+            shutil.move(str(arquivo_legado), str(vigente_dir / "salesforce.xlsx"))
+            
+        arquivos = list(vigente_dir.glob("*.xlsx"))
 
-        if not arquivo_bruto.exists():
-            logger.warning("Arquivo salesforce.xlsx não encontrado na entrada.")
+        if not arquivos:
+            logger.warning("Nenhum arquivo Salesforce encontrado na entrada vigente.")
             return {"run_id": run_id, "status": "SEM_DADOS"}
+            
+        arquivo_bruto = max(arquivos, key=lambda f: f.stat().st_mtime)
+
+        # Staging Proxy Pattern
+        staging_dir = context.path("staging") / "salesforce"
+        staging_dir.mkdir(parents=True, exist_ok=True)
+        staging_file = staging_dir / arquivo_bruto.name
+        shutil.copy2(arquivo_bruto, staging_file)
+
+        ingestion_log_path = context.path("bronze_ingestion_log") / "salesforce_ingestion.jsonl"
+        history = historico_de_ingestao_de_carga(ingestion_log_path)
+        
+        hash_arquivo = arquivo_hash(staging_file)
+        
+        if tem_hash_duplicado(history, hash_arquivo):
+            logger.info("Hash de Salesforce duplicado (%s). Ignorando pipeline por idempotência.", hash_arquivo)
+            shutil.move(str(arquivo_bruto), str(processadas_dir / arquivo_bruto.name))
+            return {"run_id": run_id, "linhas_account": 0, "status": "IGNORADO_DUPLICADO"}
+
+        manifest_record = {
+            "documento_id": str(uuid.uuid4()),
+            "run_id": run_id,
+            "tipo_ficha": "SALESFORCE_EXCEL",
+            "arquivo_nome": staging_file.name,
+            "hash_arquivo": hash_arquivo,
+            "data_processamento": datetime.now().isoformat(timespec="seconds"),
+            "status_extracao": "SUCESSO"
+        }
 
         bronze_dir = context.path("bronze") / "snapshots_fontes" / "salesforce"
         bronze_dir.mkdir(parents=True, exist_ok=True)
 
-        nome_bronze = f"raw_salesforce_{datetime.now().strftime('%Y%m%d')}_{arquivo_bruto.name}"
+        nome_bronze = f"raw_salesforce_{run_id}_{staging_file.name}"
         caminho_bronze = bronze_dir / nome_bronze
-        shutil.copy2(arquivo_bruto, caminho_bronze)
+        shutil.copy2(staging_file, caminho_bronze)
         logger.info("Snapshot bruto salvo na Bronze em: %s", caminho_bronze.name)
+        
+        anexar_registro_de_manifesto(str(ingestion_log_path), manifest_record)
 
-        dfs_sf = buscar_salesforce_dados(input_dir=input_dir, logger=logger)
+        # Continuação com o Staging File (garantindo que se usa a cópia estável)
+        dfs_sf = buscar_salesforce_dados(input_dir=staging_dir, logger=logger)
         
         df_account = dfs_sf.get("Account", pd.DataFrame())
         df_cotacao = dfs_sf.get("Cotacao", pd.DataFrame())
@@ -109,6 +154,8 @@ def inserir_dados_salesforce(context: AppContext) -> dict[str, Any]:
                     filename=f"salesforce_{nome}"
                 )
                 arquivos_salvos.append(nome)
+                
+        shutil.move(str(arquivo_bruto), str(processadas_dir / arquivo_bruto.name))
 
         logger.info("Ingestão do Salesforce concluída. Objetos salvos: %s", ", ".join(arquivos_salvos))
 

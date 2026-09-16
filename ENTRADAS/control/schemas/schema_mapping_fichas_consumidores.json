@@ -9,22 +9,30 @@
       "CELULA_PADRAO_1",
       "ABA_PADRAO_2",
       "CELULA_RUBRICA_PADRAO_2",
-      "CELULA_PADRAO_2",
-      "ABA_PADRAO_3",
-      "CELULA_RUBRICA_PADRAO_3",
-      "CELULA_PADRAO_3"
+      "CELULA_PADRAO_2"
     ],
     "properties": {
-      "RUBRICAS": { "type": "string" },
-      "ABA_PADRAO_1": { "type": "string" },
-      "CELULA_RUBRICA_PADRAO_1": { "type": "string" },
-      "CELULA_PADRAO_1": { "type": "string" },
-      "ABA_PADRAO_2": { "type": "string" },
-      "CELULA_RUBRICA_PADRAO_2": { "type": "string" },
-      "CELULA_PADRAO_2": { "type": "string" },
-      "ABA_PADRAO_3": { "type": "string" },
-      "CELULA_RUBRICA_PADRAO_3": { "type": "string" },
-      "CELULA_PADRAO_3": { "type": "string" }
+      "RUBRICAS": {
+        "type": "string"
+      },
+      "ABA_PADRAO_1": {
+        "type": "string"
+      },
+      "CELULA_RUBRICA_PADRAO_1": {
+        "type": "string"
+      },
+      "CELULA_PADRAO_1": {
+        "type": "string"
+      },
+      "ABA_PADRAO_2": {
+        "type": "string"
+      },
+      "CELULA_RUBRICA_PADRAO_2": {
+        "type": "string"
+      },
+      "CELULA_PADRAO_2": {
+        "type": "string"
+      }
     },
     "additionalProperties": false
   }

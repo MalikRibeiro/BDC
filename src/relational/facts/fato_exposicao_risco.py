@@ -16,6 +16,46 @@ from domain.credito.motor_lgd import calcular_lgd
 from domain.credito.motor_pe import calcular_perda_esperada
 from domain.credito.motor_taxa_risco import calcular_taxa_risco
 
+def processar_fato_exposicao_risco(context: AppContext) -> dict[str, Any] | None:
+    """Orquestra a leitura do MtM e Fato de Crédito para gerar a Exposição de Risco."""
+    mtm_path = context.path("silver") / "mtm_consolidado_silver" / "mtm_agregado_contraparte.parquet"
+    df_mtm = pd.read_parquet(mtm_path) if mtm_path.exists() else pd.DataFrame()
+    if df_mtm.empty: 
+        return None
+        
+    fato_path = context.path("relational_facts") / "credito" / "fato_analise_credito.parquet"
+    if not fato_path.exists():
+        fato_path = context.path("relational_facts") / "fato_analise_credito.parquet" # fallback antigo
+        
+    df_fichas = pd.read_parquet(fato_path) if fato_path.exists() else pd.DataFrame()
+
+    df_mtm["CNPJ"] = df_mtm["CNPJ"].astype(str).str.zfill(14)
+    df_exposicoes = df_mtm.copy()
+    
+    if not df_fichas.empty and "CNPJ" in df_fichas.columns:
+        df_fichas["CNPJ"] = df_fichas["CNPJ"].astype(str).str.zfill(14)
+        if "DATA_ANALISE" in df_fichas.columns:
+            df_fichas = df_fichas.sort_values("DATA_ANALISE").drop_duplicates("CNPJ", keep="last")
+            
+        cols_ficha = ["CNPJ"]
+        
+        if "PD_PERCENTUAL" in df_fichas.columns: cols_ficha.append("PD_PERCENTUAL")
+        if "SEGMENTO_METODOLOGICO_FICHA" in df_fichas.columns: cols_ficha.append("SEGMENTO_METODOLOGICO_FICHA")
+        
+        df_fichas = df_fichas[cols_ficha]
+        df_exposicoes = pd.merge(df_exposicoes, df_fichas, on="CNPJ", how="left")
+        
+        if "PD_PERCENTUAL" in df_exposicoes.columns:
+            df_exposicoes["PD_FINAL"] = df_exposicoes["PD_PERCENTUAL"]
+        if "SEGMENTO_METODOLOGICO_FICHA" in df_exposicoes.columns:
+            df_exposicoes["SEGMENTO_METODOLOGICO"] = df_exposicoes["SEGMENTO_METODOLOGICO_FICHA"]
+            
+    if "PD_FINAL" not in df_exposicoes.columns: df_exposicoes["PD_FINAL"] = None
+    if "SEGMENTO_METODOLOGICO" not in df_exposicoes.columns: df_exposicoes["SEGMENTO_METODOLOGICO"] = "NAO_ENQUADRADO"
+    
+    return construir_fato_exposicao_risco(context, df_exposicoes=df_exposicoes)
+
+
 def construir_fato_exposicao_risco(
     context: AppContext,
     df_exposicoes: pd.DataFrame,

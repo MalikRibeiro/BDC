@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import json
 import logging
-import re
+import uuid
+import shutil
 from datetime import date, datetime
 from pathlib import Path
 from typing import Any
@@ -17,6 +18,9 @@ from domain.enums import StatusAlerta
 from relational.facts.fato_alerta_util import registrar_alerta
 from services.connectors.receita_connector import buscar_receita_dados_lote
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
+from common.hashing import arquivo_hash
+from common.servico_desduplicacao import tem_hash_duplicado
+from storage.armazenamento_manifest import historico_de_ingestao_de_carga, anexar_registro_de_manifesto
 
 LOGGER = logging.getLogger(__name__)
 
@@ -50,15 +54,6 @@ def _listar_cnpjs_de_entrada(context: AppContext) -> list[str]:
 
     return list(set(cnpjs_limpos))
 
-def _salvar_instantaneo_bruto(context: AppContext, payload: list[dict[str, Any]]) -> Path:
-    bronze_dir = context.path("bronze") / "snapshots_fontes" / "receita"
-    bronze_dir.mkdir(parents=True, exist_ok=True)
-    filename = f"raw_receita_{date.today().strftime('%Y%m%d')}.json"
-    target = bronze_dir / filename
-    target.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    return target
-
-from control.logger import obter_logger
 
 def inserir_dados_receita(context: AppContext) -> dict[str, Any]:
     run_id = f"REC_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -76,8 +71,41 @@ def inserir_dados_receita(context: AppContext) -> dict[str, Any]:
         logger.warning("Consulta da Receita retornou DataFrame vazio.")
         return {"run_id": run_id, "linhas_processadas": 0, "alertas_gerados_cad001": 0, "status": "SEM_DADOS"}
 
+    # --- INÍCIO DO PROXY DE STAGING ---
     payload = df_receita.to_dict(orient="records")
-    _salvar_instantaneo_bruto(context, payload)
+    
+    staging_dir = context.path("staging") / "receita"
+    staging_dir.mkdir(parents=True, exist_ok=True)
+    staging_file = staging_dir / f"api_snapshot_receita_{run_id}.json"
+    
+    staging_file.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    
+    ingestion_log_path = context.path("bronze_ingestion_log") / "receita_ingestion.jsonl"
+    history = historico_de_ingestao_de_carga(ingestion_log_path)
+    
+    hash_arquivo = arquivo_hash(staging_file)
+    
+    if tem_hash_duplicado(history, hash_arquivo):
+        logger.info("Hash de Receita duplicado (%s). Ignorando pipeline por idempotência.", hash_arquivo)
+        return {"run_id": run_id, "linhas_processadas": 0, "alertas_gerados_cad001": 0, "status": "IGNORADO_DUPLICADO"}
+        
+    manifest_record = {
+        "documento_id": str(uuid.uuid4()),
+        "run_id": run_id,
+        "tipo_ficha": "RECEITA_API",
+        "arquivo_nome": staging_file.name,
+        "hash_arquivo": hash_arquivo,
+        "data_processamento": datetime.now().isoformat(timespec="seconds"),
+        "status_extracao": "SUCESSO"
+    }
+
+    bronze_dir = context.path("bronze") / "snapshots_fontes" / "receita"
+    bronze_dir.mkdir(parents=True, exist_ok=True)
+    bronze_file = bronze_dir / f"raw_receita_{run_id}.json"
+    shutil.copy2(staging_file, bronze_file)
+    
+    anexar_registro_de_manifesto(str(ingestion_log_path), manifest_record)
+    # --- FIM DO PROXY DE STAGING ---
 
     df_receita = df_receita.drop_duplicates(subset=["CNPJ"], keep="last").reset_index(drop=True)
     df_receita["RUN_ID"] = run_id
@@ -125,7 +153,6 @@ def inserir_dados_receita(context: AppContext) -> dict[str, Any]:
         filename=f"receita_cadastral_silver_{run_id}",
     )
 
-    import shutil
     latest_path = silver_dir / "receita_cadastral_silver.parquet"
     versioned_path = silver_dir / f"receita_cadastral_silver_{run_id}.parquet"
     if latest_path.exists():

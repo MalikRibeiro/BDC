@@ -20,11 +20,10 @@ def validar_estrutura_do_layout(layout: dict[str, Any], versao: str, logger: Any
             continue
             
         has_static = "value_cell" in config and config["value_cell"] not in [None, "0", 0]
-        has_dynamic = "search_pattern" in config and config["search_pattern"] not in [None, ""]
         
-        if not has_static and not has_dynamic:
+        if not has_static:
             logger.debug(
-                "Layout '%s' - Campo '%s': sem âncora estática ou dinâmica. Retornará vazio.", 
+                "Layout '%s' - Campo '%s': sem âncora estática. Retornará vazio.", 
                 versao, field_name
             )
 
@@ -62,7 +61,7 @@ def carregar_layouts_comercializadoras(
         if logger is not None:
             logger.info("Iniciando carga dos layouts de comercializadoras.")
 
-        for version in range(1, 8):
+        for version in range(1, 7):
             key = f"layout_ficha_comercializadora_v{version}"
             layout_path = context.control_file(key)
 
@@ -98,7 +97,7 @@ def carregar_layouts_consumidores(
         if logger is not None:
             logger.info("Iniciando carga dos layouts de consumidores.")
 
-        for version in range(1, 4):
+        for version in range(1, 3):
             key = f"layout_ficha_consumidor_v{version}"
             layout_path = context.control_file(key)
 

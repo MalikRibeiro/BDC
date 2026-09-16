@@ -8,12 +8,50 @@ import pandas as pd
 from app.context import AppContext
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
+def processar_dim_contraparte(context: AppContext) -> dict[str, Any]:
+    """Orquestra a leitura de dependências e construção da Dimensão de Contraparte."""
+    logger = logging.getLogger("bdc.gold.dim_contraparte")
+    logger.info("Iniciando processamento da Dimensão de Contraparte...")
+    
+    receita_path = context.path("silver") / "receita_silver" / "receita_cadastral_silver.parquet"
+    enquadra_path = context.path("relational_configs") / f"enquadramento_consumidores_{datetime.now().strftime('%Y%m')}.csv"
+    salesforce_path = context.path("silver") / "salesforce_silver" / "account" / "salesforce_account.parquet"
+    
+    df_receita = pd.read_parquet(receita_path) if receita_path.exists() else pd.DataFrame()
+    df_seg = pd.read_csv(enquadra_path) if enquadra_path.exists() else pd.DataFrame()
+    df_sf_account = pd.read_parquet(salesforce_path) if salesforce_path.exists() else pd.DataFrame()
+    
+    ctrl_path = context.path("silver") / "mapeamento_controladoras" / "mapeamento_controladoras.parquet"
+    df_ctrl = pd.read_parquet(ctrl_path) if ctrl_path.exists() else pd.DataFrame()
+    if not df_ctrl.empty and "_STATUS_REGISTRO" in df_ctrl.columns:
+        df_ctrl = df_ctrl[df_ctrl["_STATUS_REGISTRO"] == "VIGENTE"]
+    
+    df_fichas = pd.DataFrame()
+    for segmento_dir in ["fichas_comercializadoras_extraidas", "fichas_consumidores_extraidas"]:
+        seg_path = context.path("silver") / segmento_dir
+        if seg_path.exists():
+            parquets = list(seg_path.glob("*.parquet"))
+            if parquets:
+                df_seg_fichas = pd.read_parquet(max(parquets, key=lambda f: f.stat().st_mtime))
+                df_fichas = pd.concat([df_fichas, df_seg_fichas], ignore_index=True)
+
+    return criar_dim_contraparte(
+        context, 
+        df_silver_receita=df_receita, 
+        df_silver_segmentacao=df_seg,
+        df_silver_salesforce_account=df_sf_account,
+        df_silver_fichas=df_fichas,
+        df_controladoras=df_ctrl
+    )
+
+
 def criar_dim_contraparte(
     context: AppContext, 
     df_silver_receita: pd.DataFrame, 
     df_silver_segmentacao: pd.DataFrame,
     df_silver_salesforce_account: pd.DataFrame = None,
-    df_silver_fichas: pd.DataFrame = None
+    df_silver_fichas: pd.DataFrame = None,
+    df_controladoras: pd.DataFrame = None
 ) -> dict[str, Any]:
     run_id = f"DIM_CTR_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     logger = logging.getLogger("bdc.gold.dim_contraparte")
@@ -60,7 +98,21 @@ def criar_dim_contraparte(
     df_dim["NOME"] = df_dim["NOME_SF"].combine_first(df_dim["NOME_FICHA"])
     df_dim["SIGLA"] = df_dim["SIGLA_SF"].combine_first(df_dim["SIGLA_FICHA"])
 
-    df_dim = df_dim.dropna(subset=["CNPJ"])
+    # --- Enriquecimento com Grupo Econômico (Controladoras) ---
+    if df_controladoras is not None and not df_controladoras.empty:
+        df_ctrl_sub = df_controladoras[["CNPJ_SUBSIDIARIA", "CNPJ_CONTA_ATRELADA", "CONTA_ATRELADA"]].rename(columns={
+            "CNPJ_SUBSIDIARIA": "CNPJ",
+            "CNPJ_CONTA_ATRELADA": "CNPJ_CONTROLADORA",
+            "CONTA_ATRELADA": "NOME_CONTROLADORA"
+        }).drop_duplicates(subset=["CNPJ"], keep="last")
+        df_dim = pd.merge(df_dim, df_ctrl_sub, on="CNPJ", how="left")
+    else:
+        df_dim["CNPJ_CONTROLADORA"] = None
+        df_dim["NOME_CONTROLADORA"] = None
+
+    df_dim["GRUPO_ECONOMICO"] = df_dim["NOME_CONTROLADORA"].combine_first(df_dim["NOME"])
+    # --------------------------------------------------------
+
     df_dim = df_dim.dropna(subset=["CNPJ"])
     df_dim["CNPJ_RAIZ"] = df_dim["CNPJ"].str[:8]
     
@@ -75,7 +127,8 @@ def criar_dim_contraparte(
     schema_dim = {
         "CNPJ": "CNPJ", "NOME": "NOME", "SIGLA": "SIGLA", "CNPJ_RAIZ": "CNPJ_RAIZ", 
         "SITUACAO_CADASTRAL": "SITUACAO_CADASTRAL", "CNAE_PRINCIPAL": "SETOR", 
-        "SEGMENTO_METODOLOGICO": "SEGMENTO_METODOLOGICO"
+        "SEGMENTO_METODOLOGICO": "SEGMENTO_METODOLOGICO",
+        "GRUPO_ECONOMICO": "GRUPO_ECONOMICO", "CNPJ_CONTROLADORA": "CNPJ_CONTROLADORA"
     }
     
     df_final = df_dim[list(schema_dim.keys())].rename(columns=schema_dim).copy()

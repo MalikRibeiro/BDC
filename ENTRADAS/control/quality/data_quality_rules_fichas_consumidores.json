@@ -1,27 +1,27 @@
 {
-  "required_fields": [
-    "EMPRESA",
-    "CNPJ"
-  ],
-  "rules": [
-    {
-      "rule_id": "PD_RANGE",
-      "field": "PROBABILIDADE_DEFAULT",
-      "type": "range",
-      "min": 0,
-      "max": 100
-    },
-    {
-      "rule_id": "SCORE_BUREAU_NON_NEGATIVE",
-      "field": "SCORE_BUREAU",
-      "type": "min",
-      "value": 0
-    },
-    {
-      "rule_id": "QUANTIDADE_RESTRITIVOS_NON_NEGATIVE",
-      "field": "QUANTIDADE_RESTRITIVOS",
-      "type": "min",
-      "value": 0
-    }
-  ]
+    "required_fields": [
+        "EMPRESA",
+        "CNPJ"
+    ],
+    "rules": [
+        {
+            "rule_id": "PD_RANGE",
+            "field": "PROBABILIDADE_DEFAULT",
+            "type": "range",
+            "min": 0,
+            "max": 100
+        },
+        {
+            "rule_id": "SCORE_BUREAU_NON_NEGATIVE",
+            "field": "SCORE_BUREAU",
+            "type": "min",
+            "value": 0
+        },
+        {
+            "rule_id": "QUANTIDADE_RESTRITIVOS_NON_NEGATIVE",
+            "field": "QUANTIDADE_RESTRITIVOS",
+            "type": "min",
+            "value": 0
+        }
+    ]
 }

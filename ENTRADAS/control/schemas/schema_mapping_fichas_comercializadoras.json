@@ -15,20 +15,17 @@
       "ABA_PADRAO_4",
       "ABA_PADRAO_5",
       "ABA_PADRAO_6",
-      "ABA_PADRAO_7",
       "CELULA_RUBRICA_PADRAO_1",
       "CELULA_RUBRICA_PADRAO_2",
       "CELULA_RUBRICA_PADRAO_3",
       "CELULA_RUBRICA_PADRAO_4",
       "CELULA_RUBRICA_PADRAO_5",
       "CELULA_RUBRICA_PADRAO_6",
-      "CELULA_RUBRICA_PADRAO_7",
       "CELULA_PADRAO_2",
       "CELULA_PADRAO_3",
       "CELULA_PADRAO_4",
       "CELULA_PADRAO_5",
-      "CELULA_PADRAO_6",
-      "CELULA_PADRAO_7"
+      "CELULA_PADRAO_6"
     ],
     "properties": {
       "RUBRICAS": {
@@ -104,18 +101,6 @@
         "pattern": "^(0|[A-Z]{1,3}[1-9][0-9]{0,6})$"
       },
       "CELULA_PADRAO_6": {
-        "type": "string",
-        "pattern": "^(0|[A-Z]{1,3}[1-9][0-9]{0,6})$"
-      },
-      "ABA_PADRAO_7": {
-        "type": "string",
-        "pattern": "^(0|.+)$"
-      },
-      "CELULA_RUBRICA_PADRAO_7": {
-        "type": "string",
-        "pattern": "^(0|[A-Z]{1,3}[1-9][0-9]{0,6})$"
-      },
-      "CELULA_PADRAO_7": {
         "type": "string",
         "pattern": "^(0|[A-Z]{1,3}[1-9][0-9]{0,6})$"
       }

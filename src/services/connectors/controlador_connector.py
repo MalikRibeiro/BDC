@@ -1,7 +1,9 @@
 import logging
 import pandas as pd
+import hashlib
 from pathlib import Path
 from typing import Any
+from datetime import datetime
 
 from src.common.identificadores import normalizar_cnpj
 
@@ -11,9 +13,16 @@ class ControladorErro(Exception):
     """Exceção levantada quando a base de dados de Controlador possui problemas estruturais ou de leitura."""
     pass
 
+def _calcular_hash(caminho_arquivo: Path) -> str:
+    hash_sha256 = hashlib.sha256()
+    with open(caminho_arquivo, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_sha256.update(chunk)
+    return hash_sha256.hexdigest()
+
 def buscar_planilha_controlador(input_dir: str | None = None, logger_arg: Any | None = None) -> pd.DataFrame:
     """
-    Lê a planilha local 'Controladora e Subsidiaria.csv', valida colunas e normaliza CNPJs.
+    Lê a planilha local 'Controladora e Subsidiaria.csv', valida colunas, normaliza CNPJs e insere rastreabilidade.
     """
     log = logger_arg or logger
     data_path = Path(input_dir or "ENTRADAS/controlador")
@@ -27,8 +36,11 @@ def buscar_planilha_controlador(input_dir: str | None = None, logger_arg: Any | 
         
         try:
             df = pd.read_csv(arquivo_alvo, sep=";", encoding="utf-8-sig")
-        except:
-            df = pd.read_csv(arquivo_alvo, sep=",", encoding="utf-8-sig")
+        except (pd.errors.ParserError, UnicodeDecodeError):
+            try:
+                df = pd.read_csv(arquivo_alvo, sep=",", encoding="utf-8-sig")
+            except Exception as inner_e:
+                raise ControladorErro(f"Falha de parser (formato/encoding) ao ler o arquivo CSV: {inner_e}")
         
         df.columns = df.columns.str.strip().str.upper()
         
@@ -37,7 +49,7 @@ def buscar_planilha_controlador(input_dir: str | None = None, logger_arg: Any | 
             "CNPJ CONTROLADOR": "CNPJ_CONTA_ATRELADA",
             "SUBSIDIARIA": "SUBSIDIARIA",
             "CNPJ SUBSIDIÁRIA": "CNPJ_SUBSIDIARIA",
-            "CNPJ SUBSIDIARIA": "CNPJ_SUBSIDIARIA" # Fallback sem acento
+            "CNPJ SUBSIDIARIA": "CNPJ_SUBSIDIARIA"
         }
         
         df = df.rename(columns=mapa_colunas)
@@ -51,14 +63,26 @@ def buscar_planilha_controlador(input_dir: str | None = None, logger_arg: Any | 
         df = df[colunas_esperadas].copy()
         
         log.info("Normalizando CNPJs das Controladoras e Subsidiárias...")
-        df["CNPJ_SUBSIDIARIA"] = df["CNPJ_SUBSIDIARIA"].apply(normalizar_cnpj)
-        df["CNPJ_CONTA_ATRELADA"] = df["CNPJ_CONTA_ATRELADA"].apply(normalizar_cnpj)
+        def _extrair_cnpj(val):
+            resultado = normalizar_cnpj(val)
+            return resultado.cnpj if resultado.valido else None
+        df["CNPJ_SUBSIDIARIA"] = df["CNPJ_SUBSIDIARIA"].apply(_extrair_cnpj)
+        df["CNPJ_CONTA_ATRELADA"] = df["CNPJ_CONTA_ATRELADA"].apply(_extrair_cnpj)
         
         df = df.dropna(subset=["CNPJ_SUBSIDIARIA", "CNPJ_CONTA_ATRELADA"], how="all")
+        
+        # ---------------------------------------------------------
+        # Trilha de Auditoria (Governança Silver)
+        # ---------------------------------------------------------
+        df["SOURCE_FILE_HASH"] = _calcular_hash(arquivo_alvo)
+        df["DATA_PROCESSAMENTO"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        df["SOURCE_NAME"] = arquivo_alvo.name
         
         log.info(f"Planilha de Controladoras processada com sucesso. Total de vínculos ativos extraídos: {len(df)}")
         return df
         
+    except ControladorErro:
+        raise
     except Exception as e:
-        log.error("Erro ao ler ou processar a planilha de Controladoras local: %s", e)
+        log.error("Erro desconhecido ao processar a planilha de Controladoras local: %s", e)
         raise ControladorErro(f"Erro no processamento da base de Controladoras: {e}")

@@ -31,6 +31,24 @@ def inserir_dados_bureau(context: AppContext) -> dict[str, Any]:
     
     cnpjs_enquadrados = df_enq["CNPJ"].dropna().unique().tolist()
     
+    path_fichas_com = context.path("silver") / "fichas_comercializadoras_extraidas" / "fichas_comercializadoras_extraidas.parquet"
+    path_fichas_cons = context.path("silver") / "fichas_consumidores_extraidas" / "fichas_consumidores_extraidas.parquet"
+    path_controladoras = context.path("silver") / "mapeamento_controladoras" / "mapeamento_controladoras.parquet"
+    
+    cnpjs_adicionais = set()
+    for p in [path_fichas_com, path_fichas_cons]:
+        if p.exists():
+            df_f = pd.read_parquet(p)
+            if "CNPJ" in df_f.columns:
+                cnpjs_adicionais.update(df_f["CNPJ"].dropna().unique())
+                
+    if path_controladoras.exists():
+        df_ctrl = pd.read_parquet(path_controladoras)
+        if "CNPJ_SUBSIDIARIA" in df_ctrl.columns:
+            cnpjs_adicionais.update(df_ctrl["CNPJ_SUBSIDIARIA"].dropna().unique())
+        if "CNPJ_CONTA_ATRELADA" in df_ctrl.columns:
+            cnpjs_adicionais.update(df_ctrl["CNPJ_CONTA_ATRELADA"].dropna().unique())
+    
     path_contratos = context.path("silver") / "denodo_contratos_silver" / "contratos_correntes.parquet"
     if not path_contratos.exists():
         path_contratos = context.path("silver") / "denodo_contratos_padronizados" / "contratos_correntes.parquet"
@@ -43,10 +61,10 @@ def inserir_dados_bureau(context: AppContext) -> dict[str, Any]:
         else:
             df_ativos = df_contratos
         cnpjs_ativos = set(df_ativos["CNPJ"].dropna().unique())
-        cnpjs_alvo = [c for c in cnpjs_enquadrados if c in cnpjs_ativos]
+        cnpjs_alvo = list(set([c for c in cnpjs_enquadrados if c in cnpjs_ativos]).union(cnpjs_adicionais))
     else:
         logger.warning("Base de contratos correntes não encontrada. Prosseguindo sem filtro de atividade.")
-        cnpjs_alvo = cnpjs_enquadrados
+        cnpjs_alvo = list(set(cnpjs_enquadrados).union(cnpjs_adicionais))
 
     logger.info("Total de CNPJs elegíveis para consulta RISK3 (Enquadrados e Ativos): %d", len(cnpjs_alvo))
     
