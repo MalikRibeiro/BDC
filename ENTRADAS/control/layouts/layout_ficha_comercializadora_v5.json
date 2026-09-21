@@ -39,9 +39,9 @@
         "LUCRO_BRUTO",
         "LUCRO_LIQUIDO",
         "MATURIDADE_CALCULADA",
-        "NOTA_BOARD",
-        "NOTA_BUREAU",
-        "NOTA_CREDITO",
+        "RATING_BOARD_COPEL",
+        "RATING_BUREAU",
+        "RATING_AUDITORIA",
         "PASSIVO_CIRCULANTE",
         "PASSIVO_CIRCULANTE_FINANCEIRO",
         "PASSIVO_NAO_CIRCULANTE_FINANCEIRO",
@@ -116,7 +116,7 @@
             "value_cell": "B52",
             "implemented": true
         },
-        "NOTA_CREDITO": {
+        "RATING_BOARD_COPEL": {
             "sheet": "FichaIndividual",
             "label_cell": "A53",
             "value_cell": "B53",

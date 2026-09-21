@@ -130,6 +130,6 @@ def normalizar_registro(
         if logger is not None:
             logger.exception(
                 "Falha na normalização: CNPJ=%s EMPRESA=%s",
-                record.get("CNPJ"), record.get("EMPRESA")
+                record.get("CNPJ"), record.get("RAZAO_SOCIAL")
             )
         raise

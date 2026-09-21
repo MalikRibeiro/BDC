@@ -10,7 +10,7 @@
         "hash_arquivo",
         "load_mode",
         "dt_processamento",
-        "EMPRESA",
+        "RAZAO_SOCIAL",
         "CNPJ",
         "DATA_DEMONSTRACAO_FINANCEIRA"
     ],
@@ -21,7 +21,7 @@
                 "null"
             ]
         },
-        "EMPRESA": {
+        "RAZAO_SOCIAL": {
             "type": [
                 "string",
                 "null"
@@ -147,13 +147,13 @@
                 "null"
             ]
         },
-        "NOTA_BOARD": {
+        "RATING_BOARD_COPEL": {
             "type": [
                 "string",
                 "null"
             ]
         },
-        "NOTA_BUREAU": {
+        "RATING_BUREAU": {
             "type": [
                 "string",
                 "null"
@@ -238,12 +238,6 @@
             ]
         },
         "RESULTADO_CONSULTA": {
-            "type": [
-                "string",
-                "null"
-            ]
-        },
-        "RATING_BUREAU": {
             "type": [
                 "string",
                 "null"

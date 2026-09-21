@@ -11,52 +11,33 @@ def calcular_pd_final_consumidor_le5(
     pd_faixas: dict[str, Any],
     logger: Any | None = None,
 ) -> dict[str, Any]:
-    """Calcula PD via score de bureau e restritivos (Sem DFs)."""
+    """Calcula PD via fórmula direta da Risk3 (Sem DFs, sem Rating Copel)."""
     try:
+        import math
         score = to_float_br(registro.get("SCORE_BUREAU"))
         
-        _r = to_float_br(registro.get("QUANTIDADE_RESTRITIVOS"))
-        restritivos = _r if _r is not None else 0.0
+        _alerta = registro.get("FATOR_ALERTA") or registro.get("FATOR_DE_ALERTA")
+        alerta = to_float_br(_alerta) if _alerta is not None else 0.0
 
         if score is None:
-            raise PdInputValidationError("SCORE_BUREAU não informado para consumidor < 5 MWm.")
+            raise PdInputValidationError("SCORE_BUREAU não informado para consumidor <= 5 MWm.")
 
-        if score >= 800:
-            rating = "A"
-        elif score >= 600:
-            rating = "B"
-        elif score >= 400:
-            rating = "C"
-        elif score >= 200:
-            rating = "D"
-        else:
-            rating = "E"
-
-        if restritivos > 0:
-            rating = "E"
-
-        faixas = pd_faixas.get("CONSUMIDOR_LE_5", {})
-        if rating not in faixas:
-            raise PdCalculationError(f"Faixa de PD não encontrada para o rating {rating}.")
-
-        pd_min = float(faixas[rating]["min"])
-        pd_max = float(faixas[rating]["max"])
-
-        limites = {"A": (800, 1000), "B": (600, 800), "C": (400, 600), "D": (200, 400), "E": (0, 200)}
-        s_min, s_max = limites[rating]
-
-        score_truncado = max(s_min, min(score, s_max))
-        fator = 0.5 if s_max == s_min else 1.0 - ((score_truncado - s_min) / (s_max - s_min))
-        pd_final = pd_min + (fator * (pd_max - pd_min))
+        # Fórmula Risk3: min{1,9·exp[-0,5·(0,11·Score - Alerta/3 + 1)], 0,9999}
+        expoente = -0.5 * (0.11 * score - (alerta / 3.0) + 1.0)
+        # Evitar overflow no math.exp
+        expoente_clamped = max(-500.0, min(expoente, 500.0))
+        pd_risk3 = 1.9 * math.exp(expoente_clamped)
+        
+        pd_final = min(pd_risk3, 0.9999)
 
         resultado = {
-            "RATING_FINAL": rating,
+            "RATING_FINAL": "NAO_APLICAVEL",
             "PD_FINAL": pd_final,
-            "PD_METODO": "SCORE_BUREAU",
+            "PD_METODO": "FORMULA_RISK3",
             "SCORE_BUREAU_UTILIZADO": score,
-            "QUANTIDADE_RESTRITIVOS": restritivos,
-            "PD_MIN_FAIXA": pd_min,
-            "PD_MAX_FAIXA": pd_max,
+            "FATOR_ALERTA_UTILIZADO": alerta,
+            "PD_MIN_FAIXA": pd_final,
+            "PD_MAX_FAIXA": pd_final,
             "PATRIMONIO_LIQUIDO": "NAO_APLICAVEL",
             "LUCRO_LIQUIDO": "NAO_APLICAVEL",
             "ATIVO_TOTAL": "NAO_APLICAVEL",
@@ -64,7 +45,7 @@ def calcular_pd_final_consumidor_le5(
         }
 
         if logger:
-            logger.info("PD LE_5 calculada. CNPJ=%s SCORE=%s RATING=%s PD=%s", registro.get("CNPJ"), score, rating, pd_final)
+            logger.info("PD LE_5 calculada (Risk3). CNPJ=%s SCORE=%s ALERTA=%s PD=%s", registro.get("CNPJ"), score, alerta, pd_final)
 
         return resultado
 

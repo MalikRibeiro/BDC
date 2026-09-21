@@ -39,7 +39,7 @@ def construir_fato_analise_credito(
     df_dim_contraparte: pd.DataFrame,
 ) -> dict[str, Any]:
     run_id = f"FATO_ANL_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = obter_logger("bdc.gold.fato_analise_credito", Path("LOGS/relacional") / f"{run_id}__fato_analise_credito.log")
+    logger = obter_logger("bdc.gold.fato_analise_credito", Path("LOGS/relational") / f"{run_id}__fato_analise_credito.log")
     logger.info("Iniciando carga de fato_analise_credito e execução do Motor de Crédito (run_id=%s).", run_id)
 
     if df_silver_analises.empty:
@@ -55,6 +55,12 @@ def construir_fato_analise_credito(
         pd_cpura_config = ler_json(context.control_file("pd_cpura_config"))
         score_cpura_config = ler_json(context.control_file("score_cpura_config"))
         pd_transform_rules = ler_json(context.control_file("pd_transform_rules"))
+        try:
+            pd_zscore_config = ler_json(context.control_file("pd_zscore_config"))
+        except Exception:
+            # Fallback se não mapeado no context
+            # Fallback se não mapeado no context
+            pd_zscore_config = ler_json(context.path("control") / "configs" / "pd_zscore_config.json")
     except Exception:
         logger.exception("Falha ao carregar configurações do motor de crédito")
         raise
@@ -92,6 +98,7 @@ def construir_fato_analise_credito(
                 pd_transform_rules=pd_transform_rules,
                 pd_cpura_config=pd_cpura_config,
                 score_cpura_config=score_cpura_config,
+                pd_zscore_config=pd_zscore_config,
                 logger=logger
             )
             registro.update(pd_info)
@@ -168,11 +175,12 @@ def construir_fato_analise_credito(
         logger.warning(f"Bypass Herança de Risco: Não foi possível aplicar herança de controladoras/filiais ({e})")
     # -----------------------------------------
 
-    for col in ["ANALISE_ID", "DATA_ANALISE", "RATING_FINAL", "PD_FINAL", "SCORE_TOTAL", "CLASSE_RISCO", "MODELO_METODOLOGICO", "DATA_DEMONSTRACAO_FINANCEIRA", "SEGMENTO_PD", "TIPO_FICHA", "PATRIMONIO_LIQUIDO", "SITUACAO_DF", "SITUACAO_ANALISE", "CNPJ_RAIZ", "STATUS_CALCULO_PD", "RESTRITIVOS", "TIPO_ANALISE"]:
+    for col in ["ANALISE_ID", "DATA_ANALISE", "RATING_FINAL", "PD_FINAL", "SCORE_TOTAL", "CLASSE_RISCO", "MODELO_METODOLOGICO", "DATA_DEMONSTRACAO_FINANCEIRA", "SEGMENTO_PD", "TIPO_FICHA", "PATRIMONIO_LIQUIDO", "SITUACAO_DF", "SITUACAO_ANALISE", "CNPJ_RAIZ", "STATUS_CALCULO_PD", "RESTRITIVOS", "TIPO_ANALISE", "MOTIVO_PD_SUB", "DATA_ACIONAMENTO_PD_SUB", "FONTE_PD_SUB", "VALOR_PD_SUB", "PD_BASE", "PD_MIN_FAIXA", "PD_MAX_FAIXA", "CONFIG_SNAPSHOT_PD", "VALIDADE_DF", "VALIDADE_BUREAU", "VALIDADE_RATING_PUBLICO"]:
         if col not in df_processado.columns:
             df_processado[col] = None
 
     rename_map = {
+        "ANALISE_ID": "ANALISE_ID",
         "CNPJ": "CNPJ", "CNPJ_RAIZ": "CNPJ_RAIZ", "DATA_ANALISE": "DATA_ANALISE", "RATING_FINAL": "RATING",
         "PD_FINAL": "PD_PERCENTUAL", "SCORE_TOTAL": "SCORE", "CLASSE_RISCO": "CLASSE",
         "MODELO_METODOLOGICO": "MODELO", "DATA_DEMONSTRACAO_FINANCEIRA": "DATA_BALANCO_USADO",
@@ -180,7 +188,12 @@ def construir_fato_analise_credito(
         "PATRIMONIO_LIQUIDO": "PATRIMONIO_LIQUIDO", "SITUACAO_DF": "SITUACAO_DF",
         "SITUACAO_ANALISE": "SITUACAO_ANALISE", "STATUS_CALCULO_PD": "STATUS_CALCULO_PD",
         "ANALISE_HERDADA": "ANALISE_HERDADA", "ORIGEM_ANALISE": "ORIGEM_ANALISE",
-        "TIPO_ANALISE": "TIPO_ANALISE", "RESTRITIVOS": "RESTRITIVOS"
+        "TIPO_ANALISE": "TIPO_ANALISE", "RESTRITIVOS": "RESTRITIVOS",
+        "MOTIVO_PD_SUB": "MOTIVO_PD_SUB", "DATA_ACIONAMENTO_PD_SUB": "DATA_ACIONAMENTO_PD_SUB",
+        "FONTE_PD_SUB": "FONTE_PD_SUB", "VALOR_PD_SUB": "VALOR_PD_SUB",
+        "PD_BASE": "PD_BASE", "PD_MIN_FAIXA": "PD_MIN", "PD_MAX_FAIXA": "PD_MAX",
+        "CONFIG_SNAPSHOT_PD": "CONFIG_SNAPSHOT_PD",
+        "VALIDADE_DF": "VALIDADE_DF", "VALIDADE_BUREAU": "VALIDADE_BUREAU", "VALIDADE_RATING_PUBLICO": "VALIDADE_RATING_PUBLICO"
     }
 
     df_final = df_processado[[c for c in rename_map.keys() if c in df_processado.columns]].rename(columns=rename_map).copy()

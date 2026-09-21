@@ -7,12 +7,12 @@
         "Dados Gerais e Qualitativos"
     ],
     "required_fields": [
-        "EMPRESA",
+        "RAZAO_SOCIAL",
         "CNPJ"
     ],
     "key_fields": [
         "DATA_DEMONSTRACAO_FINANCEIRA",
-        "EMPRESA",
+        "RAZAO_SOCIAL",
         "CNPJ"
     ],
     "verify_fields": [
@@ -37,9 +37,9 @@
         "ROA",
         "ROE",
         "AGENCIA",
-        "NOTA_CREDITO",
-        "NOTA_BOARD",
-        "NOTA_BUREAU",
+        "RATING_AUDITORIA",
+        "RATING_BOARD_COPEL",
+        "RATING_BUREAU",
         "RATING_COPEL",
         "LUCRO_LIQUIDO",
         "ROL",
@@ -50,7 +50,7 @@
         "ENDERECO",
         "CAPITAL_SOCIAL",
         "CEP",
-        "SCORE_BUREAU",
+        "RATING_BUREAU",
         "RESTRITIVOS",
         "QUANTIDADE_RESTRITIVOS",
         "RESULTADO_CONSULTA",
@@ -80,7 +80,7 @@
             "required": true,
             "year_only_rule": "end_of_year"
         },
-        "EMPRESA": {
+        "RAZAO_SOCIAL": {
             "sheet": "Dados Gerais e Qualitativos",
             "label_cell": null,
             "value_cell": "B9",
@@ -104,7 +104,7 @@
             "data_type": "cnpj",
             "required": true
         },
-        "DATA_ABERTURA": {
+        "RATING_AUDITORIA": {
             "sheet": "Dados Gerais e Qualitativos",
             "label_cell": null,
             "value_cell": "B10",

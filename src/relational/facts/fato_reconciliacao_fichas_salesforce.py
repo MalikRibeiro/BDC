@@ -19,7 +19,7 @@ from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
 def executar_reconciliacao_fichas_salesforce(context: AppContext) -> dict[str, Any]:
     run_id = f"REC_SF_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = obter_logger("bdc.reconciliacao.salesforce", Path("LOGS/auditoria") / f"{run_id}__salesforce_reconciliacao.log")
+    logger = obter_logger("bdc.reconciliacao.salesforce", Path("LOGS/audit") / f"{run_id}__salesforce_reconciliacao.log")
     
     silver_dir = context.path("silver")
 

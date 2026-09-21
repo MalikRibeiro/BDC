@@ -9,7 +9,7 @@ from relational.facts.fato_alerta_util import registrar_alertas_em_lote
 
 def gerar_fato_alertas_manuais(context: Any) -> dict[str, Any]:
     run_id = f"MAN_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = obter_logger("bdc.alertas_manuais", Path("LOGS/relacional") / f"{run_id}__alertas_manuais.log")
+    logger = obter_logger("bdc.alertas_manuais", Path("LOGS/relational") / f"{run_id}__alertas_manuais.log")
     logger.info("Iniciando varredura da camada Silver para Alertas de Carga Manual...")
 
     alertas = []

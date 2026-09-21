@@ -89,29 +89,31 @@ def calcular_score_qualitativo_cpura(
                 "Bloco 'auditor_para_nota' ausente ou inválido."
             )
 
-        nota_board = registro.get("NOTA_BOARD")
-        nota_bureau = registro.get("NOTA_BUREAU")
+        rating_board_copel = registro.get("RATING_BOARD_COPEL") or registro.get("NOTA_BOARD")
+        rating_bureau = registro.get("RATING_BUREAU") or registro.get("NOTA_BUREAU")
         auditor = registro.get("AUDITOR")
 
-        nota_auditoria = _obter_nota_auditoria(
-            auditor,
-            auditor_para_nota,
-        )
+        rating_auditoria = registro.get("RATING_AUDITORIA") or registro.get("NOTA_AUDITORIA")
+        if not rating_auditoria:
+            rating_auditoria = _obter_nota_auditoria(
+                auditor,
+                auditor_para_nota,
+            )
 
         peso_board = _obter_peso_nota(
-            nota_board,
+            rating_board_copel,
             nota_para_peso,
-            "NOTA_BOARD",
+            "RATING_BOARD_COPEL",
         )
         peso_bureau = _obter_peso_nota(
-            nota_bureau,
+            rating_bureau,
             nota_para_peso,
-            "NOTA_BUREAU",
+            "RATING_BUREAU",
         )
         peso_auditoria = _obter_peso_nota(
-            nota_auditoria,
+            rating_auditoria,
             nota_para_peso,
-            "NOTA_AUDITORIA",
+            "RATING_AUDITORIA",
         )
 
         try:
@@ -134,7 +136,7 @@ def calcular_score_qualitativo_cpura(
         )
 
         resultado = {
-            "NOTA_AUDITORIA": nota_auditoria,
+            "RATING_AUDITORIA": rating_auditoria,
             "PESO_BOARD": peso_board,
             "PESO_AUDITORIA": peso_auditoria,
             "PESO_BUREAU": peso_bureau,

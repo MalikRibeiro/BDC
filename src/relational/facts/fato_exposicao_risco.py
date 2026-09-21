@@ -15,6 +15,8 @@ from domain.credito.motor_ead import calcular_ead
 from domain.credito.motor_lgd import calcular_lgd
 from domain.credito.motor_pe import calcular_perda_esperada
 from domain.credito.motor_taxa_risco import calcular_taxa_risco
+from domain.credito.motor_garantias import calcular_cobertura_garantias
+from common.json import ler_json
 
 def processar_fato_exposicao_risco(context: AppContext) -> dict[str, Any] | None:
     """Orquestra a leitura do MtM e Fato de Crédito para gerar a Exposição de Risco."""
@@ -60,14 +62,19 @@ def construir_fato_exposicao_risco(
     context: AppContext,
     df_exposicoes: pd.DataFrame,
     fator_conversao_ead: float = 1.0,
-    config_lgd: dict[str, Any] | None = None
+    config_lgd: dict[str, Any] | None = None,
+    config_garantias: dict[str, Any] | None = None
 ) -> dict[str, Any]:
     run_id = f"RSK_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = obter_logger("bdc.fato_risco", Path("LOGS/relacional") / f"{run_id}__fato_risco.log")
+    logger = obter_logger("bdc.fato_risco", Path("LOGS/relational") / f"{run_id}__fato_risco.log")
     logger.info("Iniciando Fato Exposição de Risco (run_id=%s)", run_id)
     
     garantias_path = context.path("silver") / "garantias_silver" / "fato_garantia.parquet"
     df_garantias = pd.read_parquet(garantias_path) if garantias_path.exists() else pd.DataFrame()
+
+    config_garantias_path = context.path("control") / "configs" / "garantias_config.json"
+    if not config_garantias:
+        config_garantias = ler_json(config_garantias_path) if config_garantias_path.exists() else {}
 
     resultados_fatos = []
     pe_total_carteira = 0.0
@@ -90,20 +97,20 @@ def construir_fato_exposicao_risco(
         segmento     = row.get("SEGMENTO_METODOLOGICO", "CGRUPO")
         pd_final     = row.get("PD_FINAL")
 
+        res_ead = calcular_ead(mtm_positivo_total=mtm_positivo, fator_conversao=fator_conversao_ead)
+        ead_val = float(res_ead.get("ead_valor", 0.0))
+
         cobertura_aplicada = 0.0
         if not df_garantias.empty and "CNPJ_CONTRAPARTE" in df_garantias.columns:
-            filtro = (
-                df_garantias["CNPJ_CONTRAPARTE"].astype(str).str[:8] == cnpj_raiz
-            ) & (
-                df_garantias["STATUS"].astype(str).str.strip().str.upper() == "VIGENTE"
-                if "STATUS" in df_garantias.columns
-                else True
+            res_garantias = calcular_cobertura_garantias(
+                cnpj_raiz=cnpj_raiz,
+                df_garantias=df_garantias,
+                ead_valor=ead_val,
+                config=config_garantias,
+                logger=logger
             )
-            if filtro.any():
-                cobertura_calculada = df_garantias.loc[filtro, "PERCENTUAL_COBERTURA"].sum()
-                cobertura_aplicada  = min(float(cobertura_calculada), 1.0)
+            cobertura_aplicada = res_garantias.get("cobertura_aplicada", 0.0)
 
-        res_ead = calcular_ead(mtm_positivo_total=mtm_positivo, fator_conversao=fator_conversao_ead)
         res_lgd = calcular_lgd(segmento=segmento, cobertura_garantias=cobertura_aplicada, config=config_lgd)
         res_pe = calcular_perda_esperada(
             ead=res_ead.get("ead_valor"), 

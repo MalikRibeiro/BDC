@@ -69,6 +69,7 @@ def carregar_dados_carteira() -> pd.DataFrame:
         if pd.notna(pd_raw) and str(pd_raw).strip() not in ["", "nan", "None", "<NA>"]:
             try:
                 pd_val = float(str(pd_raw).replace(',', '.'))
+                pd_val = pd_val * 100.0  # Converte decimal 0.9999 para 99.99 para exibição
             except Exception:
                 pd_val = None
         else:
@@ -79,28 +80,43 @@ def carregar_dados_carteira() -> pd.DataFrame:
         
         data_df_raw = row.get("DATA_DA_ANALISE")
         data_df = ""
+        ano_df = 0
         if pd.notna(data_df_raw) and str(data_df_raw).strip() not in ["", "nan", "None", "NaT"]:
             try:
-                data_df = pd.to_datetime(data_df_raw).strftime("%d/%m/%Y")
+                dt_obj = pd.to_datetime(data_df_raw)
+                data_df = dt_obj.strftime("%d/%m/%Y")
+                ano_df = dt_obj.year
             except Exception:
                 data_df = str(data_df_raw).split(" ")[0]
+                try:
+                    if "/" in data_df: ano_df = int(data_df.split("/")[-1])
+                    elif "-" in data_df: ano_df = int(data_df.split("-")[0])
+                except:
+                    ano_df = 0
                 
         # Status de Fornecimento derivado da Gold
         status_ctr = str(row.get("STATUS_CONTRATUAL", "")).strip()
+        qtd_contratos = int(row.get("QUANTIDADE_CONTRATOS", 0)) if pd.notna(row.get("QUANTIDADE_CONTRATOS")) else 0
+
         if status_ctr == "CONTRATO_VIGENTE":
             status_fornecimento = "Em Fornecimento"
         elif status_ctr == "CONTRATO_FUTURO":
             status_fornecimento = "A Fornecer"
+        elif qtd_contratos > 0:
+            status_fornecimento = "Contrato Vencido"
         else:
             status_fornecimento = "Sem Contrato"
             
         # Tipo de Análise direto da Metodologia Exigida da Gold
         metodologia = str(row.get("METODOLOGIA_EXIGIDA", "")).strip().upper()
-        if metodologia == "DF_DETALHADA":
+        is_herdada = row.get("ANALISE_HERDADA") == True or str(row.get("TIPO_ANALISE", "")) == "Análise Herdada"
+        
+        if is_herdada:
+            tipo_analise = "Análise Herdada"
+        elif metodologia == "DF_DETALHADA":
             tipo_analise = "Análise DF"
         elif metodologia == "BUREAU":
             tipo_analise = "Análise Bureau"
-
         else:
             tipo_analise = "Sem Análise"
             
@@ -113,25 +129,36 @@ def carregar_dados_carteira() -> pd.DataFrame:
         
         posicao_mtm = float(row.get("POSICAO_MTM", 0.0)) if pd.notna(row.get("POSICAO_MTM")) else 0.0
         
-        # Filtro de ruído: Ocultar contrapartes sem contrato, sem análise válida e sem exposição MtM
+        # Filtro de ruído: Ocultar contrapartes puramente sem histórico
         if status_fornecimento == "Sem Contrato" and tipo_analise in ["Dispensada", "Sem Análise"] and posicao_mtm == 0.0:
             continue
+            
+        data_analise_exibicao = data_df if data_df and data_df.lower() != "nat" else None
+        is_rating_empty = not rating or rating.lower() == "nan"
+        is_score_empty = not score or score.lower() == "nan"
+        
+        if is_rating_empty and is_score_empty and tipo_analise != "Sem Análise":
+            tipo_analise = f"{tipo_analise} (Não Encontrada)"
+            if not data_analise_exibicao:
+                # Usa a data de hoje como a data da última verificação do sistema
+                data_analise_exibicao = pd.Timestamp.now().strftime("%d/%m/%Y")
             
         linhas_carteira.append({
             "CNPJ": cnpj_c,
             "Contraparte": contraparte,
-            "Quantidade de contratos": int(row.get("QUANTIDADE_CONTRATOS", 0)) if pd.notna(row.get("QUANTIDADE_CONTRATOS")) else 0,
+            "Quantidade de contratos": qtd_contratos,
             "Numero do contrato": str(row.get("NUMERACAO_CONTRATOS", "")).strip() or None,
-            "Rating": rating if rating and rating.lower() != "nan" else None,
+            "Rating": rating if not is_rating_empty else None,
             "Probabilidade de default": pd_val,
-            "Score": score if score and score.lower() != "nan" else None,
+            "Score": score if not is_score_empty else None,
             "Restritivos": restritivos if restritivos and restritivos.lower() != "nan" else None,
-            "Data da Analise": data_df if data_df and data_df.lower() != "nat" else None,
+            "Data da Analise": data_analise_exibicao,
             "Tipo de analise": tipo_analise,
             "Status_Fornecimento": status_fornecimento,
             "Posicao_MtM": posicao_mtm,
             "Status_Conciliacao": str(row.get("STATUS_CONCILIACAO", "DIVERGENTE")).strip(),
             "Ano_Inicio": row.get("ANO_INICIO_CONTRATO", 0),
+            "Ano_DF": ano_df,
             "Vigencia_Inicio": vigencia_inicio,
             "Vigencia_Fim": vigencia_fim
         })
@@ -182,24 +209,30 @@ def render_visao_carteira():
 
     # ---------------- FILTROS SUPERIORES ----------------
     st.markdown("Filtros de Carteira")
-    f1, f2, f3, f4, f5 = st.columns([1, 1, 1, 1.2, 2])
+    f1, f2, f3, f4, f5 = st.columns([2, 1, 1, 1, 1])
     
     anos_disponiveis = sorted([int(a) for a in df_carteira["Ano_Inicio"].unique() if a > 0])
     with f1:
-        anos_sel = st.multiselect("Ano Início:", anos_disponiveis, default=[])
+        busca = st.text_input("Buscar por Contraparte/CNPJ:", placeholder="Filtrar...", key="filtro_busca_carteira")
         
     tipos_analise_disponiveis = ["Todos"] + sorted(list(df_carteira["Tipo de analise"].unique()))
     with f2:
-        tipo_sel = st.selectbox("Tipo de Análise:", tipos_analise_disponiveis)
+        anos_sel = st.multiselect("Ano Início:", anos_disponiveis, default=[], key="filtro_ano_carteira")
         
     with f3:
-        status_sel = st.selectbox("Fornecimento:", ["Todos", "Em Fornecimento", "A Fornecer", "Sem Contrato"])
-
+        tipo_sel = st.multiselect("Tipo de Análise:", tipos_analise_disponiveis, key="filtro_tipo_analise_carteira")
+        
     with f4:
-        mtm_sel = st.selectbox("Status MtM:", ["Todos", "Com MtM", "Sem MtM", "Análise Sem Contrato"])
+        opcoes_base = ["Em Fornecimento", "A Fornecer", "Contrato Vencido", "Sem Contrato"]
+        fornecimentos_ativos = set(df_carteira["Status_Fornecimento"].dropna().unique())
+        fornecimento_opcoes = ["Todos"] + [opt for opt in opcoes_base if opt in fornecimentos_ativos]
+        for opt in fornecimentos_ativos:
+            if opt not in fornecimento_opcoes:
+                fornecimento_opcoes.append(opt)
+        status_sel = st.multiselect("Fornecimento:", fornecimento_opcoes, key="filtro_fornecimento_carteira")
         
     with f5:
-        busca = st.text_input("Buscar por Contraparte/CNPJ:", placeholder="Filtrar...")
+        mtm_sel = st.selectbox("Status MtM:", ["Todos", "Com MtM", "Sem MtM"], key="filtro_mtm_carteira")
 
     # Aplicação dos Filtros
     df_filtrado = df_carteira.copy()
@@ -207,21 +240,21 @@ def render_visao_carteira():
     if anos_sel:
         df_filtrado = df_filtrado[df_filtrado["Ano_Inicio"].isin(anos_sel)]
         
-    if tipo_sel != "Todos":
-        df_filtrado = df_filtrado[df_filtrado["Tipo de analise"] == tipo_sel]
+    if tipo_sel and "Todos" not in tipo_sel:
+        df_filtrado = df_filtrado[df_filtrado["Tipo de analise"].isin(tipo_sel)]
         
-    if status_sel != "Todos":
-        df_filtrado = df_filtrado[df_filtrado["Status_Fornecimento"] == status_sel]
+    if status_sel and "Todos" not in status_sel:
+        df_filtrado = df_filtrado[df_filtrado["Status_Fornecimento"].isin(status_sel)]
         
-    if mtm_sel == "Com MtM":
-        df_filtrado = df_filtrado[df_filtrado["Posicao_MtM"] > 0]
-    elif mtm_sel == "Sem MtM":
-        df_filtrado = df_filtrado[df_filtrado["Posicao_MtM"] == 0]
-    elif mtm_sel == "Análise Sem Contrato":
-        df_filtrado = df_filtrado[
-            (df_filtrado["Tipo de analise"] != "Sem Análise") & 
-            (df_filtrado["Status_Fornecimento"] == "Sem Contrato")
-        ]
+    if mtm_sel and "Todos" not in mtm_sel:
+        masks = []
+        if "Com MtM" in mtm_sel:
+            masks.append(df_filtrado["Posicao_MtM"] > 0)
+        if "Sem MtM" in mtm_sel:
+            masks.append(df_filtrado["Posicao_MtM"] == 0)
+        if masks:
+            import functools, operator
+            df_filtrado = df_filtrado[functools.reduce(operator.or_, masks)]
         
     if busca.strip():
         termo = busca.strip().lower()
@@ -235,7 +268,13 @@ def render_visao_carteira():
 
     # ---------------- INSIGHTS / KPIS ----------------
     total_contrapartes = len(df_filtrado)
-    total_contratos_reais = int(df_filtrado["Quantidade de contratos"].sum()) if not df_filtrado.empty and "Quantidade de contratos" in df_filtrado.columns else 0
+    if not df_filtrado.empty and "Numero do contrato" in df_filtrado.columns:
+        series_contratos = df_filtrado["Numero do contrato"].dropna().astype(str)
+        lista_contratos = series_contratos.str.split(",").explode().str.strip()
+        lista_contratos = lista_contratos[lista_contratos != ""]
+        total_contratos_reais = lista_contratos.nunique()
+    else:
+        total_contratos_reais = 0
     total_ativos = sum(df_filtrado["Status_Fornecimento"] == "Em Fornecimento")
     total_futuros = sum(df_filtrado["Status_Fornecimento"] == "A Fornecer")
     
@@ -277,7 +316,7 @@ def render_visao_carteira():
     
     st.dataframe(
         df_filtrado[colunas_exibicao],
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
         column_config={
             "Probabilidade de default": st.column_config.NumberColumn(

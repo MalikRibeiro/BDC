@@ -7,6 +7,8 @@ from typing import Any
 import pandas as pd
 
 from app.context import AppContext
+
+from domain.auditoria.servico_auditoria import registrar_mudanca_config, get_responsavel_pipeline
 from domain.enums import StatusAprovacao
 from common.identificadores import normalizar_cnpj
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
@@ -90,6 +92,16 @@ def processar_solicitacao_override(context: AppContext) -> dict[str, Any]:
             records=processados,
             output_dir=silver_dir,
             filename=f"solicitacao_override_{run_id}"
+        )
+        
+        # Acionar Gatilho de Auditoria / Governança
+        registrar_mudanca_config(
+            control_dir=context.path("relational_control"),
+            configuracao="OVERRIDE_MANUAL",
+            antes="",
+            depois=f"INSERCAO_SOBRESCRITA_MANUAL (registros_afetados: {len(processados)})",
+            ambiente="PROD",
+            vigencia=datetime.now().strftime('%Y-%m-%d')
         )
 
     logger.info("Overrides processados: %d.", len(processados))

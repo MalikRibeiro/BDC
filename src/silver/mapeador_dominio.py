@@ -68,24 +68,24 @@ def aplicar_normalizacao_de_dominio(
             if logger:
                 logger.warning("Falha ao normalizar RATING_COPEL: %s", exc)
 
-    if "NOTA_BOARD" in out and out["NOTA_BOARD"] is not None:
+    if "RATING_BOARD_COPEL" in out and out["RATING_BOARD_COPEL"] is not None:
         try:
-            out["NOTA_BOARD"] = normalizar_rating(
-                out["NOTA_BOARD"],
-                dicionarios.get("NOTA_BOARD", {}),
+            out["RATING_BOARD_COPEL"] = normalizar_rating(
+                out["RATING_BOARD_COPEL"],
+                dicionarios.get("RATING_BOARD_COPEL", {}),
             )
         except Exception as exc:
             if logger:
-                logger.warning("Falha ao normalizar NOTA_BOARD: %s", exc)
+                logger.warning("Falha ao normalizar RATING_BOARD_COPEL: %s", exc)
 
-    if "NOTA_BUREAU" in out and out["NOTA_BUREAU"] is not None:
+    if "RATING_BUREAU" in out and out["RATING_BUREAU"] is not None:
         try:
-            out["NOTA_BUREAU"] = normalizar_rating(
-                out["NOTA_BUREAU"],
-                dicionarios.get("NOTA_BUREAU", {}),
+            out["RATING_BUREAU"] = normalizar_rating(
+                out["RATING_BUREAU"],
+                dicionarios.get("RATING_BUREAU", {}),
             )
         except Exception as exc:
             if logger:
-                logger.warning("Falha ao normalizar NOTA_BUREAU: %s", exc)
+                logger.warning("Falha ao normalizar RATING_BUREAU: %s", exc)
 
     return out

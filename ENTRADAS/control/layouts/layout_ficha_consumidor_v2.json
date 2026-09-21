@@ -8,13 +8,13 @@
         "DRE"
     ],
     "required_fields": [
-        "EMPRESA",
+        "RAZAO_SOCIAL",
         "CNPJ",
         "PATRIMONIO_LIQUIDO"
     ],
     "key_fields": [
         "DATA_DEMONSTRACAO_FINANCEIRA",
-        "EMPRESA",
+        "RAZAO_SOCIAL",
         "CNPJ",
         "PATRIMONIO_LIQUIDO"
     ],
@@ -39,9 +39,9 @@
         "ROA",
         "ROE",
         "AGENCIA",
-        "NOTA_CREDITO",
-        "NOTA_BOARD",
-        "NOTA_BUREAU",
+        "RATING_AUDITORIA",
+        "RATING_BOARD_COPEL",
+        "RATING_BUREAU",
         "RATING_COPEL",
         "LUCRO_LIQUIDO",
         "ROL",
@@ -82,7 +82,7 @@
             "required": true,
             "year_only_rule": "end_of_year"
         },
-        "EMPRESA": {
+        "RAZAO_SOCIAL": {
             "sheet": "Dados Gerais e Qualitativos",
             "label_cell": null,
             "value_cell": "C9",
@@ -274,7 +274,7 @@
             "data_type": "text",
             "required": false
         },
-        "NOTA_CREDITO": {
+        "RATING_AUDITORIA": {
             "sheet": "Dados Gerais e Qualitativos",
             "label_cell": null,
             "value_cell": "B37",
@@ -282,7 +282,7 @@
             "data_type": "text",
             "required": false
         },
-        "NOTA_BOARD": {
+        "RATING_BOARD_COPEL": {
             "sheet": "Dados Gerais e Qualitativos",
             "label_cell": null,
             "value_cell": "C22",
@@ -290,7 +290,7 @@
             "data_type": "text",
             "required": false
         },
-        "NOTA_BUREAU": {
+        "RATING_BUREAU": {
             "sheet": "Dados Gerais e Qualitativos",
             "label_cell": null,
             "value_cell": "C24",

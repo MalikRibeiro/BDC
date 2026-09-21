@@ -94,10 +94,10 @@ def calcular_rating_final(
     """Determina o rating final conforme o segmento."""
     segmento_pd = str(segmento_pd).strip().upper()
 
-    if segmento_pd == "CPURA":
+    if segmento_pd in ("CPURA", "CONSUMIDOR_GT_5"):
         if not pd_cpura_config:
             raise PdConfigurationError(
-                "pd_cpura_config não informado para cálculo do rating de CPURA."
+                f"pd_cpura_config não informado para cálculo do rating de {segmento_pd}."
             )
 
         score_faixas = pd_cpura_config.get("score_faixas")

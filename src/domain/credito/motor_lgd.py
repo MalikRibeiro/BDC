@@ -17,12 +17,7 @@ from datetime import datetime
 from typing import Any
 from uuid import uuid4
 
-LGD_BRUTA_POR_SEGMENTO: dict[str, float] = {
-    "CPURA": 0.45,
-    "CGRUPO": 0.45,
-    "CONSUMIDOR_GT_5": 0.45,
-    "CONSUMIDOR_LE_5": 0.75,
-}
+LGD_BRUTA_POR_SEGMENTO: dict[str, float] = {}
 
 
 def calcular_lgd(
@@ -51,11 +46,9 @@ def calcular_lgd(
     if lgd_bruta_override is not None:
         lgd_bruta = lgd_bruta_override
         fonte_lgd_bruta = "OVERRIDE"
-    elif config and "lgd_bruta_por_segmento" in config:
-        lgd_bruta = config["lgd_bruta_por_segmento"].get(segmento, LGD_BRUTA_POR_SEGMENTO.get(segmento, 0.45))
-        fonte_lgd_bruta = "CONFIG"
     else:
-        lgd_bruta = LGD_BRUTA_POR_SEGMENTO.get(segmento, 0.45)
+        # Nota Técnica v7 Seção 11: Quando não houver garantia, LGD = 100%
+        lgd_bruta = 1.0
         fonte_lgd_bruta = "PADRAO_SISTEMA"
 
     cobertura_efetiva = max(0.0, min(float(cobertura_garantias), 1.0))

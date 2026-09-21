@@ -1,21 +1,21 @@
 [
     {
         "RUBRICAS": "CNPJ",
-        "ABA_PADRAO_1": "0",
-        "CELULA_RUBRICA_PADRAO_1": "0",
-        "CELULA_PADRAO_1": "0",
-        "ABA_PADRAO_2": "0",
-        "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "ABA_PADRAO_1": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_1": "B7",
+        "CELULA_PADRAO_1": "C7",
+        "ABA_PADRAO_2": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_2": "B7",
+        "CELULA_PADRAO_2": "C7"
     },
     {
-        "RUBRICAS": "EMPRESA",
-        "ABA_PADRAO_1": "0",
-        "CELULA_RUBRICA_PADRAO_1": "0",
-        "CELULA_PADRAO_1": "0",
-        "ABA_PADRAO_2": "0",
-        "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "RUBRICAS": "RAZAO_SOCIAL",
+        "ABA_PADRAO_1": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_1": "B8",
+        "CELULA_PADRAO_1": "C8",
+        "ABA_PADRAO_2": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_2": "B8",
+        "CELULA_PADRAO_2": "C8"
     },
     {
         "RUBRICAS": "DATA_DEMONSTRACAO_FINANCEIRA",
@@ -198,7 +198,7 @@
         "CELULA_PADRAO_2": "0"
     },
     {
-        "RUBRICAS": "NOTA_BOARD",
+        "RUBRICAS": "RATING_BOARD_COPEL",
         "ABA_PADRAO_1": "0",
         "CELULA_RUBRICA_PADRAO_1": "0",
         "CELULA_PADRAO_1": "0",
@@ -207,7 +207,7 @@
         "CELULA_PADRAO_2": "0"
     },
     {
-        "RUBRICAS": "NOTA_BUREAU",
+        "RUBRICAS": "RATING_BUREAU",
         "ABA_PADRAO_1": "0",
         "CELULA_RUBRICA_PADRAO_1": "0",
         "CELULA_PADRAO_1": "0",

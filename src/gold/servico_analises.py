@@ -20,7 +20,7 @@ def integrar_analises_gold(df_gold: pd.DataFrame, df_analises: pd.DataFrame, hoj
             
         def extrair_rating_valido(row):
             from common.nulos import is_nulo_textual
-            for col in ["RATING_COPEL", "NOTA_CREDITO", "NOTA_BOARD", "RATING"]:
+            for col in ["RATING_COPEL", "NOTA_CREDITO", "RATING_BOARD_COPEL", "RATING"]:
                 val = row.get(col)
                 if pd.notna(val) and not is_nulo_textual(val):
                     return str(val).strip().upper()

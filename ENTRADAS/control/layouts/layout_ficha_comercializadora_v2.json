@@ -40,8 +40,9 @@
         "LUCRO_BRUTO",
         "LUCRO_LIQUIDO",
         "MATURIDADE_CALCULADA",
-        "NOTA_BOARD",
-        "NOTA_BUREAU",
+        "RATING_BOARD_COPEL",
+        "RATING_BUREAU",
+        "RATING_AUDITORIA",
         "NOTA_CREDITO",
         "PASSIVO_CIRCULANTE",
         "PASSIVO_CIRCULANTE_FINANCEIRO",
@@ -93,7 +94,7 @@
             "value_cell": "D11",
             "implemented": true
         },
-        "AUDITOR": {
+        "RATING_AUDITORIA": {
             "sheet": "FichaIndividual",
             "label_cell": "M20",
             "value_cell": "U20",

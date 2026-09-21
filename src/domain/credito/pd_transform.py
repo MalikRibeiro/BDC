@@ -139,29 +139,6 @@ def transformar_pd_por_segmento(
         )
         
     if segmento == "CONSUMIDOR_LE_5":
-        rating = str(
-            registro.get("RATING_FINAL")
-            or registro.get("RATING_COPEL")
-            or rating_final
-            or ""
-        ).strip().upper()
-
-        if not rating:
-            raise PdConfigurationError(
-                "RATING_FINAL não informado para CONSUMIDOR_LE_5."
-            )
-
-        pd_min, pd_max = _obter_faixa_pd(
-            pd_faixas=pd_faixas,
-            segmento_pd=segmento,
-            rating_final=rating,
-        )
-
-        if not pd_transform_rules or segmento not in pd_transform_rules:
-            raise PdConfigurationError(
-                "pd_transform_rules não informado para CONSUMIDOR_LE_5."
-            )
-
         return calcular_pd_final_consumidor_le5(
             registro=registro,
             pd_faixas=pd_faixas,

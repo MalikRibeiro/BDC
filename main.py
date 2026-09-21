@@ -41,6 +41,8 @@ from relational.facts.fato_garantia import gerar_fato_garantia
 from relational.dimensions.dim_contraparte import processar_dim_contraparte
 from relational.facts.fato_analise_credito import processar_fato_analise_credito
 from relational.facts.fato_exposicao_risco import processar_fato_exposicao_risco
+from relational.facts.fato_score_rating_pd import processar_fato_score_rating_pd
+from relational.facts.fato_migracao_rating import processar_fato_migracao_rating
 from gold.servico_limites import exportar_arquivo_limites
 
 def rodar_interface_streamlit():
@@ -75,6 +77,8 @@ PIPELINE_STEPS = [
     # BLOCO 3: MOTOR DE CRÉDITO E CAMADAS RELACIONAIS
     PipelineStep(name="Dimensao Contraparte", func=processar_dim_contraparte),
     PipelineStep(name="Fato Analise de Credito", func=processar_fato_analise_credito),
+    PipelineStep(name="Fato Score Rating PD", func=processar_fato_score_rating_pd),
+    PipelineStep(name="Fato Migracao Rating", func=processar_fato_migracao_rating),
     PipelineStep(name="Fato Garantia", func=gerar_fato_garantia),
     PipelineStep(name="Fato Exposicao de Risco", func=processar_fato_exposicao_risco),
     PipelineStep(name="Fato Reconciliacao Denodo x MtM", func=executar_reconciliacao_denodo_mtm, is_critical=True),

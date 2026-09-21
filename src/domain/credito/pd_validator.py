@@ -40,12 +40,9 @@ def validar_insumos_pd(
         return
 
     pd_base_raw = registro.get("PROBABILIDADE_DEFAULT")
-    pd_base = validar_probabilidade(pd_base_raw)
+    pd_base = validar_probabilidade(pd_base_raw) if pd_base_raw is not None else None
 
-    if pd_base is None:
-        raise PdInputValidationError("PROBABILIDADE_DEFAULT não informada.")
-
-    if pd_base < 0:
+    if pd_base is not None and pd_base < 0:
         raise PdInputValidationError(
             f"PROBABILIDADE_DEFAULT negativa: {pd_base_raw!r}"
         )
@@ -90,23 +87,3 @@ def validar_insumos_pd(
             raise PdInputValidationError(
                 "TIPO_COMERCIALIZADORA inválido ou ausente."
             )
-    if segmento_pd == "CONSUMIDOR_GT_5":
-        pd_base = registro.get("PROBABILIDADE_DEFAULT")
-        rating = registro.get("RATING_FINAL") or registro.get("RATING_COPEL")
-
-        if _is_blank(pd_base):
-            raise PdCalculationError(
-                "PROBABILIDADE_DEFAULT não informada para CONSUMIDOR_GT_5."
-            )
-
-        if _is_blank(rating):
-            raise PdCalculationError(
-                "RATING_FINAL/RATING_COPEL não informado para CONSUMIDOR_GT_5."
-            )
-
-        rating_norm = normalizar_texto(rating)
-        if rating_norm not in {"A", "B", "C", "D", "E"}:
-            raise PdCalculationError(
-                f"Rating inválido para CONSUMIDOR_GT_5: {rating_norm!r}"
-            )
-        return

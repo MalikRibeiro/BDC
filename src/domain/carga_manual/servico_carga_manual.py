@@ -19,7 +19,7 @@ from storage.escrever_dados import mesclar_conjunto_de_dados_prata_por_chave_de_
 
 def inserir_dados_carga_manual(context: AppContext) -> dict[str, Any]:
     run_id = f"MAN_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = obter_logger("bdc.governanca.carga_manual", Path("LOGS/atualizacoes_manuais") / f"{run_id}__carga_manual.log")
+    logger = obter_logger("bdc.governanca.carga_manual", Path("LOGS/manual_updates") / f"{run_id}__carga_manual.log")
     
     input_dir = context.path("entradas") / "atualizacoes_manuais" / "pendentes"
     input_dir.mkdir(parents=True, exist_ok=True)

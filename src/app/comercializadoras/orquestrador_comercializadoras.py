@@ -16,7 +16,7 @@ from control.logger import obter_logger
 
 from control.layout_catalog import carregar_layouts_comercializadoras
 from control.carregador_de_mapeamento import mapeamento_de_carga_fichas_comercializadoras
-from domain.auditoria.servico_auditoria import registrar_linhagem_campos
+from domain.auditoria.servico_auditoria import registrar_linhagem_campos, registrar_evento_processamento
 from relational.facts.fato_alerta_util import registrar_alerta
 from common.servico_desduplicacao import (
     tem_chave_de_negocio_duplicada,
@@ -305,6 +305,15 @@ def processar_arquivo_individual(
         manifest.caminho_bronze = str(bronze_file)
         manifest.status_extracao = "SUCESSO"
 
+        registrar_evento_processamento(
+            control_dir=control_dir,
+            evento="EXTRACAO_FICHA_COMERCIALIZADORA",
+            entidade=manifest.cnpj_extraido or "DESCONHECIDO",
+            status_anterior="EM_PROCESSAMENTO",
+            status_novo="SUCESSO",
+            mensagem=f"Ficha {source_file.name} extraída e salva na staging/bronze"
+        )
+
         mover_para_processados(source_file, processed_dir, manifest, ingestion_log_path, logger, control_dir)
         virar_chave_de_negocio_no_historico(history, manifest.to_dict())
 
@@ -351,7 +360,7 @@ def processar_arquivo_individual(
 def processar_fichas_comercializadoras(context: AppContext) -> dict[str, Any]:
     """Executa o pipeline de ingestão purificado das fichas de comercializadoras."""
     run_id = criar_run_id(context)
-    log_file = Path("LOGS/execucao") / f"{run_id}__fichas_comercializadoras.log"
+    log_file = Path("LOGS/extraction") / f"{run_id}__fichas_comercializadoras.log"
     logger = obter_logger("bdc.comercializadoras", log_file)
 
     _ = mapeamento_de_carga_fichas_comercializadoras(context, logger)

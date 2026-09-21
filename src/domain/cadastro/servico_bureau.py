@@ -13,7 +13,7 @@ from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
 def inserir_dados_bureau(context: AppContext) -> dict[str, Any]:
     run_id = f"BUR_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = obter_logger("bdc.bureau", Path("LOGS/ingestao") / f"{run_id}__ingestao_bureau.log")
+    logger = obter_logger("bdc.bureau", Path("LOGS/ingestion") / f"{run_id}__ingestao_bureau.log")
 
     path_enq = context.path("relational_configs")
     arquivos = list(path_enq.glob("enquadramento_consumidores_*.csv"))
@@ -55,13 +55,9 @@ def inserir_dados_bureau(context: AppContext) -> dict[str, Any]:
         
     if path_contratos.exists():
         df_contratos = pd.read_parquet(path_contratos)
-        status_excluidos = ["CANCELADO", "DISTRATADO", "ENCERRADO", "REJEITADO", "INATIVO"]
-        if "STATUS" in df_contratos.columns:
-            df_ativos = df_contratos[~df_contratos["STATUS"].astype(str).str.upper().isin(status_excluidos)]
-        else:
-            df_ativos = df_contratos
-        cnpjs_ativos = set(df_ativos["CNPJ"].dropna().unique())
-        cnpjs_alvo = list(set([c for c in cnpjs_enquadrados if c in cnpjs_ativos]).union(cnpjs_adicionais))
+        cnpjs_todos_contratos = set(df_contratos["CNPJ"].dropna().unique())
+        # Agora o Bureau vai buscar TODO mundo: Enquadrados, Adicionais (Fichas) e QUALQUER CNPJ que tenha contrato (mesmo vencido)
+        cnpjs_alvo = list(set(cnpjs_enquadrados).union(cnpjs_adicionais).union(cnpjs_todos_contratos))
     else:
         logger.warning("Base de contratos correntes não encontrada. Prosseguindo sem filtro de atividade.")
         cnpjs_alvo = list(set(cnpjs_enquadrados).union(cnpjs_adicionais))

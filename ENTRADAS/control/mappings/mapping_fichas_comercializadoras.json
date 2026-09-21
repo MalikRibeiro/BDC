@@ -378,7 +378,7 @@
         "CELULA_PADRAO_6": "H13"
     },
     {
-        "RUBRICAS": "NOTA_BOARD",
+        "RUBRICAS": "RATING_BOARD_COPEL",
         "ABA_PADRAO_1": "0",
         "CELULA_RUBRICA_PADRAO_1": "0",
         "CELULA_PADRAO_1": "0",
@@ -399,7 +399,7 @@
         "CELULA_PADRAO_6": "C32"
     },
     {
-        "RUBRICAS": "NOTA_BUREAU",
+        "RUBRICAS": "RATING_BUREAU",
         "ABA_PADRAO_1": "0",
         "CELULA_RUBRICA_PADRAO_1": "0",
         "CELULA_PADRAO_1": "0",

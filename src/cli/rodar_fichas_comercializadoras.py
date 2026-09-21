@@ -35,7 +35,7 @@ def main() -> None:
 
     try:
         app_ctx = aplicativo_bootstrap(configs_dir=args.configs_dir)
-        logger = obter_logger("bdc.cli", Path("LOGS/execucao") / "cli_comercializadoras.log")
+        logger = obter_logger("bdc.cli", Path("LOGS/runner") / "cli_comercializadoras.log")
         logger.info("Contexto da aplicacao inicializado a partir de: %s", app_ctx.path('configs'))
         
         processar_fichas_comercializadoras(app_ctx)

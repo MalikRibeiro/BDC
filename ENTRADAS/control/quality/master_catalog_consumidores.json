@@ -8,23 +8,89 @@
             "criticality": "GATE_ENGINE",
             "weight": 50
         },
-        "EMPRESA": {
+        "RAZAO_SOCIAL": {
             "nature": "OBSERVED",
             "type": "string",
             "criticality": "GATE_ENGINE",
             "weight": 50
         },
-        "DATA_DEMONSTRACAO_FINANCEIRA": {
-            "nature": "OBSERVED",
-            "type": "date",
+        "FICHA_COM_DF": {
+            "nature": "DERIVED",
+            "type": "string",
             "criticality": "GATE_ENGINE",
             "weight": 50
+        },
+        "DATA_ABERTURA": {
+            "nature": "DERIVED",
+            "type": "date",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "SITUACAO_CADASTRAL": {
+            "nature": "DERIVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "CEP": {
+            "nature": "DERIVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "ENDERECO": {
+            "nature": "DERIVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "CAPITAL_SOCIAL": {
+            "nature": "DERIVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "NATUREZA_JURIDICA": {
+            "nature": "DERIVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "CNAE": {
+            "nature": "DERIVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "GRUPO_ECONOMICO": {
+            "nature": "DERIVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 0
         },
         "DATA_CALCULO": {
             "nature": "OBSERVED",
             "type": "date",
             "criticality": "OPTIONAL",
             "weight": 10
+        },
+        "CONTRATO_CORRENTE": {
+            "nature": "DERIVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "VOLUME_CONTRATADO": {
+            "nature": "DERIVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "DATA_DEMONSTRACAO_FINANCEIRA": {
+            "nature": "OBSERVED",
+            "type": "date",
+            "criticality": "GATE_ENGINE",
+            "weight": 50
         },
         "ATIVO_CIRCULANTE": {
             "nature": "OBSERVED",
@@ -86,25 +152,19 @@
             "criticality": "OPTIONAL",
             "weight": 10
         },
-        "PROBABILIDADE_DEFAULT": {
-            "nature": "OBSERVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 20
-        },
         "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": {
             "nature": "OBSERVED",
             "type": "float",
             "criticality": "OPTIONAL",
             "weight": 10
         },
-        "AUDITOR": {
+        "PROBABILIDADE_DEFAULT": {
             "nature": "OBSERVED",
-            "type": "string",
+            "type": "float",
             "criticality": "OPTIONAL",
             "weight": 20
         },
-        "FCO": {
+        "FCO_ROL": {
             "nature": "OBSERVED",
             "type": "float",
             "criticality": "OPTIONAL",
@@ -122,6 +182,60 @@
             "criticality": "OPTIONAL",
             "weight": 10
         },
+        "RATING_PD": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10
+        },
+        "SCORE_PD": {
+            "nature": "DERIVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "RATING_FCO_ROL": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10
+        },
+        "SCORE_FCO_ROL": {
+            "nature": "DERIVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "RATING_ROA": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10
+        },
+        "SCORE_ROA": {
+            "nature": "DERIVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "RATING_ROE": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 10
+        },
+        "SCORE_ROE": {
+            "nature": "DERIVED",
+            "type": "float",
+            "criticality": "OPTIONAL",
+            "weight": 0
+        },
+        "AUDITOR": {
+            "nature": "OBSERVED",
+            "type": "string",
+            "criticality": "OPTIONAL",
+            "weight": 20
+        },
         "AGENCIA": {
             "nature": "OBSERVED",
             "type": "string",
@@ -134,87 +248,27 @@
             "criticality": "OPTIONAL",
             "weight": 10
         },
-        "NOTA_BOARD": {
-            "nature": "OBSERVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 10
-        },
-        "NOTA_BUREAU": {
-            "nature": "OBSERVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 10
-        },
         "RATING_COPEL": {
             "nature": "OBSERVED",
             "type": "string",
             "criticality": "OPTIONAL",
             "weight": 10
         },
-        "LUCRO_LIQUIDO": {
+        "RATING_BOARD_COPEL": {
             "nature": "OBSERVED",
-            "type": "float",
+            "type": "string",
             "criticality": "OPTIONAL",
             "weight": 10
         },
-        "ROL": {
+        "RATING_BUREAU": {
             "nature": "OBSERVED",
-            "type": "float",
+            "type": "string",
             "criticality": "OPTIONAL",
             "weight": 10
-        },
-        "SITUACAO_CADASTRAL": {
-            "nature": "DERIVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "NATUREZA_JURIDICA": {
-            "nature": "DERIVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "CNAE": {
-            "nature": "DERIVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "DATA_ABERTURA": {
-            "nature": "DERIVED",
-            "type": "date",
-            "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "ENDERECO": {
-            "nature": "DERIVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "CAPITAL_SOCIAL": {
-            "nature": "DERIVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "CEP": {
-            "nature": "DERIVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 0
         },
         "SCORE_BUREAU": {
             "nature": "DERIVED",
             "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "RESTRITIVOS": {
-            "nature": "DERIVED",
-            "type": "string",
             "criticality": "OPTIONAL",
             "weight": 0
         },
@@ -224,45 +278,15 @@
             "criticality": "OPTIONAL",
             "weight": 0
         },
-        "RESULTADO_CONSULTA": {
-            "nature": "DERIVED",
-            "type": "string",
+        "DATA_CONSULTA": {
+            "nature": "OBSERVED",
+            "type": "date",
             "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "RATING_BUREAU": {
-            "nature": "DERIVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "PD_ASSOCIADA": {
-            "nature": "DERIVED",
-            "type": "float",
-            "criticality": "OPTIONAL",
-            "weight": 0
+            "weight": 10
         },
         "DATA_VALIDADE_CONSULTA": {
             "nature": "DERIVED",
             "type": "date",
-            "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "GRUPO_ECONOMICO": {
-            "nature": "DERIVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "CONTRATO_CORRENTE": {
-            "nature": "DERIVED",
-            "type": "string",
-            "criticality": "OPTIONAL",
-            "weight": 0
-        },
-        "VOLUME_CONTRATADO": {
-            "nature": "DERIVED",
-            "type": "float",
             "criticality": "OPTIONAL",
             "weight": 0
         }

@@ -59,12 +59,12 @@ def registrar_correcao_rascunho(cnpj: str, data_df: str, empresa: str, campo: st
         except Exception:
             df_rascunho = pd.DataFrame()
     else:
-        df_rascunho = pd.DataFrame(columns=["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "EMPRESA", "CAMPO_FALTANTE", "VALOR_NOVO", "FONTE", "MOTIVO", "SOLICITANTE", "TIPO_EVENTO"])
+        df_rascunho = pd.DataFrame(columns=["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "RAZAO_SOCIAL", "CAMPO_FALTANTE", "VALOR_NOVO", "FONTE", "MOTIVO", "SOLICITANTE", "TIPO_EVENTO"])
 
     nova_linha = {
         "CNPJ": cnpj_norm,
         "DATA_DEMONSTRACAO_FINANCEIRA": data_norm,
-        "EMPRESA": empresa.strip(),
+        "RAZAO_SOCIAL": empresa.strip(),
         "CAMPO_FALTANTE": campo.strip(),
         "VALOR_NOVO": str(valor_novo).strip(),
         "FONTE": "OVERRIDE_MANUAL_SILVER",
@@ -138,7 +138,7 @@ def render_visao_silver():
     tab_com, tab_cons, tab_denodo, tab_sf, tab_rec, tab_mtm, tab_bureau, tab_garantias = st.tabs([
         "Comercializadoras",
         "Consumidores",
-        "Denodo (Contratos)",
+        "Contratos (Denodo)",
         "Salesforce (Accounts)",
         "Receita Federal",
         "MTM",
@@ -155,7 +155,7 @@ def render_visao_silver():
         
         colunas_alvo = [
             "CNPJ", "CONTRAPARTE_CNPJ", 
-            "EMPRESA", "SIGLA", "CONTRAPARTE_NOME_FANTASIA", "NAME", "NOME_EMPRESARIAL", 
+            "RAZAO_SOCIAL", "SIGLA", "CONTRAPARTE_NOME_FANTASIA", "CONTRAPARTE_APELIDO", "NAME", "NOME_EMPRESARIAL", 
             "CONTRATO", "NUMERO_REFERENCIA_CONTRATO"
         ]
         
@@ -175,7 +175,7 @@ def render_visao_silver():
         if df is not None and not df.empty:
             df_filtrado = aplicar_filtro(df)
             st.metric("Total de Registros", len(df_filtrado))
-            st.dataframe(df_filtrado, use_container_width=True)
+            st.dataframe(df_filtrado, width='stretch')
         else:
             st.warning("Base de Comercializadoras não encontrada em SAIDAS/silver/fichas_comercializadoras_extraidas. Execute o pipeline primeiro.")
 
@@ -184,7 +184,7 @@ def render_visao_silver():
         if df is not None and not df.empty:
             df_filtrado = aplicar_filtro(df)
             st.metric("Total de Registros", len(df_filtrado))
-            st.dataframe(df_filtrado, use_container_width=True)
+            st.dataframe(df_filtrado, width='stretch')
         else:
             st.warning("Base de Consumidores não encontrada em SAIDAS/silver/fichas_consumidores_extraidas. Execute o pipeline primeiro.")
 
@@ -192,8 +192,14 @@ def render_visao_silver():
         df = ler_arquivo_silver(silver_base / "denodo_contratos_silver", "contratos_correntes")
         if df is not None and not df.empty:
             df_filtrado = aplicar_filtro(df)
-            st.metric("Total de Contratos", len(df_filtrado))
-            st.dataframe(df_filtrado, use_container_width=True)
+            if "NUMERO_REFERENCIA_CONTRATO" in df_filtrado.columns:
+                total_distinto = df_filtrado["NUMERO_REFERENCIA_CONTRATO"].nunique()
+            elif "CONTRATO" in df_filtrado.columns:
+                total_distinto = df_filtrado["CONTRATO"].nunique()
+            else:
+                total_distinto = len(df_filtrado)
+            st.metric("Total de Contratos (Únicos)", total_distinto)
+            st.dataframe(df_filtrado, width='stretch')
         else:
             st.warning("Base do Denodo não encontrada em SAIDAS/silver/denodo_contratos_silver. Execute o pipeline primeiro.")
 
@@ -202,7 +208,7 @@ def render_visao_silver():
         if df is not None and not df.empty:
             df_filtrado = aplicar_filtro(df)
             st.metric("Total de Contas Salesforce", len(df_filtrado))
-            st.dataframe(df_filtrado, use_container_width=True)
+            st.dataframe(df_filtrado, width='stretch')
         else:
             st.warning("Base do Salesforce não encontrada em SAIDAS/silver/salesforce_silver/account. Execute o pipeline primeiro.")
 
@@ -211,7 +217,7 @@ def render_visao_silver():
         if df is not None and not df.empty:
             df_filtrado = aplicar_filtro(df)
             st.metric("Total de Registros Cadastrais", len(df_filtrado))
-            st.dataframe(df_filtrado, use_container_width=True)
+            st.dataframe(df_filtrado, width='stretch')
         else:
             st.warning("Base da Receita Federal não encontrada em SAIDAS/silver/receita_silver. Execute o pipeline primeiro.")
 
@@ -220,7 +226,7 @@ def render_visao_silver():
         if df is not None and not df.empty:
             df_filtrado = aplicar_filtro(df)
             st.metric("Total de Registros MTM", len(df_filtrado))
-            st.dataframe(df_filtrado, use_container_width=True)
+            st.dataframe(df_filtrado, width='stretch')
         else:
             st.warning("Base de MTM não encontrada em SAIDAS/silver/mtm_consolidado_silver. Execute o pipeline primeiro.")
 
@@ -229,7 +235,7 @@ def render_visao_silver():
         if df is not None and not df.empty:
             df_filtrado = aplicar_filtro(df)
             st.metric("Total de Registros Bureau", len(df_filtrado))
-            st.dataframe(df_filtrado, use_container_width=True)
+            st.dataframe(df_filtrado, width='stretch')
         else:
             st.warning("Base de Bureau não encontrada em SAIDAS/silver/fato_bureau_silver. Execute o pipeline primeiro.")
 
@@ -238,6 +244,6 @@ def render_visao_silver():
         if df is not None and not df.empty:
             df_filtrado = aplicar_filtro(df)
             st.metric("Total de Registros de Garantias", len(df_filtrado))
-            st.dataframe(df_filtrado, use_container_width=True)
+            st.dataframe(df_filtrado, width='stretch')
         else:
             st.warning("Base de Garantias não encontrada em SAIDAS/silver/garantias_silver. Execute o pipeline primeiro.")

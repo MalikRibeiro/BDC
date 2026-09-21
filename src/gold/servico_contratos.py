@@ -73,7 +73,8 @@ def integrar_contratos_gold(df_gold: pd.DataFrame, df_contratos: pd.DataFrame, h
         if "NOME_CONTRATO_FALLBACK" in df_gold.columns:
             mask_nome_vazio = df_gold["NOME"].isna() | (df_gold["NOME"].astype(str).str.strip() == "") | (df_gold["NOME"].astype(str).str.lower() == "nan")
             df_gold.loc[mask_nome_vazio, "NOME"] = df_gold.loc[mask_nome_vazio, "NOME_CONTRATO_FALLBACK"]
-            df_gold = df_gold.drop(columns=["NOME_CONTRATO_FALLBACK"])
+            # Em vez de excluir, renomeia para que a Visão Carteira possa usar preferencialmente
+            df_gold = df_gold.rename(columns={"NOME_CONTRATO_FALLBACK": "CONTRAPARTE_APELIDO"})
     else:
         df_gold["STATUS_CONTRATUAL"] = "SEM_CONTRATO"
         df_gold["VOLUME_MWM"] = 0.0

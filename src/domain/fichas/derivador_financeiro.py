@@ -31,13 +31,7 @@ def calcular_indicadores_derivados(record: dict) -> dict:
         val = divisao_segura(ativo_circulante, passivo_circulante)
         if val is not None:
             record["AC_PC"] = val
-            
-    if record.get("AT_PT") is None:
-        if passivo_circulante is not None and passivo_nao_circulante is not None:
-            passivo_total = float(passivo_circulante) + float(passivo_nao_circulante)
-            val = divisao_segura(ativo_total, passivo_total)
-            if val is not None:
-                record["AT_PT"] = val
+        
                 
     if record.get("ROA") is None:
         val = divisao_segura(lucro_liquido, ativo_total)
@@ -48,10 +42,5 @@ def calcular_indicadores_derivados(record: dict) -> dict:
         val = divisao_segura(lucro_liquido, patrimonio_liquido)
         if val is not None:
             record["ROE"] = val
-            
-    if record.get("FCO") is None:
-        val = divisao_segura(fluxo_caixa, receita_base)
-        if val is not None:
-            record["FCO"] = val
-                    
+
     return record

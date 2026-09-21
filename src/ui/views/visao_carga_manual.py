@@ -47,18 +47,22 @@ def carregar_dados():
     if FILA_PATH.exists():
         df_fila = pd.read_csv(FILA_PATH, sep=";", dtype=str).fillna("")
         df_fila.columns = df_fila.columns.str.strip()
+        if "EMPRESA" in df_fila.columns:
+            df_fila.rename(columns={"EMPRESA": "RAZAO_SOCIAL"}, inplace=True)
         for col in df_fila.columns:
             df_fila[col] = df_fila[col].astype(str).str.strip()
     else:
-        df_fila = pd.DataFrame(columns=["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "EMPRESA", "CAMPO_FALTANTE", "STATUS", "VALOR_RECUPERADO"])
+        df_fila = pd.DataFrame(columns=["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "RAZAO_SOCIAL", "CAMPO_FALTANTE", "STATUS", "VALOR_RECUPERADO"])
 
     if RASCUNHO_PATH.exists():
         df_rascunho = pd.read_csv(RASCUNHO_PATH, sep=";", dtype=str).fillna("")
         df_rascunho.columns = df_rascunho.columns.str.strip()
+        if "EMPRESA" in df_rascunho.columns:
+            df_rascunho.rename(columns={"EMPRESA": "RAZAO_SOCIAL"}, inplace=True)
         for col in df_rascunho.columns:
             df_rascunho[col] = df_rascunho[col].astype(str).str.strip()
     else:
-        df_rascunho = pd.DataFrame(columns=["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "EMPRESA", "CAMPO_FALTANTE", "VALOR_NOVO", "FONTE", "MOTIVO", "SOLICITANTE", "TIPO_EVENTO"])
+        df_rascunho = pd.DataFrame(columns=["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "RAZAO_SOCIAL", "CAMPO_FALTANTE", "VALOR_NOVO", "FONTE", "MOTIVO", "SOLICITANTE", "TIPO_EVENTO"])
         
     return df_fila, df_rascunho
 
@@ -79,7 +83,7 @@ def salvar_form_rascunho(cnpj, data_df, empresa, campos):
             novas_linhas.append({
                 "CNPJ": cnpj_canonico,
                 "DATA_DEMONSTRACAO_FINANCEIRA": str(data_df).strip(),
-                "EMPRESA": str(empresa).strip(),
+                "RAZAO_SOCIAL": str(empresa).strip(),
                 "CAMPO_FALTANTE": str(campo).strip(),
                 "VALOR_NOVO": str(valor).strip(),
                 "FONTE": str(fonte).strip(),
@@ -115,13 +119,13 @@ def render_visao_carga_manual():
     
     with st.sidebar:
         st.header("Operações de Diagnóstico")
-        if st.button("Gerar Diagnóstico Atualizado", use_container_width=True):
+        if st.button("Gerar Diagnóstico Atualizado", width='stretch'):
             with st.spinner("Lendo Silver e gerando fila de pendências..."):
                 gerar_diagnostico()
             st.success("Diagnóstico concluído!")
             st.rerun()
             
-        if st.button("Exportar Carga Manual", use_container_width=True, type="primary"):
+        if st.button("Exportar Carga Manual", width='stretch', type="primary"):
             with st.spinner("Exportando..."):
                 sucesso = exportar_carga_manual()
                 if sucesso:
@@ -143,7 +147,7 @@ def render_visao_carga_manual():
         df_fila_pendente = df_fila.copy()
 
     # Métricas gerais no topo
-    grupos_totais = list(df_fila_pendente.groupby(["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "EMPRESA"])) if not df_fila_pendente.empty else []
+    grupos_totais = list(df_fila_pendente.groupby(["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "RAZAO_SOCIAL"])) if not df_fila_pendente.empty else []
     
     col_m1, col_m2, col_m3 = st.columns(3)
     col_m1.metric("Campos Pendentes", len(df_fila_pendente))
@@ -169,7 +173,7 @@ def render_visao_carga_manual():
             # Corrige bug visual do Pandas que oculta registros com chaves nulas no groupby
             df_fila_pendente["CNPJ"] = df_fila_pendente["CNPJ"].replace("", "CNPJ_DESCONHECIDO")
             df_fila_pendente["DATA_DEMONSTRACAO_FINANCEIRA"] = df_fila_pendente["DATA_DEMONSTRACAO_FINANCEIRA"].replace("", "DATA_DESCONHECIDA")
-            df_fila_pendente["EMPRESA"] = df_fila_pendente["EMPRESA"].replace("", "EMPRESA_DESCONHECIDA")
+            df_fila_pendente["RAZAO_SOCIAL"] = df_fila_pendente["RAZAO_SOCIAL"].replace("", "EMPRESA_DESCONHECIDA")
 
             # Barra de busca rápida
             busca = st.text_input("Filtrar por Empresa, CNPJ ou Campo:", placeholder="Digite o nome da empresa, CNPJ ou campo para filtrar...", key="busca_pendencias")
@@ -177,7 +181,7 @@ def render_visao_carga_manual():
             if busca.strip():
                 termo = busca.strip().lower()
                 df_filtrado = df_fila_pendente[
-                    df_fila_pendente["EMPRESA"].astype(str).str.lower().str.contains(termo) |
+                    df_fila_pendente["RAZAO_SOCIAL"].astype(str).str.lower().str.contains(termo) |
                     df_fila_pendente["CNPJ"].astype(str).str.lower().str.contains(termo) |
                     df_fila_pendente["CAMPO_FALTANTE"].astype(str).str.lower().str.contains(termo)
                 ]
@@ -187,7 +191,7 @@ def render_visao_carga_manual():
             if df_filtrado.empty:
                 st.warning(f"Nenhum registro encontrado para a busca '{busca}'.")
             else:
-                grupos = list(df_filtrado.groupby(["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "EMPRESA"]))
+                grupos = list(df_filtrado.groupby(["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "RAZAO_SOCIAL"]))
                 total_fichas = len(grupos)
                 total_paginas = max(1, (total_fichas + itens_por_pagina - 1) // itens_por_pagina)
                 
@@ -268,13 +272,13 @@ def render_visao_carga_manual():
                 st.markdown("<br>", unsafe_allow_html=True)
                 col_p1, col_p2, col_p3 = st.columns([1, 3, 1])
                 with col_p1:
-                    if st.button("Anterior", disabled=st.session_state["pagina_carga"] <= 1, use_container_width=True, key="btn_prev_pend"):
+                    if st.button("Anterior", disabled=st.session_state["pagina_carga"] <= 1, width='stretch', key="btn_prev_pend"):
                         st.session_state["pagina_carga"] -= 1
                         st.rerun()
                 with col_p2:
                     st.markdown(f"<div style='text-align: center; margin-top: 5px; font-size: 16px;'>Página <b>{st.session_state['pagina_carga']}</b> de {total_paginas}</div>", unsafe_allow_html=True)
                 with col_p3:
-                    if st.button("Próxima", disabled=st.session_state["pagina_carga"] >= total_paginas, use_container_width=True, key="btn_next_pend"):
+                    if st.button("Próxima", disabled=st.session_state["pagina_carga"] >= total_paginas, width='stretch', key="btn_next_pend"):
                         st.session_state["pagina_carga"] += 1
                         st.rerun()
 
@@ -287,7 +291,7 @@ def render_visao_carga_manual():
             
             col_b1, col_b2 = st.columns([1, 4])
             with col_b1:
-                if st.button("Exportar Carga Manual", key="btn_exportar_tab", type="primary", use_container_width=True):
+                if st.button("Exportar Carga Manual", key="btn_exportar_tab", type="primary", width='stretch'):
                     with st.spinner("Exportando..."):
                         sucesso = exportar_carga_manual()
                         if sucesso:
@@ -300,9 +304,9 @@ def render_visao_carga_manual():
                     st.rerun()
                     
             st.markdown("---")
-            colunas_exibir = [c for c in ["EMPRESA", "CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "CAMPO_FALTANTE", "VALOR_NOVO", "FONTE", "MOTIVO", "SOLICITANTE", "TIPO_EVENTO"] if c in df_rascunho.columns]
+            colunas_exibir = [c for c in ["RAZAO_SOCIAL", "CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "CAMPO_FALTANTE", "VALOR_NOVO", "FONTE", "MOTIVO", "SOLICITANTE", "TIPO_EVENTO"] if c in df_rascunho.columns]
             st.dataframe(
                 df_rascunho[colunas_exibir],
-                use_container_width=True,
+                width="stretch",
                 hide_index=True
             )

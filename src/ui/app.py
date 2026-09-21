@@ -9,15 +9,23 @@ from ui.views.visao_orquestrador import render_visao_orquestrador
 from ui.views.visao_carga_manual import render_visao_carga_manual
 from ui.views.visao_carteira import render_visao_carteira
 from ui.views.visao_silver import render_visao_silver
+from ui.views.visao_governanca import render_visao_governanca
 
 st.set_page_config(
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    page_title="BD Crédito",
+    page_icon="⚡"
 )
 
 def main():
     with st.sidebar:
-        st.title("BDC")
+        logo_path = Path(__file__).resolve().parent / "dashboard" / "logo" / "logo-copel-horizontal-laranja.png"
+        if logo_path.exists():
+            st.image(str(logo_path), width='stretch')
+        else:
+            st.title("BDC")
+            
         st.markdown("---")
 
         menu = st.radio(
@@ -26,9 +34,10 @@ def main():
                 "Orquestrador",
                 "Visão da Carteira",
                 "Visão Silver",
-                "Carga Manual",
+                "Auditoria",
+                "Carga Manual"
             ],
-            index=1
+            index=0
         )
         st.markdown("---")
 
@@ -40,6 +49,8 @@ def main():
         render_visao_silver()
     elif menu == "Carga Manual":
         render_visao_carga_manual()
+    elif menu == "Auditoria":
+        render_visao_governanca()
 
 if __name__ == "__main__":
     main()

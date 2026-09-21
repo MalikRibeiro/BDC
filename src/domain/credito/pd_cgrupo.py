@@ -105,36 +105,29 @@ def calcular_pd_final_cgrupo(
     regras_segmento: dict[str, Any],
     logger: Any | None = None,
 ) -> dict[str, Any]:
-    pd_base = float(registro["PD_BASE"])
-    rating, fonte_rating = _resolver_rating_cgrupo(registro, regras_segmento)
-
+    rating_macro, fonte_rating = _resolver_rating_cgrupo(registro, regras_segmento)
     regras_pd = regras_segmento["pd_final_rules"]
-    fixed_pd = regras_pd.get("fixed_pd_by_rating", {})
+    pd_tabela = regras_pd.get("pd_tabela", {})
 
-    if rating in fixed_pd:
-        pd_final = float(fixed_pd[rating])
-        return {
-            "RATING_FINAL": rating,
-            "FONTE_RATING": fonte_rating,
-            "PD_MIN_FAIXA": 0.0,
-            "PD_MAX_FAIXA": pd_final,
-            "PERCENTIL_PD_BASE": None,
-            "PD_FINAL": pd_final,
-            "PD_METODO": "FIXED_PD",
-        }
+    if fonte_rating == "RATING_PUBLICO":
+        rating_lookup = str(registro.get("NOTA_CREDITO") or "").strip().upper()
+    else:
+        rating_lookup = rating_macro
 
-    faixa = regras_pd["faixas_pd"][rating]
-    pd_min = float(faixa["min"])
-    pd_max = float(faixa["max"])
-
-    pd_final = min(max(pd_base, pd_min), pd_max)
+    if rating_lookup not in pd_tabela:
+        if logger is not None:
+            logger.warning("Rating %s não encontrado na tabela de CGRUPO, usando classe E (100%%)", rating_lookup)
+        pd_final = 1.0
+        rating_macro = "E"
+    else:
+        pd_final = float(pd_tabela[rating_lookup])
 
     return {
-        "RATING_FINAL": rating,
+        "RATING_FINAL": rating_macro,
         "FONTE_RATING": fonte_rating,
-        "PD_MIN_FAIXA": pd_min,
-        "PD_MAX_FAIXA": pd_max,
+        "PD_MIN_FAIXA": pd_final,
+        "PD_MAX_FAIXA": pd_final,
         "PERCENTIL_PD_BASE": None,
         "PD_FINAL": pd_final,
-        "PD_METODO": "CLAMP",
+        "PD_METODO": "LOOKUP_TABELA",
     }

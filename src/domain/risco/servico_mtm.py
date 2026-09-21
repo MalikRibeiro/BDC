@@ -31,7 +31,7 @@ class MtmReconciliationError(Exception):
 def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
     """Orquestra a ingestão MtM: Bronze snapshot → Conector → Agregação → Reconciliação → Silver."""
     run_id = f"MTM_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    log_file = Path("LOGS/ingestao") / f"{run_id}__ingestao_mtm.log"
+    log_file = Path("LOGS/ingestion") / f"{run_id}__ingestao_mtm.log"
     logger = obter_logger("bdc.mtm", log_file)
 
     try:

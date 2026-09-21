@@ -57,7 +57,7 @@ def _listar_cnpjs_de_entrada(context: AppContext) -> list[str]:
 
 def inserir_dados_receita(context: AppContext) -> dict[str, Any]:
     run_id = f"REC_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = obter_logger("bdc.receita", Path("LOGS/ingestao") / f"{run_id}__ingestao_receita.log")
+    logger = obter_logger("bdc.receita", Path("LOGS/ingestion") / f"{run_id}__ingestao_receita.log")
 
     cnpjs = _listar_cnpjs_de_entrada(context)
     if not cnpjs:

@@ -15,8 +15,8 @@ def integrar_eventos_manuais_gold(df_gold: pd.DataFrame, df_eventos: pd.DataFram
             df_ev_vigentes["CAMPO_AFETADO"] = df_ev_vigentes["CAMPO_AFETADO"].replace({
                 "NOTA_CREDITO": "RATING_FINAL",
                 "RATING": "RATING_FINAL",
-                "NOTA_BOARD": "RATING_FINAL",
-                "NOTA_BUREAU": "RATING_FINAL",
+                "RATING_BOARD_COPEL": "RATING_FINAL",
+                "RATING_BUREAU": "RATING_FINAL",
                 "PD": "PD_FINAL",
                 "PROBABILIDADE_DEFAULT": "PD_FINAL"
             })

@@ -113,7 +113,8 @@ def main() -> None:
         SAIDAS_DIR / "relational",
         SAIDAS_DIR / "gold",
         SAIDAS_DIR / "output",
-        LOGS_DIR
+        LOGS_DIR,
+        ENTRADAS_DIR / "control" / "relational_control"
     ]
 
     for path in targets:
@@ -131,19 +132,21 @@ def main() -> None:
     moved_manual = move_generic_back_to_pending(ENTRADAS_DIR / "atualizacoes_manuais")
     
     # Fontes com pasta "vigente"
-    moved_denodo = move_generic_back_to_pending(ENTRADAS_DIR / "contratos_denodo", "vigente")
     moved_mtm = move_generic_back_to_pending(ENTRADAS_DIR / "mtm", "vigente")
     moved_salesforce = move_generic_back_to_pending(ENTRADAS_DIR / "salesforce", "vigente")
     moved_receita = move_generic_back_to_pending(ENTRADAS_DIR / "receita_federal", "vigente")
+    moved_garantias = move_generic_back_to_pending(ENTRADAS_DIR / "garantias", "vigente")
+    moved_bureau = move_generic_back_to_pending(ENTRADAS_DIR / "bureau_credito", "vigente")
 
     print(f"Comercializadoras movidas para pendentes: {moved_comercializadoras}")
     print(f"Consumidores movidos para pendentes: {moved_consumidores}")
     print(f"Overrides movidos para pendentes: {moved_overrides}")
     print(f"Carga Manual movidas para pendentes: {moved_manual}")
-    print(f"Contratos Denodo movidos para vigente: {moved_denodo}")
     print(f"MtM movidos para vigente: {moved_mtm}")
     print(f"Salesforce movidos para vigente: {moved_salesforce}")
     print(f"Receita movidos para vigente: {moved_receita}")
+    print(f"Garantias movidos para vigente: {moved_garantias}")
+    print(f"Bureau movidos para vigente: {moved_bureau}")
     
     print("Reset concluído. Agora você pode executar novamente o 'python main.py'")
 

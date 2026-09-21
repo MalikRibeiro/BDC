@@ -1,0 +1,41 @@
+{
+  "status": "AGUARDANDO_HOMOLOGACAO",
+  "data_proposta": "2026-09-17",
+  "piso_lgd_residual": 0.0,
+  "status_inativos": [
+    "CANCELADA",
+    "REVOGADA",
+    "EM_DISPUTA_JUDICIAL",
+    "ENCERRADA",
+    "BAIXADA"
+  ],
+  "haircuts": {
+    "FIANCA_BANCARIA_TIER_1": 0.00,
+    "FIANCA_BANCARIA_TIER_INFERIOR": 0.20,
+    "SEGURO_GARANTIA": 0.10,
+    "IMOVEL": 0.40,
+    "HIPOTECA": 0.40,
+    "PENHOR_RECEBIVEIS": 0.50,
+    "PENHOR_DUPLICATAS": 0.50,
+    "ACOES_INDICE_PRINCIPAL": 0.15,
+    "ACOES_DEMAIS": 0.25,
+    "FUNDO_INVESTIMENTO": 0.10,
+    "APLICACAO_FINANCEIRA": 0.10
+  },
+  "rating_garantidor_tier_1": [
+    "A",
+    "A+",
+    "A-",
+    "AA",
+    "AA+",
+    "AA-",
+    "AAA",
+    "BR AAA",
+    "BR AA+",
+    "BR AA",
+    "BR AA-",
+    "BR A+",
+    "BR A",
+    "BR A-"
+  ]
+}

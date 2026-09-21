@@ -19,6 +19,7 @@ from common.servico_desduplicacao import tem_hash_duplicado
 from storage.armazenamento_manifest import historico_de_ingestao_de_carga, anexar_registro_de_manifesto
 from services.connectors.denodo_connector import buscar_denodo
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
+from control.logger import obter_logger
 
 LOGGER = logging.getLogger(__name__)
 
@@ -79,7 +80,8 @@ def aplicar_regras_negocio_pandas(df: pd.DataFrame) -> pd.DataFrame:
 
 def processar_contratos_denodo(context: AppContext) -> dict[str, Any]:
     run_id = f"CTR_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = logging.getLogger("bdc.contratos")
+    log_file = Path("LOGS/ingestion") / f"{run_id}__ingestao_contratos.log"
+    logger = obter_logger("bdc.contratos", log_file)
 
     try:
         input_dir = context.path("entradas") / "contratos_denodo"
@@ -103,7 +105,9 @@ def processar_contratos_denodo(context: AppContext) -> dict[str, Any]:
             for al in arquivos_legado:
                 shutil.move(str(al), str(vigente_dir / al.name))
 
+        hoje_str = datetime.now().strftime("%Y%m%d")
         arquivos_locais = list(vigente_dir.glob("*.csv"))
+        arquivos_processados_hoje = list(processadas_dir.glob(f"denodo_api_export_CTR_{hoje_str}*.csv"))
         
         df_raw = pd.DataFrame()
         source_file = None
@@ -114,20 +118,106 @@ def processar_contratos_denodo(context: AppContext) -> dict[str, Any]:
             logger.info("Lendo contratos de arquivo local: %s (Ignorando API)", source_file.name)
             staging_file = staging_dir / source_file.name
             shutil.copy2(source_file, staging_file)
+        elif arquivos_processados_hoje:
+            source_file = max(arquivos_processados_hoje, key=lambda f: f.stat().st_mtime)
+            logger.info("Cache diario encontrado: %s (Ignorando consulta ODBC para evitar duplicidade)", source_file.name)
+            staging_file = staging_dir / source_file.name
+            shutil.copy2(source_file, staging_file)
         else:
-            logger.info("Iniciando extração da view vwi_exportar_contrato via REST (Staging File Proxy).")
-            colunas_necessarias = "ano,mes,ncdempresaproprietaria,id_parte,id_tipo_contrato,id_contraparte,contrato_vinculado,id_status,quant_contratada,quant_sazonalizada,parte_apelido,contraparte_apelido,contraparte_cnpj,nome_contrato,suprimento_inicio,suprimento_termino,status"
-            parametros_api = {
-                "$select": colunas_necessarias, 
-                "$filter": "ano >= 2024 AND parte_apelido = 'COPEL COM' AND id_parte = 297 AND ncdempresaproprietaria = 297"
-            }
-            df_api = buscar_denodo("vwi_exportar_contrato", params=parametros_api)
+            logger.info("Iniciando extração da view vwi_exportar_contrato via ODBC.")
+            query_denodo = """
+               SELECT com.vwi_exportar_contrato.movimentacao AS movimentacao,
+                      com.vwi_exportar_contrato.contraparte_nome_fantasia AS contraparte_nome_fantasia,
+                      com.vwi_exportar_contrato.contraparte_cnpj AS contraparte_CNPJ,
+                      com.vwi_exportar_contrato.id_parte AS id_parte,
+                      com.vwi_exportar_contrato.nome_contrato AS nome_contrato,
+                      com.vwi_exportar_contrato.id_tipo_contrato AS id_tipo_contrato,
+                      com.vwi_exportar_contrato.tipo_contrato AS tipo_contrato,
+                      com.vwi_exportar_contrato.subtipo_contrato AS subtipo_contrato,
+                      com.vwi_exportar_contrato.suprimento_inicio AS suprimento_inicio,
+                      com.vwi_exportar_contrato.suprimento_termino AS suprimento_termino,
+                      com.vwi_exportar_contrato.sigla_ccee_parte AS sigla_ccee,
+                      com.vwi_exportar_contrato.submercado AS submercado,
+                      com.vwi_exportar_contrato.codigo_ccee AS codigo_ccee,
+                      com.vwi_exportar_contrato.codigo_wbc AS codigo_wbc,
+                      com.vwi_exportar_contrato.contrato_rateio_principal AS contrato_rateio_principal,
+                      com.vwi_exportar_contrato.rateio AS rateio,
+                      com.vwi_exportar_contrato.data_assinatura AS data_assinatura,
+                      com.vwi_exportar_contrato.data_criacao AS data_criacao,
+                      com.vwi_exportar_contrato.data_fechamento AS data_fechamento,
+                      com.vwi_exportar_contrato.id_status AS id_status,
+                      com.vwi_exportar_contrato.status AS status,
+                      com.vwi_exportar_contrato.data_publicacao AS data_publicacao,
+                      com.vwi_exportar_contrato.texto_publicacao AS texto_publicacao,
+                      com.vwi_exportar_contrato.motivo_publicacao AS motivo_publicacao,
+                      com.vwi_exportar_contrato.usuario_cadastro AS usuario_cadastro,
+                      com.vwi_exportar_contrato.usuario_ultima_alteracao AS usuario_ultima_alteracao,
+                      com.vwi_exportar_contrato.usuario_proposta AS usuario_proposta,
+                      com.vwi_exportar_contrato.numero_proposta AS numero_proposta,
+                      com.vwi_exportar_contrato.codigo_oportunidade AS codigo_oportunidade,
+                      com.vwi_exportar_contrato.codigo_proposta AS codigo_proposta,
+                      com.vwi_exportar_contrato.agrupador AS agrupador,
+                      com.vwi_exportar_contrato.contrato_vinculado AS contrato_vinculado,
+                      com.vwi_exportar_contrato.ano AS ano,
+                      com.vwi_exportar_contrato.mes AS mes,
+                      com.vwi_exportar_contrato.regra_valor_fixo_unitario AS regra_valor_fixo_unitario,
+                      com.vwi_exportar_contrato.quant_contratada AS quant_Contratada,
+                      com.vwi_exportar_contrato.quant_sazonalizada AS quant_sazonalizada,
+                      com.vwi_exportar_contrato.quant_solicitada AS quant_solicitada,
+                      com.vwi_exportar_contrato.quant_faturada AS quant_faturada,
+                      com.vwi_exportar_contrato.regra_preco AS regra_preco,
+                      com.vwi_exportar_contrato.id_regra_preco AS id_regra_preco,
+                      com.vwi_exportar_contrato.preco_base AS valor,
+                      com.vwi_exportar_contrato.preco_atualizado AS valorreajustado,
+                      com.vwi_exportar_contrato.form_agio AS form_agio,
+                      com.vwi_exportar_contrato.form_preco_fixo AS form_preco_fixo,
+                      com.vwi_exportar_contrato.reajuste_data AS reajuste_Data,
+                      com.vwi_exportar_contrato.reajuste_data_primeiro_reajuste AS reajuste_data_primeiro_reajuste,
+                      com.vwi_exportar_contrato.reajuste_data_base AS reajuste_data_base,
+                      com.vwi_exportar_contrato.reajuste_periodicidade AS reajuste_periodicidade,
+                      com.vwi_exportar_contrato.reajuste_prorata AS reajuste_prorata,
+                      com.vwi_exportar_contrato.reajuste_referencia AS reajuste_referencia,
+                      com.vwi_exportar_contrato.reajuste_indice_economico AS reajuste_indice_economico,
+                      com.vwi_exportar_contrato.situacao_publicacao AS situacao_publicacao,
+                      com.vwi_exportar_contrato.portfolio_vendedor AS portfolio_Vendedor,
+                      com.vwi_exportar_contrato.portfolio_comprador AS portfolio_Comprador,
+                      com.vwi_exportar_contrato.numero_referencia_contrato AS numero_referencia_contrato,
+                      com.vwi_exportar_contrato.fonte_contrato AS fonte_contrato,
+                      com.vwi_exportar_contrato.flexibilidade_mensal_min AS flexibilidademensalmin,
+                      com.vwi_exportar_contrato.flexibilidade_mensal_max AS flexibilidademensalmax,
+                      com.vwi_exportar_contrato.observacao AS observacao,
+                      com.vwi_exportar_contrato.contraparte_apelido AS contraparte_apelido,
+                      com.vwi_exportar_contrato.parte_apelido AS parte_apelido
+               FROM com.vwi_exportar_contrato
+               WHERE (
+                         ano >= 2024
+                         AND parte_apelido = 'COPEL COM'
+                         AND contraparte_apelido <> 'COPEL COM - Transferência de energia'
+                         AND ncdempresaproprietaria = 297
+                         AND id_parte = 297
+                         AND id_tipo_contrato IN (1, 3, 33, 90)
+                         AND id_contraparte <> 9057
+                         AND contrato_vinculado IS NULL
+                         AND id_status NOT IN (0, 1, 4, 5, 6, 9, 10, 11)
+                         AND (
+                                quant_contratada > 0
+                             OR quant_sazonalizada > 0
+                         )
+                     )
+            """
+            df_api = buscar_denodo(query=query_denodo)
             
             if df_api.empty:
                 return {"run_id": run_id, "status": "SEM_DADOS", "linhas": 0}
                 
             staging_file = staging_dir / f"api_snapshot_{run_id}.parquet"
             df_api.to_parquet(staging_file, index=False)
+            
+            # Exporta uma cópia em CSV para a pasta processadas para facilitar a auditoria visual
+            csv_audit_file = processadas_dir / f"denodo_api_export_{run_id}.csv"
+            df_api.to_csv(csv_audit_file, sep=";", index=False, encoding="utf-8-sig")
+            logger.info("Cópia CSV de auditoria salva em %s", csv_audit_file.name)
+            
             source_file = staging_file
 
         hash_arquivo = arquivo_hash(staging_file)

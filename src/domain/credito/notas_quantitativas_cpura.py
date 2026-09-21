@@ -113,16 +113,22 @@ def calcular_notas_quantitativas_cpura(
                 registro.get("CNPJ"),
             )
 
-        pd_valor = _obter_valor_numerico(registro, "PROBABILIDADE_DEFAULT")
-        fco_rol_valor = _obter_valor_numerico(registro, "FCO")
+        pd_valor = _obter_valor_numerico(registro, "PD_BASE")
+        fco_bruto = _obter_valor_numerico(registro, "FCO")
+        rol_bruto = _obter_valor_numerico(registro, "ROL")
+        fco_rol_valor = (fco_bruto / rol_bruto) if rol_bruto != 0 else 0.0
+        
         roe_valor = _obter_valor_numerico(registro, "ROE")
         roa_valor = _obter_valor_numerico(registro, "ROA")
 
         pd_valor = _normalizar_pd(pd_valor)
 
+        segmento = str(registro.get("SEGMENTO_PD", "")).strip().upper()
+        indicador_pd = "PD_CONSUMIDOR_GT_5" if segmento == "CONSUMIDOR_GT_5" else "PD"
+
         nota_pd = _atribuir_nota_por_faixa(
             valor=pd_valor,
-            faixas=_obter_faixas_notas(score_cpura_config, "PD"),
+            faixas=_obter_faixas_notas(score_cpura_config, indicador_pd),
             indicador="PD",
         )
         nota_fco_rol = _atribuir_nota_por_faixa(

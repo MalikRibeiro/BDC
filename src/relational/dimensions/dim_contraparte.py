@@ -70,7 +70,7 @@ def criar_dim_contraparte(
     if df_silver_fichas is not None and not df_silver_fichas.empty:
         df_fichas = df_silver_fichas.copy()
         df_fichas["CNPJ"] = df_fichas["CNPJ"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
-        df_fichas["NOME_FICHA"] = df_fichas.get("EMPRESA", None)
+        df_fichas["NOME_FICHA"] = df_fichas.get("RAZAO_SOCIAL", None)
         df_fichas["SIGLA_FICHA"] = df_fichas.get("SIGLA", None)
         
         col_sort = "DT_PROCESSAMENTO" if "DT_PROCESSAMENTO" in df_fichas.columns else "CNPJ"

@@ -29,7 +29,7 @@ def inserir_dados_salesforce(context: AppContext) -> dict[str, Any]:
     e persiste na camada Silver.
     """
     run_id = f"SF_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    log_file = Path("LOGS/ingestao") / f"{run_id}__ingestao_salesforce.log"
+    log_file = Path("LOGS/ingestion") / f"{run_id}__ingestao_salesforce.log"
     logger = obter_logger("bdc.salesforce", log_file)
 
     try:

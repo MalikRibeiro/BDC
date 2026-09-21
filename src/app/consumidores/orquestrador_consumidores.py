@@ -24,6 +24,7 @@ from common.servico_desduplicacao import (
     tem_hash_duplicado,
     virar_chave_de_negocio_no_historico,
 )
+from domain.auditoria.servico_auditoria import registrar_linhagem_campos, registrar_evento_processamento
 from domain.fichas.validador import validar_registro_consumidor
 from domain.consumidores.classificacao import (
     classificar_consumidor,
@@ -292,9 +293,13 @@ def processar_arquivo_individual(
         )
         manifest.data_calculo = normalized.get("DATA_CALCULO")
 
+        abas_planilha = workbook.sheetnames if (workbook and hasattr(workbook, "sheetnames")) else []
+
         classificacao = classificar_consumidor(
             record=normalized,
             versao_layout=classification.versao_ficha,
+            volume_mwm=None,
+            abas_planilha=abas_planilha,
         )
 
         logger.info(
@@ -418,7 +423,7 @@ def processar_arquivo_individual(
 
         bronze_subfolder = resolver_subpasta_bronze(
             manifest.cnpj_extraido,
-            normalized.get("EMPRESA"),
+            normalized.get("RAZAO_SOCIAL"),
         )
 
         bronze_staging = copiar_para_staging(
@@ -430,6 +435,15 @@ def processar_arquivo_individual(
         )
         manifest.caminho_bronze = str(bronze_file)
         manifest.status_extracao = "SUCESSO"
+
+        registrar_evento_processamento(
+            control_dir=control_dir,
+            evento="EXTRACAO_FICHA_CONSUMIDOR",
+            entidade=manifest.cnpj_extraido or "DESCONHECIDO",
+            status_anterior="EM_PROCESSAMENTO",
+            status_novo="SUCESSO",
+            mensagem=f"Ficha {source_file.name} extraída e salva na staging/bronze"
+        )
 
         mover_para_processados(
             source_file, processed_dir, manifest, ingestion_log_path, logger, control_dir
@@ -518,7 +532,7 @@ def processar_fichas_consumidores(
     run_id = criar_run_id(context)
 
     log_file = (
-        Path("LOGS/execucao") / f"{run_id}__fichas_consumidores.log"
+        Path("LOGS/extraction") / f"{run_id}__fichas_consumidores.log"
     )
     logger = obter_logger("bdc.consumidores", log_file)
 

@@ -127,13 +127,13 @@
                 "null"
             ]
         },
-        "NOTA_BOARD": {
+        "RATING_BOARD_COPEL": {
             "type": [
                 "string",
                 "null"
             ]
         },
-        "NOTA_BUREAU": {
+        "RATING_BUREAU": {
             "type": [
                 "string",
                 "null"
@@ -635,6 +635,78 @@
             ]
         },
         "SCORE_ROE": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "DATA_RATING_AGENCIA": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "FCO_ROL": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "LUCRO_LIQUIDO_ROL": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "RATING_AUDITORIA": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "RATING_FCO_ROL": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "RATING_PD": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "RATING_ROA": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "RATING_ROE": {
+            "type": [
+                "string",
+                "null"
+            ]
+        },
+        "RECEITA_CUSTO_DESPESA": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "SCORE_AUDITORIA": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "SCORE_BOARD_COPEL": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
+        "SCORE_BUREAU_CALCULADO": {
             "type": [
                 "number",
                 "null"

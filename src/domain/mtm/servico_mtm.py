@@ -31,7 +31,7 @@ class MtmReconciliationError(Exception):
 def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
     """Orquestra a ingestão MtM: Bronze snapshot → Conector → Agregação → Reconciliação → Silver."""
     run_id = f"MTM_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    log_file = Path("LOGS/ingestao") / f"{run_id}__ingestao_mtm.log"
+    log_file = Path("LOGS/ingestion") / f"{run_id}__ingestao_mtm.log"
     logger = obter_logger("bdc.mtm", log_file)
 
     try:
@@ -61,9 +61,10 @@ def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
                     logger.info("Arquivo de rede mais recente encontrado. Copiando e quebrando cache preguiçoso...")
                     hoje_str = datetime.now().strftime("%d%m%Y_%H%M%S")
                     
-                    if arq_vigente_local:
-                        arq_processado = dir_processadas / f"{arq_vigente_local.stem}_{hoje_str}{arq_vigente_local.suffix}"
-                        shutil.move(str(arq_vigente_local), str(arq_processado))
+                    for arq_antigo in dir_vigente.glob("*.*"):
+                        if arq_antigo.is_file():
+                            arq_processado = dir_processadas / f"{arq_antigo.stem}_{hoje_str}{arq_antigo.suffix}"
+                            shutil.move(str(arq_antigo), str(arq_processado))
                     
                     novo_local = dir_vigente / network_path.name
                     shutil.copy2(str(network_path), str(novo_local))

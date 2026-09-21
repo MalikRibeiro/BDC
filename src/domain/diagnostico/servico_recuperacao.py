@@ -56,7 +56,7 @@ def recuperar_pendencias_automaticamente(base_dir: str = ".") -> None:
     """Tenta recuperar dados ausentes re-executando a extração nas fichas Bronze."""
     base_path = Path(base_dir)
     data_atual = datetime.now().strftime("%Y%m%d")
-    log_path = base_path / "LOGS" / "atualizacoes_manuais" / f"UI_MANUAL_{data_atual}.log"
+    log_path = base_path / "LOGS" / "manual_updates" / f"UI_MANUAL_{data_atual}.log"
     log_path.parent.mkdir(parents=True, exist_ok=True)
     logger = obter_logger("bdc.ui.carga_manual.recuperacao", log_path)
     

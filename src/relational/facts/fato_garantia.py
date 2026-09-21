@@ -16,7 +16,7 @@ COBERTURA_MINIMA = 0.5
 
 def gerar_fato_garantia(context: AppContext) -> dict[str, Any]:
     run_id = f"F_GAR_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = obter_logger("bdc.fato_garantia", Path("LOGS/relacional") / f"{run_id}__fato_garantia.log")
+    logger = obter_logger("bdc.fato_garantia", Path("LOGS/relational") / f"{run_id}__fato_garantia.log")
     logger.info("Iniciando construção da Fato Garantia (run_id=%s)", run_id)
     
     silver_path = context.path("silver") / "garantias_silver" / "garantia_silver.parquet"

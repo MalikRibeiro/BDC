@@ -28,7 +28,7 @@ def gerar_diagnostico(base_dir: str = ".") -> None:
     """Lê a Silver e gera a fila de pendências CSV."""
     base_path = Path(base_dir)
     data_atual = datetime.now().strftime("%Y%m%d")
-    log_path = base_path / "LOGS" / "atualizacoes_manuais" / f"UI_MANUAL_{data_atual}.log"
+    log_path = base_path / "LOGS" / "manual_updates" / f"UI_MANUAL_{data_atual}.log"
     log_path.parent.mkdir(parents=True, exist_ok=True)
     logger = obter_logger("bdc.ui.carga_manual.diagnostico", log_path)
     
@@ -69,7 +69,7 @@ def gerar_diagnostico(base_dir: str = ".") -> None:
             res_cnpj = normalizar_cnpj(row.get("CNPJ", ""))
             cnpj = res_cnpj.cnpj if res_cnpj.cnpj else str(row.get("CNPJ", ""))
             data_df = str(row.get("DATA_DEMONSTRACAO_FINANCEIRA", ""))
-            empresa = str(row.get("SIGLA", row.get("EMPRESA", "")))
+            empresa = str(row.get("SIGLA", row.get("RAZAO_SOCIAL", "")))
             ficha_path = _encontrar_ficha_bronze(cnpj, base_path)
             arquivo_str = str(ficha_path) if ficha_path else "Arquivo não localizado na Bronze"
             
@@ -79,7 +79,7 @@ def gerar_diagnostico(base_dir: str = ".") -> None:
                     pendencias.append({
                         "CNPJ": cnpj,
                         "DATA_DEMONSTRACAO_FINANCEIRA": data_df,
-                        "EMPRESA": empresa,
+                        "RAZAO_SOCIAL": empresa,
                         "CAMPO_FALTANTE": campo,
                         "STATUS": "PENDENTE",
                         "ARQUIVO_ORIGEM": arquivo_str
@@ -102,7 +102,7 @@ def gerar_diagnostico(base_dir: str = ".") -> None:
             res_cnpj = normalizar_cnpj(row.get("CNPJ", ""))
             cnpj = res_cnpj.cnpj if res_cnpj.cnpj else str(row.get("CNPJ", ""))
             data_df = str(row.get("DATA_DEMONSTRACAO_FINANCEIRA", ""))
-            empresa = str(row.get("EMPRESA", ""))
+            empresa = str(row.get("RAZAO_SOCIAL", ""))
             ficha_path = _encontrar_ficha_bronze(cnpj, base_path)
             arquivo_str = str(ficha_path) if ficha_path else "Arquivo não localizado na Bronze"
             
@@ -112,7 +112,7 @@ def gerar_diagnostico(base_dir: str = ".") -> None:
                     pendencias.append({
                         "CNPJ": cnpj,
                         "DATA_DEMONSTRACAO_FINANCEIRA": data_df,
-                        "EMPRESA": empresa,
+                        "RAZAO_SOCIAL": empresa,
                         "CAMPO_FALTANTE": campo,
                         "STATUS": "PENDENTE",
                         "ARQUIVO_ORIGEM": arquivo_str
@@ -123,7 +123,7 @@ def gerar_diagnostico(base_dir: str = ".") -> None:
         # Remover duplicadas caso haja o mesmo CNPJ+DATA+CAMPO
         df_pendencias = df_pendencias.drop_duplicates(subset=["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "CAMPO_FALTANTE"])
     else:
-        df_pendencias = pd.DataFrame(columns=["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "EMPRESA", "CAMPO_FALTANTE", "STATUS", "ARQUIVO_ORIGEM"])
+        df_pendencias = pd.DataFrame(columns=["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "RAZAO_SOCIAL", "CAMPO_FALTANTE", "STATUS", "ARQUIVO_ORIGEM"])
 
     df_pendencias.to_csv(fila_pendencias_path, index=False, sep=";")
     logger.info("Diagnóstico concluído. %d pendências identificadas.", len(df_pendencias))
