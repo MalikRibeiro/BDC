@@ -1,0 +1,3 @@
+2026-09-25 12:30:59 | INFO | bdc.fato_garantia | Iniciando construção da Fato Garantia (run_id=F_GAR_20260925_123059)
+2026-09-25 12:31:00 | INFO | bdc.fato_garantia | Registrados 8040 alertas de garantias no Fato Alertas.
+2026-09-25 12:31:01 | INFO | bdc.fato_garantia | Construção da Fato Garantia concluída. Registros salvos: 11504

@@ -20,7 +20,22 @@ def calcular_pd_final_consumidor_le5(
         alerta = to_float_br(_alerta) if _alerta is not None else 0.0
 
         if score is None:
-            raise PdInputValidationError("SCORE_BUREAU não informado para consumidor <= 5 MWm.")
+            if logger:
+                logger.debug("Consumidor <= 5 MWm sem SCORE_BUREAU (Risk3 N/A ou pendente). CNPJ=%s", registro.get("CNPJ"))
+            return {
+                "RATING_FINAL": "NAO_APLICAVEL",
+                "PD_FINAL": None,
+                "PD_METODO": "SEM_DADOS_BUREAU",
+                "STATUS_CALCULO_PD": "PENDENTE",
+                "SCORE_BUREAU_UTILIZADO": None,
+                "FATOR_ALERTA_UTILIZADO": alerta,
+                "PD_MIN_FAIXA": None,
+                "PD_MAX_FAIXA": None,
+                "PATRIMONIO_LIQUIDO": "NAO_APLICAVEL",
+                "LUCRO_LIQUIDO": "NAO_APLICAVEL",
+                "ATIVO_TOTAL": "NAO_APLICAVEL",
+                "PASSIVO_CIRCULANTE": "NAO_APLICAVEL"
+            }
 
         # Fórmula Risk3: min{1,9·exp[-0,5·(0,11·Score - Alerta/3 + 1)], 0,9999}
         expoente = -0.5 * (0.11 * score - (alerta / 3.0) + 1.0)
@@ -34,6 +49,7 @@ def calcular_pd_final_consumidor_le5(
             "RATING_FINAL": "NAO_APLICAVEL",
             "PD_FINAL": pd_final,
             "PD_METODO": "FORMULA_RISK3",
+            "STATUS_CALCULO_PD": "SUCESSO",
             "SCORE_BUREAU_UTILIZADO": score,
             "FATOR_ALERTA_UTILIZADO": alerta,
             "PD_MIN_FAIXA": pd_final,
@@ -49,6 +65,8 @@ def calcular_pd_final_consumidor_le5(
 
         return resultado
 
+    except (PdInputValidationError, PdCalculationError):
+        raise
     except Exception as exc:
         if logger: logger.exception("Falha no cálculo LE_5.")
         raise PdCalculationError(f"Falha LE_5: {exc}") from exc

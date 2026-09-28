@@ -18,11 +18,11 @@ def repescar_fichas_alteradas(context: AppContext, cnpjs_alterados: set[str], lo
     df_silver_com = pd.read_parquet(silver_path_com) if silver_path_com.exists() else pd.DataFrame()
     df_silver_cons = pd.read_parquet(silver_path_cons) if silver_path_cons.exists() else pd.DataFrame()
     
-    from common.identificadores import normalizar_cnpj
+    from common.identificadores import normalizar_cnpj, normalizar_cnpj_coluna
     if not df_silver_com.empty and "CNPJ" in df_silver_com.columns:
-        df_silver_com["CNPJ"] = df_silver_com["CNPJ"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
+        df_silver_com["CNPJ"] = df_silver_com["CNPJ"].apply(normalizar_cnpj_coluna)
     if not df_silver_cons.empty and "CNPJ" in df_silver_cons.columns:
-        df_silver_cons["CNPJ"] = df_silver_cons["CNPJ"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
+        df_silver_cons["CNPJ"] = df_silver_cons["CNPJ"].apply(normalizar_cnpj_coluna)
     
     repescados = 0
     for cnpj_raw in cnpjs_alterados:

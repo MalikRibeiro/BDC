@@ -5,6 +5,7 @@ import os
 import time
 from pathlib import Path
 from datetime import datetime
+from ui.theme import render_header, render_kpis
 
 BASE_DIR = Path(".")
 
@@ -32,8 +33,6 @@ def obter_ultimo_log_runner() -> tuple[Path | None, str]:
         return ultimo_log, f"Erro ao ler log: {e}"
 
 def render_visao_orquestrador():
-    st.header("Pipeline BDC")
-    
     # Inicializa estado do processo e arquivo de saída
     if "pipeline_proc" not in st.session_state:
         st.session_state.pipeline_proc = None
@@ -54,6 +53,17 @@ def render_visao_orquestrador():
                 st.error(f"O pipeline terminou com código de erro: {codigo_retorno}")
             st.session_state.pipeline_proc = None
 
+    render_header(
+        titulo="Orquestrador do Pipeline BDC",
+        subtitulo="Disparo e telemetria em tempo real dos 30 steps de ingestão, normalização, motores de risco e publicação Gold.",
+        badge_texto="EM EXECUÇÃO" if esta_executando else "SISTEMA PRONTO",
+        status_online=esta_executando
+    )
+
+    caminho_log, conteudo_log = obter_ultimo_log_runner()
+    nome_arquivo_log = caminho_log.name if caminho_log else "Nenhum"
+    tempo_decorrido = int((datetime.now() - st.session_state.pipeline_inicio).total_seconds()) if (esta_executando and st.session_state.pipeline_inicio) else 0
+
     col1, col2, col3 = st.columns([2, 1, 1])
     
     with col1:
@@ -66,7 +76,7 @@ def render_visao_orquestrador():
                 st.warning("Processo interrompido.")
                 st.rerun()
         else:
-            if st.button("Executar", type="primary", use_container_width=True):
+            if st.button("Executar", type="primary", width="stretch"):
                 try:
                     runner_logs_dir = BASE_DIR / "LOGS" / "runner"
                     runner_logs_dir.mkdir(parents=True, exist_ok=True)
@@ -90,7 +100,7 @@ def render_visao_orquestrador():
                     st.error(f"Falha ao iniciar processo: {e}")
 
     with col3:
-        if st.button("Atualizar Log", use_container_width=True):
+        if st.button("Atualizar Log", width="stretch"):
             st.rerun()
             
     st.markdown("---")

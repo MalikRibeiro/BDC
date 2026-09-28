@@ -1,0 +1,5 @@
+{
+  "limiar_mwm_detalhado": 5.0,
+  "versao_regra_atual": "v1.2",
+  "descricao": "Parâmetros metodológicos de corte de consumo (MWm) para enquadramento de consumidores (Livre >5MWm vs Varejo <=5MWm)."
+}

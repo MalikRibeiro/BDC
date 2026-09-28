@@ -144,8 +144,8 @@ def inserir_dados_garantias(
         df_garantias = df_raw.copy()
         df_garantias.columns = [str(c).strip().upper() for c in df_garantias.columns]
 
-        from common.identificadores import normalizar_cnpj
-        df_garantias["CNPJ_CONTRAPARTE"] = df_garantias["CNPJ_CONTRAPARTE"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
+        from common.identificadores import normalizar_cnpj_coluna
+        df_garantias["CNPJ_CONTRAPARTE"] = df_garantias["CNPJ_CONTRAPARTE"].apply(normalizar_cnpj_coluna)
         df_garantias["VENCIMENTO"] = pd.to_datetime(df_garantias["VENCIMENTO"], errors="coerce")
 
         if "PERCENTUAL_COBERTURA" not in df_garantias.columns:

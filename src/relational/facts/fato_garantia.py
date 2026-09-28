@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 from datetime import datetime
 from typing import Any
+import numpy as np
 import pandas as pd
 from pathlib import Path
 
@@ -30,102 +31,67 @@ def gerar_fato_garantia(context: AppContext) -> dict[str, Any]:
         return {"run_id": run_id, "linhas_processadas": 0, "status": "SEM_DADOS"}
 
     hoje = pd.Timestamp(datetime.now().date())
-    alertas = []
+
+    # --- Vetorização de STATUS via np.select (substitui iterrows) ---
+    df_garantias["VENCIMENTO_DT"] = pd.to_datetime(df_garantias["VENCIMENTO"], errors="coerce")
+    df_garantias["DIAS_P_VENCIMENTO"] = (df_garantias["VENCIMENTO_DT"] - hoje).dt.days
+    df_garantias["DIAS_P_VENCIMENTO"] = df_garantias["DIAS_P_VENCIMENTO"].fillna(-1).astype(int)
+    df_garantias["PERCENTUAL_COBERTURA"] = pd.to_numeric(
+        df_garantias.get("PERCENTUAL_COBERTURA", pd.Series(dtype="float64")), errors="coerce"
+    ).fillna(1.0)
+
+    conditions = [
+        df_garantias["DIAS_P_VENCIMENTO"] < 0,
+        df_garantias["DIAS_P_VENCIMENTO"].between(0, 30),
+    ]
+    choices = [StatusGarantia.VENCIDA.value, StatusGarantia.PROXIMA_VENCIMENTO.value]
+    df_garantias["STATUS"] = np.select(conditions, choices, default=StatusGarantia.VIGENTE.value)
+
+    # --- Geração de alertas via máscaras (subsets tipicamente pequenos) ---
     alertas_fato = []
-    status_list = []
 
-    for _, row in df_garantias.iterrows():
-        garantia_id = row.get("GARANTIA_ID")
-        cnpj = row.get("CNPJ_CONTRAPARTE")
-        data_fim = pd.to_datetime(row.get("VENCIMENTO"), errors="coerce")
-        cobertura = float(row.get("PERCENTUAL_COBERTURA", 1.0))
+    # GAR_001: Vencidas (ALTO)
+    for _, row in df_garantias[df_garantias["STATUS"] == StatusGarantia.VENCIDA.value].iterrows():
+        data_fmt = row["VENCIMENTO_DT"].strftime('%Y-%m-%d') if pd.notnull(row["VENCIMENTO_DT"]) else "N/A"
+        alertas_fato.append({
+            "codigo": "GAR_001", "severidade": "ALTO",
+            "regra": "Garantia Vencida",
+            "mensagem": f"Garantia {row.get('GARANTIA_ID')} está vencida desde {data_fmt}.",
+            "campo_afetado": "VENCIMENTO", "valor_observado": data_fmt,
+            "limite_esperado": "VIGENTE", "contraparte_id": row.get("CNPJ_CONTRAPARTE")
+        })
 
-        dias_para_vencimento = (data_fim - hoje).days if pd.notnull(data_fim) else -1
+    # GAR_001: Próximas do vencimento (MEDIO)
+    for _, row in df_garantias[df_garantias["STATUS"] == StatusGarantia.PROXIMA_VENCIMENTO.value].iterrows():
+        alertas_fato.append({
+            "codigo": "GAR_001", "severidade": "MEDIO",
+            "regra": "Garantia Próxima ao Vencimento",
+            "mensagem": f"Garantia {row.get('GARANTIA_ID')} próxima do vencimento ({row['DIAS_P_VENCIMENTO']} dias).",
+            "campo_afetado": "VENCIMENTO", "valor_observado": row["DIAS_P_VENCIMENTO"],
+            "limite_esperado": "> 30 dias", "contraparte_id": row.get("CNPJ_CONTRAPARTE")
+        })
 
-        if dias_para_vencimento < 0:
-            status_garantia = StatusGarantia.VENCIDA.value
-            data_fmt = data_fim.strftime('%Y-%m-%d') if pd.notnull(data_fim) else "N/A"
-            msg = f"Garantia {garantia_id} está vencida desde {data_fmt}."
-            alertas.append({
-                "CODIGO": "GAR_001",
-                "CNPJ": cnpj,
-                "SEVERIDADE": "ALTO",
-                "MENSAGEM": msg
-            })
-            alertas_fato.append({
-                "codigo": "GAR_001",
-                "severidade": "ALTO",
-                "regra": "Garantia Vencida",
-                "mensagem": msg,
-                "campo_afetado": "VENCIMENTO",
-                "valor_observado": data_fmt,
-                "limite_esperado": "VIGENTE",
-                "contraparte_id": cnpj
-            })
-        elif 0 <= dias_para_vencimento <= 30:
-            status_garantia = StatusGarantia.PROXIMA_VENCIMENTO.value
-            msg = f"Garantia {garantia_id} próxima do vencimento ({dias_para_vencimento} dias)."
-            alertas.append({
-                "CODIGO": "GAR_001",
-                "CNPJ": cnpj,
-                "SEVERIDADE": "MEDIO",
-                "MENSAGEM": msg
-            })
-            alertas_fato.append({
-                "codigo": "GAR_001",
-                "severidade": "MEDIO",
-                "regra": "Garantia Próxima ao Vencimento",
-                "mensagem": msg,
-                "campo_afetado": "VENCIMENTO",
-                "valor_observado": dias_para_vencimento,
-                "limite_esperado": "> 30 dias",
-                "contraparte_id": cnpj
-            })
-        else:
-            status_garantia = StatusGarantia.VIGENTE.value
+    # GAR_002: Cobertura insuficiente
+    for _, row in df_garantias[df_garantias["PERCENTUAL_COBERTURA"] < COBERTURA_MINIMA].iterrows():
+        alertas_fato.append({
+            "codigo": "GAR_002", "severidade": "MEDIO",
+            "regra": "Cobertura Insuficiente",
+            "mensagem": f"Garantia {row.get('GARANTIA_ID')} com cobertura insuficiente ({row['PERCENTUAL_COBERTURA']*100:.1f}%).",
+            "campo_afetado": "PERCENTUAL_COBERTURA", "valor_observado": row["PERCENTUAL_COBERTURA"],
+            "limite_esperado": COBERTURA_MINIMA, "contraparte_id": row.get("CNPJ_CONTRAPARTE")
+        })
 
-        if cobertura < COBERTURA_MINIMA:
-            msg = f"Garantia {garantia_id} com cobertura insuficiente ({cobertura*100:.1f}%)."
-            alertas.append({
-                "CODIGO": "GAR_002",
-                "CNPJ": cnpj,
-                "SEVERIDADE": "MEDIO",
-                "MENSAGEM": msg
-            })
-            alertas_fato.append({
-                "codigo": "GAR_002",
-                "severidade": "MEDIO",
-                "regra": "Cobertura Insuficiente",
-                "mensagem": msg,
-                "campo_afetado": "PERCENTUAL_COBERTURA",
-                "valor_observado": cobertura,
-                "limite_esperado": COBERTURA_MINIMA,
-                "contraparte_id": cnpj
-            })
+    # Gravação apenas via Fato Alerta (fonte da verdade) — removida a dupla Silver
+    if alertas_fato:
+        registrar_alertas_em_lote(alertas_fato, run_id, context)
+        logger.info("Registrados %s alertas de garantias no Fato Alertas.", len(alertas_fato))
 
-        status_list.append(status_garantia)
-
-    df_garantias["STATUS"] = status_list
-    df_garantias["VENCIMENTO"] = pd.to_datetime(df_garantias["VENCIMENTO"], errors="coerce").dt.strftime("%Y-%m-%d")
+    # --- Persistência da Fato Garantia ---
+    df_garantias["VENCIMENTO"] = df_garantias["VENCIMENTO_DT"].dt.strftime("%Y-%m-%d")
     df_garantias["DT_PROCESSAMENTO"] = datetime.now().isoformat(timespec="seconds")
     df_garantias["RUN_ID"] = run_id
-
-    if alertas:
-        df_alertas = pd.DataFrame(alertas)
-        df_alertas["RUN_ID"] = run_id
-        df_alertas["DATA_DETECCAO"] = datetime.now().isoformat(timespec="seconds")
-        df_alertas["STATUS_ALERTA"] = "ABERTO"
-
-        escrever_conjunto_de_dados_silver(
-            records=df_alertas.to_dict(orient="records"),
-            output_dir=context.path("silver") / "alertas_credito",
-            filename=f"alertas_garantias_{run_id}"
-        )
-        logger.info("Gerados %s alertas de garantias na Silver.", len(alertas))
-        
-        if alertas_fato:
-            registrar_alertas_em_lote(alertas_fato, run_id, context)
-            logger.info("Registrados %s alertas de garantias no Fato Alertas.", len(alertas_fato))
+    # Limpa colunas auxiliares de cálculo
+    df_garantias = df_garantias.drop(columns=["VENCIMENTO_DT", "DIAS_P_VENCIMENTO"], errors="ignore")
 
     relational_dir = context.path("relational_facts") / "garantias"
     relational_dir.mkdir(parents=True, exist_ok=True)
@@ -146,6 +112,6 @@ def gerar_fato_garantia(context: AppContext) -> dict[str, Any]:
     return {
         "run_id": run_id,
         "linhas_processadas": len(df_garantias),
-        "alertas_gerados": len(alertas),
+        "alertas_gerados": len(alertas_fato),
         "status": "SUCESSO"
     }

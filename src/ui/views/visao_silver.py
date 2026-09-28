@@ -8,6 +8,7 @@ import json
 # Adiciona o diretório src ao PYTHONPATH
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent))
 
+from ui.theme import render_header, render_kpis
 from common.identificadores import normalizar_cnpj
 from common.datas import normalizar_data
 
@@ -85,7 +86,12 @@ def registrar_correcao_rascunho(cnpj: str, data_df: str, empresa: str, campo: st
     df_rascunho.to_csv(RASCUNHO_PATH, index=False, sep=";")
 
 def render_visao_silver():
-    st.header("Visão da Camada Silver")
+    render_header(
+        titulo="Visão da Camada Silver",
+        subtitulo="Dados limpos, tipados e padronizados da origem sem interferência de regras de risco (Verdade da Origem).",
+        badge_texto="Camada Silver • Refined",
+        status_online=True
+    )
 
     # Formulário de Correção / Override
     with st.expander("Criar Correção de Dado Incorreto", expanded=False):

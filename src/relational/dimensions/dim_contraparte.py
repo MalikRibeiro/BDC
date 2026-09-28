@@ -1,16 +1,19 @@
 """Serviço de consolidação da Dimensão de Contraparte."""
 from __future__ import annotations
-import logging
 from datetime import datetime
+from pathlib import Path
 from typing import Any
+
 import pandas as pd
 
 from app.context import AppContext
+from control.logger import obter_logger
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
 def processar_dim_contraparte(context: AppContext) -> dict[str, Any]:
     """Orquestra a leitura de dependências e construção da Dimensão de Contraparte."""
-    logger = logging.getLogger("bdc.gold.dim_contraparte")
+    run_id = f"DIM_CTR_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+    logger = obter_logger("bdc.dim_contraparte", Path("LOGS/relational") / f"{run_id}__dim_contraparte.log")
     logger.info("Iniciando processamento da Dimensão de Contraparte...")
     
     receita_path = context.path("silver") / "receita_silver" / "receita_cadastral_silver.parquet"
@@ -26,14 +29,8 @@ def processar_dim_contraparte(context: AppContext) -> dict[str, Any]:
     if not df_ctrl.empty and "_STATUS_REGISTRO" in df_ctrl.columns:
         df_ctrl = df_ctrl[df_ctrl["_STATUS_REGISTRO"] == "VIGENTE"]
     
-    df_fichas = pd.DataFrame()
-    for segmento_dir in ["fichas_comercializadoras_extraidas", "fichas_consumidores_extraidas"]:
-        seg_path = context.path("silver") / segmento_dir
-        if seg_path.exists():
-            parquets = list(seg_path.glob("*.parquet"))
-            if parquets:
-                df_seg_fichas = pd.read_parquet(max(parquets, key=lambda f: f.stat().st_mtime))
-                df_fichas = pd.concat([df_fichas, df_seg_fichas], ignore_index=True)
+    from common.dados import carregar_fichas_silver_consolidadas
+    df_fichas = carregar_fichas_silver_consolidadas(context.path("silver"))
 
     return criar_dim_contraparte(
         context, 
@@ -54,22 +51,22 @@ def criar_dim_contraparte(
     df_controladoras: pd.DataFrame = None
 ) -> dict[str, Any]:
     run_id = f"DIM_CTR_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = logging.getLogger("bdc.gold.dim_contraparte")
+    logger = obter_logger("bdc.dim_contraparte", Path("LOGS/relational") / f"{run_id}__dim_contraparte.log")
 
     if df_silver_receita.empty:
         df_silver_receita = pd.DataFrame(columns=["CNPJ", "SITUACAO_CADASTRAL", "NATUREZA_JURIDICA", "CNAE_PRINCIPAL"])
     if df_silver_segmentacao.empty:
         df_silver_segmentacao = pd.DataFrame(columns=["CNPJ", "VOLUME_ENQUADRAMENTO_MWM", "POSSUI_PELO_MENOS_5_MWM", "SEGMENTO_METODOLOGICO"])
 
-    from common.identificadores import normalizar_cnpj
-    df_silver_receita["CNPJ"] = df_silver_receita["CNPJ"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
-    df_silver_segmentacao["CNPJ"] = df_silver_segmentacao["CNPJ"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
+    from common.identificadores import normalizar_cnpj_coluna
+    df_silver_receita["CNPJ"] = df_silver_receita["CNPJ"].apply(normalizar_cnpj_coluna)
+    df_silver_segmentacao["CNPJ"] = df_silver_segmentacao["CNPJ"].apply(normalizar_cnpj_coluna)
 
     df_dim = pd.merge(df_silver_receita, df_silver_segmentacao, on="CNPJ", how="outer")
 
     if df_silver_fichas is not None and not df_silver_fichas.empty:
         df_fichas = df_silver_fichas.copy()
-        df_fichas["CNPJ"] = df_fichas["CNPJ"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
+        df_fichas["CNPJ"] = df_fichas["CNPJ"].apply(normalizar_cnpj_coluna)
         df_fichas["NOME_FICHA"] = df_fichas.get("RAZAO_SOCIAL", None)
         df_fichas["SIGLA_FICHA"] = df_fichas.get("SIGLA", None)
         
@@ -82,7 +79,7 @@ def criar_dim_contraparte(
 
     if df_silver_salesforce_account is not None and not df_silver_salesforce_account.empty:
         df_sf = df_silver_salesforce_account.copy()
-        df_sf["CNPJ"] = df_sf["CNPJ"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
+        df_sf["CNPJ"] = df_sf["CNPJ"].apply(normalizar_cnpj_coluna)
         sf_cols = {"CNPJ": "CNPJ", "Name": "NOME_SF", "Sigla__c": "SIGLA_SF"}
         df_sf_id = df_sf[[c for c in sf_cols.keys() if c in df_sf.columns]].rename(columns=sf_cols)
         df_sf_id = df_sf_id.drop_duplicates(subset=["CNPJ"], keep="last")

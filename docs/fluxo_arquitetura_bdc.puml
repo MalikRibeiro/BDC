@@ -1,0 +1,150 @@
+@startuml
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Segoe UI"
+skinparam fontSize 12
+skinparam dpi 150
+skinparam linetype ortho
+
+skinparam package {
+    BackgroundColor #FAFBFC
+    BorderColor #DFE1E6
+    FontColor #172B4D
+    FontStyle bold
+}
+
+skinparam rectangle {
+    BackgroundColor #FFFFFF
+    BorderColor #C1C7D0
+    FontColor #172B4D
+}
+
+' =============================================================================
+' FONTES DE DADOS EXTERNAS E ENTRADAS
+' =============================================================================
+package "1. Fontes Externas e Entradas Brutas" as P_FONTES #F4F5F7 {
+    rectangle "Rede Corporativa (S:\\COM_CPR)\nPlanilhas Excel de Fichas" as SRC_REDE #EAE6FF
+    rectangle "Virtualizador Denodo\nView ODBC vwi_exportar_contrato" as SRC_DENODO #DEEBFF
+    rectangle "Base MtM Diária\nPlanilhas Excel / Relatórios" as SRC_MTM #DEEBFF
+    rectangle "Salesforce CRM\nContas, Cotações, Chamados, Contratos" as SRC_SF #DEEBFF
+    rectangle "Receita Federal (BrasilAPI)\nSituação Cadastral e CNPJs Ativos" as SRC_REC #DEEBFF
+    rectangle "Bureau RISK3 (API REST)\nScores, Fatores de Restrição e Ratings" as SRC_BUR #DEEBFF
+    rectangle "Estrutura Societária\nPlanilha de Grupos e Controladoras" as SRC_CTRL #EAE6FF
+    rectangle "Garantias Bancárias / Cartas\nPlanilha de Garantias e Vencimentos" as SRC_GAR #EAE6FF
+    rectangle "Carga Manual & Overrides\nPlanilha de Solicitações e Eventos" as SRC_MAN #FFEBE6
+}
+
+' =============================================================================
+' CAMADA BRONZE (IMUTÁVEL & AUDITORIA)
+' =============================================================================
+package "2. Camada Bronze (Imutável & Auditoria)" as P_BRONZE #FBF0E6 {
+    rectangle "obter_fichas_rede()\n""fichas_connector.py""\n---\n* Gate estrutural por abas do layout\n* Idempotência SHA-256 e cache de vetos\n* Roteamento automático Comercializadoras x Consumidores" as F_REDE #FFF0D6
+    rectangle "raw_contratos_*.parquet\nSnapshots imutáveis de contratos" as BRZ_CTR #FFF0D6
+    rectangle "raw_salesforce_*.xlsx\nSnapshots imutáveis de CRM" as BRZ_SF #FFF0D6
+    rectangle "raw_bureau_*.parquet\nSnapshots brutos da RISK3" as BRZ_BUR #FFF0D6
+}
+
+' =============================================================================
+' CAMADA SILVER (DADOS OBSERVADOS & NORMALIZAÇÃO ESTRUTURAL)
+' =============================================================================
+package "3. Camada Silver (Fichas & Cadastros Padronizados)" as P_SILVER #F4F5F7 {
+    rectangle "extrair_fichas_comercializadoras()\n""servico_fichas_comercializadoras.py""\n---\n* Extração tipada de DRE, Balanço, Ratings\n* Governança SCD2 e controle de versões" as SIL_COM #E3E8EE
+    rectangle "extrair_fichas_consumidores()\n""servico_fichas_consumidores.py""\n---\n* Extração tabular de dados cadastrais e volumes\n* Validação via master_catalog_consumidores.json" as SIL_CON #E3E8EE
+    rectangle "servico_contratos_denodo()\n""servico_contratos_denodo.py""\n---\n* Consulta diária à view Denodo via ODBC\n* Agregação de volumes mensais (MWm / MWh)\n* Fallback automático para export local recente" as SIL_CTR #E3E8EE
+    rectangle "servico_enquadramento()\n""enquadramento_consumidores.py""\n---\n* Enquadramento de porte (<= 5 MWm vs > 5 MWm)\n* Baseado no maior volume contratual ativo" as SIL_ENQ #E3E8EE
+    rectangle "buscar_bureau_risk3()\n""risk3_connector.py""\n---\n* Consulta online em lote com token dinâmico\n* Cache persistente local com suporte offline a N/A" as SIL_BUR #E3E8EE
+    rectangle "Cargas Manuais e Overrides\n""servico_cargas_manuais.py""\n---\n* Aplicação auditada de eventos e substituições\n* Normalização estrutural e casts tipados" as SIL_OVR #FFEBE6
+}
+
+' =============================================================================
+' CAMADA RELACIONAL (MOTOR DE RISCO & LINHAGEM DE INDICADORES)
+' =============================================================================
+package "4. Camada Relacional (Modelagem Dimensional & Motor de Crédito)" as P_REL #E9F2FF {
+    rectangle "dim_contraparte\n""servico_dim_contraparte.py""\n---\n* Dimensão canônica unificada de contrapartes\n* CNPJ normalizado, Razão Social, Segmento Metodológico" as REL_DIM #D2E4FF
+    rectangle "processar_fato_analise_credito()\n""fato_analise_credito.py"" & ""pd_motor.py""\n---\n* Motor de Crédito e Regras de Risco (Nota Técnica):\n  - Z-Score logístico e notas contábeis para CPURA\n  - Tabela estática de agências para CGRUPO\n  - Fórmula direta Risk3 para Consumidores <= 5 MWm\n  - Tratamento controlado de pendência ('Análise Bureau (N/A)')" as REL_ANL #B9D7FF
+    rectangle "fato_exposicao_risco\n""fato_exposicao_risco.py""\n---\n* Cálculo de Exposição (EAD) e Perda Esperada (PE)\n* Taxa de Risco de Crédito da Carteira (TRC)" as REL_RSK #B9D7FF
+    rectangle "fato_reconciliacao_contratos_mtm\n""fato_reconciliacao_contrato_mtm.py""\n---\n* Cruzamento bidirecional Denodo x MtM\n* Detecção de divergências de volumes e contratos" as REL_REC_MTM #D2E4FF
+    rectangle "fato_reconciliacao_fichas_salesforce\n""fato_reconciliacao_fichas_salesforce.py""\n---\n* Reconciliação cadastral Fichas x Salesforce CRM" as REL_REC_SF #D2E4FF
+    rectangle "gerar_fato_alertas_credito()\n""fato_alertas.py""\n---\n* Central integradora de alertas analíticos:\n  - Garantias vencidas e limites estourados\n  - Demonstrações financeiras expiradas (> 18 meses)\n  - Divergências contratuais e CRM pendente" as REL_ALT #FFD5D2
+}
+
+' =============================================================================
+' CAMADA GOLD & PRODUTOS DE DADOS
+' =============================================================================
+package "5. Camada Gold (Visões Consolidadas Institucionais)" as P_GOLD #FFF8E1 {
+    rectangle "construir_visao_consolidada_gold()\n""servico_gold.py""\n---\n* Master Join institucional: Dimensões + Fatos\n* Consolidado operacional por contraparte e limite" as GLD_MASTER #FFE699
+    rectangle "construir_visao_carteira_contratos()\n""servico_carteira_contratos.py""\n---\n* Visão granular Contrato a Contrato (As-Of)\n* Pareamento temporal da análise vigente na data do contrato\n* Classificação documental: Análise DF, Bureau, Herdada ou N/A" as GLD_CTR #FFE699
+    rectangle "gerar_visao_migracao_rating_gold()\n""servico_migracao_rating.py""\n---\n* Matriz de transição temporal de Ratings de Crédito" as GLD_MIG #FFE699
+    rectangle "gerar_visao_garantias_gold()\n""servico_visao_garantias.py""\n---\n* Relatório consolidado de coberturas e garantias ativas" as GLD_GAR #FFE699
+}
+
+' =============================================================================
+' CAMADA DE SAÍDAS & APLICAÇÃO
+' =============================================================================
+package "6. Camada de Saídas & Consumo" as P_OUT #E3FCEF {
+    rectangle "gerar_arquivo_limites()\n""servico_limites.py""\n---\n* Exportação tabular em Excel formatado\n* Arquivo: entrada_limites_credito_YYYYMMDD.xlsx" as OUT_EXCEL #ABF5D1
+    rectangle "Aplicação Streamlit\n""src/ui/app.py""\n---\n* Dashboard executivo com filtros dinâmicos\n* Visão Carteira, Silver, Reconciliações e Limites" as OUT_UI #ABF5D1
+}
+
+' =============================================================================
+' RELACIONAMENTOS E FLUXO DE DADOS
+' =============================================================================
+SRC_REDE --> F_REDE : Varrredura de rede
+F_REDE --> SIL_COM : Fichas Comercializadoras validadas
+F_REDE --> SIL_CON : Fichas Consumidores validadas
+
+SRC_DENODO --> BRZ_CTR : Consulta ODBC diária
+BRZ_CTR --> SIL_CTR : Padronização de datas/volumes
+SIL_CTR --> SIL_ENQ : Histórico de volumes ativos
+
+SRC_SF --> BRZ_SF : Snapshot diário
+SRC_BUR --> BRZ_BUR : Extração API Rest
+BRZ_BUR --> SIL_BUR : Normalização & Cache local
+
+SIL_COM --> REL_DIM : Cadastro e Metadados
+SIL_CON --> REL_DIM : Cadastro e Metadados
+SIL_CTR --> REL_DIM : Contrapartes com contratos
+
+REL_DIM --> REL_ANL : Base de contrapartes
+SIL_COM --> REL_ANL : DFs e Indicadores contábeis
+SIL_BUR --> REL_ANL : Scores e Fatores de restrição
+SIL_ENQ --> REL_ANL : Segmentação (LE_5 vs GT_5)
+SIL_OVR --> REL_ANL : Eventos manuais e Overrides
+
+REL_ANL --> REL_RSK : PD, Rating e Métricas
+SIL_CTR --> REL_RSK : Volumes contratados
+SRC_MTM --> REL_RSK : MtM da carteira
+
+SIL_CTR --> REL_REC_MTM : Contratos Denodo
+SRC_MTM --> REL_REC_MTM : Registros de MtM
+
+SIL_COM --> REL_REC_SF : Fichas vigentes
+SIL_CON --> REL_REC_SF : Fichas vigentes
+BRZ_SF --> REL_REC_SF : Contas do Salesforce
+
+REL_DIM --> REL_ALT : Chaves e segmentos
+REL_ANL --> REL_ALT : Validade de DFs e Ratings
+REL_RSK --> REL_ALT : Limites e Exposições
+REL_REC_MTM --> REL_ALT : Divergências de Reconciliação
+REL_REC_SF --> REL_ALT : Fichas sem CRM
+
+REL_DIM --> GLD_MASTER : Atributos cadastrais
+REL_ANL --> GLD_MASTER : Indicadores de Crédito
+REL_RSK --> GLD_MASTER : Exposição e Risco
+REL_ALT --> GLD_MASTER : Alertas consolidados
+
+SIL_CTR --> GLD_CTR : Base analítica de contratos
+REL_ANL --> GLD_CTR : Análises históricas e vigentes
+SIL_BUR --> GLD_CTR : Validação As-Of RISK3
+SRC_MTM --> GLD_CTR : Valores de MtM por contrato
+
+REL_ANL --> GLD_MIG : Histórico de ratings
+SRC_GAR --> GLD_GAR : Dados de garantias
+
+GLD_MASTER --> OUT_EXCEL : Geração de arquivo de carga
+GLD_MASTER --> OUT_UI : Visualização e KPIs
+GLD_CTR --> OUT_UI : Tabela As-Of de contratos
+GLD_MIG --> OUT_UI : Visualização de migrações
+GLD_GAR --> OUT_UI : Visão de coberturas
+
+@enduml

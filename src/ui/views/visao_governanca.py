@@ -3,6 +3,7 @@ import pandas as pd
 from pathlib import Path
 import sys
 from datetime import datetime, timedelta
+from ui.theme import render_header, render_kpis
 
 BASE_DIR = Path(".").resolve()
 
@@ -28,13 +29,16 @@ def ler_parquet_ou_csv(caminho_dir: Path, nome_base: str) -> pd.DataFrame:
     return df
 
 def render_visao_governanca():
-    st.markdown("<h2 style='color: #F5821E;'>Governança, Auditoria e Alertas (BDC)</h2>", unsafe_allow_html=True)
-    st.markdown("Painel executivo de monitoramento do Risco de Crédito e integridade do pipeline.")
+    render_header(
+        titulo="Governança, Auditoria e Alertas",
+        subtitulo="Monitoramento de conformidade de crédito, integridade de tabelas de controle e vigência de análises.",
+        badge_texto="Controle & Auditoria",
+        status_online=True
+    )
     
-    tab_alertas, tab_auditoria, tab_vencimentos = st.tabs(["🚨 Alertas de Crédito", "🛡️ Tabelas de Controle (Auditoria)", "📅 Controle de Vencimentos"])
+    tab_alertas, tab_auditoria, tab_vencimentos = st.tabs(["Alertas de Crédito", "Tabelas de Controle (Auditoria)", "Controle de Vencimentos"])
 
     with tab_alertas:
-        st.subheader("Painel de Alertas de Crédito e Risco")
         dir_alertas = BASE_DIR / "SAIDAS" / "gold" / "alertas"
         df_alertas = ler_parquet_ou_csv(dir_alertas, "alertas_consolidados")
         
@@ -45,18 +49,39 @@ def render_visao_governanca():
             total_criticos = len(df_alertas[df_alertas.get("SEVERIDADE", "") == "CRITICO"]) if "SEVERIDADE" in df_alertas.columns else 0
             total_risco = len(df_alertas[df_alertas.get("CODIGO", "").astype(str).str.contains("RAT|EXP")]) if "CODIGO" in df_alertas.columns else 0
 
+            render_kpis([
+                {
+                    "label": "Total de Apontamentos",
+                    "valor": str(total_alertas),
+                    "subtexto": "Todos os alertas consolidados",
+                    "layer": "silver"
+                },
+                {
+                    "label": "Alertas Críticos",
+                    "valor": str(total_criticos),
+                    "subtexto": "Exigem ação imediata da mesa",
+                    "layer": "warning"
+                },
+                {
+                    "label": "Risco de Rating/Exposição",
+                    "valor": str(total_risco),
+                    "subtexto": "Códigos RAT / EXP acionados",
+                    "layer": "copel"
+                }
+            ])
+
             if "filtro_alerta" not in st.session_state:
                 st.session_state["filtro_alerta"] = "Todos"
 
             col1, col2, col3 = st.columns(3)
             with col1:
-                if st.button(f"🚨 Todos os Alertas: {total_alertas}", use_container_width=True):
+                if st.button(f"Exibir Todos ({total_alertas})", width="stretch"):
                     st.session_state["filtro_alerta"] = "Todos"
             with col2:
-                if st.button(f"🔴 Alertas Críticos: {total_criticos}", use_container_width=True):
+                if st.button(f"Apenas Críticos ({total_criticos})", width="stretch"):
                     st.session_state["filtro_alerta"] = "Criticos"
             with col3:
-                if st.button(f"⚠️ Risco (RAT/EXP): {total_risco}", use_container_width=True):
+                if st.button(f"Apenas RAT/EXP ({total_risco})", width="stretch"):
                     st.session_state["filtro_alerta"] = "Risco"
             
             st.markdown(f"<p style='color: var(--primary); font-weight: bold;'>Filtro Aplicado: {st.session_state['filtro_alerta']}</p>", unsafe_allow_html=True)
@@ -69,7 +94,7 @@ def render_visao_governanca():
 
             st.dataframe(
                 df_mostrar,
-                use_container_width=True,
+                width="stretch",
                 height=400
             )
 
@@ -87,7 +112,7 @@ def render_visao_governanca():
         if selecao_tabela:
             df_ctrl = ler_parquet_ou_csv(ctrl_dir, selecao_tabela)
             if not df_ctrl.empty:
-                st.dataframe(df_ctrl.sort_values(by=df_ctrl.columns[0], ascending=False) if len(df_ctrl.columns) > 0 else df_ctrl, use_container_width=True)
+                st.dataframe(df_ctrl.sort_values(by=df_ctrl.columns[0], ascending=False) if len(df_ctrl.columns) > 0 else df_ctrl, width="stretch")
             else:
                 st.warning(f"Tabela {selecao_tabela} ainda vazia ou não inicializada nesta rodada.")
 
@@ -160,13 +185,13 @@ def render_visao_governanca():
                 
                 cols = st.columns(len(ordem))
                 for idx, (faixa, count) in enumerate(resumo.items()):
-                    cor = "red" if "Vencida" in faixa or "15" in faixa else "orange" if "30" in faixa else "green" if "90" in faixa else "gray"
-                    cols[idx].markdown(f"<div style='text-align: center; padding: 10px; border-radius: 5px; border: 1px solid #ccc;'><h4 style='color: {cor}; margin:0;'>{count}</h4><small>{faixa}</small></div>", unsafe_allow_html=True)
+                    cor = "#f5821e" if ("Vencida" in faixa or "15" in faixa or "30" in faixa) else "#9fa1a4"
+                    cols[idx].markdown(f"<div style='text-align: center; padding: 10px; border-radius: 8px; border: 1px solid var(--bdc-surface-border);'><h4 style='color: {cor}; margin:0;'>{count}</h4><small>{faixa}</small></div>", unsafe_allow_html=True)
                 
                 st.markdown("---")
                 df_exibir = df_venc.drop(columns=["FAIXA_ORDEM"])
                 if filtro_faixa != "Todos":
                     df_exibir = df_exibir[df_exibir["FAIXA_VENCIMENTO"] == filtro_faixa]
-                st.dataframe(df_exibir, use_container_width=True)
+                st.dataframe(df_exibir, width="stretch")
             else:
                 st.info("Nenhuma análise ativa para calcular vencimentos.")

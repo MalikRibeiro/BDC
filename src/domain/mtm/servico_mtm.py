@@ -122,16 +122,28 @@ def inserir_dados_mtm(context: AppContext) -> dict[str, Any]:
         if "DATA_BASE" not in df_mtm.columns:
             df_mtm["DATA_BASE"] = datetime.now().strftime("%Y-%m-%d")
 
+        # Salvar versão bruta e detalhada (nível contrato) na Silver para a Visão Carteira
+        silver_contratos_dir = context.path("silver") / "mtm_contratos_silver"
+        silver_contratos_dir.mkdir(parents=True, exist_ok=True)
+        df_mtm.to_parquet(silver_contratos_dir / "mtm_contratos.parquet", index=False)
+
+
+        agg_dict = {
+            "MTM_TOTAL": "sum",
+            "NOTIONAL": "sum"
+        }
+        rename_dict = {
+            "MTM_TOTAL": "MTM_TOTAL_NETTED",
+            "NOTIONAL": "NOTIONAL_TOTAL"
+        }
+        if "PORTFOLIO" in df_mtm.columns:
+            agg_dict["PORTFOLIO"] = "first"
+            rename_dict["PORTFOLIO"] = "PORTFOLIO_AGREGADO"
+
         df_agregado = (
             df_mtm.groupby(["CNPJ", "CNPJ_RAIZ", "DATA_BASE"], as_index=False)
-            .agg({
-                "MTM_TOTAL": "sum",
-                "NOTIONAL": "sum"
-            })
-            .rename(columns={
-                "MTM_TOTAL": "MTM_TOTAL_NETTED",
-                "NOTIONAL": "NOTIONAL_TOTAL"
-            })
+            .agg(agg_dict)
+            .rename(columns=rename_dict)
         )
 
         df_agregado["MTM_POSITIVO_TOTAL"] = df_agregado["MTM_TOTAL_NETTED"].apply(

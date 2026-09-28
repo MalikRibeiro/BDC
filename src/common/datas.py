@@ -81,3 +81,22 @@ def normalizar_data_demonstracao_financeira(value: Any) -> tuple[str | None, str
             continue
 
     return None, None, False
+
+
+def formatar_data_br_serie(serie: pd.Series) -> pd.Series:
+    """Converte série de datas para string no padrão corporativo brasileiro DD/MM/AAAA.
+    Lida de forma determinística com objetos datetime, strings ISO (YYYY-MM-DD) e DD/MM/AAAA,
+    preenchendo valores ausentes/inválidos com '-'.
+    """
+    if serie.empty:
+        return serie
+
+    if pd.api.types.is_datetime64_any_dtype(serie):
+        return serie.dt.strftime("%d/%m/%Y").fillna("-")
+
+    s_str = serie.astype(str).str.strip()
+    s_dt = pd.to_datetime(serie, format="%d/%m/%Y", errors="coerce")
+    mask_iso = s_dt.isna() & serie.notna() & ~s_str.isin(["", "None", "nan", "<NA>", "NaT", "-"])
+    if mask_iso.any():
+        s_dt.loc[mask_iso] = pd.to_datetime(serie.loc[mask_iso], errors="coerce")
+    return s_dt.dt.strftime("%d/%m/%Y").fillna("-")

@@ -11,8 +11,7 @@ import pandas as pd
 
 from app.context import AppContext
 from control.logger import obter_logger
-from domain.enums import StatusAlerta
-from relational.facts.fato_alerta_util import registrar_alerta
+from relational.facts.fato_alerta_util import registrar_alertas_em_lote
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
 
@@ -70,18 +69,11 @@ def executar_reconciliacao_denodo_mtm(context: AppContext) -> dict[str, Any]:
         
         df_merged["STATUS_CONCILIACAO"] = np.select(conditions, choices, default="DIVERGENTE")
 
-        alertas = []
         alertas_db = []
         
         mask_ctr_001 = df_merged["STATUS_CONCILIACAO"] == "CONTRATO_SEM_MTM"
         for row in df_merged[mask_ctr_001].to_dict(orient="records"):
             msg = f"A contraparte (CNPJ {row['CNPJ']}) possui contrato(s) no Denodo, mas não tem posição na base de MtM."
-            alertas.append({
-                "CODIGO": "CTR_001",
-                "CNPJ": row["CNPJ"],
-                "SEVERIDADE": "MEDIO",
-                "MENSAGEM": msg
-            })
             alertas_db.append({
                 "codigo": "CTR_001",
                 "severidade": "MEDIO",
@@ -96,12 +88,6 @@ def executar_reconciliacao_denodo_mtm(context: AppContext) -> dict[str, Any]:
         mask_ctr_002 = df_merged["STATUS_CONCILIACAO"] == "MTM_SEM_CONTRATO"
         for row in df_merged[mask_ctr_002].to_dict(orient="records"):
             msg = f"Posição de MtM identificada para a contraparte {row['CNPJ']}, mas nenhum contrato corrente consta no Denodo."
-            alertas.append({
-                "CODIGO": "CTR_002",
-                "CNPJ": row["CNPJ"],
-                "SEVERIDADE": "ALTO",
-                "MENSAGEM": msg
-            })
             alertas_db.append({
                 "codigo": "CTR_002",
                 "severidade": "ALTO",
@@ -114,22 +100,8 @@ def executar_reconciliacao_denodo_mtm(context: AppContext) -> dict[str, Any]:
             })
 
         if alertas_db:
-            from relational.facts.fato_alerta_util import registrar_alertas_em_lote
             registrar_alertas_em_lote(alertas_db, run_id, context)
-
-        if alertas:
-            df_alertas = pd.DataFrame(alertas)
-            df_alertas["RUN_ID"] = run_id
-            df_alertas["DATA_DETECCAO"] = datetime.now().isoformat(timespec="seconds")
-            df_alertas["STATUS_ALERTA"] = StatusAlerta.ABERTO.value
-            
-            alertas_output_dir = context.path("silver") / "alertas_credito"
-            escrever_conjunto_de_dados_silver(
-                records=df_alertas.to_dict(orient="records"),
-                output_dir=alertas_output_dir,
-                filename=f"alertas_reconciliacao_{run_id}"
-            )
-            logger.info("Gerados %s alertas de negócio na reconciliação.", len(alertas))
+            logger.info("Registrados %s alertas de reconciliação no Fato Alertas.", len(alertas_db))
 
         colunas_saida = [
             "CNPJ", "STATUS_CONCILIACAO", 

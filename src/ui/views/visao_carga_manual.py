@@ -12,6 +12,7 @@ from domain.diagnostico.servico_diagnostico import gerar_diagnostico
 from domain.diagnostico.servico_exportacao import exportar_carga_manual
 from common.identificadores import normalizar_cnpj
 from common.datas import normalizar_data
+from ui.theme import render_header, render_kpis
 
 BASE_DIR = Path(".")
 DIAGNOSTICO_DIR = BASE_DIR / "ENTRADAS" / "atualizacoes_manuais" / "diagnostico"
@@ -110,7 +111,12 @@ def limpar_rascunho():
         RASCUNHO_PATH.unlink()
 
 def render_visao_carga_manual():
-    st.header("Carga Manual")
+    render_header(
+        titulo="Carga Manual & Overrides",
+        subtitulo="Diagnóstico de lacunas nas demonstrações financeiras da Silver e aplicação de complementações auditadas via SCD2.",
+        badge_texto="Governança de Entrada",
+        status_online=True
+    )
     
     if st.session_state.pop("sucesso_salvamento", False):
         st.success("Resoluções salvas com sucesso! Os campos foram transferidos para a aba 'Resoluções Salvas'.")
@@ -148,11 +154,29 @@ def render_visao_carga_manual():
 
     # Métricas gerais no topo
     grupos_totais = list(df_fila_pendente.groupby(["CNPJ", "DATA_DEMONSTRACAO_FINANCEIRA", "RAZAO_SOCIAL"])) if not df_fila_pendente.empty else []
-    
-    col_m1, col_m2, col_m3 = st.columns(3)
-    col_m1.metric("Campos Pendentes", len(df_fila_pendente))
-    col_m2.metric("Fichas a Resolver", len(grupos_totais))
-    col_m3.metric("Campos Resolvidos", len(df_rascunho) if not df_rascunho.empty else 0)
+    qtd_pendentes = len(df_fila_pendente)
+    qtd_resolvidos = len(df_rascunho) if not df_rascunho.empty else 0
+
+    render_kpis([
+        {
+            "label": "Campos Pendentes",
+            "valor": str(qtd_pendentes),
+            "subtexto": "Lacunas aguardando complementação",
+            "layer": "warning" if qtd_pendentes > 0 else "neutral"
+        },
+        {
+            "label": "Fichas / Demonstrações",
+            "valor": str(len(grupos_totais)),
+            "subtexto": "Empresas com dados incompletos",
+            "layer": "copel"
+        },
+        {
+            "label": "Resoluções Salvas",
+            "valor": str(qtd_resolvidos),
+            "subtexto": "Prontos para exportar ao pipeline",
+            "layer": "silver"
+        }
+    ])
 
     st.markdown("---")
 
@@ -166,7 +190,7 @@ def render_visao_carga_manual():
     with tab_pendencias:
         if df_fila_pendente.empty:
             if not df_rascunho.empty:
-                st.success("🎉 Todas as pendências foram preenchidas e estão salvas no rascunho! Vá para a aba 'Resoluções Salvas' para conferir e exportar a carga.")
+                st.success("Todas as pendências foram preenchidas e estão salvas no rascunho! Vá para a aba 'Resoluções Salvas' para conferir e exportar a carga.")
             else:
                 st.info("Nenhuma pendência na fila. Clique em 'Gerar Diagnóstico Atualizado' para varrer a camada Silver.")
         else:
@@ -214,7 +238,7 @@ def render_visao_carga_manual():
                     except Exception:
                         data_df_exibicao = str(data_df).split(" ")[0]
                         
-                    with st.expander(f"🏢 {empresa} | CNPJ: {cnpj} | DF: {data_df_exibicao} ({len(grupo)} campos pendentes)", expanded=True):
+                    with st.expander(f"{empresa} | CNPJ: {cnpj} | DF: {data_df_exibicao} ({len(grupo)} campos pendentes)", expanded=True):
                         arquivo_origem = grupo.iloc[0].get("ARQUIVO_ORIGEM", "Desconhecido")
                         st.info(f"Ficha mapeada: {arquivo_origem}")
                         st.markdown("---")

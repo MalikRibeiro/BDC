@@ -106,24 +106,39 @@ def processar_contratos_denodo(context: AppContext) -> dict[str, Any]:
                 shutil.move(str(al), str(vigente_dir / al.name))
 
         hoje_str = datetime.now().strftime("%Y%m%d")
-        arquivos_locais = list(vigente_dir.glob("*.csv"))
-        arquivos_processados_hoje = list(processadas_dir.glob(f"denodo_api_export_CTR_{hoje_str}*.csv"))
+        
+        # 1. Arquivos manuais inseridos intencionalmente pelo usuário (não gerados pela API)
+        arquivos_manuais = [f for f in vigente_dir.glob("*.csv") if not f.name.startswith("denodo_api_export_CTR_")]
+        
+        # 2. Cache diário gerado pela API no dia de hoje
+        arquivos_processados_hoje = list(processadas_dir.glob(f"denodo_api_export_CTR_{hoje_str}*.csv")) + [
+            f for f in vigente_dir.glob(f"denodo_api_export_CTR_{hoje_str}*.csv")
+        ]
+        
+        # 3. Histórico de exports anteriores para contingência/fallback
+        arquivos_historicos = list(processadas_dir.glob("denodo_api_export_CTR_*.csv")) + [
+            f for f in vigente_dir.glob("denodo_api_export_CTR_*.csv")
+        ]
         
         df_raw = pd.DataFrame()
         source_file = None
         staging_file = None
+        usando_arquivo_local = False
         
-        if arquivos_locais:
-            source_file = max(arquivos_locais, key=lambda f: f.stat().st_mtime)
-            logger.info("Lendo contratos de arquivo local: %s (Ignorando API)", source_file.name)
+        if arquivos_manuais:
+            source_file = max(arquivos_manuais, key=lambda f: f.stat().st_mtime)
+            logger.info("Carga manual de contratos detectada: %s (Ignorando API por override)", source_file.name)
             staging_file = staging_dir / source_file.name
             shutil.copy2(source_file, staging_file)
+            usando_arquivo_local = True
         elif arquivos_processados_hoje:
             source_file = max(arquivos_processados_hoje, key=lambda f: f.stat().st_mtime)
-            logger.info("Cache diario encontrado: %s (Ignorando consulta ODBC para evitar duplicidade)", source_file.name)
+            logger.info("Cache diario de contratos encontrado para hoje (%s): %s. Reutilizando snapshot.", hoje_str, source_file.name)
             staging_file = staging_dir / source_file.name
             shutil.copy2(source_file, staging_file)
+            usando_arquivo_local = True
         else:
+            logger.info("Nenhum snapshot de hoje (%s) encontrado. Consultando API do Denodo via ODBC...", hoje_str)
             logger.info("Iniciando extração da view vwi_exportar_contrato via ODBC.")
             query_denodo = """
                SELECT com.vwi_exportar_contrato.movimentacao AS movimentacao,
@@ -205,20 +220,29 @@ def processar_contratos_denodo(context: AppContext) -> dict[str, Any]:
                          )
                      )
             """
-            df_api = buscar_denodo(query=query_denodo)
-            
-            if df_api.empty:
-                return {"run_id": run_id, "status": "SEM_DADOS", "linhas": 0}
+            try:
+                df_api = buscar_denodo(query=query_denodo)
+                if df_api.empty:
+                    return {"run_id": run_id, "status": "SEM_DADOS", "linhas": 0}
+                    
+                staging_file = staging_dir / f"api_snapshot_{run_id}.parquet"
+                df_api.to_parquet(staging_file, index=False)
                 
-            staging_file = staging_dir / f"api_snapshot_{run_id}.parquet"
-            df_api.to_parquet(staging_file, index=False)
-            
-            # Exporta uma cópia em CSV para a pasta processadas para facilitar a auditoria visual
-            csv_audit_file = processadas_dir / f"denodo_api_export_{run_id}.csv"
-            df_api.to_csv(csv_audit_file, sep=";", index=False, encoding="utf-8-sig")
-            logger.info("Cópia CSV de auditoria salva em %s", csv_audit_file.name)
-            
-            source_file = staging_file
+                # Exporta uma cópia em CSV para a pasta processadas para auditoria visual e cache diário
+                csv_audit_file = processadas_dir / f"denodo_api_export_{run_id}.csv"
+                df_api.to_csv(csv_audit_file, sep=";", index=False, encoding="utf-8-sig")
+                logger.info("API Denodo consultada com sucesso. Cópia CSV salva em %s", csv_audit_file.name)
+                source_file = staging_file
+            except Exception as e_api:
+                logger.warning("Falha na comunicação com API Denodo via ODBC: %s", e_api)
+                if arquivos_historicos:
+                    source_file = max(arquivos_historicos, key=lambda f: f.stat().st_mtime)
+                    logger.warning("Operando em modo de contingência com último export local: %s", source_file.name)
+                    staging_file = staging_dir / source_file.name
+                    shutil.copy2(source_file, staging_file)
+                    usando_arquivo_local = True
+                else:
+                    raise
 
         hash_arquivo = arquivo_hash(staging_file)
         
@@ -227,7 +251,7 @@ def processar_contratos_denodo(context: AppContext) -> dict[str, Any]:
 
         if tem_hash_duplicado(history, hash_arquivo) and silver_file_check.exists():
             logger.info("Hash de Contratos Denodo duplicado (%s). Ignorando pipeline por idempotência.", hash_arquivo)
-            if arquivos_locais and source_file:
+            if usando_arquivo_local and source_file and source_file.parent == vigente_dir:
                 shutil.move(str(source_file), str(processadas_dir / source_file.name))
             return {"run_id": run_id, "status": "IGNORADO_DUPLICADO", "linhas": 0}
 
@@ -280,11 +304,11 @@ def processar_contratos_denodo(context: AppContext) -> dict[str, Any]:
             if col not in df_silver.columns: df_silver[col] = "NAO_INFORMADO"
 
         group_cols = ["CNPJ", "CONTRATO", "COMPETENCIA", "VIGENCIA_INICIO", "VIGENCIA_FIM", "STATUS"]
-        for extra_col in ["NUMERO_REFERENCIA_CONTRATO", "CONTRAPARTE_APELIDO", "CONTRAPARTE_NOME_FANTASIA"]:
+        for extra_col in ["NUMERO_REFERENCIA_CONTRATO", "CONTRAPARTE_APELIDO", "CONTRAPARTE_NOME_FANTASIA", "DATA_FECHAMENTO", "MOVIMENTACAO"]:
             if extra_col in df_silver.columns and extra_col not in group_cols:
                 group_cols.append(extra_col)
 
-        df_silver_final = df_silver.groupby(group_cols, as_index=False).agg({"VOLUME_CONTRATADO_MENSAL_MWM": "sum"})
+        df_silver_final = df_silver.groupby(group_cols, dropna=False, as_index=False).agg({"VOLUME_CONTRATADO_MENSAL_MWM": "sum"})
 
         cols_identidade = ["CNPJ", "CNPJ_RAIZ", "STATUS_CNPJ"]
         cols_identidade_presentes = [c for c in cols_identidade if c in df_silver.columns]
@@ -305,13 +329,13 @@ def processar_contratos_denodo(context: AppContext) -> dict[str, Any]:
         dir_reconciliacao = context.path("silver") / "denodo_contratos_silver"
         escrever_conjunto_de_dados_silver(records=df_silver_final.to_dict(orient="records"), output_dir=dir_reconciliacao, filename="contratos_correntes")
         
-        if arquivos_locais and source_file:
+        if usando_arquivo_local and source_file and source_file.parent == vigente_dir:
             shutil.move(str(source_file), str(processadas_dir / source_file.name))
 
         logger.info("Contratos agregados e sem duplicidades salvos. %d registros limpos", len(df_silver_final))
         return {"run_id": run_id, "linhas_processadas": len(df_silver_final), "status": "SUCESSO"}
     except Exception as exc:
         logger.exception("Falha crítica na ingestão de contratos do Denodo.")
-        if 'source_file' in locals() and arquivos_locais and source_file:
+        if 'source_file' in locals() and 'usando_arquivo_local' in locals() and usando_arquivo_local and source_file and source_file.parent == vigente_dir:
              shutil.move(str(source_file), str(rejeitadas_dir / source_file.name))
         raise Exception(f"Erro na ingestão Denodo: {exc}") from exc

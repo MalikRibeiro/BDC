@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from app.context import AppContext
-from relational.facts.fato_alerta_util import registrar_alerta
+from relational.facts.fato_alerta_util import registrar_alertas_em_lote
 from common.excel import fechar_pasta, abrir_pasta
 from common.hashing import arquivo_hash
 from common.json import ler_json
@@ -26,7 +26,7 @@ from common.servico_desduplicacao import (
 )
 from domain.auditoria.servico_auditoria import registrar_linhagem_campos, registrar_evento_processamento
 from domain.fichas.validador import validar_registro_consumidor
-from domain.consumidores.classificacao import (
+from domain.contrapartes.segmentacao import (
     classificar_consumidor,
     criar_classificacao_registro,
     VERSAO_REGRA_ATUAL,
@@ -232,7 +232,7 @@ def processar_arquivo_individual(
             manifest.status_extracao = "ERRO_LAYOUT"
             msg = "DOC_001_ESTRUTURA_INCOMPATIVEL: Nenhuma aba compativel com o layout esperada foi encontrada."
             manifest.erros.append(msg)
-            registrar_alerta(
+            registrar_alertas_em_lote(
                 codigo="DOC_001",
                 severidade="ALTO",
                 regra="Estrutura de Ficha Incompatível",

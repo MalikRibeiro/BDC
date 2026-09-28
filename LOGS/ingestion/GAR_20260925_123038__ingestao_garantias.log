@@ -1,0 +1,4 @@
+2026-09-25 12:30:38 | INFO | bdc.garantias | Iniciando ingestão de Garantias (Modo CSV Local).
+2026-09-25 12:30:38 | INFO | bdc.garantias | Iniciando extração de Garantias via ODBC.
+2026-09-25 12:30:40 | INFO | bdc.garantias | Cópia CSV de auditoria salva em denodo_garantias_odbc_GAR_20260925_123038.csv
+2026-09-25 12:30:41 | INFO | bdc.garantias | Ingestão de garantias na Silver concluída. Registros salvos: 11504

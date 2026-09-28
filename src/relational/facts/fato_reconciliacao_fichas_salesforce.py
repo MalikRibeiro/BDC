@@ -12,14 +12,14 @@ from typing import Any
 import pandas as pd
 
 from app.context import AppContext
-from common.identificadores import normalizar_cnpj
+from common.identificadores import normalizar_cnpj_coluna
 from control.logger import obter_logger
-from relational.facts.fato_alerta_util import registrar_alerta
+from relational.facts.fato_alerta_util import registrar_alertas_em_lote
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
 
 def executar_reconciliacao_fichas_salesforce(context: AppContext) -> dict[str, Any]:
     run_id = f"REC_SF_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    logger = obter_logger("bdc.reconciliacao.salesforce", Path("LOGS/audit") / f"{run_id}__salesforce_reconciliacao.log")
+    logger = obter_logger("bdc.reconciliacao.salesforce", Path("LOGS/salesforce") / f"{run_id}__salesforce_reconciliacao.log")
     
     silver_dir = context.path("silver")
 
@@ -50,8 +50,7 @@ def executar_reconciliacao_fichas_salesforce(context: AppContext) -> dict[str, A
         logger.warning("Base do Salesforce (Account) não foi encontrada na Silver. Abortando.")
         return {"run_id": run_id, "status": "SEM_DADOS_SF"}
 
-    from common.identificadores import normalizar_cnpj
-    df_fichas["CNPJ_FICHAS"] = df_fichas["CNPJ"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
+    df_fichas["CNPJ_FICHAS"] = df_fichas["CNPJ"].apply(normalizar_cnpj_coluna)
     df_fichas_unique = df_fichas.drop_duplicates(subset=["CNPJ_FICHAS"]).copy()
 
     col_cnpj_sf = "CNPJ" if "CNPJ" in df_sf.columns else next((c for c in df_sf.columns if "CNPJ" in str(c).upper() or "DOCUMENTO" in str(c).upper()), None)
@@ -60,40 +59,31 @@ def executar_reconciliacao_fichas_salesforce(context: AppContext) -> dict[str, A
         logger.warning("Coluna de CNPJ não encontrada na base do Salesforce.")
         return {"run_id": run_id, "status": "FALHA_MAPEAMENTO_SF"}
 
-    df_sf["CNPJ_SF"] = df_sf[col_cnpj_sf].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
+    df_sf["CNPJ_SF"] = df_sf[col_cnpj_sf].apply(normalizar_cnpj_coluna)
     df_sf_unique = df_sf.drop_duplicates(subset=["CNPJ_SF"]).copy()
 
     df_merge = pd.merge(df_fichas_unique, df_sf_unique, left_on="CNPJ_FICHAS", right_on="CNPJ_SF", how="left", indicator=True)
     
-    alertas = []
     df_missing_in_sf = df_merge[df_merge["_merge"] == "left_only"]
     
+    alertas_fato = []
     for _, row in df_missing_in_sf.iterrows():
         cnpj = row["CNPJ_FICHAS"]
         if cnpj == "00000000000000": continue
         
-        msg = "Contraparte possui Ficha de Crédito, mas NÃO foi encontrada na base de Contas do CRM (Salesforce)."
-        alertas.append({
-            "CODIGO": "SF_001",
-            "CNPJ": cnpj,
-            "MENSAGEM": msg,
-            "SEVERIDADE": "MÉDIA",
-            "RUN_ID": run_id,
-            "DT_DETECCAO": datetime.now().isoformat(timespec="seconds"),
-            "STATUS_ALERTA": "ABERTO"
+        alertas_fato.append({
+            "codigo": "SF_001",
+            "severidade": "MEDIO",
+            "regra": "Ficha sem Conta CRM",
+            "mensagem": "Contraparte possui Ficha de Crédito, mas NÃO foi encontrada na base de Contas do CRM (Salesforce).",
+            "campo_afetado": "STATUS_RECONCILIACAO",
+            "valor_observado": "PENDENTE_NO_SALESFORCE",
+            "limite_esperado": "SINCRONIZADO",
+            "contraparte_id": cnpj
         })
-        registrar_alerta(
-            codigo="SF_001",
-            severidade="MEDIO",
-            regra="Ficha sem Conta CRM",
-            mensagem=msg,
-            campo_afetado="STATUS_RECONCILIACAO",
-            valor_observado="PENDENTE_NO_SALESFORCE",
-            limite_esperado="SINCRONIZADO",
-            contraparte_id=cnpj,
-            run_id=run_id,
-            context=context
-        )
+
+    if alertas_fato:
+        registrar_alertas_em_lote(alertas_fato, run_id, context)
 
     relational_dir = context.path("relational_facts") / "reconciliacao"
     relational_dir.mkdir(parents=True, exist_ok=True)
@@ -109,19 +99,11 @@ def executar_reconciliacao_fichas_salesforce(context: AppContext) -> dict[str, A
     df_resultado.to_csv(relational_dir / "fato_reconciliacao_fichas_salesforce.csv", index=False, sep=";", decimal=",")
     df_resultado.to_parquet(relational_dir / "fato_reconciliacao_fichas_salesforce.parquet", index=False)
 
-    if alertas:
-        df_alertas = pd.DataFrame(alertas)
-        escrever_conjunto_de_dados_silver(
-            records=df_alertas.to_dict(orient="records"), 
-            output_dir=silver_dir / "alertas_credito", 
-            filename=f"alertas_reconciliacao_sf_{run_id}"
-        )
-
-    logger.info("Reconciliação CRM concluída. %d Fichas sem cadastro correspondente no Salesforce.", len(alertas))
+    logger.info("Reconciliação CRM concluída. %d Fichas sem cadastro correspondente no Salesforce.", len(alertas_fato))
     
     return {
         "run_id": run_id, 
         "status": "SUCESSO", 
         "fichas_cruzadas": len(df_fichas_unique),
-        "alertas_gerados": len(alertas)
+        "alertas_gerados": len(alertas_fato)
     }

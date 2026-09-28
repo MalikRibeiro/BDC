@@ -10,8 +10,6 @@ from datetime import datetime
 
 def _encontrar_ficha_bronze(cnpj: str, base_dir: Path) -> Path | None:
     """Busca o arquivo mais recente da ficha na camada Bronze para um CNPJ."""
-    # A estrutura bronze geralmente tem o CNPJ na pasta ou no nome do arquivo
-    # Vamos buscar iterativamente (sem assumir a estrutura profunda de pastas)
     bronze_dir = base_dir / "SAIDAS" / "bronze"
     if not bronze_dir.exists():
         return None
@@ -33,7 +31,6 @@ def _encontrar_ficha_bronze(cnpj: str, base_dir: Path) -> Path | None:
     if not candidatos:
         return None
         
-    # Ordena pelo tempo de modificação para pegar a mais recente
     candidatos.sort(key=os.path.getmtime, reverse=True)
     return candidatos[0]
 

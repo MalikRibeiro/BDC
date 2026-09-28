@@ -1,5 +1,3 @@
-"""Conector de integração com a base de MtM (Risco de Mercado)."""
-
 from __future__ import annotations
 from pathlib import Path
 from typing import Any
@@ -47,6 +45,12 @@ def buscar_mtm_consolidado(input_dir: Path | str, logger: Any | None = None) -> 
             valores_mtm = pd.to_numeric(raw_mtm, errors="coerce").fillna(0.0)
         else:
             valores_mtm = pd.Series([0.0] * len(df_bruto), name="MTM_TOTAL")
+            
+        if "MTM_VPL" in df_bruto.columns:
+            raw_mtm_vpl = df_bruto["MTM_VPL"].astype(str).str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
+            valores_mtm_vpl = pd.to_numeric(raw_mtm_vpl, errors="coerce").fillna(0.0)
+        else:
+            valores_mtm_vpl = pd.Series([0.0] * len(df_bruto), name="MTM_VPL")
 
         if "ENERGIA_MWH" in df_bruto.columns and "PRECO_REAJUSTADO" in df_bruto.columns:
             vol = df_bruto["ENERGIA_MWH"].astype(str).str.replace(".", "", regex=False).str.replace(",", ".", regex=False)
@@ -57,6 +61,7 @@ def buscar_mtm_consolidado(input_dir: Path | str, logger: Any | None = None) -> 
 
         contrato_series = df_bruto.get("COD_CONTRATO", pd.Series([None] * len(df_bruto)))
         data_base_series = df_bruto.get("DATA_AVALIACAO", pd.Series([datetime.now().strftime("%Y-%m-%d")] * len(df_bruto)))
+        portfolio_series = df_bruto.get("PORTFOLIO", pd.Series([None] * len(df_bruto)))
 
         df_resultado = pd.DataFrame({
             "CNPJ":        cnpj_series,
@@ -65,7 +70,9 @@ def buscar_mtm_consolidado(input_dir: Path | str, logger: Any | None = None) -> 
             "CONTRATO":    contrato_series,
             "DATA_BASE":   data_base_series,
             "MTM_TOTAL":   valores_mtm,
-            "NOTIONAL":    valores_notional
+            "MTM_VPL":     valores_mtm_vpl,
+            "NOTIONAL":    valores_notional,
+            "PORTFOLIO":   portfolio_series
         })
 
         df_resultado = df_resultado[df_resultado["STATUS_CNPJ"] == "CNPJ_VALIDO"].copy()

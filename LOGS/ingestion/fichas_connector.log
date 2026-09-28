@@ -1,0 +1,9 @@
+2026-09-25 12:23:03 | INFO | fichas_connector | Verificando consistência de layouts nas pastas de fichas locais...
+2026-09-25 12:23:07 | INFO | fichas_connector | Iniciando varredura e validação de fichas na raiz de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR
+2026-09-25 12:23:07 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\.Chamados SalesForce\2026\.COMERCIALIZADORAS E GERADORAS
+2026-09-25 12:23:08 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\Limite Comercializadoras\Agentes_Demonstrações Financeiras\Fichas\2025
+2026-09-25 12:23:12 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\Limite Comercializadoras\Agentes_Demonstrações Financeiras\Fichas\2026
+2026-09-25 12:23:15 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\.Chamados SalesForce\2026\.CONSUMIDORES LIVRES
+2026-09-25 12:23:21 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\Limite Consumidores Livres\Fichas
+2026-09-25 12:23:24 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\.Chamados SalesForce\2025
+2026-09-25 12:23:33 | INFO | fichas_connector | Obtenção de fichas concluída: 0 novas (0 comercializadoras, 0 consumidores), 1018 inalteradas, 0 bloqueadas por usuários, 236 descartadas (não são fichas). Base local total: 802 comercializadoras, 797 consumidores.

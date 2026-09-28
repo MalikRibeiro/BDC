@@ -126,3 +126,20 @@ def validar_schema_dataframe(df: pd.DataFrame, colunas_obrigatorias: list[str]) 
         if col not in df.columns:
             erros.append(f"Coluna obrigatória não encontrada no DataFrame: '{col}'.")
     return erros
+
+def carregar_fichas_silver_consolidadas(silver_dir) -> pd.DataFrame:
+    """Carrega e concatena fichas extraídas mais recentes (comercializadoras + consumidores).
+
+    Consolida o padrão glob + max(mtime) + concat que antes estava duplicado
+    em fato_analise_credito, dim_contraparte, fato_reconciliacao_fichas_salesforce e servico_receita.
+    """
+    from pathlib import Path
+    silver_dir = Path(silver_dir)
+    dfs = []
+    for segmento in ("fichas_comercializadoras_extraidas", "fichas_consumidores_extraidas"):
+        seg_path = silver_dir / segmento
+        if seg_path.exists():
+            parquets = list(seg_path.glob("*.parquet"))
+            if parquets:
+                dfs.append(pd.read_parquet(max(parquets, key=lambda f: f.stat().st_mtime)))
+    return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()

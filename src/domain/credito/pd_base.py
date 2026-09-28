@@ -23,8 +23,16 @@ def calcular_pd_base(
         raw_pd = registro.get("PROBABILIDADE_DEFAULT")
         return to_float_br(raw_pd) if raw_pd is not None else None
 
+    if registro.get("PD_BASE") is not None:
+        pd_dir = to_float_br(registro.get("PD_BASE"))
+        if pd_dir is not None:
+            return pd_dir
+
     try:
         if not pd_zscore_config:
+            raw_pd = registro.get("PROBABILIDADE_DEFAULT")
+            if raw_pd is not None:
+                return to_float_br(raw_pd)
             raise PdInputValidationError("Falta pd_zscore_config para cálculo da PD base.")
 
         la = to_float_br(registro.get("LUCROS_ACUMULADOS")) or 0.0

@@ -22,8 +22,14 @@ def validar_probabilidade(valor: Any) -> float | None:
 def _is_blank(value: Any) -> bool:
     if value is None:
         return True
+    try:
+        import pandas as _pd
+        if _pd.isna(value):
+            return True
+    except Exception:
+        pass
     texto = str(value).strip().upper()
-    return texto in {"", "N/A", "NA", "N.D.", "ND", "NONE", "NULL"}
+    return texto in {"", "N/A", "NA", "N.D.", "ND", "NONE", "NULL", "NAN", "NAT"}
 
 
 def validar_insumos_pd(
@@ -35,8 +41,8 @@ def validar_insumos_pd(
         raise PdInputValidationError("SEGMENTO_PD não informado.")
     
     if segmento_pd == "CONSUMIDOR_LE_5":
-        if registro.get("SCORE_BUREAU") is None:
-            raise PdInputValidationError("SCORE_BUREAU não informado para CONSUMIDOR_LE_5.")
+        # Ausência de SCORE_BUREAU em CONSUMIDOR_LE_5 não interrompe o motor com exceção;
+        # Permite que o motor retorne status PENDENTE e PD nula, preservando a governança.
         return
 
     pd_base_raw = registro.get("PROBABILIDADE_DEFAULT")
@@ -48,21 +54,9 @@ def validar_insumos_pd(
         )
 
     if segmento_pd == "CGRUPO":
-        agencia = registro.get("AGENCIA")
-        nota_credito = registro.get("NOTA_CREDITO")
-        rating_interno = registro.get(
-            "RATING_FINAL") or registro.get("RATING_COPEL")
-
-        tem_rating_publico = not _is_blank(
-            agencia) and not _is_blank(nota_credito)
-        tem_rating_interno = not _is_blank(rating_interno)
-
-        if not tem_rating_publico and not tem_rating_interno:
-            raise PdInputValidationError(
-                "CGRUPO sem rating público (AGENCIA/NOTA_CREDITO) "
-                "e sem rating interno (RATING_FINAL/RATING_COPEL)."
-            )
-
+        # Ausência de rating ou PD em CGRUPO não interrompe o motor com exceção;
+        # Permite que o motor retorne campos nulos preservando a auditoria.
+        pass
     else:
         rating = (
             registro.get("RATING_COPEL")

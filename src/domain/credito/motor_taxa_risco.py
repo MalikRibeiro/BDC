@@ -1,21 +1,11 @@
 from __future__ import annotations
 
 import logging
-import math
 from datetime import datetime
 from typing import Any
 from uuid import uuid4
-from relational.facts.fato_alerta_util import registrar_alerta
-
-
-def _is_missing(val) -> bool:
-    """Retorna True se val for None ou NaN."""
-    if val is None:
-        return True
-    try:
-        return math.isnan(float(val))
-    except (TypeError, ValueError):
-        return False
+from relational.facts.fato_alerta_util import registrar_alertas_em_lote
+from common.nulos import is_missing as _is_missing
 
 LOGGER = logging.getLogger(__name__)
 
@@ -40,7 +30,7 @@ def calcular_taxa_risco(
 
     alertas = []
     
-    if _is_missing(notional_total) or float(notional_total) <= 0:
+    if float(notional_total) <= 0:
         LOGGER.warning(
             "Cálculo de Taxa de Risco não executado: Notional Total inválido ou zero (%.2f).", 
             notional_total
@@ -53,18 +43,16 @@ def calcular_taxa_risco(
         })
         
         if run_id and context:
-            registrar_alerta(
-                codigo="QLT_002",
-                severidade="ALTO",
-                regra="Notional Total Zerado",
-                mensagem=msg,
-                campo_afetado="NOTIONAL_TOTAL",
-                valor_observado=notional_total,
-                limite_esperado="> 0",
-                contraparte_id="N/A (Carteira)",
-                run_id=run_id,
-                context=context
-            )
+            registrar_alertas_em_lote([{
+                "codigo": "QLT_002",
+                "severidade": "ALTO",
+                "regra": "Notional Total Zerado",
+                "mensagem": msg,
+                "campo_afetado": "NOTIONAL_TOTAL",
+                "valor_observado": notional_total,
+                "limite_esperado": "> 0",
+                "contraparte_id": "N/A (Carteira)"
+            }], run_id, context)
         return {
             "calculo_id": calculo_id,
             "taxa_risco": None,

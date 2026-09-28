@@ -71,6 +71,11 @@ def normalizar_cnpj_raiz(valor: Any) -> str | None:
     resultado = normalizar_cnpj(valor)
     return resultado.raiz if resultado.valido else None
 
+def normalizar_cnpj_coluna(valor: Any) -> str | None:
+    """Normaliza CNPJ para uso em df.apply() — chamada única por célula."""
+    r = normalizar_cnpj(valor)
+    return r.cnpj if r.valido else None
+
 def normalizar_cnpj(
     valor: Any,
     *,

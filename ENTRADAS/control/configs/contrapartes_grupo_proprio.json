@@ -1,0 +1,20 @@
+{
+  "descricao": "Configuração de Governança BDC: Contrapartes do Grupo Econômico Próprio (Operações Intercompany isentas de risco de crédito de terceiros)",
+  "versao": "1.0",
+  "data_atualizacao": "2026-09-25",
+  "raizes_cnpj_isentas": [
+    "19125927",
+    "04370282",
+    "04557307"
+  ],
+  "cnpjs_isentos": [
+    "19125927000186",
+    "04370282000170",
+    "04557307000149"
+  ],
+  "termos_razao_social": [
+    "COPEL GET",
+    "COPEL COM - GERENCIAL",
+    "ELEJOR"
+  ]
+}

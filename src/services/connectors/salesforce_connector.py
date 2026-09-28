@@ -50,8 +50,8 @@ def buscar_salesforce_dados(
             df = df.replace("nan", "")
             
             if chave_dict == "Account" and "CNPJ__c" in df.columns:
-                from common.identificadores import normalizar_cnpj
-                df["CNPJ__c"] = df["CNPJ__c"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
+                from common.identificadores import normalizar_cnpj_coluna
+                df["CNPJ__c"] = df["CNPJ__c"].apply(normalizar_cnpj_coluna)
             
             resultados_df[chave_dict] = df
             

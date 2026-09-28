@@ -136,7 +136,7 @@
         },
         "PROBABILIDADE_DEFAULT": {
             "sheet": "FichaIndividual",
-            "label_cell": "B30",
+            "label_cell": "A31",
             "value_cell": "B31",
             "implemented": true
         },

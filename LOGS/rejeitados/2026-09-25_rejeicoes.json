@@ -1,0 +1,2986 @@
+[
+    {
+        "timestamp": "2026-09-25T12:23:36.060584",
+        "arquivo": "ADN 02062026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 39.34%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:36.140835",
+        "arquivo": "AEGEA 30.07.2024.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 22.95%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:36.237643",
+        "arquivo": "AES BRASIL 09_05_2022 TESTE GRUPO.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:43.697980",
+        "arquivo": "ANGELINA COLOMBO 29072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 37.7%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:50.593208",
+        "arquivo": "ATMO 16052025__1.xlsx",
+        "status": "ERRO_DUPLICIDADE_HASH",
+        "erros": [
+            "Hash já processado anteriormente."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:52.145546",
+        "arquivo": "ATVOS PART. 03082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.07%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:52.793090",
+        "arquivo": "ATVOS SANTA LUZIA 31072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:52.897561",
+        "arquivo": "AUREN (VOTENER) 06_05_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:54.283192",
+        "arquivo": "AUTODROMO ENERGETICA 24082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 37.7%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:55.514447",
+        "arquivo": "BANCO BOCOM BBM 25_05_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:55.593354",
+        "arquivo": "BANCO BTG PACTUAL (GRUPO) 14_07_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:57.902581",
+        "arquivo": "BEP 09072025.xlsx",
+        "status": "ERRO_DUPLICIDADE_HASH",
+        "erros": [
+            "Hash já processado anteriormente."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:23:58.611946",
+        "arquivo": "BEP RATING 26032026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:07.702499",
+        "arquivo": "BTG PACTUAL (BANCO)_08-11_2021.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:08.999199",
+        "arquivo": "Bravo_2024.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 37.7%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:09.542579",
+        "arquivo": "CANADIAN RARTING 26022026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:09.924700",
+        "arquivo": "CANADIAN SOLAR 16092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:09.991191",
+        "arquivo": "CANADIAN SOLAR_06_10_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:13.017814",
+        "arquivo": "CDVSA 12082026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:13.193461",
+        "arquivo": "CDV_SIMULACAO.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:13.655344",
+        "arquivo": "CEESAM 23072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.07%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:14.569487",
+        "arquivo": "CELESC 11_05_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.07%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:15.557131",
+        "arquivo": "CEMIG H COMERCIALIZAÇÃO_23_02_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 31.15%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:16.314352",
+        "arquivo": "CENTRAL 04092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 37.7%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:17.065790",
+        "arquivo": "CENTRAL EOLICA NOVO MUNDO 3 02092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.07%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:17.231929",
+        "arquivo": "CENTRAL EÓLICA NOVO MUNDO 2 02092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 37.7%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:22.083296",
+        "arquivo": "CPFL 04072025__1.xlsx",
+        "status": "ERRO_DUPLICIDADE_HASH",
+        "erros": [
+            "Hash já processado anteriormente."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:22.428277",
+        "arquivo": "CPFL_01_06_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:24.494833",
+        "arquivo": "CUTRALE ENERGIA 14092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 39.34%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:26.309493",
+        "arquivo": "Cópia de TRADENER 17092026 1.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 39.34%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:39.683523",
+        "arquivo": "ENDE BRASIL 01092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:40.401216",
+        "arquivo": "ENEL 22_06_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:42.542210",
+        "arquivo": "ENERGEST 17082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 39.34%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:43.470159",
+        "arquivo": "ENERGISA(GRUPO)_04_09_2021.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:45.077442",
+        "arquivo": "ENEVA_05_04_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:46.438380",
+        "arquivo": "ENGIE COM (GRUPO)_06_10_2021.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:46.516307",
+        "arquivo": "ENGIE TRADING_(GRUPO)_18_10_2021.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:54.416751",
+        "arquivo": "FOTOVO ENERGIAS 16092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:55.173774",
+        "arquivo": "Fibra Energy 14052025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:55.653723",
+        "arquivo": "Fibra_2024.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:55.874886",
+        "arquivo": "Ficha Nova Rating Comercializadoras.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:24:56.285210",
+        "arquivo": "GALAPAGOS 30102025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:05.581865",
+        "arquivo": "ICAL ENERGIA 16042026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:09.451436",
+        "arquivo": "INPASA 05082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 39.34%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:10.473546",
+        "arquivo": "ITAMBÉ ENERGÉTICA.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:10.902304",
+        "arquivo": "ITAU COM 02_05_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:11.669946",
+        "arquivo": "J&F 0108025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:15.467475",
+        "arquivo": "LDC 30062025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:15.692701",
+        "arquivo": "LDC BRASIL 29102025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:19.312824",
+        "arquivo": "LIGHT_(GRUPO)_18_10_2021.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:25.525017",
+        "arquivo": "MARACANA 06082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 37.7%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:25.983487",
+        "arquivo": "MARFRIG 27082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 39.34%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:26.159162",
+        "arquivo": "MARFRIG ENERGIA 25082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.07%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:28.445259",
+        "arquivo": "MEGA 09092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 39.34%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:33.530240",
+        "arquivo": "Matrix -grupo- 03042025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 37.7%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:34.606222",
+        "arquivo": "NC ENERGIA 21_06_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:34.835930",
+        "arquivo": "NC ENERGIA 26032026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:39.981438",
+        "arquivo": "NOVA - 03042025.xlsx",
+        "status": "ERRO_DUPLICIDADE_HASH",
+        "erros": [
+            "Hash já processado anteriormente."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:42.262679",
+        "arquivo": "OMEGA 13_07_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:46.238661",
+        "arquivo": "PCH VERDE 2 ENERGETICA RATING 23012026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:47.472239",
+        "arquivo": "POLIMIX 01092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 31.15%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:50.890354",
+        "arquivo": "QAIR BRASIL COM 16092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 39.34%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:52.108946",
+        "arquivo": "RBE ENERGIA 03092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:52.303339",
+        "arquivo": "RBE ENERGIA 18092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 37.7%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:53.958708",
+        "arquivo": "RIO ENERGY (GRUPO) 23_08_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:56.634475",
+        "arquivo": "SAFIRA ADM.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:56.976348",
+        "arquivo": "SAFIRA Holding 2023.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:57.151673",
+        "arquivo": "SAFIRA Holding 2024.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:25:57.324040",
+        "arquivo": "SAFIRA Holding.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:01.166429",
+        "arquivo": "SAO PAULO ENERGETICA 17082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 31.15%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:03.804650",
+        "arquivo": "SERRANA ENERGETICA 26082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:09.738648",
+        "arquivo": "SPIC BRASIL 01_12_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 31.15%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:09.973581",
+        "arquivo": "SPIC BRASIL 07052026.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:11.997021",
+        "arquivo": "STATKRAFT 24_06_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:13.574210",
+        "arquivo": "SUDOESTE ENERGIA 14_06_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.07%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:14.126262",
+        "arquivo": "Santa Maria não é Grupo 12062025.xlsx",
+        "status": "ERRO_VALIDACAO_GATES",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:17.234975",
+        "arquivo": "TEREOS 15072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.07%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:19.587518",
+        "arquivo": "TIMBRO TRADING 15072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:19.969672",
+        "arquivo": "TRADENER 17092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 39.34%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:22.079071",
+        "arquivo": "TRIA ENERGY 08072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 39.34%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:25.843012",
+        "arquivo": "UHE JURUENA 20082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 36.07%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:26.353171",
+        "arquivo": "UHE SAO SIMAO 29082025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 39.34%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:28.401896",
+        "arquivo": "USINA MONTE ALEGRE 15072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 37.7%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:30.188758",
+        "arquivo": "VOLTALIA (GRUPO) 24_08_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 34.43%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:30.787382",
+        "arquivo": "VOTENER (GRUPO)_14_10_2021.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "Score insuficiente: 32.79%. Minimo exigido: 40.0%."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:37.322670",
+        "arquivo": ".Ficha Nova Rating Consumidores sem DF.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:37.411691",
+        "arquivo": ".Ficha Nova Rating Consumidores.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:37.643764",
+        "arquivo": "3R PETROLEUM  22042024.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:37.891686",
+        "arquivo": "3R PETROLEUM 13082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:38.007472",
+        "arquivo": "3R PETROLEUM RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:39.334238",
+        "arquivo": "AEGEA 30.07.2024.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:39.472281",
+        "arquivo": "AEGEA RATING 09122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:40.140221",
+        "arquivo": "AEROPORTO DE GUARULHOS 28082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:40.278410",
+        "arquivo": "AEROPORTO DE GUARULHOS RATING 04112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:40.537910",
+        "arquivo": "AGC VIDROS 14082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:41.112197",
+        "arquivo": "AHLSTROM-MUNKSJO 27052026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:41.174941",
+        "arquivo": "AIR LIQUIDE 06072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:41.626506",
+        "arquivo": "ALBRAS RATING 05012026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:42.086762",
+        "arquivo": "ALCOA ALUMINIO RATING 01122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:42.180990",
+        "arquivo": "ALCOA WORLD 13052026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:45.336476",
+        "arquivo": "ARCELORMITTAL PECEM 17072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:46.161998",
+        "arquivo": "ASCENTY RATING 13102023.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:46.675349",
+        "arquivo": "ASSAI RATING 09032026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:46.773430",
+        "arquivo": "ASUN RATING 24102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:47.413737",
+        "arquivo": "ATVOS BIOENERGIA RIO CLARO RATING 23122025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:49.932506",
+        "arquivo": "BASF 23062026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:50.200326",
+        "arquivo": "BASF RATING 14102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:50.653565",
+        "arquivo": "BE8_26_08_2024.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:51.097434",
+        "arquivo": "BERNECK 08102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:52.984443",
+        "arquivo": "BOZEL BRASIL 21082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:53.106749",
+        "arquivo": "BOZEL RATING 31102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:53.393007",
+        "arquivo": "BRACELL RATING 02122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:53.525578",
+        "arquivo": "BRACELL RATING 10032025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:54.700697",
+        "arquivo": "BRASKEM RATING 24102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:56.060679",
+        "arquivo": "BUNGE 09102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:56.390567",
+        "arquivo": "BUNGE 18062026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:56.491213",
+        "arquivo": "BUNGE RATING 2010205.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:57.741997",
+        "arquivo": "Bridgestone do Brasil.xlsx",
+        "status": "ERRO_SEM_CNPJ",
+        "erros": [
+            "Ficha sem CNPJ válido."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:58.285537",
+        "arquivo": "Bridgestone_24_08_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:59.497904",
+        "arquivo": "CANDEIAS 15102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:26:59.980330",
+        "arquivo": "CARGILL 11062026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:00.113144",
+        "arquivo": "CARGILL 15072025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:00.235817",
+        "arquivo": "CARGILL 15072025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:00.330026",
+        "arquivo": "CARGILL RATING 13102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:00.599978",
+        "arquivo": "CBA 08102025 RATING RETIFICADO.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:00.703013",
+        "arquivo": "CBA 08102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:01.042090",
+        "arquivo": "CBA CIA BRASILEIRA DE ALUMINIO 30052025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:01.648553",
+        "arquivo": "CEESAM 11-12-2025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:02.246165",
+        "arquivo": "CEPASA RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:02.339927",
+        "arquivo": "CERMISSOES 17082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:03.862349",
+        "arquivo": "CITROSUCO 12052026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:04.184325",
+        "arquivo": "CJ DO BRASIL 01072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:04.297867",
+        "arquivo": "CJ do Brasil_13042023.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:04.621033",
+        "arquivo": "CMPC 14072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:07.012759",
+        "arquivo": "COMPANHIA RIOGRANDENSE DE SANEAMENTO 18082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:07.146478",
+        "arquivo": "COMPANHIA RIOGRANDENSE DE SANEAMENTO 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:07.630288",
+        "arquivo": "CONSORCIO TRANSVIDA RATING 18022026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:09.149923",
+        "arquivo": "COOPERLUZ 14082026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:09.817314",
+        "arquivo": "COPACOL RATING 24102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:10.273107",
+        "arquivo": "COPACOL_25_08_2022.xlsx",
+        "status": "ERRO_SEM_CNPJ",
+        "erros": [
+            "Ficha sem CNPJ válido."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:11.690275",
+        "arquivo": "CPTM RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:12.864543",
+        "arquivo": "CSN CIMENTOS RATING 31102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:13.007681",
+        "arquivo": "CSN MATRIZ RATING 05112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:13.172396",
+        "arquivo": "CSN MATRIZ RATING 06012026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:13.278835",
+        "arquivo": "CSN MINERACAO 20072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:13.615010",
+        "arquivo": "CSN MINERAÇÃO 22082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:13.767254",
+        "arquivo": "CSN MINERAÇÃO RATING 03112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:15.510668",
+        "arquivo": "Coca-cola FEMSA 05032024.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:16.080081",
+        "arquivo": "Continental Camaçari_21_02_2022.xlsx",
+        "status": "ERRO_SEM_CNPJ",
+        "erros": [
+            "Ficha sem CNPJ válido."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:16.252047",
+        "arquivo": "Cooper Barras 29_09_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:18.150271",
+        "arquivo": "DEXCO RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:19.135623",
+        "arquivo": "DIP FRANGOS RATING 05012025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:19.250666",
+        "arquivo": "DITIN 14072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:19.328478",
+        "arquivo": "DOW BRASIL RATING 21012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:20.486688",
+        "arquivo": "EATON LTDA RATING 12032026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:20.733167",
+        "arquivo": "EBAZAR 18062026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:21.314175",
+        "arquivo": "EDF 24072025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:21.501474",
+        "arquivo": "EDF RATING 24122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:23.296178",
+        "arquivo": "EMBASA RATING 01122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:25.935756",
+        "arquivo": "EVONIK RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:27.353562",
+        "arquivo": "Evora_27_10_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:28.677619",
+        "arquivo": "FERBASA RATING 03122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:29.055327",
+        "arquivo": "FGV 15102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:29.184949",
+        "arquivo": "FIBRAPLAC 22102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:29.470570",
+        "arquivo": "FICHA ANGLO AMERICAN 31.12.2023.xlsx",
+        "status": "ERRO_DUPLICIDADE_HASH",
+        "erros": [
+            "Hash já processado anteriormente."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:29.599153",
+        "arquivo": "FICHA CONSUMIDORES V1 (2).xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:31.303974",
+        "arquivo": "FICHA_CONSUMIDORES_V1.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:31.416045",
+        "arquivo": "FICHA_CONSUMIDORES_V1_CEESAM_PREENCHIDA 1.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:31.541188",
+        "arquivo": "FICHA_CONSUMIDORES_V3.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:31.721476",
+        "arquivo": "FICHA_CONSUMIDORES_V3_BRF_PREENCHIDA 4.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:32.231448",
+        "arquivo": "FORD 04092026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:32.344011",
+        "arquivo": "FORMAPLAN 30042026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:33.926158",
+        "arquivo": "GAZIT 05022024.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:34.572829",
+        "arquivo": "GERDAU AÇOMINAS 13062025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:34.903448",
+        "arquivo": "GERDAU AÇOS LONGOS RATING 15102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:35.070678",
+        "arquivo": "GERDAU AÇOS LONGOS RATING 27032026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:36.168260",
+        "arquivo": "GERDAU SA RATING 12122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:36.424664",
+        "arquivo": "GM RATING 16012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:36.834173",
+        "arquivo": "GPA RATING 10032026.xlsx",
+        "status": "ERRO_DUPLICIDADE_HASH",
+        "erros": [
+            "Hash já processado anteriormente."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:37.818797",
+        "arquivo": "GTFOODS RATING 26052026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:38.285505",
+        "arquivo": "GWEST RATING 03022026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:40.909025",
+        "arquivo": "HAVAN RATING 03112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:44.737281",
+        "arquivo": "INDEMIL RATING 23032026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:44.864628",
+        "arquivo": "INDUPA 11082025_consiste.xlsx",
+        "status": "ERRO_SEM_CNPJ",
+        "erros": [
+            "Ficha sem CNPJ válido."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:45.042778",
+        "arquivo": "INDUPA 14072025.xlsx",
+        "status": "ERRO_SEM_CNPJ",
+        "erros": [
+            "Ficha sem CNPJ válido."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:46.506002",
+        "arquivo": "INTERCEMENT RATING 13102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:47.345749",
+        "arquivo": "IRGOVEL 28072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:48.004952",
+        "arquivo": "ITAMBE MATRIZ - 17092025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:48.172708",
+        "arquivo": "ITAMBE MATRIZ RATING 16102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:48.303659",
+        "arquivo": "Incepa 20052024.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:49.971582",
+        "arquivo": "JBS SA RATING 06112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:50.321903",
+        "arquivo": "JBS_30052025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:51.316346",
+        "arquivo": "KARSTEN SA 09102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:51.438009",
+        "arquivo": "KINROSS 09072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:52.390921",
+        "arquivo": "KLABIN_2023_03_17.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:53.291902",
+        "arquivo": "Karsten_27_02_2023.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:53.430867",
+        "arquivo": "Kimberly-Clark análises.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:53.774760",
+        "arquivo": "Klabin 03112023.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:53.912642",
+        "arquivo": "Klabin 12062024.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:54.322060",
+        "arquivo": "Klabin Rating 17102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:54.997535",
+        "arquivo": "LAR COOPERATIVA RATING 18112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:55.132330",
+        "arquivo": "LAVANDERIA JUSSARA 05052026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:55.404513",
+        "arquivo": "LDC 09102025 RATING.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:56.521498",
+        "arquivo": "LDC SUCOS RATING 13112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:56.649425",
+        "arquivo": "LDC TES 10102025 RATING.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:57.722948",
+        "arquivo": "LIASA RATING 29102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:58.996646",
+        "arquivo": "LINHAS 8 E 9 07072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:27:59.766681",
+        "arquivo": "Laticínios Ruhban 09102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:00.591648",
+        "arquivo": "M DIAS BRANCO 15082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:00.795549",
+        "arquivo": "M DIAS BRANCO RATING 03112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:02.081939",
+        "arquivo": "MARINGA FERRO LIGA 26082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:02.269059",
+        "arquivo": "MARINGA FERRO LIGA RATING 31102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:03.580695",
+        "arquivo": "MESSES GASES RATING 12112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:03.950315",
+        "arquivo": "METAL LEVE - 21082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:04.108989",
+        "arquivo": "METAL LEVE RATING 18022026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:04.260789",
+        "arquivo": "METAL LEVE RATING 31102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:04.873587",
+        "arquivo": "METRO BAHIA 08102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:05.348542",
+        "arquivo": "METRO BAHIA RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:05.612757",
+        "arquivo": "METRO RATING 26112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:06.023500",
+        "arquivo": "METRO RIO RATING 03112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:06.876553",
+        "arquivo": "MICHELIN RATING 15012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:07.315497",
+        "arquivo": "MILI SA 05082025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:09.577726",
+        "arquivo": "MOSAIC FERTILIZANTES RATING 21012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:09.715249",
+        "arquivo": "MOTIVA 19062026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:10.459641",
+        "arquivo": "MOTIVA SA 23062026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:11.476532",
+        "arquivo": "Metrô São Paulo_06032023.xlsx",
+        "status": "ERRO_SEM_CNPJ",
+        "erros": [
+            "Ficha sem CNPJ válido."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:12.927991",
+        "arquivo": "NADIR FIGUEIREDO 21072026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:13.320336",
+        "arquivo": "NC COMUNICACOES RATING 27022026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:13.450037",
+        "arquivo": "NEXA 05012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:13.833990",
+        "arquivo": "NEXA RATING 05012026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:16.176841",
+        "arquivo": "Nitaplast 16_08_2022.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:16.640494",
+        "arquivo": "ORIZON RATING 25112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:17.684021",
+        "arquivo": "PARACATU RATING 04032026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:18.112592",
+        "arquivo": "PARAGOMINAS RATING 18112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:22.378391",
+        "arquivo": "PURO PELLET_2023_07_27.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:22.787797",
+        "arquivo": "Paraná Xisto 13012025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:23.766418",
+        "arquivo": "QAIR BRASIL RATING 09012026.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:24.120205",
+        "arquivo": "RAIZEN 16042026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:27.318769",
+        "arquivo": "ROMI RATING 31102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:27.488437",
+        "arquivo": "ROMI_24062025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:28.779687",
+        "arquivo": "SABESP 23062026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:28.907122",
+        "arquivo": "SABESP RATING 10112025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:29.050052",
+        "arquivo": "SABESP_27052025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:29.177356",
+        "arquivo": "SALITRE (Eurochem)_05_04_2022.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:29.809077",
+        "arquivo": "SALOBO METAIS RATING 12112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:29.945457",
+        "arquivo": "SAMARCO 13102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:30.708235",
+        "arquivo": "SAMARCO 25082025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:32.039970",
+        "arquivo": "SANEPAR RATING 17102025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:32.452167",
+        "arquivo": "SANSUY 10062025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:33.303798",
+        "arquivo": "SAVOY MATRIZ 27042026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:33.960654",
+        "arquivo": "SCALA DATA CENTERS RATING 18112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:36.056775",
+        "arquivo": "SLC - Avaliação Middle.xlsx",
+        "status": "ERRO_DUPLICIDADE_HASH",
+        "erros": [
+            "Hash já processado anteriormente."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:36.624691",
+        "arquivo": "SOFTYS BRASIL RATING 03122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:37.598285",
+        "arquivo": "SOLAR ENERGIAS RATING 12122025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:38.436980",
+        "arquivo": "SOUTH32 RATING 09122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:39.280760",
+        "arquivo": "SUPERVIA_2023_07_27.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:40.197291",
+        "arquivo": "SUZANO_26062025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:40.979902",
+        "arquivo": "Santander 02012024.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 35.56% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:44.227588",
+        "arquivo": "TELEVISAO IGUAÇU 18062026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:46.070667",
+        "arquivo": "TERNIUM RATING 27102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:47.890816",
+        "arquivo": "TRANSPETRO 25082025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:48.040731",
+        "arquivo": "TRANSPETRO 25082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:48.225316",
+        "arquivo": "TRANSPETRO RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:48.949686",
+        "arquivo": "TRENS DE SP 21082025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:50.044023",
+        "arquivo": "TUPY RATING 19112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:50.659604",
+        "arquivo": "Todeschini - Avaliação Middle.xlsx",
+        "status": "ERRO_DUPLICIDADE_HASH",
+        "erros": [
+            "Hash já processado anteriormente."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:53.664753",
+        "arquivo": "URUCUIA GERAÇÃO 20082025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:54.555286",
+        "arquivo": "USIMINAS RATING 05112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:55.357993",
+        "arquivo": "USINAGEM TIMBO RATING 05022026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:55.966199",
+        "arquivo": "Usina Santo Angelo 18052026.xlsx",
+        "status": "ERRO_PROCESSAMENTO",
+        "erros": [
+            "DOC_001_ESTRUTURA_INCOMPATIVEL: Nenhuma aba compativel com o layout esperada foi encontrada.",
+            "registrar_alertas_em_lote() got an unexpected keyword argument 'codigo'"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:56.363224",
+        "arquivo": "VALE 20072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:56.968609",
+        "arquivo": "VALE RATING 04112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:57.361938",
+        "arquivo": "VALGROUP PACKAGING SOLUTIONS2.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:28:57.802122",
+        "arquivo": "VALLOUREC TUBOS RATING 08012025.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:00.398808",
+        "arquivo": "VOLKSWAGEN RATING 08012026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:01.028641",
+        "arquivo": "VOTORANTIM CIMENTOS RATING.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:01.406358",
+        "arquivo": "VOTORANTIM NNE 20082025_consiste.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:01.573830",
+        "arquivo": "VOTORANTIM NNE RATING 22122025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:01.730252",
+        "arquivo": "VOTORANTIM RATING 05112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:02.336315",
+        "arquivo": "VTAL Rede Neutra 23072025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:02.759992",
+        "arquivo": "Vista Foods 15122023.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:04.732373",
+        "arquivo": "WEG RATING 04112025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:04.870693",
+        "arquivo": "WHB Fundição - Avaliação Middle.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:06.213729",
+        "arquivo": "WHITE MARTINS RATING 30102025.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:06.297116",
+        "arquivo": "YARA 13072026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:07.033690",
+        "arquivo": "ZILOR 27052026.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "GATE_ENGINE ausente: DATA_DEMONSTRACAO_FINANCEIRA",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PATRIMONIO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: ATIVO_TOTAL",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: PASSIVO_CIRCULANTE",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: LUCRO_LIQUIDO",
+            "Campo financeiro obrigatório ausente para consumidor ≥5 MWm: FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:07.986507",
+        "arquivo": "ficha SANTHER 2022.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:08.306859",
+        "arquivo": "ficha Yara Brasil Fertilizantes SA 2022 - Copia DF.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:08.436771",
+        "arquivo": "ficha Yara Brasil Fertilizantes SA 2022.xlsx",
+        "status": "ERRO_DUPLICIDADE_NEGOCIO",
+        "erros": [
+            "Já existe documento com mesmo CNPJ e data da DF."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:08.563322",
+        "arquivo": "klabin.xlsx",
+        "status": "ERRO_INTEGRIDADE",
+        "erros": [
+            "GATE_ENGINE ausente: CNPJ",
+            "GATE_ENGINE ausente: RAZAO_SOCIAL",
+            "SCORE_BUREAU obrigatório para consumidor <5 MWm não informado.",
+            "Integridade baixa: 0.0% (mínimo 40%). Ficha rejeitada."
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:08.629122",
+        "arquivo": "modelo_credito_Jussara_2025.xlsx",
+        "status": "ERRO_PROCESSAMENTO",
+        "erros": [
+            "DOC_001_ESTRUTURA_INCOMPATIVEL: Nenhuma aba compativel com o layout esperada foi encontrada.",
+            "registrar_alertas_em_lote() got an unexpected keyword argument 'codigo'"
+        ]
+    },
+    {
+        "timestamp": "2026-09-25T12:29:08.675842",
+        "arquivo": "modelo_credito_final_v2 BRF.xlsx",
+        "status": "ERRO_PROCESSAMENTO",
+        "erros": [
+            "DOC_001_ESTRUTURA_INCOMPATIVEL: Nenhuma aba compativel com o layout esperada foi encontrada.",
+            "registrar_alertas_em_lote() got an unexpected keyword argument 'codigo'"
+        ]
+    }
+]

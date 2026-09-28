@@ -85,10 +85,10 @@ def inserir_dados_bureau(context: AppContext) -> dict[str, Any]:
     bronze_dir.mkdir(parents=True, exist_ok=True)
     df_bureau.to_parquet(bronze_dir / f"raw_bureau_{run_id}.parquet", index=False)
 
-    df_silver = df_bureau[df_bureau["STATUS"] == "SUCESSO"].copy()
+    df_silver = df_bureau[df_bureau["STATUS"].isin(["SUCESSO", "NAO_ENCONTRADO"])].copy()
     
     if df_silver.empty:
-        logger.warning("Nenhum registro com STATUS=SUCESSO retornado pelo Bureau.")
+        logger.warning("Nenhum registro com STATUS válido retornado pelo Bureau.")
         _gravar_silver_vazia(context, run_id)
         return {"run_id": run_id, "status": "FALHA_OU_BLOQUEIO_DE_REDE"}
         

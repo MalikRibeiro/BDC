@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import Optional, Union
 
-from src.app.context import AppContext, carregar_contexto
+from app.context import AppContext, carregar_contexto
 from dotenv import load_dotenv
 
 load_dotenv()

@@ -29,3 +29,14 @@ def is_nulo_textual(valor: str | None | float) -> bool:
     if valor is None or pd.isna(valor):
         return True
     return str(valor).strip().upper() in VALORES_NULOS_TEXTUAIS
+
+
+def is_missing(val) -> bool:
+    """Retorna True se val for None ou NaN (numérico). Para uso nos motores de cálculo."""
+    import math
+    if val is None:
+        return True
+    try:
+        return math.isnan(float(val))
+    except (TypeError, ValueError):
+        return False

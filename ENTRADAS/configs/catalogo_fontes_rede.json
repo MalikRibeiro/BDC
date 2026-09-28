@@ -1,0 +1,28 @@
+{
+  "habilitado": true,
+  "drive_root": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR",
+  "extensoes_permitidas": [
+    ".xlsx",
+    ".xlsm",
+    ".xls"
+  ],
+  "arquivo_manifesto": "ENTRADAS/fichas/manifesto_fichas_rede.json",
+  "destinos_locais": {
+    "comercializadoras": "ENTRADAS/fichas/comercializadoras/pendentes",
+    "consumidores": "ENTRADAS/fichas/consumidores/pendentes"
+  },
+  "fontes": {
+    "comercializadoras": [
+      ".Chamados SalesForce\\2026\\.COMERCIALIZADORAS E GERADORAS",
+      "Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2025",
+      "Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026"
+    ],
+    "consumidores": [
+      ".Chamados SalesForce\\2026\\.CONSUMIDORES LIVRES",
+      "Limite Consumidores Livres\\Fichas"
+    ],
+    "triagem_mista": [
+      ".Chamados SalesForce\\2025"
+    ]
+  }
+}

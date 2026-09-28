@@ -169,5 +169,5 @@ def calcular_notas_quantitativas_cpura(
 
     except Exception:
         if logger is not None:
-            logger.exception("Falha no cálculo das notas quantitativas CPURA. CNPJ=%s", registro.get('CNPJ'))
+            logger.warning("Falha no cálculo das notas quantitativas CPURA (Insumo Pendente). CNPJ=%s", registro.get('CNPJ'))
         raise

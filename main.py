@@ -17,6 +17,7 @@ from control.logger import obter_logger
 
 from cli import rodar_fichas_comercializadoras
 from cli import rodar_fichas_consumidores
+from services.connectors.fichas_connector import obter_fichas_rede
 
 from domain.auditoria.servico_auditoria import registrar_inicio_pipeline, registrar_fim_pipeline
 from domain.contratos.servico_contratos_denodo import processar_contratos_denodo
@@ -44,6 +45,9 @@ from relational.facts.fato_exposicao_risco import processar_fato_exposicao_risco
 from relational.facts.fato_score_rating_pd import processar_fato_score_rating_pd
 from relational.facts.fato_migracao_rating import processar_fato_migracao_rating
 from gold.servico_limites import exportar_arquivo_limites
+from gold.servico_carteira_contratos import processar_visao_contratos_risco
+from gold.servico_migracao_rating import exportar_visao_migracao_rating_gold
+from gold.servico_visao_garantias import exportar_visao_garantias_gold
 
 def rodar_interface_streamlit():
     app_path = PROJECT_ROOT / "src" / "ui" / "app.py"
@@ -58,6 +62,9 @@ class PipelineStep(NamedTuple):
     allow_degraded: bool = False
 
 PIPELINE_STEPS = [
+    # BLOCO 0: SINCRONIZAÇÃO PREVENTIVA DE REDE (IDEMPOTENTE E FAIL-SAFE)
+    PipelineStep(name="Obtencao de Fichas da Rede", func=lambda ctx: obter_fichas_rede(), allow_degraded=True),
+
     # BLOCO 1: INGESTaO CORE E OVERRIDES (ATIVO)
     PipelineStep(name="Fichas Comercializadoras", func=lambda ctx: rodar_fichas_comercializadoras.main()),
     PipelineStep(name="Fichas Consumidores", func=lambda ctx: rodar_fichas_consumidores.main()),
@@ -84,11 +91,16 @@ PIPELINE_STEPS = [
     PipelineStep(name="Fato Reconciliacao Denodo x MtM", func=executar_reconciliacao_denodo_mtm, is_critical=True),
     PipelineStep(name="Fato Reconciliacao Fichas x Salesforce", func=executar_reconciliacao_fichas_salesforce),
     PipelineStep(name="Alertas de Carga Manual e Exceções", func=gerar_fato_alertas_manuais),
-    PipelineStep(name="Visao Consolidada Gold", func=exportar_visao_consolidada_gold),
     PipelineStep(name="Fato Alertas de Credito", func=gerar_fato_alertas_credito),
+
+    # BLOCO 4: CAMADA GOLD E EXPORTAÇÃO
+    PipelineStep(name="Visao Consolidada Gold", func=exportar_visao_consolidada_gold),
+    PipelineStep(name="Visao Carteira Contratos (Vigente)", func=processar_visao_contratos_risco),
+    PipelineStep(name="Visao Migracao Rating Gold", func=exportar_visao_migracao_rating_gold),
+    PipelineStep(name="Visao Garantias Gold", func=exportar_visao_garantias_gold),
     PipelineStep(name="Exportacao de Limites", func=exportar_arquivo_limites),
 
-    # BLOCO 4: INTERFACE
+    # BLOCO 5: INTERFACE
     PipelineStep(name="Interface Streamlit", func=lambda ctx: rodar_interface_streamlit()),
 ]
 def main() -> int:
@@ -115,9 +127,10 @@ def main() -> int:
     registro_inicio = registrar_inicio_pipeline(run_id, len(PIPELINE_STEPS), control_dir)
 
     exit_codes = []
-    metricas_operacionais = {}
     
     for step in PIPELINE_STEPS:
+        if args.no_ui and step.name == "Interface Streamlit":
+            continue
         try:
             logger_runner.info(f"\n{'=' * 60}\nExecutando Etapa: {step.name}\n{'=' * 60}")
             

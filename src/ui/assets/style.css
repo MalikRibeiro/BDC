@@ -1,0 +1,1879 @@
+/* ==========================================================================
+   BD CRÉDITO - ARQUITETURA MEDALLION & DATA PIPELINE
+   Folha de Estilos Executiva (Padrão Enterprise / Tech-Grade)
+   ========================================================================== */
+
+:root {
+    /* Identidade Corporativa Copel */
+    --copel-orange: #f5821e;
+    --copel-orange-hover: #e06f0e;
+    --copel-orange-soft: rgba(245, 130, 30, 0.12);
+    --copel-gray: #9fa1a4;
+
+    /* Neutros e Superfícies (Tema Claro Oficial Streamlit) */
+    --bg-page: #ffffff;
+    --card-bg: #ffffff;
+    --card-bg-subtle: #f0f2f6;
+    --card-border: rgba(49, 51, 63, 0.14);
+    --card-border-hover: rgba(245, 130, 30, 0.50);
+    --text-primary: #31333f;
+    --text-secondary: rgba(49, 51, 63, 0.80);
+    --text-muted: #9fa1a4;
+    --text-subtle: rgba(49, 51, 63, 0.45);
+    --table-header-bg: #f0f2f6;
+    --code-bg: rgba(0, 0, 0, 0.04);
+    --code-color: #31333f;
+
+    /* Paleta Medallion Estrita Copel (Laranja & Cinza) */
+    /* 1. Ingestão / Fontes (Cinza Copel Neutro) */
+    --c-ingestion: #9fa1a4;
+    --c-ingestion-dark: #475569;
+    --c-ingestion-light: rgba(159, 161, 164, 0.10);
+    --c-ingestion-border: rgba(159, 161, 164, 0.30);
+    --c-ingestion-glow: rgba(159, 161, 164, 0.12);
+
+    /* 2. Bronze / Raw (Cinza Grafite) */
+    --c-bronze: #71717a;
+    --c-bronze-dark: #3f3f46;
+    --c-bronze-light: rgba(113, 113, 122, 0.10);
+    --c-bronze-border: rgba(113, 113, 122, 0.30);
+    --c-bronze-glow: rgba(113, 113, 122, 0.12);
+
+    /* 3. Silver / Refined (Cinza Copel Refinado) */
+    --c-silver: #9fa1a4;
+    --c-silver-dark: #475569;
+    --c-silver-light: rgba(159, 161, 164, 0.10);
+    --c-silver-border: rgba(159, 161, 164, 0.30);
+    --c-silver-glow: rgba(159, 161, 164, 0.12);
+    --c-silver-accent: #f5821e;
+
+    /* 4. Relacional / Compute (Chumbo / Neutro Estruturado) */
+    --c-relational: #64748b;
+    --c-relational-dark: #334155;
+    --c-relational-light: rgba(100, 116, 139, 0.10);
+    --c-relational-border: rgba(100, 116, 139, 0.30);
+    --c-relational-glow: rgba(100, 116, 139, 0.12);
+
+    /* 5. Gold / Decision (Laranja Copel Destaque Oficial) */
+    --c-gold: #f5821e;
+    --c-gold-dark: #e06f0e;
+    --c-gold-light: rgba(245, 130, 30, 0.12);
+    --c-gold-border: rgba(245, 130, 30, 0.35);
+    --c-gold-glow: rgba(245, 130, 30, 0.20);
+
+    /* Sombras Elevadas */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    --shadow-hover: 0 12px 24px -4px rgba(0, 0, 0, 0.12), 0 4px 8px -2px rgba(0, 0, 0, 0.06);
+
+    /* Raios de Borda */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-pill: 9999px;
+}
+
+[data-theme="dark"],
+body.theme-dark {
+    --bg-page: #0e1117;
+    --card-bg: #262730;
+    --card-bg-subtle: rgba(0, 0, 0, 0.22);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-border-hover: rgba(245, 130, 30, 0.50);
+    --text-primary: #fafafa;
+    --text-secondary: rgba(250, 250, 250, 0.80);
+    --text-muted: #9fa1a4;
+    --text-subtle: rgba(250, 250, 250, 0.45);
+    --table-header-bg: #262730;
+    --code-bg: rgba(255, 255, 255, 0.06);
+    --code-color: #fafafa;
+
+    --c-ingestion-dark: #fafafa;
+    --c-bronze-dark: #fafafa;
+    --c-silver-dark: #fafafa;
+    --c-relational-dark: #fafafa;
+    --c-gold-dark: #f5821e;
+}
+
+/* Sincronização Nativa Streamlit (.stApp) */
+.stApp {
+    --bg-page: var(--background-color, #ffffff);
+    --card-bg: var(--secondary-background-color, #ffffff);
+    --card-bg-subtle: var(--secondary-background-color, #f0f2f6);
+    --text-primary: var(--text-color, #31333f);
+    --table-header-bg: var(--secondary-background-color, #f0f2f6);
+}
+
+.stApp[data-theme="dark"],
+.stApp:has([data-theme="dark"]),
+[data-theme="dark"] .stApp {
+    --bg-page: var(--background-color, #0e1117);
+    --card-bg: var(--secondary-background-color, #262730);
+    --card-bg-subtle: rgba(0, 0, 0, 0.22);
+    --text-primary: var(--text-color, #fafafa);
+    --table-header-bg: var(--secondary-background-color, #262730);
+}
+
+
+/* ==========================================================================
+   RESET & TIPOGRAFIA BASE
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 5rem;
+    word-break: normal;
+    overflow-wrap: break-word;
+    hyphens: none;
+}
+
+/* ==========================================================================
+   HEADER EXECUTIVO
+   ========================================================================== */
+
+.exec-header {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+    position: relative;
+    padding: 2.5rem 2rem 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.exec-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg,
+            var(--copel-gray) 0%,
+            rgba(245, 130, 30, 0.5) 50%,
+            var(--copel-orange) 100%);
+}
+
+.header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.header-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.header-branding {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.logo-copel {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+}
+
+.brand-divider {
+    width: 1px;
+    height: 40px;
+    background-color: var(--card-border);
+}
+
+.header-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: rgba(245, 130, 30, 0.12);
+    color: var(--copel-orange);
+    border: 1px solid rgba(245, 130, 30, 0.30);
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--copel-orange);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(245, 130, 30, 0.25);
+    animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.3);
+        opacity: 0.7;
+    }
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-primary-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background-color: var(--copel-orange);
+    color: #ffffff;
+    padding: 0.75rem 1.4rem;
+    border-radius: var(--radius-sm);
+    font-weight: 600;
+    font-size: 0.92rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(245, 130, 30, 0.25);
+}
+
+.btn-primary-action:hover {
+    background-color: var(--copel-orange-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(245, 130, 30, 0.35);
+}
+
+.header-titles {
+    max-width: 1000px;
+}
+
+.header-titles h1 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 2.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.header-titles .lead {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+/* Painel de Metadados Executivos */
+.exec-kpi-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--card-border);
+}
+
+.kpi-chip {
+    background: var(--bg-page);
+    border: 1px solid var(--card-border);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.kpi-chip .kpi-label {
+    font-size: 0.70rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+}
+
+.kpi-chip .kpi-val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   STICKY PIPELINE NAVIGATION
+   ========================================================================== */
+
+.pipeline-nav-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+    padding: 0.70rem 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.pipeline-nav-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    overflow-x: auto;
+}
+
+.nav-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+}
+
+.nav-steps-track {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+}
+
+.nav-step-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border: 1px solid var(--card-border);
+    background-color: var(--card-bg);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.nav-step-link:hover {
+    border-color: var(--card-border-hover);
+    transform: translateY(-1px);
+}
+
+.nav-step-link.step-1:hover {
+    border-color: var(--c-ingestion);
+    color: var(--c-ingestion-dark);
+}
+
+.nav-step-link.step-2:hover {
+    border-color: var(--c-bronze);
+    color: var(--c-bronze-dark);
+}
+
+.nav-step-link.step-3:hover {
+    border-color: var(--c-silver);
+    color: var(--c-silver-dark);
+}
+
+.nav-step-link.step-4:hover {
+    border-color: var(--c-relational);
+    color: var(--c-relational-dark);
+}
+
+.nav-step-link.step-5:hover {
+    border-color: var(--c-gold);
+    color: var(--c-gold-dark);
+}
+
+.nav-step-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.step-1 .nav-step-num {
+    background-color: var(--c-ingestion);
+}
+
+.step-2 .nav-step-num {
+    background-color: var(--c-bronze);
+}
+
+.step-3 .nav-step-num {
+    background-color: var(--c-silver);
+}
+
+.step-4 .nav-step-num {
+    background-color: var(--c-relational);
+}
+
+.step-5 .nav-step-num {
+    background-color: var(--c-gold);
+}
+
+.nav-divider-arrow {
+    color: var(--text-subtle);
+    font-size: 0.8rem;
+    user-select: none;
+}
+
+/* ==========================================================================
+   LAYOUT PRINCIPAL DO DIAGRAMA
+   ========================================================================== */
+
+.pipeline-diagram {
+    max-width: 1400px;
+    margin: 2.5rem auto 0;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+/* ==========================================================================
+   BLOCO DE CAMADA (STAGE CARD)
+   ========================================================================== */
+
+.pipeline-layer {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    position: relative;
+    transition: box-shadow 0.3s ease;
+}
+
+.pipeline-layer:hover {
+    box-shadow: var(--shadow-lg);
+}
+
+/* Cabeçalho da Camada */
+.layer-header {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border-bottom: 1px solid var(--card-border);
+    position: relative;
+}
+
+.layer-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.layer-icon-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fira Code', monospace;
+    font-size: 1.15rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-sm);
+}
+
+.layer-title-block h2 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+}
+
+.layer-title-block p {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    margin-top: 0.2rem;
+}
+
+.layer-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.layer-pill {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-pill);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* Corpo da Camada */
+.layer-body {
+    padding: 2rem;
+    background-color: var(--card-bg-subtle);
+}
+
+/* ==========================================================================
+   COLOR-CODING POR CAMADA (MEDALLION SPEC)
+   ========================================================================== */
+
+/* 1. Ingestão */
+.layer-ingestion {
+    border-top: 5px solid var(--c-ingestion);
+}
+
+.layer-ingestion .layer-icon-badge {
+    background-color: var(--c-ingestion-light);
+    color: var(--c-ingestion-dark);
+}
+
+.layer-ingestion .layer-title-block h2 {
+    color: var(--c-ingestion-dark);
+}
+
+.layer-ingestion .layer-pill {
+    background-color: var(--c-ingestion-light);
+    color: var(--c-ingestion-dark);
+    border: 1px solid var(--c-ingestion-border);
+}
+
+/* 2. Bronze */
+.layer-bronze {
+    border-top: 5px solid var(--c-bronze);
+}
+
+.layer-bronze .layer-icon-badge {
+    background-color: var(--c-bronze-light);
+    color: var(--c-bronze-dark);
+}
+
+.layer-bronze .layer-title-block h2 {
+    color: var(--c-bronze-dark);
+}
+
+.layer-bronze .layer-pill {
+    background-color: var(--c-bronze-light);
+    color: var(--c-bronze-dark);
+    border: 1px solid var(--c-bronze-border);
+}
+
+/* 3. Silver */
+.layer-silver {
+    border-top: 5px solid var(--c-silver);
+}
+
+.layer-silver .layer-icon-badge {
+    background-color: var(--c-silver-light);
+    color: var(--c-silver-dark);
+}
+
+.layer-silver .layer-title-block h2 {
+    color: var(--c-silver-dark);
+}
+
+.layer-silver .layer-pill {
+    background-color: var(--c-silver-light);
+    color: var(--c-silver-dark);
+    border: 1px solid var(--c-silver-border);
+}
+
+/* 4. Relacional */
+.layer-relational {
+    border-top: 5px solid var(--c-relational);
+}
+
+.layer-relational .layer-icon-badge {
+    background-color: var(--c-relational-light);
+    color: var(--c-relational-dark);
+}
+
+.layer-relational .layer-title-block h2 {
+    color: var(--c-relational-dark);
+}
+
+.layer-relational .layer-pill {
+    background-color: var(--c-relational-light);
+    color: var(--c-relational-dark);
+    border: 1px solid var(--c-relational-border);
+}
+
+/* 5. Gold */
+.layer-gold {
+    border-top: 5px solid var(--c-gold);
+}
+
+.layer-gold .layer-icon-badge {
+    background-color: var(--c-gold-light);
+    color: var(--c-gold-dark);
+}
+
+.layer-gold .layer-title-block h2 {
+    color: var(--c-gold-dark);
+}
+
+.layer-gold .layer-pill {
+    background-color: var(--c-gold-light);
+    color: var(--c-gold-dark);
+    border: 1px solid var(--c-gold-border);
+}
+
+/* ==========================================================================
+   CONECTORES DE FLUXO (PIPELINE CONNECTORS)
+   ========================================================================== */
+
+.pipeline-flow-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+    position: relative;
+}
+
+.connector-line-wrapper {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 700px;
+    gap: 1rem;
+}
+
+.connector-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--card-border-hover) 50%, transparent 100%);
+    position: relative;
+}
+
+.connector-badge {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-sm);
+    padding: 0.4rem 1.2rem;
+    border-radius: var(--radius-pill);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.connector-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--copel-orange);
+}
+
+.connector-pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--copel-orange);
+    box-shadow: 0 0 0 3px rgba(245, 130, 30, 0.25);
+    animation: pulse-dot 1.8s infinite ease-in-out;
+}
+
+.connector-arrow-down {
+    color: var(--copel-orange);
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: bounce-subtle 2s infinite ease-in-out;
+}
+
+@keyframes bounce-subtle {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(3px);
+    }
+}
+
+/* ==========================================================================
+   GRIDS & MICRO-CARDS (SISTEMA DE NÓS DE ENGENHARIA)
+   ========================================================================== */
+
+/* Grid Responsivo para Micro-Cards */
+.nodes-grid-5,
+.nodes-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+}
+
+@media (max-width: 1200px) {
+    .nodes-grid-5,
+    .nodes-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .nodes-grid-5,
+    .nodes-grid-4 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.nodes-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Micro-Card Padrão */
+.node-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 1.15rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    height: 100%;
+}
+
+.node-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--card-border-hover);
+}
+
+/* Variações de Borda no Hover */
+.layer-ingestion .node-card:hover {
+    border-color: var(--c-ingestion);
+    box-shadow: 0 10px 20px -3px var(--c-ingestion-glow);
+}
+
+.layer-bronze .node-card:hover {
+    border-color: var(--c-bronze);
+    box-shadow: 0 10px 20px -3px var(--c-bronze-glow);
+}
+
+.layer-silver .node-card:hover {
+    border-color: var(--copel-orange);
+    box-shadow: 0 10px 20px -3px var(--copel-orange-soft);
+}
+
+.layer-relational .node-card:hover {
+    border-color: var(--c-relational);
+    box-shadow: 0 10px 20px -3px var(--c-relational-glow);
+}
+
+.layer-gold .node-card:hover {
+    border-color: var(--c-gold);
+    box-shadow: 0 10px 20px -3px var(--c-gold-glow);
+}
+
+.node-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+    min-height: 52px;
+}
+
+.node-title-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.node-emoji {
+    display: none !important;
+}
+
+.node-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.25;
+    word-break: normal;
+    overflow-wrap: break-word;
+    hyphens: none;
+}
+
+.node-badges {
+    display: flex;
+    gap: 0.25rem;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+}
+
+/* Badges Técnicos Estritos Copel (Laranja ou Cinza Neutro) */
+.badge-tag {
+    font-family: 'Inter', monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.18rem 0.4rem;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+    background-color: rgba(159, 161, 164, 0.12);
+    color: var(--text-secondary);
+    border: 1px solid rgba(159, 161, 164, 0.30);
+}
+
+.badge-tag.gold,
+.badge-tag.gate,
+.badge-tag.manual {
+    background-color: rgba(245, 130, 30, 0.12);
+    color: var(--copel-orange);
+    border: 1px solid rgba(245, 130, 30, 0.30);
+}
+
+.badge-tag.api,
+.badge-tag.rede,
+.badge-tag.xlsx,
+.badge-tag.csv,
+.badge-tag.crm,
+.badge-tag.gov,
+.badge-tag.parquet,
+.badge-tag.compute {
+    background-color: rgba(159, 161, 164, 0.12);
+    color: var(--text-secondary);
+    border: 1px solid rgba(159, 161, 164, 0.30);
+}
+
+/* Corpo e Descrição do Nó */
+.node-desc {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    margin-bottom: 0.85rem;
+    min-height: 55px;
+    word-break: normal;
+    overflow-wrap: break-word;
+    hyphens: none;
+}
+
+/* Bloco Técnico Retrátil / Compactado (Hover / Expansion) */
+.node-tech-detail {
+    background-color: var(--bg-page);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 0.6rem 0.75rem;
+    font-size: 0.78rem;
+    margin-top: auto;
+    min-height: 125px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 0.35rem;
+    transition: all 0.2s ease;
+    overflow: hidden;
+}
+
+.node-card:hover .node-tech-detail {
+    background-color: var(--card-bg);
+    border-color: var(--card-border-hover);
+}
+
+.node-tech-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    line-height: 1.4;
+    min-width: 0;
+}
+
+.node-tech-row:last-child {
+    margin-bottom: 0;
+}
+
+.tech-key {
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    flex: 0 0 68px;
+    width: 68px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.tech-val {
+    color: var(--text-secondary);
+    flex: 1;
+    min-width: 0;
+    word-break: normal;
+    overflow-wrap: break-word;
+    hyphens: none;
+}
+
+.tech-val code {
+    font-family: 'Fira Code', Consolas, Monaco, monospace;
+    font-size: 0.72rem;
+    background-color: var(--code-bg);
+    padding: 0.12rem 0.35rem;
+    border-radius: 4px;
+    color: var(--code-color);
+    border: 1px solid var(--card-border);
+    white-space: normal;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    display: inline;
+    line-height: 1.35;
+}
+
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS DE CAMADAS
+   ========================================================================== */
+
+/* Regras da Bronze (Lista Executiva) */
+.bronze-rules-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.bronze-rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1.25rem;
+}
+
+.bronze-feature {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+}
+
+.bronze-feature-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    background-color: var(--c-bronze-light);
+    color: var(--c-bronze-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.bronze-feature-text h4 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.3rem;
+}
+
+.bronze-feature-text p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.bronze-feature-text code {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    background-color: var(--code-bg);
+    color: var(--code-color);
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    border: 1px solid var(--card-border);
+}
+
+/* Alerta de Governança Silver */
+.silver-governance-alert {
+    background-color: rgba(245, 130, 30, 0.08);
+    border: 1px solid rgba(245, 130, 30, 0.25);
+    border-left: 4px solid var(--copel-orange);
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-sm);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.silver-alert-text {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.silver-alert-text strong {
+    font-weight: 700;
+}
+
+/* Tabela de Domínios Silver */
+.data-pipeline-table-wrapper {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+
+.data-pipeline-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    text-align: left;
+}
+
+.data-pipeline-table th {
+    background-color: var(--table-header-bg);
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--card-border);
+}
+
+.data-pipeline-table td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--card-border);
+    color: var(--text-secondary);
+    vertical-align: middle;
+}
+
+.data-pipeline-table tr:last-child td {
+    border-bottom: none;
+}
+
+.data-pipeline-table tr:hover td {
+    background-color: var(--card-bg-subtle);
+}
+
+.table-domain-tag {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.parquet-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background-color: var(--code-bg);
+    border: 1px solid var(--card-border);
+    color: var(--code-color);
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-sm);
+    font-family: 'Fira Code', monospace;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   CAMADA RELACIONAL: CARDS DE COMPUTAÇÃO & BASILEIA MASTER
+   ========================================================================== */
+
+.relational-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.relational-top-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 1.5rem;
+}
+
+.compute-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: all 0.25s ease;
+}
+
+.compute-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--copel-orange);
+}
+
+.compute-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 0.85rem;
+}
+
+.compute-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.compute-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.compute-list li {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    padding-left: 1.25rem;
+    position: relative;
+}
+
+.compute-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    top: 2px;
+    font-size: 0.75rem;
+    color: var(--c-relational);
+}
+
+/* Bloco Master: Fechamento de Basileia / IFRS-9 */
+.master-risk-card {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border-radius: var(--radius-md);
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid rgba(245, 130, 30, 0.35);
+    position: relative;
+    overflow: hidden;
+}
+
+.master-risk-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(245, 130, 30, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.master-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 1rem;
+}
+
+.master-header h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+/* Destaque de Fórmula Matemática */
+.math-formula-banner {
+    background: rgba(159, 161, 164, 0.08);
+    border: 1px solid rgba(159, 161, 164, 0.25);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.formula-label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.formula-display {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--copel-orange);
+    letter-spacing: 1px;
+}
+
+.formula-highlight {
+    color: var(--copel-orange-hover);
+}
+
+/* Tabela de Indicadores */
+.risk-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.metric-box {
+    background: var(--card-bg-subtle);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 1.1rem;
+    transition: all 0.2s ease;
+}
+
+.metric-box:hover {
+    background: var(--card-bg);
+    border-color: rgba(245, 130, 30, 0.40);
+    transform: translateY(-2px);
+}
+
+.metric-box.pe-highlight {
+    background: rgba(245, 130, 30, 0.10);
+    border: 1px solid rgba(245, 130, 30, 0.35);
+}
+
+.metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.metric-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.metric-source {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.metric-formula {
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.4rem;
+}
+
+.pe-highlight .metric-formula {
+    color: var(--copel-orange);
+    font-weight: 700;
+}
+
+.metric-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.35;
+}
+
+/* ==========================================================================
+   FOOTER EXECUTIVO
+   ========================================================================== */
+
+.exec-footer {
+    max-width: 1400px;
+    margin: 3.5rem auto 0;
+    padding: 2rem;
+    border-top: 1px solid var(--card-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.footer-tag {
+    font-family: monospace;
+    font-size: 0.78rem;
+    background: var(--card-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--card-border);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+}
+
+/* ==========================================================================
+   RESPONSIVIDADE (TABLETS E MOBILE)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+    .header-titles h1 {
+        font-size: 1.85rem;
+    }
+
+    .nodes-grid-5 {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .nodes-grid-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .pipeline-diagram {
+        padding: 0 1rem;
+    }
+
+    .layer-header {
+        padding: 1.25rem 1.25rem;
+    }
+
+    .layer-body {
+        padding: 1.25rem;
+    }
+
+    .pipeline-nav-sticky {
+        padding: 0.5rem 1rem;
+    }
+
+    .exec-kpi-bar {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .header-top-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .connector-line-wrapper {
+        max-width: 100%;
+    }
+}
+
+/* ==========================================================================
+   ADAPTAÇÃO DO DESIGN SYSTEM BDC PARA STREAMLIT OPERACIONAL (LIGHT & DARK)
+   Paleta Estrita Copel: Laranja (#f5821e) e Cinza (#9fa1a4)
+   ========================================================================== */
+
+.stApp {
+    --copel-orange: #f5821e;
+    --copel-orange-hover: #e06f0e;
+    --copel-gray: #9fa1a4;
+
+    /* Superfícies e Textos dinâmicos baseados no tema nativo do Streamlit */
+    --bdc-bg-app: var(--background-color);
+    --bdc-surface-card: var(--secondary-background-color);
+    --bdc-surface-border: rgba(159, 161, 164, 0.25);
+    --bdc-surface-border-hover: rgba(245, 130, 30, 0.50);
+    --bdc-text-title: var(--text-color);
+    --bdc-text-body: var(--text-color);
+    --bdc-text-subtle: #9fa1a4;
+
+    /* Variáveis do Diagrama Medallion integradas nativamente ao Streamlit */
+    --bg-page: var(--background-color);
+    --card-bg: var(--secondary-background-color);
+    --card-bg-subtle: var(--background-color);
+    --table-header-bg: var(--secondary-background-color);
+    --text-primary: var(--text-color);
+    --text-secondary: var(--text-color);
+    --text-muted: #9fa1a4;
+    --text-subtle: #9fa1a4;
+    --code-bg: var(--secondary-background-color);
+    --code-color: var(--text-color);
+    --card-border: rgba(159, 161, 164, 0.25);
+    --card-border-hover: rgba(245, 130, 30, 0.50);
+}
+
+/* Tipografia Base no Streamlit */
+.stApp {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+.stApp h1, .stApp h2, .stApp h3, .stApp h4, .stApp h5, .stApp h6 {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.3px !important;
+}
+
+/* Header de Página Streamlit (Topbar invisível limpa) */
+header[data-testid="stHeader"] {
+    background: transparent !important;
+}
+
+/* Sidebar Corporativa Dinâmica (Reage corretamente a Light e Dark) */
+section[data-testid="stSidebar"] {
+    background-color: var(--secondary-background-color) !important;
+    border-right: 1px solid var(--bdc-surface-border) !important;
+}
+
+section[data-testid="stSidebar"] * {
+    color: var(--text-color) !important;
+}
+
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: var(--text-color) !important;
+    font-family: 'Outfit', sans-serif !important;
+}
+
+section[data-testid="stSidebar"] hr {
+    border-color: var(--bdc-surface-border) !important;
+    margin: 1rem 0 !important;
+}
+
+/* Sidebar Navegação: limpa e sem caixas envolventes */
+section[data-testid="stSidebar"] div[data-testid="stWidgetLabel"] label,
+section[data-testid="stSidebar"] .stRadio > label {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 0 6px 0 !important;
+    box-shadow: none !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+}
+
+section[data-testid="stSidebar"] .stRadio label {
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 6px 0 !important;
+    transition: color 0.15s ease;
+    cursor: pointer;
+    box-shadow: none !important;
+}
+
+section[data-testid="stSidebar"] .stRadio label:hover {
+    background: transparent !important;
+    border: none !important;
+}
+
+section[data-testid="stSidebar"] .stRadio label:hover span {
+    color: var(--copel-orange) !important;
+}
+
+section[data-testid="stSidebar"] .stRadio label[data-checked="true"],
+section[data-testid="stSidebar"] .stRadio label:has(input:checked) {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+section[data-testid="stSidebar"] .stRadio label[data-checked="true"] span,
+section[data-testid="stSidebar"] .stRadio label:has(input:checked) span {
+    color: var(--copel-orange) !important;
+    font-weight: 700 !important;
+}
+
+/* Botões Nativos Streamlit */
+div.stButton > button {
+    border-radius: var(--radius-sm) !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 0.90rem !important;
+    padding: 0.55rem 1.25rem !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+div.stButton > button[kind="primary"] {
+    background-color: var(--copel-orange) !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 2px 6px rgba(245, 130, 30, 0.28) !important;
+}
+
+div.stButton > button[kind="primary"]:hover {
+    background-color: #e06f0e !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(245, 130, 30, 0.42) !important;
+}
+
+div.stButton > button[kind="secondary"] {
+    background-color: var(--secondary-background-color) !important;
+    color: var(--text-color) !important;
+    border: 1px solid var(--bdc-surface-border) !important;
+}
+
+div.stButton > button[kind="secondary"]:hover {
+    border-color: var(--copel-orange) !important;
+    color: var(--copel-orange) !important;
+}
+
+/* Tabs Streamlit */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 8px !important;
+    border-bottom: 2px solid var(--bdc-surface-border) !important;
+    background: transparent !important;
+    padding-bottom: 2px !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    color: var(--text-color) !important;
+    opacity: 0.70;
+    border-radius: 8px 8px 0 0 !important;
+    padding: 10px 20px !important;
+    background: transparent !important;
+    border: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+    color: var(--copel-orange) !important;
+    background: rgba(245, 130, 30, 0.06) !important;
+    opacity: 1;
+}
+
+.stTabs [aria-selected="true"] {
+    color: var(--copel-orange) !important;
+    border-bottom: 3px solid var(--copel-orange) !important;
+    background: transparent !important;
+    opacity: 1;
+}
+
+/* Dataframes, Inputs, Selectbox e Multiselect */
+.stDataFrame {
+    border-radius: var(--radius-md) !important;
+    border: 1px solid var(--bdc-surface-border) !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+div[data-baseweb="select"] > div,
+div[data-baseweb="input"] > div {
+    background-color: var(--secondary-background-color) !important;
+    border-radius: var(--radius-sm) !important;
+    border: 1px solid var(--bdc-surface-border) !important;
+    color: var(--text-color) !important;
+    font-family: 'Inter', sans-serif !important;
+}
+
+div[data-baseweb="select"] > div:focus-within,
+div[data-baseweb="input"] > div:focus-within {
+    border-color: var(--copel-orange) !important;
+    box-shadow: 0 0 0 1px var(--copel-orange) !important;
+}
+
+/* Multiselect Tags/Chips */
+div[data-baseweb="select"] span[data-baseweb="tag"] {
+    background-color: rgba(245, 130, 30, 0.15) !important;
+    color: var(--text-color) !important;
+    border: 1px solid rgba(245, 130, 30, 0.35) !important;
+    border-radius: 4px !important;
+}
+
+/* Expanders */
+div[data-testid="stExpander"] {
+    background-color: var(--bdc-surface-card) !important;
+    border: 1px solid var(--bdc-surface-border) !important;
+    border-radius: var(--radius-md) !important;
+}
+
+div[data-testid="stExpander"] details {
+    background-color: transparent !important;
+    color: var(--text-color) !important;
+}
+
+div[data-testid="stExpander"] summary {
+    color: var(--text-color) !important;
+    border-bottom: 1px solid var(--bdc-surface-border) !important;
+}
+
+div[data-testid="stExpander"] summary:hover {
+    color: var(--copel-orange) !important;
+}
+
+/* Code Blocks */
+.stCodeBlock {
+    border-radius: var(--radius-md) !important;
+    border: 1px solid var(--bdc-surface-border) !important;
+    background-color: var(--secondary-background-color) !important;
+}
+
+.stCodeBlock pre, .stCodeBlock code {
+    font-family: 'Fira Code', monospace !important;
+    font-size: 0.86rem !important;
+    color: var(--text-color) !important;
+}
+
+/* Componentes Visuais BDC (Adaptativos Light/Dark) */
+.stApp .bdc-view-header,
+.bdc-view-header {
+    background-color: var(--secondary-background-color) !important;
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(159, 161, 164, 0.25) !important;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.bdc-view-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--copel-orange) 0%, rgba(245, 130, 30, 0.25) 60%, var(--copel-gray) 100%);
+}
+
+.bdc-view-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 0.4rem;
+}
+
+.stApp .bdc-view-title,
+.bdc-view-title {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    color: var(--text-color) !important;
+    margin: 0;
+    letter-spacing: -0.4px;
+}
+
+.stApp .bdc-view-subtitle,
+.bdc-view-subtitle {
+    font-size: 0.95rem;
+    color: var(--text-color) !important;
+    margin: 0;
+    opacity: 0.85;
+}
+
+.bdc-status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background-color: rgba(245, 130, 30, 0.12);
+    color: var(--copel-orange);
+    border: 1px solid rgba(245, 130, 30, 0.30);
+    padding: 0.30rem 0.75rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.bdc-status-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--copel-orange);
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(245, 130, 30, 0.25);
+    animation: bdc-pulse 2s infinite ease-in-out;
+}
+
+@keyframes bdc-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.7; }
+}
+
+.bdc-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stApp .bdc-kpi-card,
+.bdc-kpi-card {
+    background-color: var(--secondary-background-color) !important;
+    border: 1px solid rgba(159, 161, 164, 0.25) !important;
+    border-radius: var(--radius-md);
+    padding: 1.15rem 1.25rem;
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.stApp .bdc-kpi-card:hover,
+.bdc-kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: rgba(245, 130, 30, 0.50) !important;
+}
+
+.bdc-kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background-color: var(--copel-orange);
+}
+
+/* Paleta estrita Copel: todas as variantes utilizam Laranja ou Cinza com opacidades */
+.bdc-kpi-card.kpi-copel::before,
+.bdc-kpi-card.kpi-gold::before,
+.bdc-kpi-card.kpi-warning::before,
+.bdc-kpi-card.kpi-danger::before {
+    background-color: var(--copel-orange);
+}
+
+.bdc-kpi-card.kpi-silver::before,
+.bdc-kpi-card.kpi-relational::before,
+.bdc-kpi-card.kpi-ingestion::before,
+.bdc-kpi-card.kpi-bronze::before,
+.bdc-kpi-card.kpi-success::before,
+.bdc-kpi-card.kpi-neutral::before {
+    background-color: var(--copel-gray);
+}
+
+.bdc-kpi-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.stApp .bdc-kpi-label,
+.bdc-kpi-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--text-color) !important;
+    opacity: 0.75;
+    letter-spacing: 0.5px;
+}
+
+.bdc-kpi-icon {
+    display: none !important;
+}
+
+.stApp .bdc-kpi-value,
+.bdc-kpi-value {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 1.7rem !important;
+    font-weight: 700 !important;
+    color: var(--text-color) !important;
+    line-height: 1.15;
+    margin-bottom: 0.35rem;
+}
+
+.stApp .bdc-kpi-subtext,
+.bdc-kpi-subtext {
+    font-size: 0.80rem;
+    color: var(--text-color) !important;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    opacity: 0.85;
+}
+
+.bdc-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.20rem 0.55rem;
+    border-radius: var(--radius-pill);
+    font-size: 0.70rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.bdc-badge-pill.warning,
+.bdc-badge-pill.danger,
+.bdc-badge-pill.copel {
+    background-color: rgba(245, 130, 30, 0.15);
+    color: var(--copel-orange);
+    border: 1px solid rgba(245, 130, 30, 0.30);
+}
+
+.bdc-badge-pill.success,
+.bdc-badge-pill.neutral,
+.bdc-badge-pill.silver {
+    background-color: rgba(159, 161, 164, 0.15);
+    color: var(--text-color);
+    border: 1px solid rgba(159, 161, 164, 0.30);
+}

@@ -10,7 +10,7 @@ from pathlib import Path
 from app.context import AppContext
 from common.json import validar_esquema_json
 from common.json import ler_json
-from common.identificadores import normalizar_cnpj
+from common.identificadores import normalizar_cnpj, normalizar_cnpj_coluna
 from common.datas import normalizar_data
 from common.numeros import to_decimal_br
 from domain.carga_manual.servico_repescagem import repescar_fichas_alteradas
@@ -51,7 +51,7 @@ def inserir_dados_carga_manual(context: AppContext) -> dict[str, Any]:
             
             df = df.replace('nan', '')
             
-            df["CNPJ"] = df["CNPJ"].apply(lambda x: normalizar_cnpj(x).cnpj if normalizar_cnpj(x).valido else None)
+            df["CNPJ"] = df["CNPJ"].apply(normalizar_cnpj_coluna)
             df = df.dropna(subset=["CNPJ"])
 
             registros = df.to_dict(orient="records")

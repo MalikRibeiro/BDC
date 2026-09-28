@@ -115,9 +115,13 @@ def herdar_risco_controladoras(df_fato: pd.DataFrame, df_controladoras: pd.DataF
     count_inseridos = 0
     
     for _, row in df_controladoras.iterrows():
-        cnpj_sub = row["CNPJ_SUBSIDIARIA"]
-        cnpj_matriz = row["CNPJ_CONTA_ATRELADA"]
+        cnpj_sub = str(row["CNPJ_SUBSIDIARIA"]).strip()
+        cnpj_matriz = str(row["CNPJ_CONTA_ATRELADA"]).strip()
         
+        # A Matriz / Controladora nunca herda dela mesma
+        if cnpj_sub == cnpj_matriz:
+            continue
+            
         # A Matriz precisa estar na Fato (foi analisada)
         if cnpj_matriz in df_fato_indexed.index:
             dados_matriz = df_fato_indexed.loc[cnpj_matriz]
@@ -208,45 +212,56 @@ def herdar_risco_filiais(df_fato: pd.DataFrame, df_contratos: pd.DataFrame) -> p
         logger.info("Nenhuma filial órfã com contrato identificada para herança.")
         return df_result
         
-    # 4. Criar dicionário de doadores potenciais (Raiz -> DataFrame com Ratings)
-    df_fato["CNPJ_RAIZ_TEMP"] = df_fato["CNPJ"].astype(str).str[:8]
+    # 4. Criar dicionário indexado de doadores potenciais (Raiz -> Doador dict)
     df_doadores = df_fato[~mask_presente_mas_orfao].copy()
     
+    doadores_dict: dict[str, dict] = {}
+    for _, doador_row in df_doadores.iterrows():
+        c_str = str(doador_row["CNPJ"])
+        r = c_str[:8]
+        is_0001 = (len(c_str) >= 12 and c_str[8:12] == "0001")
+        if r not in doadores_dict or (is_0001 and not doadores_dict[r].get("_is_0001")):
+            d = doador_row.to_dict()
+            d["_is_0001"] = is_0001
+            doadores_dict[r] = d
+            
     novas_linhas = []
     count_herdados = 0
     count_inseridos = 0
+    
+    set_linhas_atualizar = set(linhas_atualizar)
+    map_cnpj_to_indices = df_result.groupby("CNPJ").indices
     
     todas_orfas = list(cnpjs_orfaos) + df_result.loc[linhas_atualizar, "CNPJ"].tolist()
     todas_orfas = list(set(todas_orfas))
     
     for cnpj_filial in todas_orfas:
-        raiz = str(cnpj_filial)[:8]
-        # Procurar doador
-        doadores_potenciais = df_doadores[df_doadores["CNPJ_RAIZ_TEMP"] == raiz]
-        if not doadores_potenciais.empty:
-            # Prioriza a filial mais "matriz" que é 0001 (e.g. 0001-XX)
-            matrizes = doadores_potenciais[doadores_potenciais["CNPJ"].astype(str).str[8:12] == "0001"]
-            if not matrizes.empty:
-                doador = matrizes.iloc[0]
-            else:
-                doador = doadores_potenciais.iloc[0]
-                
-            dados_herdados = doador.to_dict()
+        c_filial_str = str(cnpj_filial).strip()
+        raiz = c_filial_str[:8]
+        doador_template = doadores_dict.get(raiz)
+        if doador_template is not None:
+            c_doador_str = str(doador_template.get("CNPJ", "")).strip()
+            
+            # REGRA ANTI-AUTOHERANÇA:
+            # 1. A Matriz NUNCA herda dela mesma
+            if c_filial_str == c_doador_str:
+                continue
+            # 2. A Matriz (0001) não herda de filial pela mesma raiz
+            if len(c_filial_str) >= 12 and c_filial_str[8:12] == "0001":
+                continue
+
+            dados_herdados = doador_template.copy()
+            dados_herdados.pop("_is_0001", None)
             dados_herdados["ANALISE_HERDADA"] = True
             dados_herdados["ORIGEM_ANALISE"] = "HERDADA DA MATRIZ (RAIZ CNPJ)"
-            dados_herdados["TIPO_ANALISE"] = "Herança de Raiz"
+            dados_herdados["TIPO_ANALISE"] = "Análise Herdada"
             dados_herdados["CNPJ"] = cnpj_filial
             dados_herdados["CNPJ_RAIZ"] = raiz
             
-            # Remover chaves temporárias
-            if "CNPJ_RAIZ_TEMP" in dados_herdados:
-                del dados_herdados["CNPJ_RAIZ_TEMP"]
-                
-            mask_sub = df_result["CNPJ"] == cnpj_filial
-            if mask_sub.any():
-                idx_sub = df_result[mask_sub].index
-                for idx in idx_sub:
-                    if idx in linhas_atualizar:
+            indices_presentes = map_cnpj_to_indices.get(cnpj_filial)
+            if indices_presentes is not None and len(indices_presentes) > 0:
+                for idx in indices_presentes:
+                    if idx in set_linhas_atualizar:
                         for c, v in dados_herdados.items():
                             df_result.at[idx, c] = v
                         count_herdados += 1

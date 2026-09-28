@@ -7,19 +7,10 @@ Ref: §6.7, §11.2, §11.6 (Reconciliação PE) do Planejamento Funcional.
 
 from __future__ import annotations
 
-import math
 from datetime import datetime
 from uuid import uuid4
 
-
-def _is_missing(val) -> bool:
-    """Retorna True se val for None ou NaN."""
-    if val is None:
-        return True
-    try:
-        return math.isnan(float(val))
-    except (TypeError, ValueError):
-        return False
+from common.nulos import is_missing as _is_missing
 
 
 def calcular_perda_esperada(

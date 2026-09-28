@@ -15,7 +15,7 @@ import pandas as pd
 from app.context import AppContext
 from control.logger import obter_logger
 from domain.enums import StatusAlerta
-from relational.facts.fato_alerta_util import registrar_alerta
+from relational.facts.fato_alerta_util import registrar_alertas_em_lote
 from services.connectors.receita_connector import buscar_receita_dados_lote
 from storage.escrever_dados import escrever_conjunto_de_dados_silver
 from common.hashing import arquivo_hash
@@ -112,6 +112,7 @@ def inserir_dados_receita(context: AppContext) -> dict[str, Any]:
     df_receita["DT_PROCESSAMENTO"] = datetime.now().isoformat(timespec="seconds")
 
     alertas: list[dict[str, Any]] = []
+    alertas_db = []
     for _, row in df_receita.iterrows():
         situacao = str(row.get("SITUACAO_CADASTRAL") or "").strip().upper()
         if situacao and situacao != "ATIVA" and situacao != "NONE":
@@ -124,19 +125,19 @@ def inserir_dados_receita(context: AppContext) -> dict[str, Any]:
                 "DT_DETECCAO": datetime.now().isoformat(timespec="seconds"),
                 "STATUS_ALERTA": StatusAlerta.ABERTO.value,
             })
-            
-            registrar_alerta(
-                codigo="CAD_001",
-                severidade="ALTO",
-                regra="Situação Cadastral Irregular",
-                mensagem=f"CNPJ com situação cadastral irregular: {situacao}.",
-                campo_afetado="SITUACAO_CADASTRAL",
-                valor_observado=situacao,
-                limite_esperado="ATIVA",
-                contraparte_id=row.get("CNPJ"),
-                run_id=run_id,
-                context=context
-            )
+            alertas_db.append({
+                "codigo": "CAD_001",
+                "severidade": "ALTO",
+                "regra": "Situação Cadastral Irregular",
+                "mensagem": f"CNPJ com situação cadastral irregular: {situacao}.",
+                "campo_afetado": "SITUACAO_CADASTRAL",
+                "valor_observado": situacao,
+                "limite_esperado": "ATIVA",
+                "contraparte_id": row.get("CNPJ")
+            })
+
+    if alertas_db:
+        registrar_alertas_em_lote(alertas_db, run_id, context)
 
     if alertas:
         df_alertas = pd.DataFrame(alertas)

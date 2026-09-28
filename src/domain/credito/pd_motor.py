@@ -16,11 +16,14 @@ from datetime import datetime
 import hashlib
 import json
 def _is_expired(data_str: Any, dias_validade: int) -> bool:
-    if not data_str:
+    if data_str is None or _is_blank(data_str):
         return True
     try:
-        dt = datetime.fromisoformat(str(data_str)[:10])
-        idade_dias = (datetime.now() - dt).days
+        import pandas as _pd
+        dt = _pd.to_datetime(data_str, errors="coerce")
+        if _pd.isna(dt):
+            return True
+        idade_dias = (datetime.now() - dt.to_pydatetime()).days
         return idade_dias > dias_validade
     except Exception:
         return True
@@ -67,6 +70,18 @@ def calcular_pd_ajustada(
         if str(registro.get("RECUPERACAO_JUDICIAL", "")).strip().upper() == "SIM":
             if logger is not None:
                 logger.warning("Curto-circuito: RJ acionada para CNPJ=%s", registro.get("CNPJ"))
+            data_df = registro.get("DATA_DEMONSTRACAO_FINANCEIRA")
+            data_bureau = registro.get("DATA_BUREAU") or registro.get("DATA_CONSULTA")
+            import pandas as _pd
+            fim_vig_rj = None
+            if segmento_pd == "CONSUMIDOR_LE_5" and data_bureau:
+                dt_b = _pd.to_datetime(data_bureau, errors="coerce")
+                if not _pd.isna(dt_b):
+                    fim_vig_rj = (dt_b + _pd.DateOffset(months=12)).strftime("%Y-%m-%d")
+            elif data_df:
+                dt_d = _pd.to_datetime(data_df, errors="coerce")
+                if not _pd.isna(dt_d):
+                    fim_vig_rj = (dt_d + _pd.DateOffset(months=18)).strftime("%Y-%m-%d")
             return {
                 "SEGMENTO_PD": segmento_pd,
                 "STATUS_CALCULO_PD": "RECUPERACAO_JUDICIAL",
@@ -74,72 +89,41 @@ def calcular_pd_ajustada(
                 "PD_FINAL": 1.0,
                 "RATING_FINAL": "E",
                 "PD_METODO": "OVERRIDE_RECUPERACAO_JUDICIAL",
-                "CONFIG_SNAPSHOT_PD": config_snapshot_id
+                "CONFIG_SNAPSHOT_PD": config_snapshot_id,
+                "FIM_VIGENCIA_ANALISE": fim_vig_rj
             }
 
         validar_insumos_pd(registro, segmento_pd)
 
-        # --- FALLBACKS E VALIDADE DAS INFORMACOES ---
+        # --- VALIDADE DAS INFORMACOES (METADADOS DE GOVERNANCA) ---
         data_df = registro.get("DATA_DEMONSTRACAO_FINANCEIRA")
-        data_bureau = registro.get("DATA_BUREAU")
-        data_rating = registro.get("DATA_RATING_PUBLICO")
+        data_bureau = registro.get("DATA_BUREAU") or registro.get("DATA_CONSULTA")
+        data_rating = registro.get("DATA_RATING_PUBLICO") or registro.get("DATA_RATING_AGENCIA")
         
-        pd_risk3_val = registro.get("PD_RISK3")
-        try:
-            pd_risk3 = float(pd_risk3_val) if pd_risk3_val is not None else 0.15 # fallback 15%
-        except (ValueError, TypeError):
-            pd_risk3 = 0.15
-            
-        df_vencida = _is_expired(data_df, 540) # 18 meses
-        bureau_vencido = _is_expired(data_bureau, 120) if segmento_pd == "CPURA" else _is_expired(data_bureau, 365)
-        rating_vencido = _is_expired(data_rating, 540)
-        
-        from datetime import timedelta
-        
-        validade_df = (datetime.fromisoformat(str(data_df)[:10]) + timedelta(days=540)).isoformat()[:10] if data_df and not _is_blank(data_df) else None
-        validade_bureau = (datetime.fromisoformat(str(data_bureau)[:10]) + timedelta(days=120 if segmento_pd == "CPURA" else 365)).isoformat()[:10] if data_bureau and not _is_blank(data_bureau) else None
-        validade_rating = (datetime.fromisoformat(str(data_rating)[:10]) + timedelta(days=540)).isoformat()[:10] if data_rating and not _is_blank(data_rating) else None
-        
-        fallback_acionado = False
-        pd_sub = None
-        motivo_sub = None
-
-        if segmento_pd == "CPURA" and df_vencida:
-            fallback_acionado = True
-            pd_sub = max(pd_risk3, 0.10)
-            motivo_sub = "DF > 18 meses"
-        elif segmento_pd == "CGRUPO" and (df_vencida or rating_vencido):
-            fallback_acionado = True
+        import pandas as _pd
+        def _calcular_validade_meses(data_val: Any, meses: int) -> str | None:
+            if data_val is None or _is_blank(data_val):
+                return None
             try:
-                ultima_pd = float(registro.get("PD_ULTIMA_VALIDA", 0.0))
-            except (ValueError, TypeError):
-                ultima_pd = 0.0
-            pd_sub = max(ultima_pd, 0.15)
-            motivo_sub = "DF > 18 meses ou Rating Publico Vencido"
-        elif segmento_pd == "CONSUMIDOR_GT_5" and df_vencida:
-            fallback_acionado = True
-            pd_sub = max(pd_risk3, 0.50)
-            motivo_sub = "DF > 18 meses"
-            
-        if fallback_acionado:
-            if logger is not None:
-                logger.warning("Fallback acionado para CNPJ=%s: %s", registro.get("CNPJ"), motivo_sub)
-            return {
-                "SEGMENTO_PD": segmento_pd,
-                "STATUS_CALCULO_PD": "CONCLUIDO_COM_PD_SUB",
-                "PD_BASE": None,
-                "PD_FINAL": pd_sub,
-                "RATING_FINAL": "E" if pd_sub >= 0.10 else "D", # Estimativa conservadora
-                "PD_METODO": "PD_SUBSTITUTA",
-                "MOTIVO_PD_SUB": motivo_sub,
-                "DATA_ACIONAMENTO_PD_SUB": datetime.now().isoformat(timespec="seconds"),
-                "FONTE_PD_SUB": "REGRA_FALLBACK",
-                "VALOR_PD_SUB": pd_sub,
-                "CONFIG_SNAPSHOT_PD": config_snapshot_id,
-                "VALIDADE_DF": validade_df,
-                "VALIDADE_BUREAU": validade_bureau,
-                "VALIDADE_RATING_PUBLICO": validade_rating
-            }
+                dt = _pd.to_datetime(data_val, errors="coerce")
+                if _pd.isna(dt):
+                    return None
+                return (dt + _pd.DateOffset(months=meses)).strftime("%Y-%m-%d")
+            except Exception:
+                return None
+
+        # Validades específicas
+        validade_df = _calcular_validade_meses(data_df, 18)
+        validade_bureau = _calcular_validade_meses(data_bureau, 4 if segmento_pd == "CPURA" else 12)
+        validade_rating = _calcular_validade_meses(data_rating, 18)
+
+        # Regra canônica de FIM_VIGENCIA_ANALISE por metodologia:
+        # - Bureau (Consumidor <= 5MWm): 12 meses a partir da data de consulta/bureau
+        # - DF (Comercializadoras e Consumidor > 5MWm): 18 meses a partir da demonstração financeira
+        if segmento_pd == "CONSUMIDOR_LE_5" or str(registro.get("TIPO_ANALISE", "")).strip().startswith("Análise Bureau"):
+            fim_vigencia_analise = _calcular_validade_meses(data_bureau, 12)
+        else:
+            fim_vigencia_analise = _calcular_validade_meses(data_df, 18)
 
         pd_base = calcular_pd_base(registro, segmento_pd, pd_zscore_config, logger)
 
@@ -230,6 +214,7 @@ def calcular_pd_ajustada(
             "VALIDADE_DF": validade_df,
             "VALIDADE_BUREAU": validade_bureau,
             "VALIDADE_RATING_PUBLICO": validade_rating,
+            "FIM_VIGENCIA_ANALISE": fim_vigencia_analise,
             **resultado_scores,
             **resultado_transformacao,
         }
@@ -252,7 +237,7 @@ def calcular_pd_ajustada(
 
     except PdCalculationError:
         if logger is not None:
-            logger.exception("Erro controlado no cálculo de PD ajustada. CNPJ=%s SEGMENTO_PD=%s", registro.get('CNPJ'), segmento_pd)
+            logger.warning("Cálculo de PD não concluído (Insumo Pendente). CNPJ=%s SEGMENTO_PD=%s", registro.get('CNPJ'), segmento_pd)
         raise
 
     except Exception:

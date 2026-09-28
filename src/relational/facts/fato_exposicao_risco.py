@@ -36,13 +36,11 @@ def processar_fato_exposicao_risco(context: AppContext) -> dict[str, Any] | None
     
     if not df_fichas.empty and "CNPJ" in df_fichas.columns:
         df_fichas["CNPJ"] = df_fichas["CNPJ"].astype(str).str.zfill(14)
-        if "DATA_ANALISE" in df_fichas.columns:
-            df_fichas = df_fichas.sort_values("DATA_ANALISE").drop_duplicates("CNPJ", keep="last")
-            
-        cols_ficha = ["CNPJ"]
         
-        if "PD_PERCENTUAL" in df_fichas.columns: cols_ficha.append("PD_PERCENTUAL")
-        if "SEGMENTO_METODOLOGICO_FICHA" in df_fichas.columns: cols_ficha.append("SEGMENTO_METODOLOGICO_FICHA")
+        cols_ficha = ["CNPJ"]
+        for c in ["ANALISE_ID", "DATA_ANALISE", "PD_PERCENTUAL", "SEGMENTO_METODOLOGICO_FICHA", "_VERSAO_REGISTRO", "_STATUS_REGISTRO", "FIM_VIGENCIA_ANALISE"]:
+            if c in df_fichas.columns:
+                cols_ficha.append(c)
         
         df_fichas = df_fichas[cols_ficha]
         df_exposicoes = pd.merge(df_exposicoes, df_fichas, on="CNPJ", how="left")
@@ -86,8 +84,8 @@ def construir_fato_exposicao_risco(
     df_exposicoes["PD_FINAL"] = pd.to_numeric(df_exposicoes.get("PD_FINAL"), errors="coerce")
 
     if "CNPJ_RAIZ" not in df_exposicoes.columns:
-        from common.identificadores import normalizar_cnpj
-        df_exposicoes["CNPJ_RAIZ"] = df_exposicoes["CNPJ"].apply(lambda x: normalizar_cnpj(x).raiz if normalizar_cnpj(x).valido else None)
+        from common.identificadores import normalizar_cnpj_raiz
+        df_exposicoes["CNPJ_RAIZ"] = df_exposicoes["CNPJ"].apply(normalizar_cnpj_raiz)
 
     for idx, row in df_exposicoes.iterrows():
         cnpj      = row.get("CNPJ")
@@ -96,6 +94,7 @@ def construir_fato_exposicao_risco(
         notional     = row.get("NOTIONAL_TOTAL")
         segmento     = row.get("SEGMENTO_METODOLOGICO", "CGRUPO")
         pd_final     = row.get("PD_FINAL")
+        portfolio    = row.get("PORTFOLIO_AGREGADO")
 
         res_ead = calcular_ead(mtm_positivo_total=mtm_positivo, fator_conversao=fator_conversao_ead)
         ead_val = float(res_ead.get("ead_valor", 0.0))
@@ -127,6 +126,12 @@ def construir_fato_exposicao_risco(
 
         fato = {
             "RUN_ID": run_id, "CNPJ": cnpj, "SEGMENTO": segmento,
+            "ANALISE_ID": row.get("ANALISE_ID"),
+            "DATA_ANALISE": row.get("DATA_ANALISE"),
+            "_VERSAO_REGISTRO": row.get("_VERSAO_REGISTRO"),
+            "_STATUS_REGISTRO": row.get("_STATUS_REGISTRO"),
+            "FIM_VIGENCIA_ANALISE": row.get("FIM_VIGENCIA_ANALISE"),
+            "PORTFOLIO": portfolio,
             "DT_CALCULO": res_pe.get("dt_calculo"),
             "CALCULO_ID_EAD": res_ead.get("calculo_id"), "EAD_VALOR": res_ead.get("ead_valor", 0.0),
             "FATOR_CONVERSAO_EAD": res_ead.get("fator_conversao"), "CONFIG_SNAPSHOT_EAD": res_ead.get("config_snapshot_id"),
