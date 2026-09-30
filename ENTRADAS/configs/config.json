@@ -123,5 +123,9 @@
             "CONSUMIDOR": 0.50
         },
         "dias_alerta_vencimento_garantia": 30
+    },
+    "qualidade_extracao": {
+        "limiar_integridade_minima": 35.0,
+        "descricao": "Score percentual mínimo ponderado exigido para aprovação na extração e GATES de fichas (comercializadoras e consumidores)"
     }
 }

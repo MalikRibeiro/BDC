@@ -98,11 +98,11 @@ def herdar_risco_controladoras(df_fato: pd.DataFrame, df_controladoras: pd.DataF
     mask_subsidiaria_oficial = df_result[col_cnpj].isin(set_subsidiarias)
     
     # Regra 2: Identificar quem já está na base Fato mas sem Rating
-    mask_presente_mas_orfao = pd.Series(False, index=df_result.index)
-    if "RATING_FINAL" in df_result.columns:
-        mask_presente_mas_orfao = df_result["RATING_FINAL"].isna() | (df_result["RATING_FINAL"] == "")
-    elif "PD_FINAL" in df_result.columns:
-        mask_presente_mas_orfao = df_result["PD_FINAL"].isna()
+    VALORES_SEM_RATING = {"", "NONE", "NAN", "<NA>", "PENDENTE", "NAO_ENQUADRADO", "NAO_APLICAVEL"}
+    s_rat = df_result["RATING_FINAL"].astype(str).str.strip().str.upper() if "RATING_FINAL" in df_result.columns else pd.Series("", index=df_result.index)
+    mask_presente_mas_orfao = df_result["RATING_FINAL"].isna() | s_rat.isin(VALORES_SEM_RATING) if "RATING_FINAL" in df_result.columns else pd.Series(False, index=df_result.index)
+    if "PD_FINAL" in df_result.columns:
+        mask_presente_mas_orfao = mask_presente_mas_orfao | df_result["PD_FINAL"].isna()
         
     mask_elegivel_atualizacao = mask_subsidiaria_oficial & mask_presente_mas_orfao
     linhas_atualizar = df_result[mask_elegivel_atualizacao].index
@@ -149,6 +149,7 @@ def herdar_risco_controladoras(df_fato: pd.DataFrame, df_controladoras: pd.DataF
                 dados_herdados["ANALISE_HERDADA"] = True
                 dados_herdados["ORIGEM_ANALISE"] = "HERDADA DA CONTROLADORA"
                 dados_herdados["TIPO_ANALISE"] = "Análise Herdada"
+                dados_herdados["FONTE_ANALISE"] = "Herança Societária"
                 dados_herdados[col_cnpj] = cnpj_sub 
                 dados_herdados["CNPJ_RAIZ"] = str(cnpj_sub)[:8]
                 
@@ -201,9 +202,9 @@ def herdar_risco_filiais(df_fato: pd.DataFrame, df_contratos: pd.DataFrame) -> p
     cnpjs_na_fato = set(df_result["CNPJ"].dropna().unique())
     
     # 3. Filiais orfãs = tem contrato mas NÃO estão na fato (ou estão mas não têm rating)
-    mask_presente_mas_orfao = pd.Series(False, index=df_result.index)
-    if "RATING_FINAL" in df_result.columns:
-        mask_presente_mas_orfao = df_result["RATING_FINAL"].isna() | (df_result["RATING_FINAL"] == "")
+    VALORES_SEM_RATING = {"", "NONE", "NAN", "<NA>", "PENDENTE", "NAO_ENQUADRADO", "NAO_APLICAVEL"}
+    s_rat = df_result["RATING_FINAL"].astype(str).str.strip().str.upper() if "RATING_FINAL" in df_result.columns else pd.Series("", index=df_result.index)
+    mask_presente_mas_orfao = df_result["RATING_FINAL"].isna() | s_rat.isin(VALORES_SEM_RATING) if "RATING_FINAL" in df_result.columns else pd.Series(False, index=df_result.index)
         
     cnpjs_orfaos = cnpjs_com_contrato - cnpjs_na_fato
     linhas_atualizar = df_result[df_result["CNPJ"].isin(cnpjs_com_contrato) & mask_presente_mas_orfao].index
@@ -255,6 +256,7 @@ def herdar_risco_filiais(df_fato: pd.DataFrame, df_contratos: pd.DataFrame) -> p
             dados_herdados["ANALISE_HERDADA"] = True
             dados_herdados["ORIGEM_ANALISE"] = "HERDADA DA MATRIZ (RAIZ CNPJ)"
             dados_herdados["TIPO_ANALISE"] = "Análise Herdada"
+            dados_herdados["FONTE_ANALISE"] = "Herança Societária"
             dados_herdados["CNPJ"] = cnpj_filial
             dados_herdados["CNPJ_RAIZ"] = raiz
             

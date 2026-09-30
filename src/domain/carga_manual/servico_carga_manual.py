@@ -7,8 +7,8 @@ from typing import Any
 import pandas as pd
 from pathlib import Path
 
+import jsonschema
 from app.context import AppContext
-from common.json import validar_esquema_json
 from common.json import ler_json
 from common.identificadores import normalizar_cnpj, normalizar_cnpj_coluna
 from common.datas import normalizar_data
@@ -66,9 +66,12 @@ def inserir_dados_carga_manual(context: AppContext) -> dict[str, Any]:
 
                 if schema:
                     try:
-                        validar_esquema_json(reg, schema, f"Registro [{idx}] do arquivo {arquivo.name}")
-                    except Exception as exc:
-                        logger.warning("Registro %s inválido: %s. Ignorando.", idx, exc)
+                        jsonschema.validate(instance=reg, schema=schema)
+                    except jsonschema.ValidationError as exc:
+                        logger.warning(
+                            "Registro [%s] do arquivo %s inválido estruturalmente (%s: %s). Ignorando.",
+                            idx, arquivo.name, exc.json_path, exc.message,
+                        )
                         continue
 
                 cnpj_14 = reg.get("CNPJ")

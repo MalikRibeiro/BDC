@@ -390,6 +390,20 @@
         }
       },
       "additionalProperties": false
+    },
+    "qualidade_extracao": {
+      "type": "object",
+      "properties": {
+        "limiar_integridade_minima": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "descricao": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     }
   }
 }

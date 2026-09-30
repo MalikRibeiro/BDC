@@ -36,6 +36,8 @@
         "Intervencao de Alcada (Override)",
         "Obtencao Tardia de Dados (Complementacao)",
         "Omissao no Envio de Documentos (Ausencia de DF)",
+        "Complementação Assistida",
+        "CORRECAO",
         "Outro"
       ]
     },
@@ -46,7 +48,8 @@
       "type": "string",
       "enum": [
         "Malik Ribeiro Mourad",
-        "Eduardo Suzuki Yamauti"
+        "Eduardo Suzuki Yamauti",
+        "Operador de Qualidade"
       ]
     },
     "TIPO_EVENTO": {
@@ -56,6 +59,7 @@
         "RECLASSIFICACAO_SETORIAL",
         "RESTRITIVO_MANUAL",
         "CORRECAO",
+        "COMPLEMENTACAO",
         "OUTRO"
       ]
     }

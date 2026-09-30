@@ -125,6 +125,71 @@ def calcular_pd_ajustada(
         else:
             fim_vigencia_analise = _calcular_validade_meses(data_df, 18)
 
+        # --- FALLBACK DE VALIDADE / PD SUBSTITUTA (NT 1.2 §6.4, §7.2, §9.4) ---
+        from common.numeros import to_float_br
+        hoje = _pd.Timestamp.now().normalize()
+        df_vencida = False
+        if validade_df:
+            dt_val_df = _pd.to_datetime(validade_df, errors="coerce")
+            if dt_val_df is not None and not _pd.isna(dt_val_df) and dt_val_df < hoje:
+                df_vencida = True
+
+        rating_vencido = False
+        if validade_rating:
+            dt_val_rt = _pd.to_datetime(validade_rating, errors="coerce")
+            if dt_val_rt is not None and not _pd.isna(dt_val_rt) and dt_val_rt < hoje:
+                rating_vencido = True
+
+        pd_risk3 = float(to_float_br(registro.get("PD_RISK3")) or 0.0)
+
+        fallback_acionado = False
+        pd_sub = None
+        motivo_sub = None
+
+        tem_rating_cgrupo = any(
+            registro.get(k) and not _is_blank(registro.get(k))
+            for k in ["NOTA_CREDITO", "RATING_COPEL", "RATING_FINAL", "RATING"]
+        )
+
+        if segmento_pd == "CGRUPO" and (df_vencida or rating_vencido) and tem_rating_cgrupo:
+            fallback_acionado = True
+            try:
+                ultima_pd = float(to_float_br(registro.get("PD_ULTIMA_VALIDA")) or 0.0)
+            except (ValueError, TypeError):
+                ultima_pd = 0.0
+            pd_sub = max(ultima_pd, 0.15)
+            motivo_sub = "DF > 18 meses ou Rating Publico Vencido"
+        elif segmento_pd == "CONSUMIDOR_GT_5" and df_vencida and (registro.get("PD_BASE") is None and registro.get("PROBABILIDADE_DEFAULT") is None):
+            fallback_acionado = True
+            pd_sub = max(pd_risk3, 0.50)
+            motivo_sub = "DF > 18 meses"
+        elif segmento_pd == "CPURA" and df_vencida and (registro.get("PD_BASE") is None and registro.get("PROBABILIDADE_DEFAULT") is None):
+            fallback_acionado = True
+            pd_sub = max(pd_risk3, 0.10)
+            motivo_sub = "DF > 18 meses"
+
+        if fallback_acionado:
+            if logger is not None:
+                logger.warning("Fallback acionado para CNPJ=%s: %s", registro.get("CNPJ"), motivo_sub)
+            return {
+                "SEGMENTO_PD": segmento_pd,
+                "STATUS_CALCULO_PD": "CONCLUIDO_COM_PD_SUB",
+                "PD_BASE": None,
+                "PD_FINAL": pd_sub,
+                "RATING_FINAL": "E" if pd_sub >= 0.10 else "D",
+                "PD_METODO": "PD_SUBSTITUTA",
+                "MOTIVO_PD_SUB": motivo_sub,
+                "DATA_ACIONAMENTO_PD_SUB": datetime.now().isoformat(timespec="seconds"),
+                "FONTE_PD_SUB": "REGRA_FALLBACK",
+                "VALOR_PD_SUB": pd_sub,
+                "CONFIG_SNAPSHOT_PD": config_snapshot_id,
+                "VALIDADE_DF": validade_df,
+                "VALIDADE_BUREAU": validade_bureau,
+                "VALIDADE_RATING_PUBLICO": validade_rating,
+                "FIM_VIGENCIA_ANALISE": fim_vigencia_analise
+            }
+        # ----------------------------------------------------------------------
+
         pd_base = calcular_pd_base(registro, segmento_pd, pd_zscore_config, logger)
 
         registro_calculo = dict(registro)

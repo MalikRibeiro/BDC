@@ -223,16 +223,25 @@ def processar_contratos_denodo(context: AppContext) -> dict[str, Any]:
             try:
                 df_api = buscar_denodo(query=query_denodo)
                 if df_api.empty:
-                    return {"run_id": run_id, "status": "SEM_DADOS", "linhas": 0}
+                    logger.warning("Consulta ODBC ao Denodo retornou vazia. Verificando contingência com histórico local...")
+                    if arquivos_historicos:
+                        source_file = max(arquivos_historicos, key=lambda f: f.stat().st_mtime)
+                        logger.warning("Operando em modo de contingência com último export local: %s", source_file.name)
+                        staging_file = staging_dir / source_file.name
+                        shutil.copy2(source_file, staging_file)
+                        usando_arquivo_local = True
+                    else:
+                        logger.warning("Nenhum arquivo histórico de contratos disponível.")
+                        return {"run_id": run_id, "status": "SEM_DADOS", "linhas": 0}
+                else:
+                    staging_file = staging_dir / f"api_snapshot_{run_id}.parquet"
+                    df_api.to_parquet(staging_file, index=False)
                     
-                staging_file = staging_dir / f"api_snapshot_{run_id}.parquet"
-                df_api.to_parquet(staging_file, index=False)
-                
-                # Exporta uma cópia em CSV para a pasta processadas para auditoria visual e cache diário
-                csv_audit_file = processadas_dir / f"denodo_api_export_{run_id}.csv"
-                df_api.to_csv(csv_audit_file, sep=";", index=False, encoding="utf-8-sig")
-                logger.info("API Denodo consultada com sucesso. Cópia CSV salva em %s", csv_audit_file.name)
-                source_file = staging_file
+                    # Exporta uma cópia em CSV para a pasta processadas para auditoria visual e cache diário
+                    csv_audit_file = processadas_dir / f"denodo_api_export_{run_id}.csv"
+                    df_api.to_csv(csv_audit_file, sep=";", index=False, encoding="utf-8-sig")
+                    logger.info("API Denodo consultada com sucesso. Cópia CSV salva em %s", csv_audit_file.name)
+                    source_file = staging_file
             except Exception as e_api:
                 logger.warning("Falha na comunicação com API Denodo via ODBC: %s", e_api)
                 if arquivos_historicos:

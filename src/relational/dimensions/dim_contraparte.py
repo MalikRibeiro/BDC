@@ -80,22 +80,28 @@ def criar_dim_contraparte(
     if df_silver_salesforce_account is not None and not df_silver_salesforce_account.empty:
         df_sf = df_silver_salesforce_account.copy()
         df_sf["CNPJ"] = df_sf["CNPJ"].apply(normalizar_cnpj_coluna)
-        sf_cols = {"CNPJ": "CNPJ", "Name": "NOME_SF", "Sigla__c": "SIGLA_SF"}
+        sf_cols = {
+            "CNPJ": "CNPJ",
+            "Name": "NOME_SF",
+            "Sigla__c": "SIGLA_SF",
+            "Grupo_economico__c": "GRUPO_ECONOMICO_SF"
+        }
         df_sf_id = df_sf[[c for c in sf_cols.keys() if c in df_sf.columns]].rename(columns=sf_cols)
         df_sf_id = df_sf_id.drop_duplicates(subset=["CNPJ"], keep="last")
         df_dim = pd.merge(df_dim, df_sf_id, on="CNPJ", how="outer")
     else:
         df_dim["NOME_SF"] = None
         df_dim["SIGLA_SF"] = None
+        df_dim["GRUPO_ECONOMICO_SF"] = None
 
-    for col_safe in ["NOME_SF", "SIGLA_SF", "NOME_FICHA", "SIGLA_FICHA"]:
+    for col_safe in ["NOME_SF", "SIGLA_SF", "NOME_FICHA", "SIGLA_FICHA", "GRUPO_ECONOMICO_SF"]:
         if col_safe not in df_dim.columns:
             df_dim[col_safe] = None
 
     df_dim["NOME"] = df_dim["NOME_SF"].combine_first(df_dim["NOME_FICHA"])
     df_dim["SIGLA"] = df_dim["SIGLA_SF"].combine_first(df_dim["SIGLA_FICHA"])
 
-    # --- Enriquecimento com Grupo Econômico (Controladoras) ---
+    # --- Enriquecimento com Grupo Econômico (Controladoras + Salesforce) ---
     if df_controladoras is not None and not df_controladoras.empty:
         df_ctrl_sub = df_controladoras[["CNPJ_SUBSIDIARIA", "CNPJ_CONTA_ATRELADA", "CONTA_ATRELADA"]].rename(columns={
             "CNPJ_SUBSIDIARIA": "CNPJ",
@@ -107,18 +113,92 @@ def criar_dim_contraparte(
         df_dim["CNPJ_CONTROLADORA"] = None
         df_dim["NOME_CONTROLADORA"] = None
 
-    df_dim["GRUPO_ECONOMICO"] = df_dim["NOME_CONTROLADORA"].combine_first(df_dim["NOME"])
-    # --------------------------------------------------------
+    df_dim["NOME_CONTROLADORA"] = df_dim["NOME_CONTROLADORA"].replace({"": None, "None": None, "nan": None, "<NA>": None})
+    df_dim["GRUPO_ECONOMICO_SF"] = df_dim["GRUPO_ECONOMICO_SF"].replace({"": None, "None": None, "nan": None, "<NA>": None})
+
+    df_dim["GRUPO_ECONOMICO"] = (
+        df_dim["NOME_CONTROLADORA"]
+        .combine_first(df_dim["GRUPO_ECONOMICO_SF"])
+        .combine_first(df_dim["NOME"])
+    )
+
+    # BUG 1 FIX: Quando o CSV estático não mapeou a controladora mas o Salesforce
+    # preencheu o grupo econômico, tentar casamento de nome com correspondência unívoca.
+    mask_ctrl_nulo = df_dim["CNPJ_CONTROLADORA"].isna() & df_dim["GRUPO_ECONOMICO_SF"].notna()
+    if mask_ctrl_nulo.any():
+        from common.texto import normalizar_chave_textual
+        # Base de busca: contrapartes conhecidas com nome e CNPJ
+        candidatos_base = df_dim[["CNPJ", "NOME"]].dropna().copy()
+        candidatos_base["NOME_NORM"] = candidatos_base["NOME"].apply(normalizar_chave_textual)
+        candidatos_base = candidatos_base[candidatos_base["NOME_NORM"].notna()]
+        candidatos_base["CNPJ_RAIZ"] = candidatos_base["CNPJ"].str[:8]
+        candidatos_base["IS_SEDE"] = candidatos_base["CNPJ"].str[8:12] == "0001"
+
+        mapa_nome_cnpj: dict[str, str] = {}
+        for nome_norm, grp in candidatos_base.groupby("NOME_NORM"):
+            raizes_unicas = grp["CNPJ_RAIZ"].unique()
+            # Apenas se houver correspondência unívoca (uma única raiz corporativa)
+            if len(raizes_unicas) == 1:
+                # Preferir a sede (0001) se disponível
+                sede = grp.sort_values("IS_SEDE", ascending=False).iloc[0]["CNPJ"]
+                mapa_nome_cnpj[nome_norm] = sede
+
+        for idx in df_dim[mask_ctrl_nulo].index:
+            grupo_nome_norm = normalizar_chave_textual(df_dim.at[idx, "GRUPO_ECONOMICO_SF"])
+            if grupo_nome_norm and grupo_nome_norm in mapa_nome_cnpj:
+                cnpj_encontrado = mapa_nome_cnpj[grupo_nome_norm]
+                # A empresa não pode ser controladora de si mesma
+                if cnpj_encontrado != df_dim.at[idx, "CNPJ"]:
+                    df_dim.at[idx, "CNPJ_CONTROLADORA"] = cnpj_encontrado
 
     df_dim = df_dim.dropna(subset=["CNPJ"])
     df_dim["CNPJ_RAIZ"] = df_dim["CNPJ"].str[:8]
     
     # Garante a existência das colunas para evitar KeyError
-    for col in ["SITUACAO_CADASTRAL", "SEGMENTO_METODOLOGICO", "CNAE_PRINCIPAL"]:
+    for col in ["SITUACAO_CADASTRAL", "CNAE_PRINCIPAL"]:
         if col not in df_dim.columns:
             df_dim[col] = None
             
     df_dim["SITUACAO_CADASTRAL"] = df_dim["SITUACAO_CADASTRAL"].fillna("NAO_INFORMADO")
+
+    # BUG 2 FIX: Enquadramento Metodológico Canônico
+    if "SEGMENTO_METODOLOGICO" not in df_dim.columns:
+        df_dim["SEGMENTO_METODOLOGICO"] = None
+
+    # 1. Comercializadoras têm precedência absoluta (CPURA / CGRUPO)
+    if df_silver_fichas is not None and not df_silver_fichas.empty:
+        df_fichas_seg = df_silver_fichas.copy()
+        df_fichas_seg["CNPJ"] = df_fichas_seg["CNPJ"].apply(normalizar_cnpj_coluna)
+        if "TIPO_FICHA" in df_fichas_seg.columns:
+            mask_com = df_fichas_seg["TIPO_FICHA"].astype(str).str.upper() == "COMERCIALIZADORA"
+            tipo_com_col = "TIPO_COMERCIALIZADORA" if "TIPO_COMERCIALIZADORA" in df_fichas_seg.columns else None
+            df_fichas_seg["_SEG"] = None
+            if tipo_com_col:
+                df_fichas_seg.loc[mask_com & (df_fichas_seg[tipo_com_col].astype(str).str.upper() == "CPURA"), "_SEG"] = "CPURA"
+                df_fichas_seg.loc[mask_com & (df_fichas_seg[tipo_com_col].astype(str).str.upper() == "CGRUPO"), "_SEG"] = "CGRUPO"
+            df_fichas_seg.loc[mask_com & df_fichas_seg["_SEG"].isna(), "_SEG"] = "CGRUPO"
+            
+            mask_cons_ficha = df_fichas_seg["TIPO_FICHA"].astype(str).str.upper() == "CONSUMIDOR"
+            df_fichas_seg.loc[mask_cons_ficha & df_fichas_seg["_SEG"].isna(), "_SEG"] = "CONSUMIDOR"
+
+            df_com_map = df_fichas_seg.dropna(subset=["_SEG"]).drop_duplicates("CNPJ", keep="last")[["CNPJ", "_SEG"]]
+            df_dim = pd.merge(df_dim, df_com_map, on="CNPJ", how="left")
+            df_dim.loc[df_dim["_SEG"].isin(["CPURA", "CGRUPO"]), "SEGMENTO_METODOLOGICO"] = df_dim["_SEG"]
+            df_dim.drop(columns=["_SEG"], inplace=True)
+
+    # 2. Consumidores e Enquadramento por Volume (regra dos 5 MWm)
+    vol_num = pd.to_numeric(df_dim.get("VOLUME_ENQUADRAMENTO_MWM"), errors="coerce")
+    possui_5 = df_dim.get("POSSUI_PELO_MENOS_5_MWM")
+
+    mask_nao_definido = df_dim["SEGMENTO_METODOLOGICO"].isna() | df_dim["SEGMENTO_METODOLOGICO"].isin(["NAO_ENQUADRADO", "CONSUMIDOR", ""])
+
+    cond_gt5 = mask_nao_definido & ((possui_5 == True) | (vol_num >= 5.0))
+    cond_le5 = mask_nao_definido & ((possui_5 == False) | ((vol_num < 5.0) & vol_num.notna()))
+
+    df_dim.loc[cond_gt5, "SEGMENTO_METODOLOGICO"] = "CONSUMIDOR_GT_5"
+    df_dim.loc[cond_le5, "SEGMENTO_METODOLOGICO"] = "CONSUMIDOR_LE_5"
+
+    # Se ainda estiver sem enquadramento:
     df_dim["SEGMENTO_METODOLOGICO"] = df_dim["SEGMENTO_METODOLOGICO"].fillna("NAO_ENQUADRADO")
 
     schema_dim = {

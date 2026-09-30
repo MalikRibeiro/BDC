@@ -78,7 +78,13 @@ def buscar_bureau_risk3(cnpjs: list[str], context: AppContext) -> pd.DataFrame:
 
         for c in cnpjs_unicos:
             if c in cache:
-                results.append(cache[c])
+                rec = dict(cache[c])
+                if not rec.get("DATA_CONSULTA") and rec.get("DATA_VALIDADE"):
+                    try:
+                        rec["DATA_CONSULTA"] = (pd.to_datetime(rec["DATA_VALIDADE"]) - relativedelta(months=12)).strftime("%Y-%m-%d")
+                    except Exception:
+                        pass
+                results.append(rec)
             else:
                 # Registra no cache como NÃO ENCONTRADO (status N/A) para evitar chamadas futuras
                 registro_na = {
@@ -114,8 +120,14 @@ def buscar_bureau_risk3(cnpjs: list[str], context: AppContext) -> pd.DataFrame:
     for i, cnpj in enumerate(cnpjs_unicos):
         cached = cache.get(cnpj)
         if cached:
-            status_cache = cached.get("STATUS")
-            data_cons = cached.get("DATA_CONSULTA")
+            rec = dict(cached)
+            if not rec.get("DATA_CONSULTA") and rec.get("DATA_VALIDADE"):
+                try:
+                    rec["DATA_CONSULTA"] = (pd.to_datetime(rec["DATA_VALIDADE"]) - relativedelta(months=12)).strftime("%Y-%m-%d")
+                except Exception:
+                    pass
+            status_cache = rec.get("STATUS")
+            data_cons = rec.get("DATA_CONSULTA")
             if data_cons and status_cache in ("SUCESSO", "NAO_ENCONTRADO"):
                 try:
                     dias_cache = (datetime.now() - datetime.fromisoformat(data_cons)).days
@@ -124,7 +136,7 @@ def buscar_bureau_risk3(cnpjs: list[str], context: AppContext) -> pd.DataFrame:
                 ttl = 365 if status_cache == "SUCESSO" else 30
                 if dias_cache < ttl:
                     logger.info("[%d/%d] CNPJ %s -> CACHE (%s, %dd/%dd)", i + 1, len(cnpjs_unicos), cnpj, status_cache, dias_cache, ttl)
-                    results.append(cached)
+                    results.append(rec)
                     continue
 
         logger.info("[%d/%d] CNPJ %s -> Consultando API (Endpoint detalhado por CNPJ)...", i + 1, len(cnpjs_unicos), cnpj)

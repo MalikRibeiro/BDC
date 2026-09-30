@@ -228,12 +228,15 @@ def processar_arquivo_individual(
             mover_para_rejeitados(source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir)
             return None
             
+        from control.quality_loader import obter_limiar_integridade_fichas
+        limiar_minimo = obter_limiar_integridade_fichas(context)
+        
         score_campeao = raw_record.get("INTEGRIDADE_EXTRAIDA_PERCENTUAL", 0)
             
-        if not winner_layout or winner_layout == "NENHUM" or score_campeao < 40.0:
+        if not winner_layout or winner_layout == "NENHUM" or score_campeao < limiar_minimo:
             manifest.status_classificacao = "REJEITADO"
             manifest.status_extracao = "ERRO_INTEGRIDADE"
-            manifest.erros.append(f"Score insuficiente: {score_campeao}%. Minimo exigido: 40.0%.")
+            manifest.erros.append(f"Score insuficiente: {score_campeao}%. Minimo exigido: {limiar_minimo}%.")
             fechar_pasta(workbook)
             mover_para_rejeitados(source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir)
             return None
@@ -265,8 +268,8 @@ def processar_arquivo_individual(
         manifest.erros.extend(errors)
         manifest.avisos.extend(warnings)
         
-        if errors or integridade < 40.0 or not manifest.cnpj_extraido:
-            manifest.status_extracao = "ERRO_VALIDACAO_GATES" if errors else ("ERRO_INTEGRIDADE" if integridade < 40.0 else "ERRO_SEM_CNPJ")
+        if errors or integridade < limiar_minimo or not manifest.cnpj_extraido:
+            manifest.status_extracao = "ERRO_VALIDACAO_GATES" if errors else ("ERRO_INTEGRIDADE" if integridade < limiar_minimo else "ERRO_SEM_CNPJ")
             fechar_pasta(workbook)
             mover_para_rejeitados(source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir)
             return None

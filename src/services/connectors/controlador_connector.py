@@ -36,6 +36,8 @@ def buscar_planilha_controlador(input_dir: str | None = None, logger_arg: Any | 
         
         try:
             df = pd.read_csv(arquivo_alvo, sep=";", encoding="utf-8-sig")
+            if len(df.columns) <= 1:
+                df = pd.read_csv(arquivo_alvo, sep=",", encoding="utf-8-sig")
         except (pd.errors.ParserError, UnicodeDecodeError):
             try:
                 df = pd.read_csv(arquivo_alvo, sep=",", encoding="utf-8-sig")

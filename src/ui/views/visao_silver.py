@@ -89,7 +89,7 @@ def render_visao_silver():
     render_header(
         titulo="Visão da Camada Silver",
         subtitulo="Dados limpos, tipados e padronizados da origem sem interferência de regras de risco (Verdade da Origem).",
-        badge_texto="Camada Silver • Refined",
+        badge_texto="Camada Silver",
         status_online=True
     )
 

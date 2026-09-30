@@ -32,6 +32,8 @@ def executar_reconciliacao_denodo_mtm(context: AppContext) -> dict[str, Any]:
 
         silver_mtm_path = context.path("silver") / "mtm_consolidado_silver" / "mtm_agregado_contraparte.parquet"
         silver_denodo_path = context.path("silver") / "denodo_contratos_silver" / "contratos_correntes.parquet"
+        if not silver_denodo_path.exists():
+            silver_denodo_path = context.path("silver") / "denodo_contratos_padronizados" / "contratos_correntes.parquet"
 
         if not silver_mtm_path.exists() or not silver_denodo_path.exists():
             raise ReconciliacaoDataError("As bases Silver do Denodo ou MtM não foram encontradas para a reconciliação.")

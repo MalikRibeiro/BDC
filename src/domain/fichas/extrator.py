@@ -291,14 +291,17 @@ def extrair_registro(leitor: LeitorPlanilha, layout_schema: Dict[str, Any], mast
             logger.debug("[GATE_ENGINE] Layout candidato descartado. Campo %s (GATE) ausente.", gate)
             break
                 
+    from control.quality_loader import obter_limiar_integridade_fichas
+    limiar_minimo = obter_limiar_integridade_fichas()
+
     if falha_gate:
         score = 0.0
         extracted_data["INTEGRIDADE_EXTRAIDA_PERCENTUAL"] = 0.0
         logger.debug("[INTEGRIDADE] Layout candidato recusado: Falha no GATE Crítico.")
-    elif score >= 40.0:
+    elif score >= limiar_minimo:
         logger.debug("[INTEGRIDADE] Layout candidato atingiu %.2f%% de integridade.", score)
     else:
-        logger.debug("[INTEGRIDADE] Layout candidato recusado: baixa integridade (%.2f%%).", score)
+        logger.debug("[INTEGRIDADE] Layout candidato recusado: baixa integridade (%.2f%%). Minimo exigido: %.1f%%.", score, limiar_minimo)
 
     return extracted_data, metadata_list
 

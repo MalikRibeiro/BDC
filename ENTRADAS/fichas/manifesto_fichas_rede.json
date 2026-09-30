@@ -12304,5 +12304,223 @@
     "data_sincronizacao": "2026-09-25T11:18:31.827626",
     "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\.Chamados SalesForce\\2026\\.CONSUMIDORES LIVRES\\AGROINDUSTRIAL IGUATEMI 00536728\\FICHA_CONSUMIDORES_V3_IGUATEMI 24092026.xlsx",
     "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\FICHA_CONSUMIDORES_V3_IGUATEMI 24092026.xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\.Chamados SalesForce\\2026\\.COMERCIALIZADORAS E GERADORAS\\PAN AMERICAN ENERGY - 00497449\\PAN AMERICAN EER 28092026.xlsx": {
+    "nome_arquivo": "PAN AMERICAN EER 28092026.xlsx",
+    "status": "SUCESSO",
+    "segmento": "comercializadoras",
+    "tamanho_bytes": 1095594,
+    "mtime": 1790707380.3531957,
+    "hash_sha256": "448e83afdee2de475089b3e481bcb2def4952e01c1231b8300e8fdcdab02881a",
+    "data_sincronizacao": "2026-09-29T16:05:50.524508",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\.Chamados SalesForce\\2026\\.COMERCIALIZADORAS E GERADORAS\\PAN AMERICAN ENERGY - 00497449\\PAN AMERICAN EER 28092026.xlsx",
+    "destino_local": "ENTRADAS\\fichas\\comercializadoras\\pendentes\\PAN AMERICAN EER 28092026.xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Francisco 1 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Francisco 1 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168242,
+    "mtime": 1790620295.951457,
+    "hash_sha256": "759028aa05178da90321dddaac1def2c094a41c69c6a08b4c606b8b598a72a7c",
+    "data_sincronizacao": "2026-09-28T16:55:27.713852",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Francisco 1 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Francisco 1 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Jaiba 3 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Jaiba 3 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168241,
+    "mtime": 1790617787.3115232,
+    "hash_sha256": "17adff64f4506b8aadf3cb3ee26bb234e97d70e0258560d368ed57f7a08a7af7",
+    "data_sincronizacao": "2026-09-28T15:30:51.271159",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Jaiba 3 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Jaiba 3 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Jaiba 4 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Jaiba 4 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168238,
+    "mtime": 1790618074.9025724,
+    "hash_sha256": "f0d3b97dbdc4feb6abcae617a454e573f223ecf01efb6c84e1ce46afc57e1aad",
+    "data_sincronizacao": "2026-09-28T15:30:51.362154",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Jaiba 4 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Jaiba 4 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Jaiba 9 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Jaiba 9 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168259,
+    "mtime": 1790618593.9502625,
+    "hash_sha256": "82f335a8793ceebc68d655ffcec7e173e93e21d61f04e3f1f4697069a3d6c9aa",
+    "data_sincronizacao": "2026-09-28T15:30:51.485892",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Jaiba 9 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Jaiba 9 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Lavras 1 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Lavras 1 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168526,
+    "mtime": 1790634950.244578,
+    "hash_sha256": "28d57a15492a84ed5c3afee6f51ef9247f5a518c720a5c33fbfeabbd72219126",
+    "data_sincronizacao": "2026-09-29T11:00:30.960898",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Lavras 1 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Lavras 1 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Lavras 2 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Lavras 2 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168600,
+    "mtime": 1790635383.8443851,
+    "hash_sha256": "ca791d4d274cb9e642e8d854604848ec634696a62b6a2e5fa3ca20bc1e64c924",
+    "data_sincronizacao": "2026-09-29T11:00:31.089902",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Lavras 2 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Lavras 2 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Lavras 3 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Lavras 3 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168596,
+    "mtime": 1790635710.7722757,
+    "hash_sha256": "08d0940f0201e27a363330042bc880926e015e28c4e61878bcd62a7891a752c7",
+    "data_sincronizacao": "2026-09-29T11:00:31.207407",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Lavras 3 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Lavras 3 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Lavras 4 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Lavras 4 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168527,
+    "mtime": 1790636135.5356095,
+    "hash_sha256": "53d8f6fdc6e900dc5b061b243b006d96dd51ce4b0d068beaf437dfaefdbff235",
+    "data_sincronizacao": "2026-09-29T11:00:31.356851",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Lavras 4 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Lavras 4 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Lavras 5 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Lavras 5 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168595,
+    "mtime": 1790693218.4449804,
+    "hash_sha256": "2a23a109936e45f5a0107b2b87a404d67880a2799ec93365c2bbffd208763647",
+    "data_sincronizacao": "2026-09-29T14:58:38.606698",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Lavras 5 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Lavras 5 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\NEBRAS DO BRAZIL INVESTMENTS 25092026.xlsx": {
+    "nome_arquivo": "NEBRAS DO BRAZIL INVESTMENTS 25092026.xlsx",
+    "status": "SUCESSO",
+    "segmento": "comercializadoras",
+    "tamanho_bytes": 514369,
+    "mtime": 1790629734.5808935,
+    "hash_sha256": "673e2c52f3981d7b0bb46780f3d125706b490252bcb604db592bf6fe502af498",
+    "data_sincronizacao": "2026-09-29T11:00:31.636393",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\NEBRAS DO BRAZIL INVESTMENTS 25092026.xlsx",
+    "destino_local": "ENTRADAS\\fichas\\comercializadoras\\pendentes\\NEBRAS DO BRAZIL INVESTMENTS 25092026.xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Salgueiro 1 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Salgueiro 1 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168648,
+    "mtime": 1790633668.868267,
+    "hash_sha256": "634d19057b6bcd8b4bc23c6696c916e055d5c750a47962fcb6e27f4048bab82b",
+    "data_sincronizacao": "2026-09-29T11:00:31.761674",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Salgueiro 1 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Salgueiro 1 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Salgueiro 2 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Salgueiro 2 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168613,
+    "mtime": 1790633713.7611973,
+    "hash_sha256": "25f7c9bcd86de2dc761d10cc4adcafb0ed074a34a1a29bf421754a6456bec4f9",
+    "data_sincronizacao": "2026-09-29T11:00:31.869736",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Salgueiro 2 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Salgueiro 2 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Salgueiro 3 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Salgueiro 3 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168562,
+    "mtime": 1790634383.548387,
+    "hash_sha256": "008c035a2edb9a9c6020aed679d1b45958deaa482edc4f6c3b2ea1c552962ec5",
+    "data_sincronizacao": "2026-09-29T11:00:32.005591",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Salgueiro 3 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Salgueiro 3 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Francisco 2 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Francisco 2 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168254,
+    "mtime": 1790620539.814249,
+    "hash_sha256": "afffdec864aae16011271bf6236d212d0e7b79898e5d9ede20b962776f2ef712",
+    "data_sincronizacao": "2026-09-28T16:55:27.809134",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Francisco 2 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Francisco 2 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Francisco 3 Energias Renováveis (apenas apuração de PD).xlsx": {
+    "nome_arquivo": "Francisco 3 Energias Renováveis (apenas apuração de PD).xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 168224,
+    "mtime": 1790620772.0483117,
+    "hash_sha256": "509362c546c537f823ed09e0d881cf4f2a30f741c15f644f00c6595977d6b9df",
+    "data_sincronizacao": "2026-09-28T16:55:27.913174",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\NEBRAS DO BRAZIL INVESTMENTS Ltda\\Francisco 3 Energias Renováveis (apenas apuração de PD).xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\Francisco 3 Energias Renováveis (apenas apuração de PD).xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\AMAGGI - 00522938\\FICHA_CONSUMIDORES_AMAGGI 29092026 controlador.xlsx": {
+    "nome_arquivo": "FICHA_CONSUMIDORES_AMAGGI 29092026 controlador.xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 170516,
+    "mtime": 1790709817.5234232,
+    "hash_sha256": "84f49a49481050a81d7893dc29b24eabec40d5b7e413bfeb268cab53d99679b2",
+    "data_sincronizacao": "2026-09-29T17:33:57.113275",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\AMAGGI - 00522938\\FICHA_CONSUMIDORES_AMAGGI 29092026 controlador.xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\FICHA_CONSUMIDORES_AMAGGI 29092026 controlador.xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\AMAGGI - 00522938\\FICHA_PURAS_V1_AMAGGI_29092026 controlador.xlsx": {
+    "nome_arquivo": "FICHA_PURAS_V1_AMAGGI_29092026 controlador.xlsx",
+    "status": "VETO",
+    "motivo_veto": "PADRAO_APOIO_OU_TEMPLATE",
+    "tamanho_bytes": 442699,
+    "mtime": 1790709789.4090345,
+    "data_avaliacao": "2026-09-29T17:33:57.225382",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\AMAGGI - 00522938\\FICHA_PURAS_V1_AMAGGI_29092026 controlador.xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\.Chamados SalesForce\\2026\\.COMERCIALIZADORAS E GERADORAS\\BTG PACTUAL\\BTG PACTUAL 29092026.xlsx": {
+    "nome_arquivo": "BTG PACTUAL 29092026.xlsx",
+    "status": "SUCESSO",
+    "segmento": "comercializadoras",
+    "tamanho_bytes": 508490,
+    "mtime": 1790711096.4053798,
+    "hash_sha256": "7e9906d0fd5f651e31d0105bddcc3e984a686d1b39da7f43f6989968e5179920",
+    "data_sincronizacao": "2026-09-29T17:33:50.954219",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\.Chamados SalesForce\\2026\\.COMERCIALIZADORAS E GERADORAS\\BTG PACTUAL\\BTG PACTUAL 29092026.xlsx",
+    "destino_local": "ENTRADAS\\fichas\\comercializadoras\\pendentes\\BTG PACTUAL 29092026.xlsx"
+  },
+  "\\\\KM3REDE2\\GRP2\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\AMAGGI - 00522938\\FICHA_CONSUMIDORES_V3_AMAGGI_2025_PREENCHIDA 5.xlsx": {
+    "nome_arquivo": "FICHA_CONSUMIDORES_V3_AMAGGI_2025_PREENCHIDA 5.xlsx",
+    "status": "SUCESSO",
+    "segmento": "consumidores",
+    "tamanho_bytes": 146560,
+    "mtime": 1790710554.7848957,
+    "hash_sha256": "df38ec49ef257a832a18fa26f2742723d03efba8ce21add9c18d571afe6b00b3",
+    "data_sincronizacao": "2026-09-29T17:33:57.184328",
+    "caminho_origem": "S:\\COM_CPR\\3 ATIVIDADES E PROJETOS DA CPR\\Limite Comercializadoras\\Agentes_Demonstrações Financeiras\\Fichas\\2026\\AMAGGI - 00522938\\FICHA_CONSUMIDORES_V3_AMAGGI_2025_PREENCHIDA 5.xlsx",
+    "destino_local": "ENTRADAS\\fichas\\consumidores\\pendentes\\FICHA_CONSUMIDORES_V3_AMAGGI_2025_PREENCHIDA 5.xlsx"
   }
 }

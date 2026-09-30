@@ -7,6 +7,10 @@ from pathlib import Path
 from typing import Any
 
 from app.context import AppContext
+from control.logger import obter_logger
+
+logger = obter_logger("bdc.enquadramento")
+
 
 
 def calcular_enquadramento_consumidor(
@@ -22,7 +26,7 @@ def calcular_enquadramento_consumidor(
     parquet_path = silver_dir / f"contratos_correntes_{competencia_base}.parquet"
 
     if not parquet_path.exists():
-        df_vazio = pd.DataFrame(columns=["CNPJ", "VOLUME_ENQUADRAMENTO_MWM", "POSSUI_PELO_MENOS_5_MWM"])
+        df_vazio = pd.DataFrame(columns=["CNPJ", "VOLUME_ENQUADRAMENTO_MWM", "POSSUI_PELO_MENOS_5_MWM", "SEGMENTO_METODOLOGICO"])
         _salvar_enquadramento(context, competencia_base, df_vazio)
         return df_vazio
 
@@ -30,7 +34,7 @@ def calcular_enquadramento_consumidor(
 
     if df_contratos.empty:
         df_enquadramento = pd.DataFrame(
-            columns=["CNPJ", "VOLUME_ENQUADRAMENTO_MWM", "POSSUI_PELO_MENOS_5_MWM"]
+            columns=["CNPJ", "VOLUME_ENQUADRAMENTO_MWM", "POSSUI_PELO_MENOS_5_MWM", "SEGMENTO_METODOLOGICO"]
         )
         _salvar_enquadramento(context, competencia_base, df_enquadramento)
         return df_enquadramento
@@ -51,7 +55,7 @@ def calcular_enquadramento_consumidor(
 
     if df_ativos.empty:
         df_enquadramento = pd.DataFrame(
-            columns=["CNPJ", "VOLUME_ENQUADRAMENTO_MWM", "POSSUI_PELO_MENOS_5_MWM"]
+            columns=["CNPJ", "VOLUME_ENQUADRAMENTO_MWM", "POSSUI_PELO_MENOS_5_MWM", "SEGMENTO_METODOLOGICO"]
         )
         _salvar_enquadramento(context, competencia_base, df_enquadramento)
         return df_enquadramento
@@ -107,17 +111,58 @@ def calcular_enquadramento_consumidor(
         )
     )
 
+    # --- FALLBACK 2: VOLUME MWM VIA COTAÇÕES APROVADAS SALESFORCE ---
+    df_sf_cot_val = pd.DataFrame()
+    try:
+        sf_cot_path = context.path("silver") / "salesforce_silver" / "cotacao" / "salesforce_cotacao.parquet"
+        if sf_cot_path.exists():
+            df_sf_cot = pd.read_parquet(sf_cot_path)
+            if not df_sf_cot.empty and "Maior_Volume_Mwm__c" in df_sf_cot.columns and "CNPJ" in df_sf_cot.columns:
+                if "Cotacao_Aprovada__c" in df_sf_cot.columns:
+                    mask_aprov = df_sf_cot["Cotacao_Aprovada__c"].astype(str).str.strip().str.upper().isin(["TRUE", "1", "S", "SIM"])
+                    df_sf_cot_val = df_sf_cot[mask_aprov].copy()
+                else:
+                    df_sf_cot_val = df_sf_cot.copy()
+
+                from common.numeros import to_float_br
+                from common.identificadores import normalizar_cnpj_coluna
+
+                df_sf_cot_val["CNPJ"] = df_sf_cot_val["CNPJ"].apply(normalizar_cnpj_coluna)
+                df_sf_cot_val["CNPJ_RAIZ"] = df_sf_cot_val["CNPJ"].str[:8]
+                df_sf_cot_val["VOL_SF"] = df_sf_cot_val["Maior_Volume_Mwm__c"].apply(to_float_br)
+                df_sf_cot_val = df_sf_cot_val.dropna(subset=["CNPJ_RAIZ", "VOL_SF"])
+
+                if not df_sf_cot_val.empty:
+                    df_sf_max = df_sf_cot_val.groupby("CNPJ_RAIZ", as_index=False)["VOL_SF"].max()
+                    # Outer join garante que contrapartes com cotação aprovada no Salesforce não sejam perdidas
+                    df_enq_raiz = pd.merge(df_enq_raiz, df_sf_max, on="CNPJ_RAIZ", how="outer")
+                    mask_denodo_valido = df_enq_raiz["VOLUME_ENQUADRAMENTO_MWM"].notna() & (df_enq_raiz["VOLUME_ENQUADRAMENTO_MWM"] > 0)
+                    df_enq_raiz.loc[~mask_denodo_valido, "VOLUME_ENQUADRAMENTO_MWM"] = df_enq_raiz.loc[~mask_denodo_valido, "VOL_SF"]
+                    df_enq_raiz.drop(columns=["VOL_SF"], inplace=True)
+    except Exception as exc:
+        logger.warning("Falha ao carregar fallback de volume do Salesforce: %s", exc)
+    # -----------------------------------------------------------------
+
     LIMIAR_MWM = 5.0
 
     df_enq_raiz["POSSUI_PELO_MENOS_5_MWM"] = (
         df_enq_raiz["VOLUME_ENQUADRAMENTO_MWM"] >= LIMIAR_MWM
     )
+    df_enq_raiz["SEGMENTO_METODOLOGICO"] = df_enq_raiz["POSSUI_PELO_MENOS_5_MWM"].map(
+        {True: "CONSUMIDOR_GT_5", False: "CONSUMIDOR_LE_5"}
+    ).fillna("CONSUMIDOR_LE_5")
+
+    # Mapear de volta para todos os CNPJs completos (Denodo + Salesforce)
+    df_cnpjs_base = df_ativos[["CNPJ", "CNPJ_RAIZ"]].drop_duplicates()
+    if not df_sf_cot_val.empty:
+        df_cnpjs_sf = df_sf_cot_val[["CNPJ", "CNPJ_RAIZ"]].drop_duplicates()
+        df_cnpjs_base = pd.concat([df_cnpjs_base, df_cnpjs_sf], ignore_index=True).drop_duplicates("CNPJ")
 
     df_enquadramento = pd.merge(
-        df_ativos[["CNPJ", "CNPJ_RAIZ"]].drop_duplicates(),
+        df_cnpjs_base,
         df_enq_raiz,
         on="CNPJ_RAIZ",
-        how="left",
+        how="inner",
     ).drop(columns=["CNPJ_RAIZ"])
 
     _salvar_enquadramento(context, competencia_base, df_enquadramento)

@@ -130,3 +130,26 @@ def normalizar_cnpj(
         valor_original=valor,
         zeros_adicionados=zeros_adicionados,
     )
+
+
+def calcular_cnpj_matriz(cnpj_ou_raiz: Any) -> str | None:
+    """Calcula deterministamente o CNPJ da matriz (terminação 0001-XX) via Módulo 11."""
+    digitos = _extrair_digitos_identificador(cnpj_ou_raiz)
+    if not digitos or len(digitos) < 8:
+        return None
+    raiz = digitos[:8]
+    base = raiz + "0001"
+
+    pesos1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+    soma1 = sum(int(num) * peso for num, peso in zip(base, pesos1))
+    resto1 = soma1 % 11
+    d1 = "0" if resto1 < 2 else str(11 - resto1)
+
+    pesos2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
+    base2 = base + d1
+    soma2 = sum(int(num) * peso for num, peso in zip(base2, pesos2))
+    resto2 = soma2 % 11
+    d2 = "0" if resto2 < 2 else str(11 - resto2)
+
+    cnpj_matriz = base + d1 + d2
+    return cnpj_matriz if validar_digitos_cnpj(cnpj_matriz) else None

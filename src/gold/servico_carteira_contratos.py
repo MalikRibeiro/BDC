@@ -120,6 +120,19 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
         df_fatos["CNPJ"] = df_fatos["CNPJ"].apply(normalizar_cnpj_coluna)
         df_fatos["DATA_ANALISE_DT"] = pd.to_datetime(df_fatos["DATA_ANALISE"], errors="coerce").astype("datetime64[ns]")
         
+        # Fallback de segurança: se DATA_ANALISE_DT for NaT mas houver FIM_VIGENCIA_ANALISE
+        if "FIM_VIGENCIA_ANALISE" in df_fatos.columns:
+            mask_dt_nat = df_fatos["DATA_ANALISE_DT"].isna() & df_fatos["FIM_VIGENCIA_ANALISE"].notna()
+            if mask_dt_nat.any():
+                is_bur = df_fatos["TIPO_ANALISE"].astype(str).str.contains("Bureau", na=False)
+                df_fatos.loc[mask_dt_nat & is_bur, "DATA_ANALISE_DT"] = (
+                    pd.to_datetime(df_fatos.loc[mask_dt_nat & is_bur, "FIM_VIGENCIA_ANALISE"], errors="coerce") - pd.DateOffset(months=12)
+                ).astype("datetime64[ns]")
+                df_fatos.loc[mask_dt_nat & (~is_bur), "DATA_ANALISE_DT"] = (
+                    pd.to_datetime(df_fatos.loc[mask_dt_nat & (~is_bur), "FIM_VIGENCIA_ANALISE"], errors="coerce") - pd.DateOffset(months=18)
+                ).astype("datetime64[ns]")
+                df_fatos.loc[mask_dt_nat, "DATA_ANALISE"] = df_fatos.loc[mask_dt_nat, "DATA_ANALISE_DT"].dt.strftime("%Y-%m-%d")
+
         # Critério de ordenação com desempate determinístico:
         # 1. CNPJ
         # 2. DATA_ANALISE_DT (data da análise)
@@ -139,7 +152,8 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
         cols_interesse_fato = [
             "CNPJ", "DATA_ANALISE", "DATA_ANALISE_DT", "RATING", "PD_PERCENTUAL", 
             "SCORE", "RESTRITIVOS", "TIPO_ANALISE", "FIM_VIGENCIA_ANALISE", 
-            "ORIGEM_FONTE", "ANALISE_HERDADA", "SEGMENTO_METODOLOGICO_FICHA", "TIPO_FICHA"
+            "ORIGEM_FONTE", "ANALISE_HERDADA", "SEGMENTO_METODOLOGICO_FICHA", "TIPO_FICHA",
+            "FONTE_ANALISE"
         ]
         cols_presentes = [c for c in cols_interesse_fato if c in df_fatos_latest.columns]
         df_fatos_sub = df_fatos_latest[cols_presentes].copy()
@@ -152,7 +166,7 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
         )
     else:
         df_final = df_merged.copy()
-        for c in ["DATA_ANALISE", "DATA_ANALISE_DT", "RATING", "PD_PERCENTUAL", "SCORE", "RESTRITIVOS", "TIPO_ANALISE", "FIM_VIGENCIA_ANALISE", "ORIGEM_FONTE"]:
+        for c in ["DATA_ANALISE", "DATA_ANALISE_DT", "RATING", "PD_PERCENTUAL", "SCORE", "RESTRITIVOS", "TIPO_ANALISE", "FIM_VIGENCIA_ANALISE", "ORIGEM_FONTE", "FONTE_ANALISE"]:
             df_final[c] = pd.NA
 
     # 5. Avaliação de Vigência da Análise contra a data de hoje
@@ -266,6 +280,30 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
     df_final.loc[mask_intercompany, "SCORE"] = pd.NA
     df_final.loc[mask_intercompany, "RESTRITIVOS"] = 0
 
+    # Padronização canônica de FONTE_ANALISE na Gold
+    if "FONTE_ANALISE" not in df_final.columns:
+        df_final["FONTE_ANALISE"] = pd.NA
+
+    _mapa_fonte_gold = {
+        "DF": "Ficha Interna",
+        "BUREAU": "Bureau (Risk3)",
+        "SALESFORCE": "Salesforce",
+    }
+    mask_fonte_na = df_final["FONTE_ANALISE"].isna() & df_final["ORIGEM_FONTE"].notna()
+    if mask_fonte_na.any():
+        df_final.loc[mask_fonte_na, "FONTE_ANALISE"] = (
+            df_final.loc[mask_fonte_na, "ORIGEM_FONTE"]
+            .astype(str)
+            .str.strip()
+            .str.upper()
+            .map(_mapa_fonte_gold)
+        )
+
+    mask_herdada_gold = df_final["ANALISE_HERDADA"] == True
+    df_final.loc[mask_herdada_gold, "FONTE_ANALISE"] = "Herança Societária"
+    df_final.loc[mask_intercompany, "FONTE_ANALISE"] = "Intercompany"
+    df_final.loc[df_final["STATUS_VIGENCIA_ANALISE"] == "SEM_ANALISE", "FONTE_ANALISE"] = pd.NA
+
     # 6. Cálculo da NOVA COLUNA: STATUS_CONTRATO
     # - Se hoje < SUPRIMENTO_INICIO ➔ A_FORNECER
     # - Se SUPRIMENTO_INICIO <= hoje <= SUPRIMENTO_FIM ➔ EM_FORNECIMENTO
@@ -318,7 +356,8 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
         "FIM_VIGENCIA_ANALISE": "FIM_VIGENCIA_ANALISE",
         "STATUS_VIGENCIA_ANALISE": "STATUS_VIGENCIA_ANALISE",
         "TIPO_ANALISE": "TIPO_ANALISE",
-        "STATUS_CONTRATO": "STATUS_CONTRATO"
+        "STATUS_CONTRATO": "STATUS_CONTRATO",
+        "FONTE_ANALISE": "FONTE_ANALISE"
     }
     
     for col in rename_map.keys():
@@ -336,7 +375,7 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
         if num_col in df_final.columns:
             df_final[num_col] = pd.to_numeric(df_final[num_col], errors="coerce")
             
-    for str_col in ["CONTRAPARTE_NOME_FANTASIA", "CONTRAPARTE_CNPJ", "NUMERO_REFERENCIA_CONTRATO", "MOVIMENTACAO", "PORTFOLIO", "RATING", "STATUS_VIGENCIA_ANALISE", "TIPO_ANALISE", "STATUS_CONTRATO"]:
+    for str_col in ["CONTRAPARTE_NOME_FANTASIA", "CONTRAPARTE_CNPJ", "NUMERO_REFERENCIA_CONTRATO", "MOVIMENTACAO", "PORTFOLIO", "RATING", "STATUS_VIGENCIA_ANALISE", "TIPO_ANALISE", "STATUS_CONTRATO", "FONTE_ANALISE"]:
         if str_col in df_final.columns:
             df_final[str_col] = df_final[str_col].astype(str).replace({"nan": None, "None": None, "<NA>": None, "NaT": None})
 

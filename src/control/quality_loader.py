@@ -69,3 +69,34 @@ def carregar_regras_de_qualidade_de_dados_consumidores(
     
     logger.info("Lendo master catalog consumidores: %s", master_catalog_path)
     return ler_json(master_catalog_path)
+
+
+def obter_limiar_integridade_fichas(context: Any = None) -> float:
+    """
+    Carrega o limiar de integridade mínima das fichas parametrizado no config.json (com fallback seguro para 35.0%).
+    Permite governança centralizada sem hardcode espalhado pelo código.
+    """
+    limiar_padrao = 35.0
+    
+    if context is not None:
+        cfg = getattr(context, "config", None)
+        if isinstance(cfg, dict):
+            val = cfg.get("qualidade_extracao", {}).get("limiar_integridade_minima")
+            if val is not None:
+                try:
+                    return float(val)
+                except (ValueError, TypeError):
+                    pass
+
+    # Leitura direta do arquivo JSON caso invocado fora de um AppContext instanciado
+    config_path = Path("ENTRADAS/configs/config.json")
+    if config_path.exists():
+        try:
+            cfg_dict = ler_json(config_path)
+            val = cfg_dict.get("qualidade_extracao", {}).get("limiar_integridade_minima")
+            if val is not None:
+                return float(val)
+        except Exception:
+            pass
+
+    return limiar_padrao

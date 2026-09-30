@@ -34,6 +34,7 @@ def inserir_dados_bureau(context: AppContext) -> dict[str, Any]:
     path_fichas_com = context.path("silver") / "fichas_comercializadoras_extraidas" / "fichas_comercializadoras_extraidas.parquet"
     path_fichas_cons = context.path("silver") / "fichas_consumidores_extraidas" / "fichas_consumidores_extraidas.parquet"
     path_controladoras = context.path("silver") / "mapeamento_controladoras" / "mapeamento_controladoras.parquet"
+    path_controladoras_csv = Path("ENTRADAS/controlador/Controladora e Subsidiaria.csv")
     
     cnpjs_adicionais = set()
     for p in [path_fichas_com, path_fichas_cons]:
@@ -48,21 +49,43 @@ def inserir_dados_bureau(context: AppContext) -> dict[str, Any]:
             cnpjs_adicionais.update(df_ctrl["CNPJ_SUBSIDIARIA"].dropna().unique())
         if "CNPJ_CONTA_ATRELADA" in df_ctrl.columns:
             cnpjs_adicionais.update(df_ctrl["CNPJ_CONTA_ATRELADA"].dropna().unique())
+    elif path_controladoras_csv.exists():
+        try:
+            df_ctrl = pd.read_csv(path_controladoras_csv, sep=",")
+            if len(df_ctrl.columns) <= 1:
+                df_ctrl = pd.read_csv(path_controladoras_csv, sep=";")
+            df_ctrl.columns = df_ctrl.columns.str.strip().str.upper()
+            if "CNPJ_SUBSIDIARIA" in df_ctrl.columns:
+                cnpjs_adicionais.update(df_ctrl["CNPJ_SUBSIDIARIA"].dropna().unique())
+            if "CNPJ_CONTA_ATRELADA" in df_ctrl.columns:
+                cnpjs_adicionais.update(df_ctrl["CNPJ_CONTA_ATRELADA"].dropna().unique())
+        except Exception as e:
+            logger.warning("Falha ao ler CSV de controladoras como fallback: %s", e)
     
     path_contratos = context.path("silver") / "denodo_contratos_silver" / "contratos_correntes.parquet"
     if not path_contratos.exists():
         path_contratos = context.path("silver") / "denodo_contratos_padronizados" / "contratos_correntes.parquet"
         
+    cnpjs_matrizes_derivadas = set()
+    from common.identificadores import calcular_cnpj_matriz, normalizar_cnpj_coluna
     if path_contratos.exists():
         df_contratos = pd.read_parquet(path_contratos)
         cnpjs_todos_contratos = set(df_contratos["CNPJ"].dropna().unique())
-        # Agora o Bureau vai buscar TODO mundo: Enquadrados, Adicionais (Fichas) e QUALQUER CNPJ que tenha contrato (mesmo vencido)
-        cnpjs_alvo = list(set(cnpjs_enquadrados).union(cnpjs_adicionais).union(cnpjs_todos_contratos))
+        for c in cnpjs_todos_contratos:
+            c_norm = normalizar_cnpj_coluna(c)
+            if c_norm and len(c_norm) == 14 and c_norm[8:12] != "0001":
+                matriz = calcular_cnpj_matriz(c_norm)
+                if matriz:
+                    cnpjs_matrizes_derivadas.add(matriz)
+        cnpjs_alvo = list(set(cnpjs_enquadrados).union(cnpjs_adicionais).union(cnpjs_todos_contratos).union(cnpjs_matrizes_derivadas))
     else:
         logger.warning("Base de contratos correntes não encontrada. Prosseguindo sem filtro de atividade.")
         cnpjs_alvo = list(set(cnpjs_enquadrados).union(cnpjs_adicionais))
 
-    logger.info("Total de CNPJs elegíveis para consulta RISK3 (Enquadrados e Ativos): %d", len(cnpjs_alvo))
+    if cnpjs_matrizes_derivadas:
+        logger.info("Adicionadas %d Matrizes (0001-XX) derivadas de filiais para busca no Bureau.", len(cnpjs_matrizes_derivadas))
+
+    logger.info("Total de CNPJs elegíveis para consulta RISK3 (Enquadrados, Ativos e Matrizes): %d", len(cnpjs_alvo))
     
     if not cnpjs_alvo:
         _gravar_silver_vazia(context, run_id)
@@ -92,6 +115,12 @@ def inserir_dados_bureau(context: AppContext) -> dict[str, Any]:
         _gravar_silver_vazia(context, run_id)
         return {"run_id": run_id, "status": "FALHA_OU_BLOQUEIO_DE_REDE"}
         
+    if "DATA_CONSULTA" in df_silver.columns and "DATA_VALIDADE" in df_silver.columns:
+        mask_sem_data = df_silver["DATA_CONSULTA"].isna() | df_silver["DATA_CONSULTA"].astype(str).str.strip().isin(["", "None", "nan", "<NA>"])
+        df_silver.loc[mask_sem_data, "DATA_CONSULTA"] = (
+            pd.to_datetime(df_silver.loc[mask_sem_data, "DATA_VALIDADE"], errors="coerce") - pd.DateOffset(months=12)
+        ).dt.strftime("%Y-%m-%d")
+
     df_silver["RUN_ID"] = run_id
     df_silver["DT_PROCESSAMENTO"] = datetime.now().isoformat(timespec="seconds")
     

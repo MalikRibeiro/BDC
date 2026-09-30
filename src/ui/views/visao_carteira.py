@@ -37,7 +37,8 @@ COL_MAP_CARTEIRA = {
     "RESTRITIVOS": "Restritivos",
     "DATA_ANALISE": "Data Análise",
     "FIM_VIGENCIA_ANALISE": "Fim Vigência",
-    "TIPO_ANALISE": "Tipo de Análise"
+    "TIPO_ANALISE": "Tipo de Análise",
+    "FONTE_ANALISE": "Fonte dos Dados"
 }
 
 def ler_parquet_ou_csv(caminho_dir: Path, nome_base: str) -> pd.DataFrame:
@@ -96,7 +97,7 @@ def carregar_dados_carteira_preparados() -> pd.DataFrame:
         df_exibicao["PD (%)"] = pd.to_numeric(df_exibicao["PD (%)"], errors="coerce") * 100.0
 
     # Normalizar valores vazios/nulos nas colunas de texto para evitar overhead no filtro
-    cols_traco = ["Rating", "Tipo de Análise", "Status do Contrato", "Operação", "Data Análise", "Fim Vigência", "Portfólio", "Data Fechamento", "Início Suprimento", "Fim Suprimento"]
+    cols_traco = ["Rating", "Tipo de Análise", "Fonte dos Dados", "Status do Contrato", "Operação", "Data Análise", "Fim Vigência", "Portfólio", "Data Fechamento", "Início Suprimento", "Fim Suprimento"]
     for col_txt in cols_traco:
         if col_txt in df_exibicao.columns:
             df_exibicao[col_txt] = df_exibicao[col_txt].replace({"None": "-", "nan": "-", "<NA>": "-", "NaT": "-"}).fillna("-")
@@ -188,6 +189,13 @@ def render_visao_carteira():
         * **Portfólio (`PORTFOLIO`):** Classificação do book de negociação ou submercado.
         * **MtM Total (`MTM_TOTAL_R$`):** Marcação a mercado total acumulada do contrato (soma de parcelas líquidas).
         * **MtM VPL (`MTM_VPL_R$`):** Valor Presente Líquido da curva de exposição projetada.
+        
+        ### Valorados à MtM: Contratos com reconhecimento futuro
+        * **Estratégia** (Aprovado em Comissão Estratégica com caráter de Trading) = Raro​
+        * **Geradores NE** (Operações de LP com geradores em implantação) = Raro​
+        * **Chamada 01/2020 Etapa 1** (Operações LP da CP já ocorrida em 01/2020) = não será utilizado de agora em diante​
+        * **Trading** (operações de Trading para o portfólio da COPEL COM) 
+        * **Direcional** (Operações de Trading para o Direcional)
         """)
 
     try:

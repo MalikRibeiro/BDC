@@ -18,7 +18,10 @@ from common.nulos import is_nulo_textual
 
 from control.layout_catalog import carregar_layouts_consumidores
 from control.carregador_de_mapeamento import mapeamento_de_carga_fichas_consumidores
-from control.quality_loader import carregar_regras_de_qualidade_de_dados_consumidores
+from control.quality_loader import (
+    carregar_regras_de_qualidade_de_dados_consumidores,
+    obter_limiar_integridade_fichas,
+)
 from common.servico_desduplicacao import (
     tem_chave_de_negocio_duplicada,
     tem_hash_duplicado,
@@ -332,12 +335,13 @@ def processar_arquivo_individual(
             logger=logger,
         )
         
+        limiar_minimo = obter_limiar_integridade_fichas(context)
         integridade = normalized.get("INTEGRIDADE_EXTRAIDA_PERCENTUAL", 0)
-        if integridade >= 40.0:
+        if integridade >= limiar_minimo:
             critical_errors = []
             for e in errors:
                 if "ausente" in e.lower() or "não informado" in e.lower() or "não informada" in e.lower():
-                    warnings.append(f"Ignorado por Integridade >= 40%: {e}")
+                    warnings.append(f"Ignorado por Integridade >= {limiar_minimo}%: {e}")
                 else:
                     critical_errors.append(e)
             errors = critical_errors
@@ -345,9 +349,9 @@ def processar_arquivo_individual(
         manifest.erros.extend(errors)
         manifest.avisos.extend(warnings)
 
-        if integridade < 40.0:
+        if integridade < limiar_minimo:
             manifest.status_extracao = "ERRO_INTEGRIDADE"
-            manifest.erros.append(f"Integridade baixa: {integridade}% (mínimo 40%). Ficha rejeitada.")
+            manifest.erros.append(f"Integridade baixa: {integridade}% (mínimo {limiar_minimo}%). Ficha rejeitada.")
             fechar_pasta(workbook)
             mover_para_rejeitados(
                 source_file, rejected_dir, manifest, ingestion_log_path, logger, control_dir
