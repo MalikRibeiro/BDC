@@ -1,0 +1,3 @@
+2026-10-05 15:39:27 | INFO | bdc.bureau | Adicionadas 293 Matrizes (0001-XX) derivadas de filiais para busca no Bureau.
+2026-10-05 15:39:27 | INFO | bdc.bureau | Total de CNPJs elegíveis para consulta RISK3 (Enquadrados, Ativos e Matrizes): 3192
+2026-10-05 15:40:13 | INFO | bdc.bureau | Ingestão do Bureau concluída. 3192 registros na Silver.

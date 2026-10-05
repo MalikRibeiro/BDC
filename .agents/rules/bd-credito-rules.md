@@ -86,6 +86,14 @@ Exemplos: `fato_analise_credito`, `fato_exposicao_risco`, `fato_score_rating_pd`
 
 Visão consolidada para negócio: joins finais, agregações, seleção e formatação. Não esconder regras complexas na Gold nem recalcular silenciosamente indicadores.
 
+## Soberania da Origem e Validação Paralela
+
+Na camada Relacional e saídas Gold:
+* **O valor lido da ficha original é a autoridade soberana** para concessão e relatórios oficiais, salvo substituição formal via fluxo de Overrides / Carga Manual.
+* O motor Python recalcula fórmulas e réguas como **validação paralela / auditoria sombra**.
+* Divergências numéricas entre o recálculo e a ficha não devem abortar o pipeline silenciosamente: devem gerar status `DIVERGENCIA_ORIGEM` e registro contextual em log de auditoria.
+
+
 # IV. GOVERNANÇA E METADADOS
 
 ## Catálogos e Schemas
@@ -100,6 +108,11 @@ Extração, tipagem e GATES devem ser orientados por metadados, incluindo:
 **Evite hardcode** de colunas, tipos, domínios e validações quando puderem ser parametrizados.
 
 Antes de criar config/catálogo, procure um existente que possa ser estendido.
+
+## Especialização Declarativa de Layouts
+
+* **PROIBIDO:** Usar `if/else` procedurais no extrator Python para desviar leitura de células com base em categoria ou segmento.
+* Diferenças de coordenadas de células entre subsegmentos (ex.: CPURA vs CGRUPO) devem ser tratadas criando layouts JSON dedicados e declarativos no catálogo.
 
 ## Overrides / Carga Manual
 
@@ -163,6 +176,11 @@ except Exception:
 Erros devem ser registrados e, quando aplicável, anexados ao manifesto (`manifest.erros.append(...)`) e encaminhados para rejeição (`mover_para_rejeitados(...)`).
 
 Nunca engolir exceções silenciosamente.
+
+## Invariância Matemática e Z-Score
+
+* A probabilidade de default contábil da NT v7 §4 obedece estritamente a $\text{PD} = \frac{1}{1 + e^{-z}}$.
+* Em caso de denominador contábil nulo ou zero ($AT \le 0$ ou $VL \le 0$), retornar `None` com status `INSUMO_CONTABIL_INVALIDO`, proibida a imputação de zero artificial.
 
 # VI. INTEGRIDADE ARQUITETURAL
 

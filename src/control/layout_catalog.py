@@ -61,16 +61,38 @@ def carregar_layouts_comercializadoras(
         if logger is not None:
             logger.info("Iniciando carga dos layouts de comercializadoras.")
 
-        for version in range(1, 7):
-            key = f"layout_ficha_comercializadora_v{version}"
-            layout_path = context.control_file(key)
+        catalog_path = context.control_file("catalogo_layouts_ficha_comercializadora")
+        catalog = ler_json(catalog_path)
+        layouts_dir = context.path("control_layouts")
 
-            layout_data = ler_json(layout_path)
-            
-            if logger is not None:
-                validar_estrutura_do_layout(layout_data, key, logger)
+        from pathlib import Path
+        for item in catalog.get("layouts", []):
+            versao = item.get("versao_ficha")
+            arquivo = item.get("arquivo_layout")
+            if not versao or not arquivo:
+                continue
 
-            layouts[f"padrao_{version}"] = layout_data
+            layout_file_path = Path(layouts_dir) / arquivo
+            if layout_file_path.exists():
+                layout_data = ler_json(str(layout_file_path))
+                if "expected_tabs" in item:
+                    layout_data["expected_tabs"] = item["expected_tabs"]
+
+                if logger is not None:
+                    validar_estrutura_do_layout(layout_data, versao, logger)
+
+                layouts[versao] = layout_data
+
+        # Fallback de segurança para padrao_1 a 7
+        for version in range(1, 8):
+            v_key = f"padrao_{version}"
+            if v_key not in layouts:
+                key = f"layout_ficha_comercializadora_v{version}"
+                layout_path = context.control_file(key)
+                layout_data = ler_json(layout_path)
+                if logger is not None:
+                    validar_estrutura_do_layout(layout_data, key, logger)
+                layouts[v_key] = layout_data
 
         if logger is not None:
             logger.info(
@@ -97,7 +119,7 @@ def carregar_layouts_consumidores(
         if logger is not None:
             logger.info("Iniciando carga dos layouts de consumidores.")
 
-        for version in range(1, 3):
+        for version in range(1, 4):
             key = f"layout_ficha_consumidor_v{version}"
             layout_path = context.control_file(key)
 

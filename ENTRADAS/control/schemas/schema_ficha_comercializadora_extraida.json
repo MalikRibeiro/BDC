@@ -175,6 +175,12 @@
                 "null"
             ]
         },
+        "FCO_ROL": {
+            "type": [
+                "number",
+                "null"
+            ]
+        },
         "ROA": {
             "type": [
                 "number",

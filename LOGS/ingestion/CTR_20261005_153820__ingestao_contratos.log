@@ -1,0 +1,2 @@
+2026-10-05 15:38:20 | INFO | bdc.contratos | Cache diario de contratos encontrado para hoje (20261005): denodo_api_export_CTR_20261005_113340.csv. Reutilizando snapshot.
+2026-10-05 15:38:59 | INFO | bdc.contratos | Contratos agregados e sem duplicidades salvos. 114054 registros limpos

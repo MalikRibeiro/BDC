@@ -53,11 +53,17 @@
                 "CPURA",
                 "CGRUPO",
                 "PURA",
-                "GRUPO"
+                "GRUPO",
+                "GERADORA",
+                "GERADORAS",
+                "PRODUTOR INDEPENDENTE"
             ],
             "value_mapping": {
                 "PURA": "CPURA",
-                "GRUPO": "CGRUPO"
+                "GRUPO": "CGRUPO",
+                "GERADORA": "CPURA",
+                "GERADORAS": "CPURA",
+                "PRODUTOR INDEPENDENTE": "CPURA"
             }
         },
         "CATEGORIA": {

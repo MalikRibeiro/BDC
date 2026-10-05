@@ -22,33 +22,44 @@ def _calcular_hash(caminho_arquivo: Path) -> str:
 
 def buscar_planilha_controlador(input_dir: str | None = None, logger_arg: Any | None = None) -> pd.DataFrame:
     """
-    Lê a planilha local 'Controladora e Subsidiaria.csv', valida colunas, normaliza CNPJs e insere rastreabilidade.
+    Lê a planilha local 'Controladora e Subsidiaria.xlsx' (ou .csv), valida colunas,
+    normaliza CNPJs com tipagem estrita de texto e insere rastreabilidade de governança.
     """
     log = logger_arg or logger
     data_path = Path(input_dir or "ENTRADAS/controlador")
-    arquivo_alvo = data_path / "Controladora e Subsidiaria.csv"
     
-    if not arquivo_alvo.exists():
-        raise ControladorErro(f"Arquivo não encontrado: {arquivo_alvo}")
+    arquivo_xlsx = data_path / "Controladora e Subsidiaria.xlsx"
+    arquivo_csv = data_path / "Controladora e Subsidiaria.csv"
+
+    if arquivo_xlsx.exists():
+        arquivo_alvo = arquivo_xlsx
+    elif arquivo_csv.exists():
+        arquivo_alvo = arquivo_csv
+    else:
+        raise ControladorErro(f"Arquivo não encontrado: nem {arquivo_xlsx} nem {arquivo_csv} existem.")
     
     try:
         log.info(f"Carregando planilha de Controladoras local: {arquivo_alvo}")
         
-        try:
-            df = pd.read_csv(arquivo_alvo, sep=";", encoding="utf-8-sig")
-            if len(df.columns) <= 1:
-                df = pd.read_csv(arquivo_alvo, sep=",", encoding="utf-8-sig")
-        except (pd.errors.ParserError, UnicodeDecodeError):
+        if arquivo_alvo.suffix.lower() == ".xlsx":
+            df = pd.read_excel(arquivo_alvo, dtype=str)
+        else:
             try:
-                df = pd.read_csv(arquivo_alvo, sep=",", encoding="utf-8-sig")
-            except Exception as inner_e:
-                raise ControladorErro(f"Falha de parser (formato/encoding) ao ler o arquivo CSV: {inner_e}")
+                df = pd.read_csv(arquivo_alvo, sep=";", encoding="utf-8-sig", dtype=str)
+                if len(df.columns) <= 1:
+                    df = pd.read_csv(arquivo_alvo, sep=",", encoding="utf-8-sig", dtype=str)
+            except (pd.errors.ParserError, UnicodeDecodeError):
+                try:
+                    df = pd.read_csv(arquivo_alvo, sep=",", encoding="utf-8-sig", dtype=str)
+                except Exception as inner_e:
+                    raise ControladorErro(f"Falha de parser (formato/encoding) ao ler o arquivo CSV: {inner_e}")
         
         df.columns = df.columns.str.strip().str.upper()
         
         mapa_colunas = {
             "CONTROLADOR": "CONTA_ATRELADA",
             "CNPJ CONTROLADOR": "CNPJ_CONTA_ATRELADA",
+            "CNPJ_CONTROLADOR": "CNPJ_CONTA_ATRELADA",
             "SUBSIDIARIA": "SUBSIDIARIA",
             "CNPJ SUBSIDIÁRIA": "CNPJ_SUBSIDIARIA",
             "CNPJ SUBSIDIARIA": "CNPJ_SUBSIDIARIA"

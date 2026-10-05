@@ -6,7 +6,10 @@
         "CELULA_PADRAO_1": "C7",
         "ABA_PADRAO_2": "Dados Gerais e Qualitativos",
         "CELULA_RUBRICA_PADRAO_2": "B7",
-        "CELULA_PADRAO_2": "C7"
+        "CELULA_PADRAO_2": "C7",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "A8",
+        "CELULA_PADRAO_3": "C8"
     },
     {
         "RUBRICAS": "RAZAO_SOCIAL",
@@ -15,7 +18,10 @@
         "CELULA_PADRAO_1": "C8",
         "ABA_PADRAO_2": "Dados Gerais e Qualitativos",
         "CELULA_RUBRICA_PADRAO_2": "B8",
-        "CELULA_PADRAO_2": "C8"
+        "CELULA_PADRAO_2": "C8",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "A9",
+        "CELULA_PADRAO_3": "C9"
     },
     {
         "RUBRICAS": "DATA_DEMONSTRACAO_FINANCEIRA",
@@ -24,7 +30,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "C18"
     },
     {
         "RUBRICAS": "DATA_CALCULO",
@@ -33,7 +42,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "A73"
     },
     {
         "RUBRICAS": "ATIVO_CIRCULANTE",
@@ -42,7 +54,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "J12"
     },
     {
         "RUBRICAS": "ATIVO_CIRCULANTE_FINANCEIRO",
@@ -51,7 +66,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "J13"
     },
     {
         "RUBRICAS": "ATIVO_TOTAL",
@@ -60,7 +78,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "H14",
+        "CELULA_PADRAO_3": "J14"
     },
     {
         "RUBRICAS": "PASSIVO_CIRCULANTE",
@@ -69,7 +90,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "J15"
     },
     {
         "RUBRICAS": "PASSIVO_CIRCULANTE_FINANCEIRO",
@@ -78,7 +102,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "J16"
     },
     {
         "RUBRICAS": "PASSIVO_NAO_CIRCULANTE_FINANCEIRO",
@@ -87,7 +114,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "J17"
     },
     {
         "RUBRICAS": "PATRIMONIO_LIQUIDO",
@@ -96,7 +126,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "H18",
+        "CELULA_PADRAO_3": "J18"
     },
     {
         "RUBRICAS": "LUCROS_ACUMULADOS",
@@ -105,7 +138,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "J20"
     },
     {
         "RUBRICAS": "RESERVA_DE_LUCROS",
@@ -114,7 +150,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "J21"
     },
     {
         "RUBRICAS": "VENDAS_LIQUIDAS",
@@ -123,7 +162,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "J22"
     },
     {
         "RUBRICAS": "PROBABILIDADE_DEFAULT",
@@ -132,7 +174,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "A27",
+        "CELULA_PADRAO_3": "C27"
     },
     {
         "RUBRICAS": "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
@@ -141,7 +186,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "J24"
     },
     {
         "RUBRICAS": "AUDITOR",
@@ -150,7 +198,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "J25"
     },
     {
         "RUBRICAS": "FCO",
@@ -159,7 +210,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "G52"
     },
     {
         "RUBRICAS": "ROA",
@@ -168,7 +222,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "G53"
     },
     {
         "RUBRICAS": "ROE",
@@ -177,7 +234,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "G54"
     },
     {
         "RUBRICAS": "AGENCIA",
@@ -186,7 +246,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "C37"
     },
     {
         "RUBRICAS": "NOTA_CREDITO",
@@ -195,7 +258,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "C21",
+        "CELULA_PADRAO_3": "C22"
     },
     {
         "RUBRICAS": "RATING_BOARD_COPEL",
@@ -204,7 +270,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "A20",
+        "CELULA_PADRAO_3": "C22"
     },
     {
         "RUBRICAS": "RATING_BUREAU",
@@ -213,7 +282,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "A24",
+        "CELULA_PADRAO_3": "C24"
     },
     {
         "RUBRICAS": "RATING_COPEL",
@@ -222,7 +294,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "Dados Gerais e Qualitativos",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "C35"
     },
     {
         "RUBRICAS": "LUCRO_LIQUIDO",
@@ -231,7 +306,10 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "DRE",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "B39"
     },
     {
         "RUBRICAS": "ROL",
@@ -240,6 +318,9 @@
         "CELULA_PADRAO_1": "0",
         "ABA_PADRAO_2": "0",
         "CELULA_RUBRICA_PADRAO_2": "0",
-        "CELULA_PADRAO_2": "0"
+        "CELULA_PADRAO_2": "0",
+        "ABA_PADRAO_3": "DRE",
+        "CELULA_RUBRICA_PADRAO_3": "0",
+        "CELULA_PADRAO_3": "B4"
     }
 ]

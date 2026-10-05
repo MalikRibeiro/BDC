@@ -321,6 +321,47 @@ def render_visao_carteira():
 
     colunas_finais = [v for k, v in COL_MAP_CARTEIRA.items() if v in df_filtrado.columns]
 
+    # Barra de Ferramentas e Exportação Segura (Evita distorção numérica do Excel)
+    c_info, c_down1, c_down2 = st.columns([2, 1.2, 1.2])
+    with c_info:
+        st.markdown(f"**Mostrando {len(df_filtrado)} contrato(s) filtrado(s)**")
+
+    df_export = df_filtrado[colunas_finais].copy()
+    
+    # 1. Exportação CSV Padrão Brasil (separador ';' e decimal ',')
+    csv_bytes = df_export.to_csv(sep=";", decimal=",", index=False, encoding="utf-8-sig").encode("utf-8-sig")
+    with c_down1:
+        st.download_button(
+            label="📥 Baixar CSV (Padrão BR)",
+            data=csv_bytes,
+            file_name="visao_carteira_contratos.csv",
+            mime="text/csv",
+            help="Arquivo CSV com separador ';' e vírgula decimal. Abre diretamente no Excel brasileiro sem distorcer números de PD."
+        )
+
+    # 2. Exportação Excel (.xlsx) Nativo
+    try:
+        import io
+        buffer_xlsx = io.BytesIO()
+        with pd.ExcelWriter(buffer_xlsx, engine="openpyxl") as writer:
+            df_export.to_excel(writer, index=False, sheet_name="Carteira_Contratos")
+            worksheet = writer.sheets["Carteira_Contratos"]
+            for col in worksheet.columns:
+                max_len = max(len(str(cell.value or "")) for cell in col)
+                col_letter = col[0].column_letter
+                worksheet.column_dimensions[col_letter].width = min(max(max_len + 3, 12), 40)
+        buffer_xlsx.seek(0)
+        with c_down2:
+            st.download_button(
+                label="📥 Baixar Excel (.xlsx)",
+                data=buffer_xlsx.getvalue(),
+                file_name="visao_carteira_contratos.xlsx",
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                help="Planilha Excel nativa com tipos preservados."
+            )
+    except Exception:
+        pass
+
     st.dataframe(
         df_filtrado[colunas_finais],
         width="stretch",

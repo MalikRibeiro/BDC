@@ -1,7 +1,7 @@
 {
     "tipo_ficha": "comercializadora",
-    "version": "1.0.0",
-    "total_layouts": 6,
+    "version": "1.1.0",
+    "total_layouts": 9,
     "layouts": [
         {
             "versao_ficha": "padrao_1",
@@ -98,7 +98,7 @@
             "arquivo_layout": "layout_ficha_comercializadora_v6.json",
             "score_minimo": 10,
             "required_match_ratio_min": 0.7,
-            "preferred": true,
+            "preferred": false,
             "expected_tabs": [
                 "V0",
                 "Para_Limite_Comercializadoras",
@@ -109,6 +109,48 @@
                 "Dados Gerais e Qualitativos",
                 "DRE",
                 "Dem.Fin."
+            ]
+        },
+        {
+            "versao_ficha": "padrao_7_cpura",
+            "arquivo_layout": "layout_ficha_comercializadora_v7_cpura.json",
+            "score_minimo": 10,
+            "required_match_ratio_min": 0.7,
+            "preferred": true,
+            "expected_tabs": [
+                "FichaIndividual",
+                "Conf. Puras_BP",
+                "Conf. Puras_DRE",
+                "Conf. Puras_DFC",
+                "Calculo Vol e Hor",
+                "Calculo Rating"
+            ]
+        },
+        {
+            "versao_ficha": "padrao_7_cgrupo",
+            "arquivo_layout": "layout_ficha_comercializadora_v7_cgrupo.json",
+            "score_minimo": 10,
+            "required_match_ratio_min": 0.7,
+            "preferred": true,
+            "expected_tabs": [
+                "FichaIndividual",
+                "Conf. Grupo",
+                "Calculo Vol e Hor"
+            ]
+        },
+        {
+            "versao_ficha": "padrao_7",
+            "arquivo_layout": "layout_ficha_comercializadora_v7.json",
+            "score_minimo": 10,
+            "required_match_ratio_min": 0.7,
+            "preferred": false,
+            "expected_tabs": [
+                "FichaIndividual",
+                "Conf. Puras_BP",
+                "Conf. Puras_DRE",
+                "Conf. Puras_DFC",
+                "Calculo Vol e Hor",
+                "Calculo Rating"
             ]
         }
     ]

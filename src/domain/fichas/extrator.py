@@ -339,7 +339,30 @@ def avaliar_vencedor_por_grid(leitor: LeitorPlanilha, layouts: Dict[str, Any], m
     
     logger.info("Extração (Schema): Arquivo lido. %s colunas, %s linhas identificadas na aba '%s'.", colunas_lidas, linhas_lidas, aba_ativa)
 
-    layouts_to_test = list(layouts.items())
+    # Filtragem preliminar declarativa por abas esperadas (expected_tabs)
+    workbook_tabs_clean = {norm_tab(t) for t in leitor.abas_nomes}
+    tem_aba_conf_grupo = any("CONF.GRUPO" in t or "CONFGRUPO" in t for t in workbook_tabs_clean)
+    tem_aba_conf_puras = any("CONFPURAS" in t or "CONF.PURAS" in t for t in workbook_tabs_clean)
+
+    layouts_to_test = []
+    for layout_name, layout_schema in layouts.items():
+        exp_tabs = layout_schema.get("expected_tabs", [])
+        if exp_tabs:
+            schema_tabs_norm = {norm_tab(t) for t in exp_tabs}
+            # Se for layout específico de Grupo e o arquivo não possuir a aba de grupo, descarta
+            if any("CONFGRUPO" in t or "CONF.GRUPO" in t for t in schema_tabs_norm) and not tem_aba_conf_grupo:
+                continue
+            # Se for layout específico de Puras e o arquivo possuir aba de grupo (e não de puras), descarta
+            if any("CONFPURAS" in t or "CONF.PURAS" in t for t in schema_tabs_norm) and tem_aba_conf_grupo and not tem_aba_conf_puras:
+                continue
+            # Se nenhuma das abas esperadas estiver no workbook, descarta
+            if not schema_tabs_norm.intersection(workbook_tabs_clean):
+                continue
+
+        layouts_to_test.append((layout_name, layout_schema))
+
+    if not layouts_to_test:
+        layouts_to_test = list(layouts.items())
 
     melhor_score = -1.0
     vencedor_dados = {}

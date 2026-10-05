@@ -16,17 +16,12 @@ def calcular_pd_base(
 ) -> float | None:
     """Calcula a PD base via regressão logística (Z-Score) ou lê o input direto."""
     # Para públicos que não possuem PD contábil ou já recebem via fallback (ou Risk3)
-    if segmento_pd in {"CONSUMIDOR_LE_5", "CGRUPO"}:
+    if segmento_pd in {"CONSUMIDOR_LE_5", "CONSUMIDOR_LT_5", "CGRUPO"}:
         return None
 
-    if segmento_pd == "CONSUMIDOR_GT_5":
+    if segmento_pd in {"CONSUMIDOR_GT_5", "CONSUMIDOR_GE_5"}:
         raw_pd = registro.get("PROBABILIDADE_DEFAULT")
         return to_float_br(raw_pd) if raw_pd is not None else None
-
-    if registro.get("PD_BASE") is not None:
-        pd_dir = to_float_br(registro.get("PD_BASE"))
-        if pd_dir is not None:
-            return pd_dir
 
     try:
         if not pd_zscore_config:
@@ -48,9 +43,9 @@ def calcular_pd_base(
         acf = to_float_br(registro.get("ATIVO_CIRCULANTE_FINANCEIRO")) or 0.0
         vl = to_float_br(registro.get("VENDAS_LIQUIDAS"))
 
-        if at is None or at == 0.0:
+        if at is None or at <= 0.0:
             raise PdInputValidationError("ATIVO_TOTAL nulo ou zero (impossível calcular X12, X16, X19).")
-        if vl is None or vl == 0.0:
+        if vl is None or vl <= 0.0:
             raise PdInputValidationError("VENDAS_LIQUIDAS nulo ou zero (impossível calcular X22).")
 
         x12 = (la + rl) / at
@@ -71,7 +66,8 @@ def calcular_pd_base(
         z = intercept + (coef_x12 * x12) + (coef_x16 * x16) + (coef_x19 * x19) + (coef_x22 * x22)
         
         z_clamped = max(-20.0, min(z, 20.0))
-        pd_base = 1.0 / (1.0 + math.exp(z_clamped))
+        # Fórmula exata da Nota Técnica v7 §4: PD = 1 / (1 + exp(-z))
+        pd_base = 1.0 / (1.0 + math.exp(-z_clamped))
 
         if pd_base < 0.0 or pd_base > 1.0:
             raise PdInputValidationError(f"PD base fora do intervalo após cálculo logístico: {pd_base}")
@@ -82,3 +78,4 @@ def calcular_pd_base(
         if logger is not None:
             logger.warning("Falha tratada no cálculo do Z-Score para CNPJ=%s: %s", registro.get("CNPJ"), str(e))
         return None
+

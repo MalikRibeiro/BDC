@@ -2,8 +2,6 @@ import argparse
 import sys
 from pathlib import Path
 
-from pyautogui import click
-
 from src.app.bootstrap import aplicativo_bootstrap
 from app.comercializadoras.orquestrador_comercializadoras import processar_fichas_comercializadoras
 from control.logger import obter_logger

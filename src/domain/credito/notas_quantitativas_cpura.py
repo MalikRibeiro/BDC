@@ -113,15 +113,60 @@ def calcular_notas_quantitativas_cpura(
                 registro.get("CNPJ"),
             )
 
-        pd_valor = _obter_valor_numerico(registro, "PD_BASE")
-        fco_bruto = _obter_valor_numerico(registro, "FCO")
-        rol_bruto = _obter_valor_numerico(registro, "ROL")
-        fco_rol_valor = (fco_bruto / rol_bruto) if rol_bruto != 0 else 0.0
-        
-        roe_valor = _obter_valor_numerico(registro, "ROE")
-        roa_valor = _obter_valor_numerico(registro, "ROA")
+        # 1. PD Base: calculado via Z-Score ou fallback soberano da ficha (B26)
+        pd_raw = registro.get("PD_BASE")
+        if pd_raw is None or to_float_br(pd_raw) is None:
+            pd_raw = registro.get("PROBABILIDADE_DEFAULT")
+        pd_num = to_float_br(pd_raw)
+        if pd_num is None:
+            raise PdInputValidationError("PD_BASE ou PROBABILIDADE_DEFAULT não informado.")
+        pd_valor = _normalizar_pd(float(pd_num))
 
-        pd_valor = _normalizar_pd(pd_valor)
+        # 2. FCO / ROL: extraído diretamente (B27) ou calculado a partir dos campos da DRE
+        fco_rol_raw = registro.get("FCO_ROL")
+        if fco_rol_raw is not None and to_float_br(fco_rol_raw) is not None:
+            fco_rol_valor = float(to_float_br(fco_rol_raw))
+        else:
+            fco_raw = (
+                registro.get("FCO") or
+                registro.get("FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS") or
+                registro.get("FLUXO_CAIXA_OP")
+            )
+            rol_raw = (
+                registro.get("ROL") or
+                registro.get("VENDAS_LIQUIDAS") or
+                registro.get("RECEITA_OPERACIONAL_LIQUIDA")
+            )
+            fco_val = to_float_br(fco_raw)
+            rol_val = to_float_br(rol_raw)
+            if fco_val is not None and rol_val is not None:
+                fco_rol_valor = (float(fco_val) / float(rol_val)) if float(rol_val) != 0 else 0.0
+            else:
+                raise PdInputValidationError("FCO_ROL ou (FCO e ROL) não informados.")
+
+        # 3. ROE: extraído diretamente (B29) ou derivado de Lucro Líquido / Patrimônio Líquido
+        roe_raw = registro.get("ROE")
+        if roe_raw is not None and to_float_br(roe_raw) is not None:
+            roe_valor = float(to_float_br(roe_raw))
+        else:
+            ll_val = to_float_br(registro.get("LUCRO_LIQUIDO"))
+            pl_val = to_float_br(registro.get("PATRIMONIO_LIQUIDO"))
+            if ll_val is not None and pl_val is not None and float(pl_val) != 0:
+                roe_valor = float(ll_val) / float(pl_val)
+            else:
+                raise PdInputValidationError("ROE ou (LUCRO_LIQUIDO e PATRIMONIO_LIQUIDO) não informados.")
+
+        # 4. ROA: extraído diretamente (B28) ou derivado de Lucro Líquido / Ativo Total
+        roa_raw = registro.get("ROA")
+        if roa_raw is not None and to_float_br(roa_raw) is not None:
+            roa_valor = float(to_float_br(roa_raw))
+        else:
+            ll_val = to_float_br(registro.get("LUCRO_LIQUIDO"))
+            at_val = to_float_br(registro.get("ATIVO_TOTAL"))
+            if ll_val is not None and at_val is not None and float(at_val) != 0:
+                roa_valor = float(ll_val) / float(at_val)
+            else:
+                raise PdInputValidationError("ROA ou (LUCRO_LIQUIDO e ATIVO_TOTAL) não informados.")
 
         segmento = str(registro.get("SEGMENTO_PD", "")).strip().upper()
         indicador_pd = "PD_CONSUMIDOR_GT_5" if segmento == "CONSUMIDOR_GT_5" else "PD"

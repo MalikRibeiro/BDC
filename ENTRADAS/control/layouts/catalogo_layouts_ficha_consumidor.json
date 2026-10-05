@@ -19,6 +19,15 @@
                 "DATA_DEMONSTRACAO_FINANCEIRA",
                 "PATRIMONIO_LIQUIDO"
             ]
+        },
+        {
+            "version": "v3",
+            "file": "layout_ficha_consumidor_v3.json",
+            "required_fields": [
+                "RAZAO_SOCIAL",
+                "CNPJ",
+                "DATA_DEMONSTRACAO_FINANCEIRA"
+            ]
         }
     ]
 }

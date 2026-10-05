@@ -1299,6 +1299,16 @@
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
+  "01323399000104": {
+    "CNPJ": "01323399000104",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "1996-07-16",
+    "CNAE_PRINCIPAL": "2731700",
+    "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
+    "DATA_CONSULTA": "2026-10-05T11:35:33",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
   "01325023000139": {
     "CNPJ": "01325023000139",
     "SITUACAO_CADASTRAL": "ATIVA",
@@ -4509,6 +4519,16 @@
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
+  "03982931000120": {
+    "CNPJ": "03982931000120",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "1979-02-07",
+    "CNAE_PRINCIPAL": "3600601",
+    "NATUREZA_JURIDICA": "Sociedade de Economia Mista",
+    "DATA_CONSULTA": "2026-10-05T15:39:25",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
   "03984862000194": {
     "CNPJ": "03984862000194",
     "SITUACAO_CADASTRAL": "ATIVA",
@@ -5745,7 +5765,7 @@
     "DATA_ABERTURA": "2002-02-05",
     "CNAE_PRINCIPAL": "4711302",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
-    "DATA_CONSULTA": "2026-09-01T15:11:29",
+    "DATA_CONSULTA": "2026-10-02T09:44:21",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -6255,7 +6275,7 @@
     "DATA_ABERTURA": "2002-10-07",
     "CNAE_PRINCIPAL": "2222600",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
-    "DATA_CONSULTA": "2026-09-01T15:11:34",
+    "DATA_CONSULTA": "2026-10-02T09:44:18",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -6435,7 +6455,7 @@
     "DATA_ABERTURA": "2003-01-16",
     "CNAE_PRINCIPAL": "2941700",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
-    "DATA_CONSULTA": "2026-09-01T15:11:44",
+    "DATA_CONSULTA": "2026-10-02T09:44:16",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -7255,7 +7275,7 @@
     "DATA_ABERTURA": "2004-03-05",
     "CNAE_PRINCIPAL": "3839499",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
-    "DATA_CONSULTA": "2026-09-01T15:11:41",
+    "DATA_CONSULTA": "2026-10-02T09:44:36",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -8935,7 +8955,7 @@
     "DATA_ABERTURA": "2006-03-03",
     "CNAE_PRINCIPAL": "2222600",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
-    "DATA_CONSULTA": "2026-09-01T15:11:31",
+    "DATA_CONSULTA": "2026-10-02T09:44:30",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -10205,7 +10225,7 @@
     "DATA_ABERTURA": "2022-08-09",
     "CNAE_PRINCIPAL": "2823200",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
-    "DATA_CONSULTA": "2026-09-01T15:11:43",
+    "DATA_CONSULTA": "2026-10-02T09:44:33",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -10745,7 +10765,7 @@
     "DATA_ABERTURA": "2008-11-11",
     "CNAE_PRINCIPAL": "8211300",
     "NATUREZA_JURIDICA": "Sociedade Anônima Fechada",
-    "DATA_CONSULTA": "2026-09-01T15:11:27",
+    "DATA_CONSULTA": "2026-10-02T09:44:25",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -12406,6 +12426,16 @@
     "CNAE_PRINCIPAL": "6462000",
     "NATUREZA_JURIDICA": "Sociedade Anônima Fechada",
     "DATA_CONSULTA": "2026-09-28T15:45:30",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
+  "13204698000109": {
+    "CNPJ": "13204698000109",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "1982-11-25",
+    "CNAE_PRINCIPAL": "2031200",
+    "NATUREZA_JURIDICA": "Sociedade Anônima Fechada",
+    "DATA_CONSULTA": "2026-10-05T13:09:32",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -15999,6 +16029,16 @@
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
+  "25240542000162": {
+    "CNPJ": "25240542000162",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "2016-07-19",
+    "CNAE_PRINCIPAL": "2330302",
+    "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
+    "DATA_CONSULTA": "2026-10-02T09:44:22",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
   "25318541000193": {
     "CNPJ": "25318541000193",
     "SITUACAO_CADASTRAL": "ATIVA",
@@ -17219,6 +17259,16 @@
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
+  "30005640000155": {
+    "CNPJ": "30005640000155",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "2018-03-22",
+    "CNAE_PRINCIPAL": "3511501",
+    "NATUREZA_JURIDICA": "Sociedade Anônima Fechada",
+    "DATA_CONSULTA": "2026-10-02T09:44:28",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
   "30053915000126": {
     "CNPJ": "30053915000126",
     "SITUACAO_CADASTRAL": "ATIVA",
@@ -17676,6 +17726,16 @@
     "CNAE_PRINCIPAL": "1621800",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
     "DATA_CONSULTA": "2026-09-28T15:52:28",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
+  "31695962000136": {
+    "CNPJ": "31695962000136",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "2018-10-05",
+    "CNAE_PRINCIPAL": "6462000",
+    "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
+    "DATA_CONSULTA": "2026-10-02T09:44:29",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -18495,7 +18555,7 @@
     "DATA_ABERTURA": "2020-10-30",
     "CNAE_PRINCIPAL": "3513100",
     "NATUREZA_JURIDICA": "Sociedade Anônima Fechada",
-    "DATA_CONSULTA": "2026-09-01T15:11:32",
+    "DATA_CONSULTA": "2026-10-02T09:44:19",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -22045,7 +22105,7 @@
     "DATA_ABERTURA": "2023-11-30",
     "CNAE_PRINCIPAL": "4120400",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
-    "DATA_CONSULTA": "2026-09-01T15:11:33",
+    "DATA_CONSULTA": "2026-10-02T09:44:39",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -23849,6 +23909,16 @@
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
+  "61603288000183": {
+    "CNPJ": "61603288000183",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "1966-07-30",
+    "CNAE_PRINCIPAL": "2949299",
+    "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
+    "DATA_CONSULTA": "2026-10-05T11:35:37",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
   "61620753001670": {
     "CNPJ": "61620753001670",
     "SITUACAO_CADASTRAL": "ATIVA",
@@ -24615,7 +24685,7 @@
     "DATA_ABERTURA": "1993-07-07",
     "CNAE_PRINCIPAL": "5211701",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
-    "DATA_CONSULTA": "2026-09-01T15:11:36",
+    "DATA_CONSULTA": "2026-10-02T09:44:15",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -25045,7 +25115,7 @@
     "DATA_ABERTURA": "2024-07-19",
     "CNAE_PRINCIPAL": "8610101",
     "NATUREZA_JURIDICA": "Cooperativa",
-    "DATA_CONSULTA": "2026-09-01T15:11:37",
+    "DATA_CONSULTA": "2026-10-02T09:44:23",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -25269,6 +25339,16 @@
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
+  "75805895000130": {
+    "CNPJ": "75805895000130",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "1966-10-18",
+    "CNAE_PRINCIPAL": "3514000",
+    "NATUREZA_JURIDICA": "Sociedade de Economia Mista",
+    "DATA_CONSULTA": "2026-10-05T11:35:34",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
   "75864728000160": {
     "CNPJ": "75864728000160",
     "SITUACAO_CADASTRAL": "ATIVA",
@@ -25485,7 +25565,7 @@
     "DATA_ABERTURA": "2026-04-28",
     "CNAE_PRINCIPAL": "1041400",
     "NATUREZA_JURIDICA": "Cooperativa",
-    "DATA_CONSULTA": "2026-09-01T15:11:45",
+    "DATA_CONSULTA": "2026-10-02T09:44:38",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -29449,6 +29529,16 @@
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
+  "88446034000155": {
+    "CNPJ": "88446034000155",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "1968-02-19",
+    "CNAE_PRINCIPAL": "3514000",
+    "NATUREZA_JURIDICA": "Sociedade de Economia Mista",
+    "DATA_CONSULTA": "2026-10-05T11:35:35",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
   "88582291000114": {
     "CNPJ": "88582291000114",
     "SITUACAO_CADASTRAL": "ATIVA",
@@ -29465,7 +29555,7 @@
     "DATA_ABERTURA": "1976-02-09",
     "CNAE_PRINCIPAL": "2452100",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
-    "DATA_CONSULTA": "2026-09-01T15:11:46",
+    "DATA_CONSULTA": "2026-10-02T09:44:26",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -29565,7 +29655,7 @@
     "DATA_ABERTURA": "1969-11-11",
     "CNAE_PRINCIPAL": "3514000",
     "NATUREZA_JURIDICA": "Cooperativa",
-    "DATA_CONSULTA": "2026-09-01T15:11:39",
+    "DATA_CONSULTA": "2026-10-02T09:44:34",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -29935,7 +30025,7 @@
     "DATA_ABERTURA": "1966-09-05",
     "CNAE_PRINCIPAL": "1922502",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
-    "DATA_CONSULTA": "2026-09-01T15:11:40",
+    "DATA_CONSULTA": "2026-10-02T09:44:35",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
@@ -30109,6 +30199,16 @@
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },
+  "94813490000199": {
+    "CNPJ": "94813490000199",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "1992-10-14",
+    "CNAE_PRINCIPAL": "2833000",
+    "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
+    "DATA_CONSULTA": "2026-10-02T09:44:31",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
   "94819729000138": {
     "CNPJ": "94819729000138",
     "SITUACAO_CADASTRAL": "ATIVA",
@@ -30276,6 +30376,16 @@
     "CNAE_PRINCIPAL": "1621800",
     "NATUREZA_JURIDICA": "Sociedade Empresária Limitada",
     "DATA_CONSULTA": "2026-09-28T16:20:12",
+    "STATUS": "SUCESSO",
+    "MENSAGEM": "Consulta via BrasilAPI com sucesso"
+  },
+  "97505838000179": {
+    "CNPJ": "97505838000179",
+    "SITUACAO_CADASTRAL": "ATIVA",
+    "DATA_ABERTURA": "1971-11-24",
+    "CNAE_PRINCIPAL": "3514000",
+    "NATUREZA_JURIDICA": "Cooperativa",
+    "DATA_CONSULTA": "2026-10-05T11:35:38",
     "STATUS": "SUCESSO",
     "MENSAGEM": "Consulta via BrasilAPI com sucesso"
   },

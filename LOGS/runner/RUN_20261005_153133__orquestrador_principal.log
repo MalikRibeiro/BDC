@@ -1,0 +1,144 @@
+2026-10-05 15:31:33 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Obtencao de Fichas da Rede
+============================================================
+2026-10-05 15:31:58 | INFO | bdc.runner | [OK] 'Obtencao de Fichas da Rede' concluido com sucesso.
+2026-10-05 15:31:58 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Fichas Comercializadoras
+============================================================
+2026-10-05 15:35:48 | INFO | bdc.runner | [OK] 'Fichas Comercializadoras' concluido com sucesso.
+2026-10-05 15:35:48 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Fichas Consumidores
+============================================================
+2026-10-05 15:38:20 | INFO | bdc.runner | [OK] 'Fichas Consumidores' concluido com sucesso.
+2026-10-05 15:38:20 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Ingestao de Contratos (Denodo)
+============================================================
+2026-10-05 15:38:59 | INFO | bdc.runner | [OK] 'Ingestao de Contratos (Denodo)' concluido com sucesso.
+2026-10-05 15:38:59 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Enquadramento de Consumidores
+============================================================
+2026-10-05 15:39:00 | INFO | bdc.runner | [OK] 'Enquadramento de Consumidores' concluido com sucesso.
+2026-10-05 15:39:00 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Ingestao de MtM
+============================================================
+2026-10-05 15:39:03 | INFO | bdc.runner | [OK] 'Ingestao de MtM' concluido com sucesso.
+2026-10-05 15:39:03 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Ingestao do Salesforce
+============================================================
+2026-10-05 15:39:24 | INFO | bdc.runner | [OK] 'Ingestao do Salesforce' concluido com sucesso.
+2026-10-05 15:39:24 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Ingestao da Receita Federal
+============================================================
+2026-10-05 15:39:27 | INFO | bdc.runner | [OK] 'Ingestao da Receita Federal' concluido com sucesso.
+2026-10-05 15:39:27 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Ingestao de Controladoras
+============================================================
+2026-10-05 15:39:27 | INFO | bdc.runner | [OK] 'Ingestao de Controladoras' concluido com sucesso.
+2026-10-05 15:39:27 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Ingestao de Bureau (RISK3)
+============================================================
+2026-10-05 15:40:13 | INFO | bdc.runner | [OK] 'Ingestao de Bureau (RISK3)' concluido com sucesso.
+2026-10-05 15:40:13 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Ingestao de Garantias
+============================================================
+2026-10-05 15:40:16 | INFO | bdc.runner | [OK] 'Ingestao de Garantias' concluido com sucesso.
+2026-10-05 15:40:16 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Solicitacoes de Override
+============================================================
+2026-10-05 15:40:16 | INFO | bdc.runner | [OK] 'Solicitacoes de Override' concluido com sucesso.
+2026-10-05 15:40:16 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Carga Manual (Eventos e Overrides)
+============================================================
+2026-10-05 15:40:19 | INFO | bdc.runner | [OK] 'Carga Manual (Eventos e Overrides)' concluido com sucesso.
+2026-10-05 15:40:19 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Dimensao Contraparte
+============================================================
+2026-10-05 15:40:21 | INFO | bdc.runner | [OK] 'Dimensao Contraparte' concluido com sucesso.
+2026-10-05 15:40:21 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Fato Analise de Credito
+============================================================
+2026-10-05 15:40:46 | INFO | bdc.runner | [OK] 'Fato Analise de Credito' concluido com sucesso.
+2026-10-05 15:40:46 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Fato Score Rating PD
+============================================================
+2026-10-05 15:40:46 | INFO | bdc.runner | [OK] 'Fato Score Rating PD' concluido com sucesso.
+2026-10-05 15:40:46 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Fato Migracao Rating
+============================================================
+2026-10-05 15:40:46 | INFO | bdc.runner | [OK] 'Fato Migracao Rating' concluido com sucesso.
+2026-10-05 15:40:46 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Fato Garantia
+============================================================
+2026-10-05 15:40:48 | INFO | bdc.runner | [OK] 'Fato Garantia' concluido com sucesso.
+2026-10-05 15:40:48 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Fato Exposicao de Risco
+============================================================
+2026-10-05 15:40:48 | INFO | bdc.runner | [OK] 'Fato Exposicao de Risco' concluido com sucesso.
+2026-10-05 15:40:48 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Fato Reconciliacao Denodo x MtM
+============================================================
+2026-10-05 15:40:48 | INFO | bdc.runner | [OK] 'Fato Reconciliacao Denodo x MtM' concluido com sucesso.
+2026-10-05 15:40:48 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Fato Reconciliacao Fichas x Salesforce
+============================================================
+2026-10-05 15:40:49 | INFO | bdc.runner | [OK] 'Fato Reconciliacao Fichas x Salesforce' concluido com sucesso.
+2026-10-05 15:40:49 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Alertas de Carga Manual e Excecoes
+============================================================
+2026-10-05 15:40:49 | INFO | bdc.runner | [OK] 'Alertas de Carga Manual e Excecoes' concluido com sucesso.
+2026-10-05 15:40:49 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Fato Alertas de Credito
+============================================================
+2026-10-05 15:40:52 | INFO | bdc.runner | [OK] 'Fato Alertas de Credito' concluido com sucesso.
+2026-10-05 15:40:52 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Visao Consolidada Gold
+============================================================
+2026-10-05 15:40:55 | INFO | bdc.runner | [OK] 'Visao Consolidada Gold' concluido com sucesso.
+2026-10-05 15:40:55 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Visao Carteira Contratos (Vigente)
+============================================================
+2026-10-05 15:40:56 | INFO | bdc.runner | [OK] 'Visao Carteira Contratos (Vigente)' concluido com sucesso.
+2026-10-05 15:40:56 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Visao Migracao Rating Gold
+============================================================
+2026-10-05 15:40:56 | INFO | bdc.runner | [OK] 'Visao Migracao Rating Gold' concluido com sucesso.
+2026-10-05 15:40:56 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Visao Garantias Gold
+============================================================
+2026-10-05 15:40:57 | INFO | bdc.runner | [OK] 'Visao Garantias Gold' concluido com sucesso.
+2026-10-05 15:40:57 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Exportacao de Limites
+============================================================
+2026-10-05 15:41:01 | INFO | bdc.runner | [OK] 'Exportacao de Limites' concluido com sucesso.
+2026-10-05 15:41:01 | INFO | bdc.runner | 
+============================================================
+Executando Etapa: Interface Streamlit
+============================================================

@@ -76,15 +76,21 @@ def definir_segmento_metodologico(
     tipo_ficha = normalizar_texto(registro.get("TIPO_FICHA"))
     
     if tipo_ficha == "COMERCIALIZADORA":
-        tipo_comercializadora = normalizar_texto(registro.get("TIPO_COMERCIALIZADORA"))
-        if tipo_comercializadora == "CPURA":
+        tipo_comercializadora = normalizar_texto(
+            registro.get("TIPO_COMERCIALIZADORA") or registro.get("CATEGORIA") or registro.get("SUBSEGMENTO")
+        )
+        if tipo_comercializadora in {"CPURA", "PURA", "GERADORA", "GERADORAS", "PRODUTOR INDEPENDENTE"}:
             return "CPURA"
 
-        if tipo_comercializadora == "CGRUPO":
+        if tipo_comercializadora in {"CGRUPO", "GRUPO", "BANCO", "PETRÓLEO E GÁS", "PETROLEO E GAS"}:
             return "CGRUPO"
 
+        # Fail-safe para comercializadoras com DF cuja tag textual não veio explícita
+        if not tipo_comercializadora:
+            return "CPURA"
+
         raise ValueError(
-            "Comercializadora sem TIPO_COMERCIALIZADORA válido."
+            f"Comercializadora sem TIPO_COMERCIALIZADORA válido: {tipo_comercializadora!r}."
         )
 
     if tipo_ficha == "CONSUMIDOR":

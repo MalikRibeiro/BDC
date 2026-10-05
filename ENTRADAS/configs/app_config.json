@@ -62,6 +62,8 @@
         "layout_ficha_comercializadora_v5": "ENTRADAS\\control\\layouts\\layout_ficha_comercializadora_v5.json",
         "layout_ficha_comercializadora_v6": "ENTRADAS\\control\\layouts\\layout_ficha_comercializadora_v6.json",
         "layout_ficha_comercializadora_v7": "ENTRADAS\\control\\layouts\\layout_ficha_comercializadora_v7.json",
+        "layout_ficha_comercializadora_v7_cpura": "ENTRADAS\\control\\layouts\\layout_ficha_comercializadora_v7_cpura.json",
+        "layout_ficha_comercializadora_v7_cgrupo": "ENTRADAS\\control\\layouts\\layout_ficha_comercializadora_v7_cgrupo.json",
         "catalogo_layouts_ficha_comercializadora": "ENTRADAS\\control\\layouts\\catalogo_layouts_ficha_comercializadora.json",
         "layout_ficha_consumidor_v1": "ENTRADAS\\control\\layouts\\layout_ficha_consumidor_v1.json",
         "layout_ficha_consumidor_v2": "ENTRADAS\\control\\layouts\\layout_ficha_consumidor_v2.json",

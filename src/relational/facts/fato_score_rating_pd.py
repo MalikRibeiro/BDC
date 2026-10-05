@@ -6,7 +6,12 @@ def construir_fato_score_rating_pd(context: AppContext, df_fato_analise: pd.Data
     if df_fato_analise.empty:
         return {"status": "SEM_DADOS"}
 
-    colunas = ["ANALISE_ID", "CNPJ", "DATA_ANALISE", "FIM_VIGENCIA_ANALISE", "RATING", "PD_PERCENTUAL", "SCORE", "CLASSE", "MODELO", "CONFIG_SNAPSHOT_PD"]
+    colunas = [
+        "ANALISE_ID", "CNPJ", "DATA_ANALISE", "FIM_VIGENCIA_ANALISE", "RATING", 
+        "PD_PERCENTUAL", "SCORE", "CLASSE", "MODELO", "CONFIG_SNAPSHOT_PD",
+        "PD_OFICIAL_FICHA", "PD_RECALCULADA_PYTHON", "STATUS_AUDITORIA_PD", 
+        "DELTA_PD", "STATUS_AUDITORIA_RATING"
+    ]
     disponiveis = [c for c in colunas if c in df_fato_analise.columns]
     df_score = df_fato_analise[disponiveis].copy()
     

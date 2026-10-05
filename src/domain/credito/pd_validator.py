@@ -74,10 +74,18 @@ def validar_insumos_pd(
                 )
 
     if segmento_pd in {"CPURA", "CGRUPO"}:
-        tipo_comercializadora = normalizar_texto(
-            str(registro.get("TIPO_COMERCIALIZADORA", ""))
+        tipo_raw = (
+            registro.get("TIPO_COMERCIALIZADORA")
+            or registro.get("CATEGORIA")
+            or registro.get("SUBSEGMENTO")
+            or segmento_pd
         )
-        if tipo_comercializadora not in {"CPURA", "CGRUPO"}:
+        tipo_comercializadora = normalizar_texto(str(tipo_raw))
+        tipos_validos = {
+            "CPURA", "CGRUPO", "PURA", "GRUPO", "GERADORA", "GERADORAS",
+            "PRODUTOR INDEPENDENTE", "BANCO", "GERADOR", "PETROLEO E GAS"
+        }
+        if tipo_comercializadora not in tipos_validos and segmento_pd not in {"CPURA", "CGRUPO"}:
             raise PdInputValidationError(
                 "TIPO_COMERCIALIZADORA inválido ou ausente."
             )

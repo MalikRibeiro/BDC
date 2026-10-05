@@ -28,12 +28,16 @@ def inserir_dados_controladoras(context: AppContext) -> dict[str, Any]:
         df_ctrl = buscar_planilha_controlador(logger_arg=log_ctrl)
         
         # Salvar cópia bruta na Bronze (Audit)
-        arquivo_origem = Path("ENTRADAS/controlador/Controladora e Subsidiaria.csv")
+        arquivo_origem = Path("ENTRADAS/controlador/Controladora e Subsidiaria.xlsx")
+        if not arquivo_origem.exists():
+            arquivo_origem = Path("ENTRADAS/controlador/Controladora e Subsidiaria.csv")
+            
         bronze_dir = context.path("bronze") / "snapshots_fontes" / "controladoras"
         bronze_dir.mkdir(parents=True, exist_ok=True)
         
         if arquivo_origem.exists():
-            nome_bronze = f"raw_controladoras_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+            ext = arquivo_origem.suffix
+            nome_bronze = f"raw_controladoras_{datetime.now().strftime('%Y%m%d_%H%M%S')}{ext}"
             shutil.copy2(arquivo_origem, bronze_dir / nome_bronze)
             log_ctrl.info(f"Snapshot Bronze salvo: {nome_bronze}")
 
@@ -127,15 +131,24 @@ def herdar_risco_controladoras(df_fato: pd.DataFrame, df_controladoras: pd.DataF
             dados_matriz = df_fato_indexed.loc[cnpj_matriz]
             
             if isinstance(dados_matriz, pd.DataFrame):
+                # Priorizar a análise mais recente da Matriz/Controladora
+                dt_temp = pd.to_datetime(dados_matriz.get("DATA_ANALISE"), errors="coerce")
+                if "DATA_DEMONSTRACAO_FINANCEIRA" in dados_matriz.columns:
+                    dt_temp = dt_temp.fillna(pd.to_datetime(dados_matriz["DATA_DEMONSTRACAO_FINANCEIRA"], errors="coerce"))
+                if "DATA_CALCULO" in dados_matriz.columns:
+                    dt_temp = dt_temp.fillna(pd.to_datetime(dados_matriz["DATA_CALCULO"], errors="coerce"))
+                
+                dm_sorted = dados_matriz.assign(_dt_sort=dt_temp).sort_values(by="_dt_sort", ascending=False)
+                
                 linha_valida = None
-                for _, d_row in dados_matriz.iterrows():
+                for _, d_row in dm_sorted.iterrows():
                     for col in ["RATING_FINAL", "PD_FINAL", "SCORE_TOTAL", "SCORE", "RATING"]:
                         if col in d_row and pd.notna(d_row.get(col)) and str(d_row.get(col)).strip() not in ("", "None", "nan", "<NA>"):
                             linha_valida = d_row
                             break
                     if linha_valida is not None:
                         break
-                dados_matriz = linha_valida if linha_valida is not None else dados_matriz.iloc[-1]
+                dados_matriz = linha_valida if linha_valida is not None else dm_sorted.iloc[0]
                 
             # Verifica se a matriz (linha final escolhida) realmente gerou risco
             tem_risco = False
@@ -190,16 +203,25 @@ def herdar_risco_filiais(df_fato: pd.DataFrame, df_contratos: pd.DataFrame) -> p
     df_result = df_fato.copy()
     
     # 1. Identificar CNPJs com contrato ativo
+    from common.identificadores import normalizar_cnpj_coluna
     status_excluidos = ["CANCELADO", "DISTRATADO", "ENCERRADO", "REJEITADO", "INATIVO"]
     if "STATUS" in df_contratos.columns:
         df_ativos = df_contratos[~df_contratos["STATUS"].astype(str).str.upper().isin(status_excluidos)]
     else:
         df_ativos = df_contratos
         
-    cnpjs_com_contrato = set(df_ativos["CNPJ"].dropna().unique())
+    col_cnpj_ctr = "CNPJ" if "CNPJ" in df_ativos.columns else ("CONTRAPARTE_CNPJ" if "CONTRAPARTE_CNPJ" in df_ativos.columns else None)
+    if col_cnpj_ctr:
+        cnpjs_com_contrato = set(df_ativos[col_cnpj_ctr].dropna().apply(normalizar_cnpj_coluna).unique())
+    else:
+        cnpjs_com_contrato = set()
     
     # 2. Identificar quem já está na Fato
-    cnpjs_na_fato = set(df_result["CNPJ"].dropna().unique())
+    if "CNPJ" in df_result.columns:
+        df_result["CNPJ"] = df_result["CNPJ"].apply(normalizar_cnpj_coluna)
+        cnpjs_na_fato = set(df_result["CNPJ"].dropna().unique())
+    else:
+        cnpjs_na_fato = set()
     
     # 3. Filiais orfãs = tem contrato mas NÃO estão na fato (ou estão mas não têm rating)
     VALORES_SEM_RATING = {"", "NONE", "NAN", "<NA>", "PENDENTE", "NAO_ENQUADRADO", "NAO_APLICAVEL"}
@@ -216,15 +238,48 @@ def herdar_risco_filiais(df_fato: pd.DataFrame, df_contratos: pd.DataFrame) -> p
     # 4. Criar dicionário indexado de doadores potenciais (Raiz -> Doador dict)
     df_doadores = df_fato[~mask_presente_mas_orfao].copy()
     
+    # Criar coluna temporária de data para desempate cronológico determinístico
+    df_doadores["_dt_analise_temp"] = pd.to_datetime(df_doadores.get("DATA_ANALISE"), errors="coerce")
+    if "DATA_DEMONSTRACAO_FINANCEIRA" in df_doadores.columns:
+        df_doadores["_dt_analise_temp"] = df_doadores["_dt_analise_temp"].fillna(
+            pd.to_datetime(df_doadores["DATA_DEMONSTRACAO_FINANCEIRA"], errors="coerce")
+        )
+    if "DATA_CALCULO" in df_doadores.columns:
+        df_doadores["_dt_analise_temp"] = df_doadores["_dt_analise_temp"].fillna(
+            pd.to_datetime(df_doadores["DATA_CALCULO"], errors="coerce")
+        )
+    
     doadores_dict: dict[str, dict] = {}
     for _, doador_row in df_doadores.iterrows():
-        c_str = str(doador_row["CNPJ"])
+        c_str = str(doador_row["CNPJ"]).strip()
         r = c_str[:8]
         is_0001 = (len(c_str) >= 12 and c_str[8:12] == "0001")
-        if r not in doadores_dict or (is_0001 and not doadores_dict[r].get("_is_0001")):
+        dt_atual = doador_row.get("_dt_analise_temp")
+        
+        if r not in doadores_dict:
             d = doador_row.to_dict()
             d["_is_0001"] = is_0001
+            d["_dt_analise_temp"] = dt_atual
             doadores_dict[r] = d
+        else:
+            prev_is_0001 = doadores_dict[r].get("_is_0001", False)
+            prev_dt = doadores_dict[r].get("_dt_analise_temp")
+            
+            # Critério determinístico de atualização:
+            # 1. Matriz (0001) tem prioridade absoluta sobre filiais da mesma raiz
+            # 2. Em caso de mesma hierarquia (ambas 0001 ou ambas filiais), a análise mais recente prevalece
+            deve_atualizar = False
+            if is_0001 and not prev_is_0001:
+                deve_atualizar = True
+            elif is_0001 == prev_is_0001:
+                if pd.notna(dt_atual) and (pd.isna(prev_dt) or dt_atual >= prev_dt):
+                    deve_atualizar = True
+                    
+            if deve_atualizar:
+                d = doador_row.to_dict()
+                d["_is_0001"] = is_0001
+                d["_dt_analise_temp"] = dt_atual
+                doadores_dict[r] = d
             
     novas_linhas = []
     count_herdados = 0
@@ -253,6 +308,7 @@ def herdar_risco_filiais(df_fato: pd.DataFrame, df_contratos: pd.DataFrame) -> p
 
             dados_herdados = doador_template.copy()
             dados_herdados.pop("_is_0001", None)
+            dados_herdados.pop("_dt_analise_temp", None)
             dados_herdados["ANALISE_HERDADA"] = True
             dados_herdados["ORIGEM_ANALISE"] = "HERDADA DA MATRIZ (RAIZ CNPJ)"
             dados_herdados["TIPO_ANALISE"] = "Análise Herdada"
@@ -275,9 +331,11 @@ def herdar_risco_filiais(df_fato: pd.DataFrame, df_contratos: pd.DataFrame) -> p
         df_novos = pd.DataFrame(novas_linhas)
         df_result = pd.concat([df_result, df_novos], ignore_index=True)
         
-    df_fato.drop(columns=["CNPJ_RAIZ_TEMP"], errors="ignore", inplace=True)
+    df_fato.drop(columns=["CNPJ_RAIZ_TEMP", "_dt_analise_temp"], errors="ignore", inplace=True)
     if "CNPJ_RAIZ_TEMP" in df_result.columns:
         df_result.drop(columns=["CNPJ_RAIZ_TEMP"], inplace=True)
+    if "_dt_analise_temp" in df_result.columns:
+        df_result.drop(columns=["_dt_analise_temp"], inplace=True)
         
     logger.info(f"Herança de Filiais: {count_herdados} atualizadas, {count_inseridos} inseridas na Fato.")
     return df_result

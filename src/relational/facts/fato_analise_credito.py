@@ -185,6 +185,11 @@ def construir_fato_analise_credito(
                 registro["RATING_FINAL"] = pd.NA
                 registro["PD_FINAL"] = pd.NA
                 registro["SCORE_TOTAL"] = pd.NA
+                registro["STATUS_AUDITORIA_PD"] = "NAO_VALIDAVEL"
+                registro["STATUS_AUDITORIA_RATING"] = "NAO_VALIDAVEL"
+                registro["PD_OFICIAL_FICHA"] = None
+                registro["PD_RECALCULADA_PYTHON"] = None
+                registro["DELTA_PD"] = None
                 if registro.get("TIPO_FICHA") == "CONSUMIDOR" and not tem_df_contabil:
                     registro["TIPO_ANALISE"] = "Análise Bureau"
                 else:
@@ -203,6 +208,40 @@ def construir_fato_analise_credito(
             )
             registro.update(pd_info)
             
+            # Validação Paralela (Auditoria Sombra): Soberania da Ficha vs Recálculo Python
+            try:
+                from domain.credito.validador_paralelo import validar_paralelamente_pd_e_rating
+                from common.numeros import to_float_br, to_percentual_br
+
+                # Soberania da Origem (Regra III): A ficha é soberana para relatórios oficiais
+                pd_ficha_raw = registro.get("PROBABILIDADE_DEFAULT") if registro.get("PROBABILIDADE_DEFAULT") is not None else registro.get("PD_BASE_FICHA")
+                pd_ficha_num = to_percentual_br(pd_ficha_raw) if pd_ficha_raw is not None else None
+                pd_calc_num = to_float_br(registro.get("PD_BASE")) if registro.get("PD_BASE") is not None else to_float_br(registro.get("PD_FINAL"))
+                rating_ficha = str(registro.get("RATING_COPEL") or registro.get("NOTA_CREDITO") or "").strip() or None
+                rating_calc = registro.get("RATING_FINAL")
+
+                res_val = validar_paralelamente_pd_e_rating(
+                    pd_calculada=pd_calc_num,
+                    pd_declarada=pd_ficha_num,
+                    rating_calculado=rating_calc,
+                    rating_declarado=rating_ficha,
+                    logger=logger,
+                    cnpj=cnpj
+                )
+                registro["PD_OFICIAL_FICHA"] = res_val["PD_OFICIAL"]
+                registro["PD_RECALCULADA_PYTHON"] = res_val["PD_CALCULADA"]
+                registro["STATUS_AUDITORIA_PD"] = res_val["STATUS_CONCILIACAO_PD"]
+                registro["STATUS_AUDITORIA_RATING"] = res_val["STATUS_CONCILIACAO_RATING"]
+                registro["DELTA_PD"] = res_val["DELTA_PD"]
+
+                # O valor oficial soberano prevalece para concessão se presente
+                if pd_ficha_num is not None:
+                    registro["PD_FINAL"] = pd_ficha_num
+                if rating_ficha is not None:
+                    registro["RATING_FINAL"] = rating_ficha
+            except Exception as e_val:
+                logger.warning("[AUDITORIA_SOMBRA] Falha ao executar conciliação para CNPJ %s: %s", cnpj, e_val)
+
             # Enriquecimento com Score e Restritivos da Risk3 (quando disponíveis)
             if registro.get("SCORE_BUREAU") is not None and not pd.isna(registro.get("SCORE_BUREAU")):
                 registro["SCORE_TOTAL"] = float(registro["SCORE_BUREAU"])
@@ -260,9 +299,34 @@ def construir_fato_analise_credito(
             })
             # Preservar o rating documental da ficha (RATING_COPEL, NOTA_CREDITO ou RATING)
             rating_doc = registro.get("RATING_COPEL") or registro.get("NOTA_CREDITO") or registro.get("RATING")
-            registro["RATING_FINAL"] = str(rating_doc).strip() if pd.notna(rating_doc) and str(rating_doc).strip() not in ("", "None", "nan", "<NA>") else pd.NA
-            registro["PD_FINAL"] = pd.NA
+            rating_oficial = str(rating_doc).strip() if pd.notna(rating_doc) and str(rating_doc).strip() not in ("", "None", "nan", "<NA>") else None
+            registro["RATING_FINAL"] = rating_oficial if rating_oficial is not None else pd.NA
+            
+            # SOBERANIA DA ORIGEM (Regra III): Preservar PD oficial da ficha se existir
+            from domain.credito.validador_paralelo import validar_paralelamente_pd_e_rating
+            from common.numeros import to_float_br, to_percentual_br
+
+            pd_ficha_raw = registro.get("PROBABILIDADE_DEFAULT") if registro.get("PROBABILIDADE_DEFAULT") is not None else registro.get("PD_BASE_FICHA")
+            pd_ficha_num = to_percentual_br(pd_ficha_raw) if pd_ficha_raw is not None else None
+            registro["PD_FINAL"] = pd_ficha_num if pd_ficha_num is not None else pd.NA
             registro["STATUS_CALCULO_PD"] = "PENDENTE"
+
+            try:
+                res_val = validar_paralelamente_pd_e_rating(
+                    pd_calculada=None,
+                    pd_declarada=pd_ficha_num,
+                    rating_calculado=None,
+                    rating_declarado=rating_oficial,
+                    logger=logger,
+                    cnpj=cnpj
+                )
+                registro["PD_OFICIAL_FICHA"] = res_val["PD_OFICIAL"]
+                registro["PD_RECALCULADA_PYTHON"] = res_val["PD_CALCULADA"]
+                registro["STATUS_AUDITORIA_PD"] = res_val["STATUS_CONCILIACAO_PD"]
+                registro["STATUS_AUDITORIA_RATING"] = res_val["STATUS_CONCILIACAO_RATING"]
+                registro["DELTA_PD"] = res_val["DELTA_PD"]
+            except Exception as e_val:
+                logger.warning("[AUDITORIA_SOMBRA] Falha ao executar conciliação em contingência para CNPJ %s: %s", cnpj, e_val)
             
             # Preservar SCORE_TOTAL e RESTRITIVOS da RISK3 se existirem
             if registro.get("SCORE_BUREAU") is not None and not pd.isna(registro.get("SCORE_BUREAU")):
@@ -292,9 +356,33 @@ def construir_fato_analise_credito(
                 "contraparte_id": cnpj
             })
             rating_doc = registro.get("RATING_COPEL") or registro.get("NOTA_CREDITO") or registro.get("RATING")
-            registro["RATING_FINAL"] = str(rating_doc).strip() if pd.notna(rating_doc) and str(rating_doc).strip() not in ("", "None", "nan", "<NA>") else pd.NA
-            registro["PD_FINAL"] = pd.NA
+            rating_oficial = str(rating_doc).strip() if pd.notna(rating_doc) and str(rating_doc).strip() not in ("", "None", "nan", "<NA>") else None
+            registro["RATING_FINAL"] = rating_oficial if rating_oficial is not None else pd.NA
+
+            from domain.credito.validador_paralelo import validar_paralelamente_pd_e_rating
+            from common.numeros import to_float_br, to_percentual_br
+
+            pd_ficha_raw = registro.get("PROBABILIDADE_DEFAULT") if registro.get("PROBABILIDADE_DEFAULT") is not None else registro.get("PD_BASE_FICHA")
+            pd_ficha_num = to_percentual_br(pd_ficha_raw) if pd_ficha_raw is not None else None
+            registro["PD_FINAL"] = pd_ficha_num if pd_ficha_num is not None else pd.NA
             registro["STATUS_CALCULO_PD"] = "ERRO_SISTEMICO"
+
+            try:
+                res_val = validar_paralelamente_pd_e_rating(
+                    pd_calculada=None,
+                    pd_declarada=pd_ficha_num,
+                    rating_calculado=None,
+                    rating_declarado=rating_oficial,
+                    logger=logger,
+                    cnpj=cnpj
+                )
+                registro["PD_OFICIAL_FICHA"] = res_val["PD_OFICIAL"]
+                registro["PD_RECALCULADA_PYTHON"] = res_val["PD_CALCULADA"]
+                registro["STATUS_AUDITORIA_PD"] = res_val["STATUS_CONCILIACAO_PD"]
+                registro["STATUS_AUDITORIA_RATING"] = res_val["STATUS_CONCILIACAO_RATING"]
+                registro["DELTA_PD"] = res_val["DELTA_PD"]
+            except Exception as e_val:
+                logger.warning("[AUDITORIA_SOMBRA] Falha ao executar conciliação em erro sistêmico para CNPJ %s: %s", cnpj, e_val)
             if registro.get("SCORE_BUREAU") is not None and not pd.isna(registro.get("SCORE_BUREAU")):
                 registro["SCORE_TOTAL"] = float(registro["SCORE_BUREAU"])
             elif registro.get("SCORE_TOTAL") is None:
@@ -602,7 +690,17 @@ def construir_fato_analise_credito(
         "CONFIG_SNAPSHOT_PD": "CONFIG_SNAPSHOT_PD",
         "VALIDADE_DF": "VALIDADE_DF", "VALIDADE_BUREAU": "VALIDADE_BUREAU", "VALIDADE_RATING_PUBLICO": "VALIDADE_RATING_PUBLICO",
         "FIM_VIGENCIA_ANALISE": "FIM_VIGENCIA_ANALISE", "ORIGEM_FONTE": "ORIGEM_FONTE",
-        "FONTE_ANALISE": "FONTE_ANALISE"
+        "FONTE_ANALISE": "FONTE_ANALISE",
+        "PD_OFICIAL_FICHA": "PD_OFICIAL_FICHA",
+        "PD_RECALCULADA_PYTHON": "PD_RECALCULADA_PYTHON",
+        "STATUS_AUDITORIA_PD": "STATUS_AUDITORIA_PD",
+        "STATUS_AUDITORIA_RATING": "STATUS_AUDITORIA_RATING",
+        "DELTA_PD": "DELTA_PD",
+        "VENDAS_LIQUIDAS": "VENDAS_LIQUIDAS",
+        "LUCRO_LIQUIDO": "LUCRO_LIQUIDO",
+        "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS": "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+        "SCORE_BOARD_COPEL": "SCORE_BOARD_COPEL",
+        "RATING_BOARD_COPEL": "RATING_BOARD_COPEL"
     }
 
     df_final = df_processado[[c for c in rename_map.keys() if c in df_processado.columns]].rename(columns=rename_map).copy()
@@ -614,7 +712,13 @@ def construir_fato_analise_credito(
     
     if "DATA_ANALISE" in df_final.columns:
         df_final["DATA_ANALISE"] = pd.to_datetime(df_final["DATA_ANALISE"], errors="coerce")
-    for num_col in ["SCORE", "PD_PERCENTUAL", "RESTRITIVOS", "PATRIMONIO_LIQUIDO"]:
+    colunas_numericas = [
+        "SCORE", "PD_PERCENTUAL", "RESTRITIVOS", "PATRIMONIO_LIQUIDO",
+        "VENDAS_LIQUIDAS", "LUCRO_LIQUIDO", "FLUXO_DE_CAIXA_DAS_ATIVIDADES_OPERACIONAIS",
+        "SCORE_BOARD_COPEL", "PD_OFICIAL_FICHA", "PD_RECALCULADA_PYTHON", "DELTA_PD",
+        "PD_BASE", "PD_MIN", "PD_MAX", "VALOR_PD_SUB"
+    ]
+    for num_col in colunas_numericas:
         if num_col in df_final.columns:
             df_final[num_col] = pd.to_numeric(df_final[num_col], errors="coerce")
 
@@ -622,7 +726,7 @@ def construir_fato_analise_credito(
         df_existente = pd.read_parquet(parquet_path)
         if "DATA_ANALISE" in df_existente.columns:
             df_existente["DATA_ANALISE"] = pd.to_datetime(df_existente["DATA_ANALISE"], errors="coerce")
-        for num_col in ["SCORE", "PD_PERCENTUAL", "RESTRITIVOS", "PATRIMONIO_LIQUIDO"]:
+        for num_col in colunas_numericas:
             if num_col in df_existente.columns:
                 df_existente[num_col] = pd.to_numeric(df_existente[num_col], errors="coerce")
         df_historico = pd.concat([df_existente, df_final], ignore_index=True)
@@ -645,6 +749,20 @@ def construir_fato_analise_credito(
     # Garantir datetime64[ns] unificado antes de gravar em Parquet
     if "DATA_ANALISE" in df_final.columns:
         df_final["DATA_ANALISE"] = pd.to_datetime(df_final["DATA_ANALISE"], errors="coerce").astype("datetime64[ns]")
+
+    # Garantir tipagem limpa para evitar falha no pyarrow com valores tipo 'NAO_APLICAVEL'
+    for num_col in colunas_numericas:
+        if num_col in df_final.columns:
+            df_final[num_col] = pd.to_numeric(df_final[num_col], errors="coerce")
+
+    colunas_texto = [
+        "STATUS_AUDITORIA_PD", "STATUS_AUDITORIA_RATING", "RATING", 
+        "RATING_BOARD_COPEL", "MODELO", "CLASSE", "SITUACAO_DF", 
+        "SITUACAO_ANALISE", "TIPO_ANALISE", "FONTE_ANALISE", "ORIGEM_FONTE"
+    ]
+    for str_col in colunas_texto:
+        if str_col in df_final.columns:
+            df_final[str_col] = df_final[str_col].astype("string")
         
     escrever_conjunto_de_dados_silver(records=df_final.to_dict(orient="records"), output_dir=relational_dir, filename="fato_analise_credito")
     df_final.to_parquet(parquet_path, index=False)

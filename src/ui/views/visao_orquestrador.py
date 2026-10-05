@@ -27,7 +27,7 @@ def obter_ultimo_log_runner() -> tuple[Path | None, str]:
     try:
         with open(ultimo_log, "r", encoding="utf-8", errors="replace") as f:
             linhas = f.readlines()
-            ultimas_linhas = linhas[-80:] if len(linhas) > 80 else linhas
+            ultimas_linhas = linhas[-200:] if len(linhas) > 200 else linhas
             return ultimo_log, "".join(ultimas_linhas)
     except Exception as e:
         return ultimo_log, f"Erro ao ler log: {e}"
@@ -110,7 +110,7 @@ def render_visao_orquestrador():
     caminho_log, conteudo_log = obter_ultimo_log_runner()
     
     if caminho_log:
-        st.caption(f"Visualizando arquivo: `{caminho_log}` (últimas 80 linhas)")
+        st.caption(f"Visualizando arquivo: `{caminho_log}` (últimas 200 linhas)")
         st.code(conteudo_log, language="log")
     else:
         st.info(conteudo_log)

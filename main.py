@@ -1,6 +1,5 @@
 import argparse
 import sys
-import pandas as pd
 import subprocess
 
 from pathlib import Path
@@ -14,46 +13,13 @@ if str(SRC_DIR) not in sys.path:
 
 from app.bootstrap import carregar_contexto 
 from control.logger import obter_logger
-
-from cli import rodar_fichas_comercializadoras
-from cli import rodar_fichas_consumidores
-from services.connectors.fichas_connector import obter_fichas_rede
-
 from domain.auditoria.servico_auditoria import registrar_inicio_pipeline, registrar_fim_pipeline
-from domain.contratos.servico_contratos_denodo import processar_contratos_denodo
-from domain.contrapartes.servico_enquadramento import calcular_enquadramento_consumidor
-from domain.mtm.servico_mtm import inserir_dados_mtm
-from domain.salesforce.servico_salesforce import inserir_dados_salesforce
-from domain.cadastro.servico_receita import inserir_dados_receita
-from domain.garantias.servico_garantia import inserir_dados_garantias
-from domain.carga_manual.servico_carga_manual import inserir_dados_carga_manual
-from domain.credito.servico_override import processar_solicitacao_override
-from domain.cadastro.servico_bureau import inserir_dados_bureau
-from domain.controlador.servico_controlador import inserir_dados_controladoras
-from gold.servico_gold import exportar_visao_consolidada_gold
-from relational.facts.fato_exposicao_risco import construir_fato_exposicao_risco
-from relational.facts.fato_analise_credito import construir_fato_analise_credito
-from relational.facts.fato_reconciliacao_fichas_salesforce import executar_reconciliacao_fichas_salesforce
-from relational.dimensions.dim_contraparte import criar_dim_contraparte
-from relational.facts.fato_reconciliacao_contrato_mtm import executar_reconciliacao_denodo_mtm
-from relational.facts.fato_alertas import gerar_fato_alertas_credito
-from relational.facts.fato_alertas_manuais import gerar_fato_alertas_manuais
-from relational.facts.fato_garantia import gerar_fato_garantia
-from relational.dimensions.dim_contraparte import processar_dim_contraparte
-from relational.facts.fato_analise_credito import processar_fato_analise_credito
-from relational.facts.fato_exposicao_risco import processar_fato_exposicao_risco
-from relational.facts.fato_score_rating_pd import processar_fato_score_rating_pd
-from relational.facts.fato_migracao_rating import processar_fato_migracao_rating
-from gold.servico_limites import exportar_arquivo_limites
-from gold.servico_carteira_contratos import processar_visao_contratos_risco
-from gold.servico_migracao_rating import exportar_visao_migracao_rating_gold
-from gold.servico_visao_garantias import exportar_visao_garantias_gold
 
-def rodar_interface_streamlit():
+def rodar_interface_streamlit() -> None:
+    """Inicia a interface Streamlit em subprocesso isolado."""
     app_path = PROJECT_ROOT / "src" / "ui" / "app.py"
-    subprocess.run([
-        sys.executable, "-m", "streamlit", "run", str(app_path)
-    ])
+    subprocess.run([sys.executable, "-m", "streamlit", "run", str(app_path)])
+
 
 class PipelineStep(NamedTuple):
     name: str
@@ -61,48 +27,92 @@ class PipelineStep(NamedTuple):
     is_critical: bool = False
     allow_degraded: bool = False
 
-PIPELINE_STEPS = [
-    # BLOCO 0: SINCRONIZAÇÃO PREVENTIVA DE REDE (IDEMPOTENTE E FAIL-SAFE)
-    PipelineStep(name="Obtencao de Fichas da Rede", func=lambda ctx: obter_fichas_rede(), allow_degraded=True),
 
-    # BLOCO 1: INGESTaO CORE E OVERRIDES (ATIVO)
-    PipelineStep(name="Fichas Comercializadoras", func=lambda ctx: rodar_fichas_comercializadoras.main()),
-    PipelineStep(name="Fichas Consumidores", func=lambda ctx: rodar_fichas_consumidores.main()),
-    
-    # BLOCO 2: APIS EXTERNAS E CONECTORES
-    PipelineStep(name="Ingestao de Contratos (Denodo)", func=processar_contratos_denodo, is_critical=True),
-    PipelineStep(name="Enquadramento de Consumidores", func=lambda ctx: calcular_enquadramento_consumidor(datetime.now().strftime("%Y%m"), ctx)),
-    PipelineStep(name="Ingestao de MtM", func=inserir_dados_mtm),
-    PipelineStep(name="Ingestao do Salesforce", func=inserir_dados_salesforce),
-    PipelineStep(name="Ingestao da Receita Federal", func=inserir_dados_receita), 
-    PipelineStep(name="Ingestao de Controladoras", func=inserir_dados_controladoras, allow_degraded=True),
-    PipelineStep(name="Ingestao de Bureau (RISK3)", func=inserir_dados_bureau),
-    PipelineStep(name="Ingestao de Garantias", func=inserir_dados_garantias),
-    PipelineStep(name="Solicitacoes de Override", func=processar_solicitacao_override),
-    PipelineStep(name="Carga Manual (Eventos e Overrides)", func=lambda ctx: inserir_dados_carga_manual(ctx)),
+def obter_pipeline_steps() -> list[PipelineStep]:
+    # 1. Ingestao e Conectores Silver
+    from cli import rodar_fichas_comercializadoras, rodar_fichas_consumidores
+    from services.connectors.fichas_connector import obter_fichas_rede
+    from domain.contratos.servico_contratos_denodo import processar_contratos_denodo
+    from domain.contrapartes.servico_enquadramento import calcular_enquadramento_consumidor
+    from domain.mtm.servico_mtm import inserir_dados_mtm
+    from domain.salesforce.servico_salesforce import inserir_dados_salesforce
+    from domain.cadastro.servico_receita import inserir_dados_receita
+    from domain.cadastro.servico_bureau import inserir_dados_bureau
+    from domain.controlador.servico_controlador import inserir_dados_controladoras
+    from domain.garantias.servico_garantia import inserir_dados_garantias
+    from domain.credito.servico_override import processar_solicitacao_override
+    from domain.carga_manual.servico_carga_manual import inserir_dados_carga_manual
 
-    # BLOCO 3: MOTOR DE CRÉDITO E CAMADAS RELACIONAIS
-    PipelineStep(name="Dimensao Contraparte", func=processar_dim_contraparte),
-    PipelineStep(name="Fato Analise de Credito", func=processar_fato_analise_credito),
-    PipelineStep(name="Fato Score Rating PD", func=processar_fato_score_rating_pd),
-    PipelineStep(name="Fato Migracao Rating", func=processar_fato_migracao_rating),
-    PipelineStep(name="Fato Garantia", func=gerar_fato_garantia),
-    PipelineStep(name="Fato Exposicao de Risco", func=processar_fato_exposicao_risco),
-    PipelineStep(name="Fato Reconciliacao Denodo x MtM", func=executar_reconciliacao_denodo_mtm, is_critical=True),
-    PipelineStep(name="Fato Reconciliacao Fichas x Salesforce", func=executar_reconciliacao_fichas_salesforce),
-    PipelineStep(name="Alertas de Carga Manual e Exceções", func=gerar_fato_alertas_manuais),
-    PipelineStep(name="Fato Alertas de Credito", func=gerar_fato_alertas_credito),
+    # 2. Camada Relacional (Core / Fatos e Dimensoes)
+    from relational.dimensions.dim_contraparte import processar_dim_contraparte
+    from relational.facts.fato_analise_credito import processar_fato_analise_credito
+    from relational.facts.fato_score_rating_pd import processar_fato_score_rating_pd
+    from relational.facts.fato_migracao_rating import processar_fato_migracao_rating
+    from relational.facts.fato_garantia import gerar_fato_garantia
+    from relational.facts.fato_exposicao_risco import processar_fato_exposicao_risco
+    from relational.facts.fato_reconciliacao_contrato_mtm import executar_reconciliacao_denodo_mtm
+    from relational.facts.fato_reconciliacao_fichas_salesforce import executar_reconciliacao_fichas_salesforce
+    from relational.facts.fato_alertas_manuais import gerar_fato_alertas_manuais
+    from relational.facts.fato_alertas import gerar_fato_alertas_credito
 
-    # BLOCO 4: CAMADA GOLD E EXPORTAÇÃO
-    PipelineStep(name="Visao Consolidada Gold", func=exportar_visao_consolidada_gold),
-    PipelineStep(name="Visao Carteira Contratos (Vigente)", func=processar_visao_contratos_risco),
-    PipelineStep(name="Visao Migracao Rating Gold", func=exportar_visao_migracao_rating_gold),
-    PipelineStep(name="Visao Garantias Gold", func=exportar_visao_garantias_gold),
-    PipelineStep(name="Exportacao de Limites", func=exportar_arquivo_limites),
+    # 3. Camada Gold e Exportacoes
+    from gold.servico_gold import exportar_visao_consolidada_gold
+    from gold.servico_carteira_contratos import processar_visao_contratos_risco
+    from gold.servico_migracao_rating import exportar_visao_migracao_rating_gold
+    from gold.servico_visao_garantias import exportar_visao_garantias_gold
+    from gold.servico_limites import exportar_arquivo_limites
 
-    # BLOCO 5: INTERFACE
-    PipelineStep(name="Interface Streamlit", func=lambda ctx: rodar_interface_streamlit()),
-]
+    return [
+        # BLOCO 0: SINCRONIZACAO PREVENTIVA DE REDE (IDEMPOTENTE E FAIL-SAFE)
+        PipelineStep(name="Obtencao de Fichas da Rede", func=lambda ctx: obter_fichas_rede(), allow_degraded=True),
+
+        # BLOCO 1: INGESTAO CORE E OVERRIDES (ATIVO)
+        PipelineStep(name="Fichas Comercializadoras", func=lambda ctx: rodar_fichas_comercializadoras.main()),
+        PipelineStep(name="Fichas Consumidores", func=lambda ctx: rodar_fichas_consumidores.main()),
+        
+        # BLOCO 2: APIS EXTERNAS E CONECTORES
+        PipelineStep(name="Ingestao de Contratos (Denodo)", func=processar_contratos_denodo, is_critical=True),
+        PipelineStep(name="Enquadramento de Consumidores", func=lambda ctx: calcular_enquadramento_consumidor(datetime.now().strftime("%Y%m"), ctx)),
+        PipelineStep(name="Ingestao de MtM", func=inserir_dados_mtm),
+        PipelineStep(name="Ingestao do Salesforce", func=inserir_dados_salesforce),
+        PipelineStep(name="Ingestao da Receita Federal", func=inserir_dados_receita), 
+        PipelineStep(name="Ingestao de Controladoras", func=inserir_dados_controladoras, allow_degraded=True),
+        PipelineStep(name="Ingestao de Bureau (RISK3)", func=inserir_dados_bureau),
+        PipelineStep(name="Ingestao de Garantias", func=inserir_dados_garantias),
+        PipelineStep(name="Solicitacoes de Override", func=processar_solicitacao_override),
+        PipelineStep(name="Carga Manual (Eventos e Overrides)", func=lambda ctx: inserir_dados_carga_manual(ctx)),
+
+        # BLOCO 3: MOTOR DE CREDITO E CAMADAS RELACIONAIS
+        PipelineStep(name="Dimensao Contraparte", func=processar_dim_contraparte),
+        PipelineStep(name="Fato Analise de Credito", func=processar_fato_analise_credito),
+        PipelineStep(name="Fato Score Rating PD", func=processar_fato_score_rating_pd),
+        PipelineStep(name="Fato Migracao Rating", func=processar_fato_migracao_rating),
+        PipelineStep(name="Fato Garantia", func=gerar_fato_garantia),
+        PipelineStep(name="Fato Exposicao de Risco", func=processar_fato_exposicao_risco),
+        PipelineStep(name="Fato Reconciliacao Denodo x MtM", func=executar_reconciliacao_denodo_mtm, is_critical=True),
+        PipelineStep(name="Fato Reconciliacao Fichas x Salesforce", func=executar_reconciliacao_fichas_salesforce),
+        PipelineStep(name="Alertas de Carga Manual e Excecoes", func=gerar_fato_alertas_manuais),
+        PipelineStep(name="Fato Alertas de Credito", func=gerar_fato_alertas_credito),
+
+        # BLOCO 4: CAMADA GOLD E EXPORTACAO
+        PipelineStep(name="Visao Consolidada Gold", func=exportar_visao_consolidada_gold),
+        PipelineStep(name="Visao Carteira Contratos (Vigente)", func=processar_visao_contratos_risco),
+        PipelineStep(name="Visao Migracao Rating Gold", func=exportar_visao_migracao_rating_gold),
+        PipelineStep(name="Visao Garantias Gold", func=exportar_visao_garantias_gold),
+        PipelineStep(name="Exportacao de Limites", func=exportar_arquivo_limites),
+
+        # BLOCO 5: INTERFACE
+        PipelineStep(name="Interface Streamlit", func=lambda ctx: rodar_interface_streamlit()),
+    ]
+
+
+def __getattr__(name: str) -> Any:
+    """Garante compatibilidade retroativa para modulos que acessam PIPELINE_STEPS diretamente."""
+    if name == "PIPELINE_STEPS":
+        return obter_pipeline_steps()
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--configs-dir", default=str(Path("ENTRADAS") / "configs"))
@@ -124,11 +134,13 @@ def main() -> int:
     logger_runner = obter_logger("bdc.runner", context.path("log_runner") / f"{run_id}__orquestrador_principal.log")
 
     control_dir = context.path("saidas") / "relational" / "control" if hasattr(context, "path") else Path("SAIDAS/relational/control")
-    registro_inicio = registrar_inicio_pipeline(run_id, len(PIPELINE_STEPS), control_dir)
+    
+    pipeline_steps = obter_pipeline_steps()
+    registro_inicio = registrar_inicio_pipeline(run_id, len(pipeline_steps), control_dir)
 
     exit_codes = []
     
-    for step in PIPELINE_STEPS:
+    for step in pipeline_steps:
         if args.no_ui and step.name == "Interface Streamlit":
             continue
         try:
@@ -160,7 +172,7 @@ def main() -> int:
     registrar_fim_pipeline(registro_inicio, etapas_ok, etapas_falha, control_dir)
 
     logger_runner.info(f"\n{'=' * 60}\nResumo Final da Execucao do Pipeline:")
-    for step, code in zip(PIPELINE_STEPS, exit_codes):
+    for step, code in zip(pipeline_steps, exit_codes):
         logger_runner.info(f"  - {step.name}: {'OK' if code == 0 else f'FALHOU (codigo {code})'}")
         
     logger_runner.info(f"{'=' * 60}")
