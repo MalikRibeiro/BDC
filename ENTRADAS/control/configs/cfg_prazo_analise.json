@@ -1,0 +1,10 @@
+{
+  "descricao": "Prazos regulamentares de validade das análises de crédito por fonte e demonstrativo financeiro (meses)",
+  "versao_regra": "v1.2",
+  "prazos_validade_meses": {
+    "BUREAU": 12,
+    "DF": 18,
+    "BALANCO_ANUAL": 16,
+    "DEFAULT": 12
+  }
+}

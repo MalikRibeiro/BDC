@@ -87,7 +87,15 @@ def processar_fato_analise_credito(context: AppContext) -> dict[str, Any]:
                         tem_df_mask = tem_df_mask | (s_val.notna() & (~s_val.astype(str).str.strip().isin(["", "None", "nan", "<NA>", "NaT", "-"])))
 
                 df_fichas["ORIGEM_FONTE"] = "DF"
-                df_fichas.loc[~tem_df_mask, "ORIGEM_FONTE"] = "BUREAU"
+                # Apenas consumidores pequenos (< 5 MWm) sem DF podem ter ORIGEM_FONTE = "BUREAU"
+                # Comercializadoras, Geradoras e Grandes Consumidores exigem obrigatoriamente DF e permanecem ORIGEM_FONTE = "DF"
+                mask_pode_ser_bureau = ~tem_df_mask
+                if "TIPO_FICHA" in df_fichas.columns:
+                    mask_pode_ser_bureau = mask_pode_ser_bureau & (df_fichas["TIPO_FICHA"] == "CONSUMIDOR")
+                if "VOLUME_ENQUADRAMENTO_MWM" in df_fichas.columns:
+                    mask_pode_ser_bureau = mask_pode_ser_bureau & (df_fichas["VOLUME_ENQUADRAMENTO_MWM"].fillna(0) < 5.0)
+
+                df_fichas.loc[mask_pode_ser_bureau, "ORIGEM_FONTE"] = "BUREAU"
 
                 # Adicionar CNPJs exclusivos do Bureau (clientes sem ficha cadastrada)
                 cnpjs_somente_bureau = cnpjs_bureau - cnpjs_fichas
@@ -190,7 +198,8 @@ def construir_fato_analise_credito(
                 registro["PD_OFICIAL_FICHA"] = None
                 registro["PD_RECALCULADA_PYTHON"] = None
                 registro["DELTA_PD"] = None
-                if registro.get("TIPO_FICHA") == "CONSUMIDOR" and not tem_df_contabil:
+                vol_mwm = float(registro.get("VOLUME_ENQUADRAMENTO_MWM") or 0)
+                if registro.get("TIPO_FICHA") == "CONSUMIDOR" and not tem_df_contabil and vol_mwm < 5.0:
                     registro["TIPO_ANALISE"] = "Análise Bureau"
                 else:
                     registro["TIPO_ANALISE"] = "Análise DF"
@@ -262,10 +271,16 @@ def construir_fato_analise_credito(
                     registro.get("SCORE_BUREAU_UTILIZADO") is not None and not pd.isna(registro.get("SCORE_BUREAU_UTILIZADO"))
                 )
                 if tem_score:
-                    if registro.get("RATING_BUREAU") and (registro.get("RATING_FINAL") in ["NAO_APLICAVEL", None, "", pd.NA]):
-                        registro["RATING_FINAL"] = registro.get("RATING_BUREAU")
-                    if registro.get("PD_BUREAU") and (registro.get("PD_FINAL") is None or pd.isna(registro.get("PD_FINAL"))):
-                        registro["PD_FINAL"] = registro.get("PD_BUREAU")
+                    rb = registro.get("RATING_BUREAU")
+                    rf = registro.get("RATING_FINAL")
+                    if pd.notna(rb) and str(rb).strip() not in ("", "None", "nan", "<NA>"):
+                        if pd.isna(rf) or str(rf).strip() in ("", "None", "nan", "<NA>", "NAO_APLICAVEL"):
+                            registro["RATING_FINAL"] = str(rb).strip()
+                    
+                    pb = registro.get("PD_BUREAU")
+                    pf = registro.get("PD_FINAL")
+                    if pd.notna(pb) and (pd.isna(pf) or str(pf).strip() in ("", "None", "nan", "<NA>")):
+                        registro["PD_FINAL"] = pb
                     registro["TIPO_ANALISE"] = "Análise Bureau"
                 else:
                     registro["TIPO_ANALISE"] = "Análise Bureau (N/A)"
@@ -275,11 +290,17 @@ def construir_fato_analise_credito(
                     registro["SCORE_TOTAL"] = pd.NA
             elif registro.get("ANALISE_HERDADA") is True or registro.get("ORIGEM_ANALISE") == "HERDADA":
                 registro["TIPO_ANALISE"] = "Análise Herdada"
-            elif registro.get("ORIGEM_FONTE") == "BUREAU" and not tem_df_contabil:
-                if registro.get("RATING_BUREAU") and (registro.get("RATING_FINAL") in ["NAO_APLICAVEL", None, "", pd.NA]):
-                    registro["RATING_FINAL"] = registro.get("RATING_BUREAU")
-                if registro.get("PD_BUREAU") and (registro.get("PD_FINAL") is None or pd.isna(registro.get("PD_FINAL"))):
-                    registro["PD_FINAL"] = registro.get("PD_BUREAU")
+            elif registro.get("ORIGEM_FONTE") == "BUREAU" and not tem_df_contabil and registro.get("TIPO_FICHA") == "CONSUMIDOR" and float(registro.get("VOLUME_ENQUADRAMENTO_MWM") or 0) < 5.0:
+                rb = registro.get("RATING_BUREAU")
+                rf = registro.get("RATING_FINAL")
+                if pd.notna(rb) and str(rb).strip() not in ("", "None", "nan", "<NA>"):
+                    if pd.isna(rf) or str(rf).strip() in ("", "None", "nan", "<NA>", "NAO_APLICAVEL"):
+                        registro["RATING_FINAL"] = str(rb).strip()
+                
+                pb = registro.get("PD_BUREAU")
+                pf = registro.get("PD_FINAL")
+                if pd.notna(pb) and (pd.isna(pf) or str(pf).strip() in ("", "None", "nan", "<NA>")):
+                    registro["PD_FINAL"] = pb
                 registro["TIPO_ANALISE"] = "Análise Bureau"
             else:
                 registro["TIPO_ANALISE"] = "Análise DF"
@@ -311,6 +332,16 @@ def construir_fato_analise_credito(
             registro["PD_FINAL"] = pd_ficha_num if pd_ficha_num is not None else pd.NA
             registro["STATUS_CALCULO_PD"] = "PENDENTE"
 
+            # Contingência 1: Se houver PD contábil da ficha mas faltar Rating alfabético (ex: Axia/Eletrobras)
+            if (registro["RATING_FINAL"] is pd.NA or pd.isna(registro["RATING_FINAL"])) and pd_ficha_num is not None:
+                from domain.credito.rating import derivar_rating_por_pd
+                r_der = derivar_rating_por_pd(pd_ficha_num, registro.get("SEGMENTO_PD") or registro.get("TIPO_FICHA"), pd_faixas)
+                if r_der:
+                    registro["RATING_FINAL"] = r_der
+
+            # Segmentos com DF pendente/ausente: manter estritamente como pendência contábil (sem mascaramento por Bureau)
+            registro["SITUACAO_DF"] = "PENDENTE_DF"
+
             try:
                 res_val = validar_paralelamente_pd_e_rating(
                     pd_calculada=None,
@@ -337,8 +368,10 @@ def construir_fato_analise_credito(
             if registro.get("RESTRITIVOS") is not None and not pd.isna(registro.get("RESTRITIVOS")):
                 registro["RESTRITIVOS"] = float(registro.get("RESTRITIVOS"))
                 
-            if "TIPO_ANALISE" not in registro or not registro.get("TIPO_ANALISE"):
-                if registro.get("TIPO_FICHA") == "CONSUMIDOR":
+            tipo_anl = registro.get("TIPO_ANALISE")
+            if pd.isna(tipo_anl) or str(tipo_anl).strip() in ("", "None", "nan", "<NA>"):
+                vol_mwm = float(registro.get("VOLUME_ENQUADRAMENTO_MWM") or 0)
+                if registro.get("TIPO_FICHA") == "CONSUMIDOR" and vol_mwm < 5.0:
                     registro["TIPO_ANALISE"] = "Análise Bureau (N/A)" if pd.isna(registro.get("SCORE_TOTAL")) else "Análise Bureau"
                 else:
                     registro["TIPO_ANALISE"] = "Análise DF" if pd.notna(registro["RATING_FINAL"]) else "Análise DF (N/A)"
@@ -389,8 +422,10 @@ def construir_fato_analise_credito(
                 registro["SCORE_TOTAL"] = pd.NA
             if registro.get("RESTRITIVOS") is not None and not pd.isna(registro.get("RESTRITIVOS")):
                 registro["RESTRITIVOS"] = float(registro.get("RESTRITIVOS"))
-            if "TIPO_ANALISE" not in registro or not registro.get("TIPO_ANALISE"):
-                registro["TIPO_ANALISE"] = "Análise Bureau" if registro.get("TIPO_FICHA") == "CONSUMIDOR" else "Análise DF"
+            tipo_anl_err = registro.get("TIPO_ANALISE")
+            if pd.isna(tipo_anl_err) or str(tipo_anl_err).strip() in ("", "None", "nan", "<NA>"):
+                vol_mwm = float(registro.get("VOLUME_ENQUADRAMENTO_MWM") or 0)
+                registro["TIPO_ANALISE"] = "Análise Bureau" if (registro.get("TIPO_FICHA") == "CONSUMIDOR" and vol_mwm < 5.0) else "Análise DF"
 
         resultados.append(registro)
 
@@ -442,46 +477,11 @@ def construir_fato_analise_credito(
     if "MODELO_METODOLOGICO" not in df_processado.columns and "versao_ficha" in df_processado.columns:
         df_processado["MODELO_METODOLOGICO"] = df_processado["versao_ficha"]
 
-    # --- HERANÇA DE RISCO DE CONTROLADORAS E GRUPO ECONÔMICO (SALESFORCE) ---
-    df_contratos = pd.DataFrame()
-    try:
-        from domain.controlador.servico_controlador import herdar_risco_controladoras
-        
-        ctrl_path = context.path("silver") / "mapeamento_controladoras" / "mapeamento_controladoras.parquet"
-        df_controladoras = pd.read_parquet(ctrl_path) if ctrl_path.exists() else pd.DataFrame()
-        
-        if not df_controladoras.empty:
-            if "_STATUS_REGISTRO" in df_controladoras.columns:
-                df_controladoras = df_controladoras[df_controladoras["_STATUS_REGISTRO"] == "VIGENTE"]
-
-        # Enriquecimento com vínculos comprovados de controladoras da dim_contraparte
-        if df_dim_contraparte is not None and not df_dim_contraparte.empty and "CNPJ_CONTROLADORA" in df_dim_contraparte.columns:
-            mask_ctrl_valida = df_dim_contraparte["CNPJ_CONTROLADORA"].notna() & (df_dim_contraparte["CNPJ_CONTROLADORA"] != df_dim_contraparte["CNPJ"])
-            if mask_ctrl_valida.any():
-                col_nome_ctrl = "NOME_CONTROLADORA" if "NOME_CONTROLADORA" in df_dim_contraparte.columns else "GRUPO_ECONOMICO"
-                df_dim_ctrl = df_dim_contraparte[mask_ctrl_valida][["CNPJ", "CNPJ_CONTROLADORA", col_nome_ctrl]].rename(columns={
-                    "CNPJ": "CNPJ_SUBSIDIARIA",
-                    "CNPJ_CONTROLADORA": "CNPJ_CONTA_ATRELADA",
-                    col_nome_ctrl: "CONTA_ATRELADA"
-                }).copy()
-                df_dim_ctrl["_STATUS_REGISTRO"] = "VIGENTE"
-                df_controladoras = pd.concat([df_controladoras, df_dim_ctrl], ignore_index=True).drop_duplicates(
-                    subset=["CNPJ_SUBSIDIARIA", "CNPJ_CONTA_ATRELADA"], keep="first"
-                )
-
-        if not df_controladoras.empty:
-            df_processado = herdar_risco_controladoras(df_processado, df_controladoras, col_cnpj="CNPJ")
-            
-        from domain.controlador.servico_controlador import herdar_risco_filiais
-        
-        path_contratos = context.path("silver") / "denodo_contratos_silver" / "contratos_correntes.parquet"
-        if not path_contratos.exists():
-            path_contratos = context.path("silver") / "denodo_contratos_padronizados" / "contratos_correntes.parquet"
-            
-        df_contratos = pd.read_parquet(path_contratos) if path_contratos.exists() else pd.DataFrame()
-        df_processado = herdar_risco_filiais(df_processado, df_contratos)
-    except Exception as e:
-        logger.warning(f"Bypass Herança de Risco: Não foi possível aplicar herança de controladoras/filiais ({e})")
+    # --- HERANÇA DE RISCO DIMENSIONAL (PARTE 2 APROVADA) ---
+    # A clonagem física de linhas sintéticas na Fato foi eliminada. A herança de risco
+    # agora é resolvida de forma relacional via dim_estabelecimento (FK/Join),
+    # preservando a integridade da fato_analise_credito estritamente para análises reais.
+    logger.info("Herança de Risco: resolvida relacionalmente via dim_estabelecimento (sem clonagem sintética na fato).")
 
     # --- FALLBACK 3: ANÁLISE DE CRÉDITO VIA SALESFORCE (CHAMADO / CONTA) ---
     try:
@@ -565,6 +565,43 @@ def construir_fato_analise_credito(
                     df_processado.at[idx, "ORIGEM_FONTE"] = "SALESFORCE"
                     df_processado.at[idx, "STATUS_CALCULO_PD"] = "CONCLUIDO"
                     aplicou_sf = True
+
+            # Prioridade C: Bureau Risk3 (aplicável EXCLUSIVAMENTE a Consumidores LE_5 onde a metodologia oficial é o Bureau)
+            if not aplicou_sf:
+                seg_alvo = str(df_processado.at[idx, "SEGMENTO_PD"] or "").strip().upper()
+                tipo_f = str(df_processado.at[idx, "TIPO_FICHA"] or "").strip().upper()
+                exige_df = ("CPURA" in seg_alvo) or ("CGRUPO" in seg_alvo) or (tipo_f == "COMERCIALIZADORA") or ("GT_5" in seg_alvo)
+                if not exige_df and seg_alvo == "CONSUMIDOR_LE_5":
+                    rb_cand = str(df_processado.at[idx, "RATING_BUREAU"] or "").strip().upper()
+                    if rb_cand in RATINGS_VALIDOS_COPEL:
+                        df_processado.at[idx, "RATING_FINAL"] = rb_cand
+                        pb_val = df_processado.at[idx, "PD_BUREAU"]
+                        if pd.notna(pb_val):
+                            df_processado.at[idx, "PD_FINAL"] = to_float_br(pb_val)
+                        dt_b = df_processado.at[idx, "DATA_BUREAU"] or df_processado.at[idx, "DATA_VALIDADE"]
+                        if dt_b and pd.notna(dt_b):
+                            df_processado.at[idx, "DATA_ANALISE"] = pd.to_datetime(dt_b, errors="coerce")
+                        val_b = df_processado.at[idx, "DATA_VALIDADE"]
+                        if val_b and pd.notna(val_b):
+                            df_processado.at[idx, "FIM_VIGENCIA_ANALISE"] = str(val_b)
+                        df_processado.at[idx, "TIPO_ANALISE"] = "Análise Bureau"
+                        df_processado.at[idx, "ANALISE_HERDADA"] = False
+                        df_processado.at[idx, "ORIGEM_ANALISE"] = "BUREAU_RISK3"
+                        df_processado.at[idx, "ORIGEM_FONTE"] = "BUREAU"
+                        df_processado.at[idx, "FONTE_ANALISE"] = "Bureau (Risk3)"
+                        df_processado.at[idx, "STATUS_CALCULO_PD"] = "CONCLUIDO"
+                        aplicou_sf = True
+
+            # Prioridade D: Derivação de Rating por PD se PD estiver calculada (ex: Axia/Eletrobras)
+            if not aplicou_sf:
+                pd_cand = df_processado.at[idx, "PD_FINAL"]
+                if pd_cand is not None and pd.notna(pd_cand):
+                    from domain.credito.rating import derivar_rating_por_pd
+                    r_der = derivar_rating_por_pd(pd_cand, df_processado.at[idx, "SEGMENTO_PD"] or df_processado.at[idx, "TIPO_FICHA"], pd_faixas)
+                    if r_der in RATINGS_VALIDOS_COPEL:
+                        df_processado.at[idx, "RATING_FINAL"] = r_der
+                        df_processado.at[idx, "STATUS_CALCULO_PD"] = "CONCLUIDO"
+                        aplicou_sf = True
 
         # 4. Inserir contrapartes ativas de contratos que NÃO estavam na Fato e possuem análise no Salesforce
         cnpjs_na_fato = set(df_processado["CNPJ"].unique())
@@ -670,6 +707,39 @@ def construir_fato_analise_credito(
     mask_sf = of.isin(["SALESFORCE"])
     df_processado.loc[mask_sf, "FONTE_ANALISE"] = "Salesforce"
 
+    # Identificação Declarativa de Intercompany (Grupo Próprio Isento de Risco de Crédito)
+    try:
+        cfg_intercompany_path = Path("ENTRADAS/control/configs/contrapartes_grupo_proprio.json")
+        if cfg_intercompany_path.exists():
+            import json
+            with open(cfg_intercompany_path, "r", encoding="utf-8") as f_ic:
+                cfg_ic = json.load(f_ic)
+            raizes_ic = tuple(cfg_ic.get("raizes_cnpj_isentas", []))
+            cnpjs_exatos_ic = set(cfg_ic.get("cnpjs_isentos", []))
+            termos_nome_ic = cfg_ic.get("termos_razao_social", [])
+
+            s_cnpj_fat = df_processado["CNPJ"].astype(str).str.zfill(14)
+            cond_rz = s_cnpj_fat.str.startswith(raizes_ic) if raizes_ic else pd.Series(False, index=df_processado.index)
+            cond_cp = s_cnpj_fat.isin(cnpjs_exatos_ic) if cnpjs_exatos_ic else pd.Series(False, index=df_processado.index)
+            
+            col_nm = "RAZAO_SOCIAL" if "RAZAO_SOCIAL" in df_processado.columns else ("NOME" if "NOME" in df_processado.columns else None)
+            s_nm = df_processado[col_nm].astype(str).str.upper() if col_nm and col_nm in df_processado.columns else pd.Series("", index=df_processado.index)
+            cond_nm = s_nm.apply(lambda x: any(t in x for t in termos_nome_ic)) if termos_nome_ic else pd.Series(False, index=df_processado.index)
+
+            mask_ic = cond_rz | cond_cp | cond_nm
+            if mask_ic.any():
+                df_processado.loc[mask_ic, "RATING_FINAL"] = "ISENTO_INTERCOMPANY"
+                df_processado.loc[mask_ic, "PD_FINAL"] = 0.0
+                df_processado.loc[mask_ic, "SITUACAO_ANALISE"] = "ISENTO_INTERCOMPANY"
+                df_processado.loc[mask_ic, "TIPO_ANALISE"] = "Intercompany"
+                df_processado.loc[mask_ic, "ORIGEM_ANALISE"] = "INTERCOMPANY"
+                df_processado.loc[mask_ic, "FONTE_ANALISE"] = "Intercompany"
+                df_processado.loc[mask_ic, "STATUS_CALCULO_PD"] = "ISENTO"
+                df_processado.loc[mask_ic, "STATUS_AUDITORIA_PD"] = "NAO_APLICAVEL"
+                df_processado.loc[mask_ic, "STATUS_AUDITORIA_RATING"] = "NAO_APLICAVEL"
+    except Exception as e_ic:
+        logger.warning("Falha ao identificar intercompany em fato_analise_credito: %s", e_ic)
+
     for col in ["ANALISE_ID", "DATA_ANALISE", "RATING_FINAL", "PD_FINAL", "SCORE_TOTAL", "CLASSE_RISCO", "MODELO_METODOLOGICO", "DATA_DEMONSTRACAO_FINANCEIRA", "SEGMENTO_PD", "TIPO_FICHA", "PATRIMONIO_LIQUIDO", "SITUACAO_DF", "SITUACAO_ANALISE", "CNPJ_RAIZ", "STATUS_CALCULO_PD", "RESTRITIVOS", "TIPO_ANALISE", "MOTIVO_PD_SUB", "DATA_ACIONAMENTO_PD_SUB", "FONTE_PD_SUB", "VALOR_PD_SUB", "PD_BASE", "PD_MIN_FAIXA", "PD_MAX_FAIXA", "CONFIG_SNAPSHOT_PD", "VALIDADE_DF", "VALIDADE_BUREAU", "VALIDADE_RATING_PUBLICO", "FIM_VIGENCIA_ANALISE", "ORIGEM_FONTE", "FONTE_ANALISE"]:
         if col not in df_processado.columns:
             df_processado[col] = None
@@ -724,6 +794,11 @@ def construir_fato_analise_credito(
 
     if parquet_path.exists():
         df_existente = pd.read_parquet(parquet_path)
+        # Expurgo estrito da clonagem sintética legada do histórico físico da fato
+        if "ANALISE_HERDADA" in df_existente.columns:
+            df_existente = df_existente[df_existente["ANALISE_HERDADA"] != True]
+        if "ORIGEM_ANALISE" in df_existente.columns:
+            df_existente = df_existente[~df_existente["ORIGEM_ANALISE"].astype(str).str.contains("HERDADA", case=False, na=False)]
         if "DATA_ANALISE" in df_existente.columns:
             df_existente["DATA_ANALISE"] = pd.to_datetime(df_existente["DATA_ANALISE"], errors="coerce")
         for num_col in colunas_numericas:
@@ -731,11 +806,16 @@ def construir_fato_analise_credito(
                 df_existente[num_col] = pd.to_numeric(df_existente[num_col], errors="coerce")
         df_historico = pd.concat([df_existente, df_final], ignore_index=True)
         # SCD2: dedup based on CNPJ and Date, keeping latest
-        # fillna to avoid dropping NaT
-        df_historico["_TEMP_DATE"] = df_historico["DATA_ANALISE"].fillna(pd.Timestamp("1900-01-01"))
-        df_historico_dedup = df_historico.drop_duplicates(subset=["CNPJ", "_TEMP_DATE"], keep="last")
-        df_historico_dedup = df_historico_dedup.sort_values(["CNPJ", "_TEMP_DATE"]).reset_index(drop=True)
-        df_historico_dedup.drop(columns=["_TEMP_DATE"], inplace=True)
+        col_r_chk = "RATING_FINAL" if "RATING_FINAL" in df_historico.columns else "RATING"
+        has_r = df_historico[col_r_chk].notna() & (~df_historico[col_r_chk].astype(str).str.strip().isin(["", "None", "nan", "<NA>"]))
+        df_historico["_HAS_RATING"] = has_r.astype(int)
+        df_historico["_TEMP_DATE"] = pd.to_datetime(df_historico["DATA_ANALISE"], errors="coerce").fillna(pd.Timestamp("1900-01-01"))
+        
+        # Registros com Rating e data mais recente prevalecem
+        df_historico_dedup = df_historico.sort_values(["CNPJ", "_TEMP_DATE", "_HAS_RATING"]).reset_index(drop=True)
+        df_historico_dedup = df_historico_dedup.drop_duplicates(subset=["CNPJ", "_TEMP_DATE"], keep="last")
+        df_historico_dedup = df_historico_dedup.sort_values(["CNPJ", "_TEMP_DATE", "_HAS_RATING"]).reset_index(drop=True)
+        df_historico_dedup.drop(columns=["_TEMP_DATE", "_HAS_RATING"], inplace=True)
         
         df_historico_dedup["_VERSAO_REGISTRO"] = df_historico_dedup.groupby("CNPJ").cumcount() + 1
         df_historico_dedup["_STATUS_REGISTRO"] = "HISTORICO"
@@ -743,8 +823,16 @@ def construir_fato_analise_credito(
         df_historico_dedup.loc[idx_last, "_STATUS_REGISTRO"] = "VIGENTE"
         df_final = df_historico_dedup
     else:
+        col_r_chk = "RATING_FINAL" if "RATING_FINAL" in df_final.columns else "RATING"
+        has_r = df_final[col_r_chk].notna() & (~df_final[col_r_chk].astype(str).str.strip().isin(["", "None", "nan", "<NA>"]))
+        df_final["_HAS_RATING"] = has_r.astype(int)
+        df_final["_TEMP_DATE"] = pd.to_datetime(df_final["DATA_ANALISE"], errors="coerce").fillna(pd.Timestamp("1900-01-01"))
+        df_final = df_final.sort_values(["CNPJ", "_TEMP_DATE", "_HAS_RATING"]).reset_index(drop=True)
+        df_final.drop(columns=["_TEMP_DATE", "_HAS_RATING"], inplace=True)
         df_final["_VERSAO_REGISTRO"] = df_final.groupby("CNPJ").cumcount() + 1
-        df_final["_STATUS_REGISTRO"] = "VIGENTE"
+        df_final["_STATUS_REGISTRO"] = "HISTORICO"
+        idx_last = df_final.groupby("CNPJ").tail(1).index
+        df_final.loc[idx_last, "_STATUS_REGISTRO"] = "VIGENTE"
 
     # Garantir datetime64[ns] unificado antes de gravar em Parquet
     if "DATA_ANALISE" in df_final.columns:

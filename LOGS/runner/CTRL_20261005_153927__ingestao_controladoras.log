@@ -1,6 +1,0 @@
-2026-10-05 15:39:27 | INFO | bdc.controladoras | Iniciando ingestão de dados de Controladoras (Herança de Risco).
-2026-10-05 15:39:27 | INFO | bdc.controladoras | Carregando planilha de Controladoras local: ENTRADAS\controlador\Controladora e Subsidiaria.xlsx
-2026-10-05 15:39:27 | INFO | bdc.controladoras | Normalizando CNPJs das Controladoras e Subsidiárias...
-2026-10-05 15:39:27 | INFO | bdc.controladoras | Planilha de Controladoras processada com sucesso. Total de vínculos ativos extraídos: 60
-2026-10-05 15:39:27 | INFO | bdc.controladoras | Snapshot Bronze salvo: raw_controladoras_20261005_153927.xlsx
-2026-10-05 15:39:27 | INFO | bdc.controladoras | Ingestão finalizada. 60 vínculos de Controladoras salvos na Silver (SCD2).

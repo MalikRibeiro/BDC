@@ -44,7 +44,10 @@ def obter_pipeline_steps() -> list[PipelineStep]:
     from domain.carga_manual.servico_carga_manual import inserir_dados_carga_manual
 
     # 2. Camada Relacional (Core / Fatos e Dimensoes)
+    from relational.dimensions.dim_rating import processar_dim_rating
+    from relational.dimensions.dim_grupo_economico import processar_dim_grupo_economico
     from relational.dimensions.dim_contraparte import processar_dim_contraparte
+    from relational.dimensions.dim_estabelecimento import processar_dim_estabelecimento
     from relational.facts.fato_analise_credito import processar_fato_analise_credito
     from relational.facts.fato_score_rating_pd import processar_fato_score_rating_pd
     from relational.facts.fato_migracao_rating import processar_fato_migracao_rating
@@ -83,8 +86,11 @@ def obter_pipeline_steps() -> list[PipelineStep]:
         PipelineStep(name="Carga Manual (Eventos e Overrides)", func=lambda ctx: inserir_dados_carga_manual(ctx)),
 
         # BLOCO 3: MOTOR DE CREDITO E CAMADAS RELACIONAIS
+        PipelineStep(name="Dimensao Rating", func=processar_dim_rating),
+        PipelineStep(name="Dimensao Grupo Economico", func=processar_dim_grupo_economico),
         PipelineStep(name="Dimensao Contraparte", func=processar_dim_contraparte),
         PipelineStep(name="Fato Analise de Credito", func=processar_fato_analise_credito),
+        PipelineStep(name="Dimensao Estabelecimento", func=processar_dim_estabelecimento),
         PipelineStep(name="Fato Score Rating PD", func=processar_fato_score_rating_pd),
         PipelineStep(name="Fato Migracao Rating", func=processar_fato_migracao_rating),
         PipelineStep(name="Fato Garantia", func=gerar_fato_garantia),

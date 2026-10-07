@@ -93,6 +93,24 @@ Na camada Relacional e saídas Gold:
 * O motor Python recalcula fórmulas e réguas como **validação paralela / auditoria sombra**.
 * Divergências numéricas entre o recálculo e a ficha não devem abortar o pipeline silenciosamente: devem gerar status `DIVERGENCIA_ORIGEM` e registro contextual em log de auditoria.
 
+## Automação Bureau Risk3 vs Fila de Análise Contábil (DF)
+
+* A automação via API do Bureau Risk3 opera na abertura do chamado de crédito e grava consulta preliminar. A demonstração contábil (DF) aguarda análise manual da Mesa de Crédito.
+* É comportamento padrão e esperado que uma contraparte possua consulta ao Bureau Risk3 vigente enquanto sua análise contábil (DF) ainda está pendente ou vencida.
+* **PROIBIDO estender vigência ou mascarar pendência contábil via Bureau:** Para segmentos metodológicos que exigem DF contábil (Comercializadoras `CPURA`/`CGRUPO`, Geradoras e Consumidores $\ge 5\text{ MWm}$), a validade do Bureau Risk3 **nunca** deve ser usada como `FIM_VIGENCIA_ANALISE`. Na ausência de DF analisada ou se a DF estiver expirada:
+  - Na visão de concessão/crédito: o status deve ser `VENCIDA` (ou `SEM_ANALISE`) com `RATING_OFICIAL_FICHA = pd.NA`;
+  - Na visão de mensuração de risco de mercado (Gold): aplica-se estritamente a $PD_{sub}$ com pisos regulatórios da NT v7 (§§ 6.4, 7.2, 8.2 e 9.4), derivando `RATING_MERCADO` sem gerar valores nulos/em branco.
+
+## Operações Intercompany e Partes Relacionadas
+
+* Operações intercompany com entidades do conglomerado próprio são isentas de risco de crédito de terceiros.
+* O mapeamento é estritamente **declarativo** via `contrapartes_grupo_proprio.json` (raízes CNPJ, CNPJs exatos e termos de razão social).
+* Contratos e exposições identificados como intercompany recebem:
+  - `STATUS_VIGENCIA_ANALISE = 'ISENTO_INTERCOMPANY'`;
+  - `RATING = RATING_MERCADO = RATING_OFICIAL_FICHA = 'ISENTO_INTERCOMPANY'`;
+  - `PD_PERCENTUAL = 0.0`;
+  - `FONTE_ANALISE = 'Intercompany'`.
+
 
 # IV. GOVERNANÇA E METADADOS
 

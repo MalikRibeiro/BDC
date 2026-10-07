@@ -242,6 +242,7 @@ def calcular_pd_ajustada(
                 registro=registro_calculo,
                 segmento_pd=segmento_pd,
                 pd_cpura_config=pd_cpura_config,
+                pd_faixas=pd_faixas,
             )
             registro_calculo["RATING_FINAL"] = rating_final
 

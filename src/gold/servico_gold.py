@@ -82,8 +82,22 @@ def integrar_contratos_gold(
         df_contratos["DT_INICIO"] = pd.to_datetime(df_contratos.get(col_in), errors="coerce")
         df_contratos["DT_FIM"] = pd.to_datetime(df_contratos.get(col_out), errors="coerce")
 
+        cfg_status_path = Path("ENTRADAS/control/configs/cfg_status_contrato_ativo.json")
+        status_ativos_regex = "ATIVO|EM SUPRIMENTO|2"
+        if cfg_status_path.exists():
+            try:
+                import json
+                import re
+                with open(cfg_status_path, "r", encoding="utf-8") as f_st:
+                    cfg_st = json.load(f_st)
+                s_ativos = cfg_st.get("status_ativos", [])
+                if s_ativos:
+                    status_ativos_regex = "|".join(re.escape(s) for s in s_ativos if s.upper() != "VENCIDO")
+            except Exception:
+                pass
+
         df_contratos["EH_VIGENTE"] = (
-            (df_contratos.get("STATUS", df_contratos.get("id_status", "")).astype(str).str.upper().str.contains("ATIVO|EM SUPRIMENTO|2"))
+            (df_contratos.get("STATUS", df_contratos.get("id_status", "")).astype(str).str.upper().str.contains(status_ativos_regex, regex=True, na=False))
             & (df_contratos["DT_INICIO"] <= hoje)
             & (df_contratos["DT_FIM"] >= hoje)
         )

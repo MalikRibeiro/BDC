@@ -170,6 +170,16 @@ def mesclar_conjunto_de_dados_prata_por_chave_de_negocio(
     else:
         df_combined = df_new
 
+    # Poda de Governança: remover colunas _INDICADOR_DADO_MANUAL_* 100% vazias
+    cols_manual_vazias = [
+        c for c in df_combined.columns 
+        if str(c).startswith("_INDICADOR_DADO_MANUAL_") and (
+            df_combined[c].isna() | df_combined[c].astype(str).str.strip().isin(["", "None", "nan", "<NA>", "False"])
+        ).all()
+    ]
+    if cols_manual_vazias:
+        df_combined = df_combined.drop(columns=cols_manual_vazias)
+
     qtd_inseridos = len(df_new)
     qtd_atualizados = len(keys_to_replace) if 'keys_to_replace' in locals() and not keys_to_replace.empty else 0
     

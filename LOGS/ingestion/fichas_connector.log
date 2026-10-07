@@ -1,11 +1,20 @@
-2026-10-05 15:31:33 | INFO | fichas_connector | Verificando consistência de layouts nas pastas de fichas locais...
-2026-10-05 15:31:36 | INFO | fichas_connector | Iniciando varredura e validação de fichas na raiz de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR
-2026-10-05 15:31:36 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\.Chamados SalesForce\2026\.COMERCIALIZADORAS E GERADORAS
-2026-10-05 15:31:37 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\Limite Comercializadoras\Agentes_Demonstrações Financeiras\Fichas\2025
-2026-10-05 15:31:40 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\Limite Comercializadoras\Agentes_Demonstrações Financeiras\Fichas\2026
-2026-10-05 15:31:43 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\.Chamados SalesForce\2026\.CONSUMIDORES LIVRES
-2026-10-05 15:31:44 | INFO | fichas_connector | Ficha [CONSUMIDORES] validada e copiada com sucesso: 'BRASALPA 05102026.xlsx' -> ENTRADAS\fichas\consumidores\pendentes\BRASALPA 05102026.xlsx
-2026-10-05 15:31:46 | INFO | fichas_connector | Ficha [CONSUMIDORES] validada e copiada com sucesso: 'SANESUL 05102026.xlsx' -> ENTRADAS\fichas\consumidores\pendentes\SANESUL 05102026.xlsx
-2026-10-05 15:31:48 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\Limite Consumidores Livres\Fichas
-2026-10-05 15:31:50 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\.Chamados SalesForce\2025
-2026-10-05 15:31:58 | INFO | fichas_connector | Obtenção de fichas concluída: 2 novas (0 comercializadoras, 2 consumidores), 1043 inalteradas, 0 bloqueadas por usuários, 237 descartadas (não são fichas). Base local total: 808 comercializadoras, 817 consumidores.
+2026-10-07 11:28:01 | INFO | fichas_connector | Verificando consistência de layouts nas pastas de fichas locais...
+2026-10-07 11:28:04 | INFO | fichas_connector | Iniciando varredura e validação de fichas na raiz de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR
+2026-10-07 11:28:04 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\.Chamados SalesForce\2026\.COMERCIALIZADORAS E GERADORAS
+2026-10-07 11:28:05 | INFO | fichas_connector | Ficha [COMERCIALIZADORAS] validada e copiada com sucesso: 'UTE CAMBARA 01102026.xlsx' -> ENTRADAS\fichas\comercializadoras\pendentes\UTE CAMBARA 01102026.xlsx
+2026-10-07 11:28:07 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\Limite Comercializadoras\Agentes_Demonstrações Financeiras\Fichas\2025
+2026-10-07 11:28:11 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\Limite Comercializadoras\Agentes_Demonstrações Financeiras\Fichas\2026
+2026-10-07 11:28:11 | INFO | fichas_connector | Ficha [COMERCIALIZADORAS] validada e copiada com sucesso: 'ABM TRADING 06102026.xlsx' -> ENTRADAS\fichas\comercializadoras\pendentes\ABM TRADING 06102026.xlsx
+2026-10-07 11:28:12 | INFO | fichas_connector | Ficha [COMERCIALIZADORAS] validada e copiada com sucesso: 'CASTROLANDA 06102026.xlsx' -> ENTRADAS\fichas\comercializadoras\pendentes\CASTROLANDA 06102026.xlsx
+2026-10-07 11:28:14 | INFO | fichas_connector | Ficha [COMERCIALIZADORAS] validada e copiada com sucesso: 'NEC ENERGIA 18082026.xlsx' -> ENTRADAS\fichas\comercializadoras\pendentes\NEC ENERGIA 18082026.xlsx
+2026-10-07 11:28:14 | INFO | fichas_connector | Ficha [COMERCIALIZADORAS] validada e copiada com sucesso: 'NEC GERACAO 18082026.xlsx' -> ENTRADAS\fichas\comercializadoras\pendentes\NEC GERACAO 18082026.xlsx
+2026-10-07 11:28:14 | INFO | fichas_connector | Ficha [COMERCIALIZADORAS] validada e copiada com sucesso: 'PAN AMERICAN 06102026.xlsx' -> ENTRADAS\fichas\comercializadoras\pendentes\PAN AMERICAN 06102026.xlsx
+2026-10-07 11:28:15 | INFO | fichas_connector | Ficha [COMERCIALIZADORAS] validada e copiada com sucesso: 'SANTANDER 06102026.xlsx' -> ENTRADAS\fichas\comercializadoras\pendentes\SANTANDER 06102026.xlsx
+2026-10-07 11:28:15 | INFO | fichas_connector | Ficha [COMERCIALIZADORAS] validada e copiada com sucesso: 'SERENA GERACAO 06102026.xlsx' -> ENTRADAS\fichas\comercializadoras\pendentes\SERENA GERACAO 06102026.xlsx
+2026-10-07 11:28:15 | INFO | fichas_connector | Ficha [COMERCIALIZADORAS] validada e copiada com sucesso: 'SQUADRA 05102026.xlsx' -> ENTRADAS\fichas\comercializadoras\pendentes\SQUADRA 05102026.xlsx
+2026-10-07 11:28:16 | INFO | fichas_connector | Ficha [CONSUMIDORES] validada e copiada com sucesso: 'AREIA_BRANCA_II_passo4.xlsx' -> ENTRADAS\fichas\consumidores\pendentes\AREIA_BRANCA_II_passo4.xlsx
+2026-10-07 11:28:16 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\.Chamados SalesForce\2026\.CONSUMIDORES LIVRES
+2026-10-07 11:28:17 | INFO | fichas_connector | Ficha [CONSUMIDORES] validada e copiada com sucesso: 'BEEVRAGE PACK 07102026.xlsx' -> ENTRADAS\fichas\consumidores\pendentes\BEEVRAGE PACK 07102026.xlsx
+2026-10-07 11:28:22 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\Limite Consumidores Livres\Fichas
+2026-10-07 11:28:26 | INFO | fichas_connector | Varrendo subpasta de rede: S:\COM_CPR\3 ATIVIDADES E PROJETOS DA CPR\.Chamados SalesForce\2025
+2026-10-07 11:28:39 | INFO | fichas_connector | Obtenção de fichas concluída: 11 novas (9 comercializadoras, 2 consumidores), 1052 inalteradas, 0 bloqueadas por usuários, 236 descartadas (não são fichas). Base local total: 817 comercializadoras, 827 consumidores.

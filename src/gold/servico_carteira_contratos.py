@@ -38,6 +38,51 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
         dim_path = context.path("saidas") / "relational" / "dimensions" / "contrapartes" / "dim_contraparte.parquet"
     df_dim = pd.read_parquet(dim_path) if dim_path.exists() else pd.DataFrame()
 
+    # Carregar dim_estabelecimento para resolução determinística de herança de risco
+    estab_path = context.path("relational_dimensions") / "estabelecimentos" / "dim_estabelecimento.parquet"
+    if not estab_path.exists():
+        estab_path = context.path("saidas") / "relational" / "dimensions" / "estabelecimentos" / "dim_estabelecimento.parquet"
+    df_estab = pd.read_parquet(estab_path) if estab_path.exists() else pd.DataFrame()
+
+    # Carregar configurações declarativas de status ativo e prazo de validade
+    try:
+        cfg_status_path = context.path("control") / "configs" / "cfg_status_contrato_ativo.json"
+    except Exception:
+        cfg_status_path = Path("ENTRADAS/control/configs/cfg_status_contrato_ativo.json")
+    if not cfg_status_path.exists():
+        cfg_status_path = Path("ENTRADAS/control/configs/cfg_status_contrato_ativo.json")
+    status_regex = "ATIVO|EM SUPRIMENTO|2|VENCIDO"
+    if cfg_status_path.exists():
+        try:
+            import json
+            import re
+            with open(cfg_status_path, "r", encoding="utf-8") as f_st:
+                cfg_st = json.load(f_st)
+            s_ativos = cfg_st.get("status_ativos", [])
+            if s_ativos:
+                status_regex = "|".join(re.escape(s) for s in s_ativos)
+        except Exception as e_cfg_st:
+            logger.warning("Falha ao ler cfg_status_contrato_ativo.json, usando padrão regex: %s", e_cfg_st)
+
+    try:
+        cfg_prazo_path = context.path("control") / "configs" / "cfg_prazo_analise.json"
+    except Exception:
+        cfg_prazo_path = Path("ENTRADAS/control/configs/cfg_prazo_analise.json")
+    if not cfg_prazo_path.exists():
+        cfg_prazo_path = Path("ENTRADAS/control/configs/cfg_prazo_analise.json")
+    meses_bureau = 12
+    meses_df = 18
+    if cfg_prazo_path.exists():
+        try:
+            import json
+            with open(cfg_prazo_path, "r", encoding="utf-8") as f_pz:
+                cfg_pz = json.load(f_pz)
+            prazos_dict = cfg_pz.get("prazos_validade_meses", {})
+            meses_bureau = int(prazos_dict.get("BUREAU", 12))
+            meses_df = int(prazos_dict.get("DF", 18))
+        except Exception as e_cfg_pz:
+            logger.warning("Falha ao ler cfg_prazo_analise.json, usando padrão 12/18m: %s", e_cfg_pz)
+
     enq_dir = context.path("relational_configs")
     if not enq_dir.exists():
         enq_dir = context.path("saidas") / "relational" / "configs"
@@ -51,7 +96,7 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
 
     # 2. Preparar Contratos
     col_status = "STATUS" if "STATUS" in df_contratos.columns else ("id_status" if "id_status" in df_contratos.columns else "status")
-    df_contratos = df_contratos[df_contratos[col_status].astype(str).str.upper().str.contains("ATIVO|EM SUPRIMENTO|2|VENCIDO", regex=True, na=False)].copy()
+    df_contratos = df_contratos[df_contratos[col_status].astype(str).str.upper().str.contains(status_regex, regex=True, na=False)].copy()
     
     col_cnpj = "CONTRAPARTE_CNPJ" if "CONTRAPARTE_CNPJ" in df_contratos.columns else "CNPJ"
     df_contratos["CNPJ"] = df_contratos[col_cnpj].apply(normalizar_cnpj_coluna)
@@ -153,21 +198,99 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
             "CNPJ", "DATA_ANALISE", "DATA_ANALISE_DT", "RATING", "PD_PERCENTUAL", 
             "SCORE", "RESTRITIVOS", "TIPO_ANALISE", "FIM_VIGENCIA_ANALISE", 
             "ORIGEM_FONTE", "ANALISE_HERDADA", "SEGMENTO_METODOLOGICO_FICHA", "TIPO_FICHA",
-            "FONTE_ANALISE"
+            "FONTE_ANALISE", "PD_OFICIAL_FICHA", "PD_RECALCULADA_PYTHON", "DELTA_PD",
+            "STATUS_AUDITORIA_PD", "STATUS_AUDITORIA_RATING"
         ]
         cols_presentes = [c for c in cols_interesse_fato if c in df_fatos_latest.columns]
         df_fatos_sub = df_fatos_latest[cols_presentes].copy()
         
+        # Enriquecimento com dim_estabelecimento para mapear doador de risco e herança legal
+        if not df_estab.empty and "CNPJ" in df_estab.columns:
+            df_estab["CNPJ"] = df_estab["CNPJ"].apply(normalizar_cnpj_coluna)
+            cols_est = ["CNPJ", "CONTRAPARTE_ID", "CNPJ_DOADOR_RISCO", "ORIGEM_HERANCA_RISCO", "EH_MATRIZ"]
+            cols_pres = [c for c in cols_est if c in df_estab.columns]
+            df_merged = pd.merge(
+                df_merged,
+                df_estab[cols_pres].drop_duplicates("CNPJ"),
+                on="CNPJ",
+                how="left"
+            )
+
+        if "CNPJ_DOADOR_RISCO" not in df_merged.columns:
+            df_merged["CNPJ_DOADOR_RISCO"] = df_merged["CNPJ"]
+        else:
+            df_merged["CNPJ_DOADOR_RISCO"] = df_merged["CNPJ_DOADOR_RISCO"].combine_first(df_merged["CNPJ"])
+
+        if "ORIGEM_HERANCA_RISCO" not in df_merged.columns:
+            df_merged["ORIGEM_HERANCA_RISCO"] = "ANALISE_PROPRIA_DIRETA"
+        else:
+            df_merged["ORIGEM_HERANCA_RISCO"] = df_merged["ORIGEM_HERANCA_RISCO"].replace("NAO_APLICAVEL", "ANALISE_PROPRIA_DIRETA").fillna("ANALISE_PROPRIA_DIRETA")
+
         df_final = pd.merge(
             df_merged,
             df_fatos_sub,
-            on="CNPJ",
+            left_on="CNPJ_DOADOR_RISCO",
+            right_on="CNPJ",
+            suffixes=("", "_FATO"),
             how="left"
         )
+
+        # Fallback de contingência: se o doador de risco herdado for nulo ou sem análise,
+        # mas o CNPJ do próprio contrato tiver análise direta na Fato:
+        mask_doador_falho = (df_final["RATING"].isna() | df_final["DATA_ANALISE"].isna()) & (df_final["CNPJ_DOADOR_RISCO"] != df_final["CNPJ"])
+        if mask_doador_falho.any():
+            df_proprios = pd.merge(
+                df_merged.loc[mask_doador_falho, ["NUMERO_REFERENCIA_CONTRATO_STR", "CNPJ"]],
+                df_fatos_sub,
+                on="CNPJ",
+                how="inner"
+            )
+            if not df_proprios.empty:
+                for idx_m in df_final[mask_doador_falho].index:
+                    ref_c = df_final.at[idx_m, "NUMERO_REFERENCIA_CONTRATO_STR"]
+                    match_p = df_proprios[df_proprios["NUMERO_REFERENCIA_CONTRATO_STR"] == ref_c]
+                    if not match_p.empty:
+                        row_p = match_p.iloc[0]
+                        for c_col in cols_presentes:
+                            if c_col in row_p and pd.notna(row_p[c_col]):
+                                df_final.at[idx_m, c_col] = row_p[c_col]
+                        df_final.at[idx_m, "ORIGEM_HERANCA_RISCO"] = "ANALISE_PROPRIA_DIRETA"
+                        df_final.at[idx_m, "CNPJ_DOADOR_RISCO"] = df_final.at[idx_m, "CNPJ"]
     else:
         df_final = df_merged.copy()
-        for c in ["DATA_ANALISE", "DATA_ANALISE_DT", "RATING", "PD_PERCENTUAL", "SCORE", "RESTRITIVOS", "TIPO_ANALISE", "FIM_VIGENCIA_ANALISE", "ORIGEM_FONTE", "FONTE_ANALISE"]:
+        for c in ["DATA_ANALISE", "DATA_ANALISE_DT", "RATING", "PD_PERCENTUAL", "SCORE", "RESTRITIVOS", "TIPO_ANALISE", "FIM_VIGENCIA_ANALISE", "ORIGEM_FONTE", "FONTE_ANALISE", "ORIGEM_HERANCA_RISCO", "CNPJ_DOADOR_RISCO"]:
             df_final[c] = pd.NA
+
+    # 4.1 Enriquecimento Dimensional (Star Schema): Integrar CONTRAPARTE_ID, GRUPO_ID e NOME_GRUPO
+    c_raiz_serie = df_final["CNPJ"].astype(str).str[:8]
+    if "CONTRAPARTE_ID" not in df_final.columns:
+        df_final["CONTRAPARTE_ID"] = "CPT_" + c_raiz_serie
+    else:
+        df_final["CONTRAPARTE_ID"] = df_final["CONTRAPARTE_ID"].fillna("CPT_" + c_raiz_serie)
+
+    if not df_dim.empty and "CONTRAPARTE_ID" in df_dim.columns:
+        cols_cpt_dim = [c for c in ["CONTRAPARTE_ID", "GRUPO_ID", "GRUPO_ECONOMICO"] if c in df_dim.columns]
+        df_cpt_lookup = df_dim[cols_cpt_dim].drop_duplicates("CONTRAPARTE_ID")
+        df_final = pd.merge(df_final, df_cpt_lookup, on="CONTRAPARTE_ID", how="left")
+
+    if "GRUPO_ID" not in df_final.columns:
+        df_final["GRUPO_ID"] = "GRP_" + c_raiz_serie
+    else:
+        df_final["GRUPO_ID"] = df_final["GRUPO_ID"].fillna("GRP_" + c_raiz_serie)
+
+    col_nm_ctp = "CONTRAPARTE_NOME_FANTASIA" if "CONTRAPARTE_NOME_FANTASIA" in df_final.columns else "CONTRAPARTE"
+    s_fallback_nm = df_final[col_nm_ctp] if col_nm_ctp in df_final.columns else ("CONTROLE INDEPENDENTE - " + c_raiz_serie)
+
+    if "GRUPO_ECONOMICO" in df_final.columns:
+        df_final["NOME_GRUPO"] = df_final["GRUPO_ECONOMICO"].combine_first(s_fallback_nm).fillna("CONTROLE INDEPENDENTE - " + c_raiz_serie)
+    else:
+        df_final["NOME_GRUPO"] = s_fallback_nm.fillna("CONTROLE INDEPENDENTE - " + c_raiz_serie)
+
+    mask_nm_branco = (
+        df_final["NOME_GRUPO"].isna() | 
+        df_final["NOME_GRUPO"].astype(str).str.strip().isin(["", "None", "nan", "<NA>", "NULL"])
+    )
+    df_final.loc[mask_nm_branco, "NOME_GRUPO"] = "CONTROLE INDEPENDENTE - " + c_raiz_serie.loc[mask_nm_branco]
 
     # 5. Avaliação de Vigência da Análise contra a data de hoje
     hoje = pd.Timestamp.now().normalize()
@@ -180,10 +303,10 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
     if mask_calc_fim.any():
         is_bur = df_final["TIPO_ANALISE"].astype(str).str.contains("Bureau", na=False)
         df_final.loc[mask_calc_fim & is_bur, "FIM_VIGENCIA_ANALISE"] = (
-            pd.to_datetime(df_final.loc[mask_calc_fim & is_bur, "DATA_ANALISE"], errors="coerce") + pd.DateOffset(months=12)
+            pd.to_datetime(df_final.loc[mask_calc_fim & is_bur, "DATA_ANALISE"], errors="coerce") + pd.DateOffset(months=meses_bureau)
         ).dt.strftime("%Y-%m-%d")
         df_final.loc[mask_calc_fim & (~is_bur), "FIM_VIGENCIA_ANALISE"] = (
-            pd.to_datetime(df_final.loc[mask_calc_fim & (~is_bur), "DATA_ANALISE"], errors="coerce") + pd.DateOffset(months=18)
+            pd.to_datetime(df_final.loc[mask_calc_fim & (~is_bur), "DATA_ANALISE"], errors="coerce") + pd.DateOffset(months=meses_df)
         ).dt.strftime("%Y-%m-%d")
 
     dt_fim_vigencia = pd.to_datetime(df_final["FIM_VIGENCIA_ANALISE"], errors="coerce").dt.normalize()
@@ -197,7 +320,24 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
     df_final.loc[cond_vencida, "STATUS_VIGENCIA_ANALISE"] = "VENCIDA"
     df_final.loc[cond_vigente, "STATUS_VIGENCIA_ANALISE"] = "VIGENTE"
 
-    # 5.1 Identificação Declarativa de Contrapartes Intercompany
+    # Regra de Governança BDC: Comercializadoras, Geradoras, CPURA, CGRUPO e Consumidores >= 5 MWm 
+    # exigem obrigatoriamente DF contábil analisada pela mesa. Se a DF estiver pendente, ausente ou expirada,
+    # o status de crédito deve ser estritamente 'VENCIDA' (acionando a PD_sub da NT v7 na visão de mercado).
+    is_seg_obriga_df = (
+        (df_final.get("TIPO_FICHA").astype(str).str.upper().isin(["COMERCIALIZADORA", "GERADORA"])) |
+        (df_final.get("SEGMENTO_METODOLOGICO_FICHA").astype(str).str.upper().str.contains("CPURA|CGRUPO", na=False)) |
+        (df_final.get("SEGMENTO_CADASTRO").astype(str).str.upper().str.contains("CPURA|CGRUPO", na=False)) |
+        (df_final.get("POSSUI_PELO_MENOS_5_MWM") == True) |
+        (df_final.get("SEGMENTO_METODOLOGICO_FICHA").astype(str).str.upper().str.contains("GT_5", na=False))
+    )
+    mask_df_nao_atendida = is_seg_obriga_df & (
+        (df_final.get("SITUACAO_DF") == "PENDENTE_DF") |
+        (df_final["STATUS_VIGENCIA_ANALISE"] == "SEM_ANALISE") |
+        (~tem_data_analise)
+    )
+    df_final.loc[mask_df_nao_atendida, "STATUS_VIGENCIA_ANALISE"] = "VENCIDA"
+
+    # 5.1 Identificação Declarativa de Contrapartes Intercompany (Isentas de Risco)
     cfg_intercompany_path = Path("ENTRADAS/control/configs/contrapartes_grupo_proprio.json")
     mask_intercompany = pd.Series(False, index=df_final.index)
     if cfg_intercompany_path.exists():
@@ -218,46 +358,63 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
             cond_nome = s_nome.apply(lambda x: any(t in x for t in termos_nome)) if termos_nome else pd.Series(False, index=df_final.index)
 
             mask_intercompany = cond_raiz | cond_cnpj | cond_nome
-            df_final.loc[mask_intercompany, "STATUS_VIGENCIA_ANALISE"] = "INTERCOMPANY"
+            df_final.loc[mask_intercompany, "STATUS_VIGENCIA_ANALISE"] = "ISENTO_INTERCOMPANY"
         except Exception as e:
             logger.warning("Falha ao carregar config de contrapartes grupo próprio: %s", e)
+
+    # 5.2 Identificação e Rastreabilidade Estrita de Herança de Risco
+    mask_matriz = (df_final.get("ORIGEM_HERANCA_RISCO") == "MATRIZ_FILIAL_CNPJ_RAIZ") & df_final["RATING"].notna()
+    mask_ctrl = (df_final.get("ORIGEM_HERANCA_RISCO") == "CONTROLADORA_HOMOLOGADA_PLANILHA") & df_final["RATING"].notna()
+
+    df_final.loc[mask_matriz, "ANALISE_HERDADA"] = True
+    df_final.loc[mask_matriz, "ORIGEM_ANALISE"] = "HERDADA DA MATRIZ (RAIZ CNPJ)"
+    df_final.loc[mask_matriz, "FONTE_ANALISE"] = "Herança Matriz/Filial"
+
+    df_final.loc[mask_ctrl, "ANALISE_HERDADA"] = True
+    df_final.loc[mask_ctrl, "ORIGEM_ANALISE"] = "HERDADA DA CONTROLADORA (HOMOLOGADA)"
+    df_final.loc[mask_ctrl, "FONTE_ANALISE"] = "Herança Societária Homologada"
 
     # Mapeamento do TIPO_ANALISE
     def determinar_metodologia_vigente(row):
         stat_vig = row.get("STATUS_VIGENCIA_ANALISE")
-        if stat_vig == "INTERCOMPANY":
+        if stat_vig in ["INTERCOMPANY", "ISENTO_INTERCOMPANY"]:
             return "Intercompany"
         if stat_vig == "SEM_ANALISE":
             return "Sem Análise"
             
-        tipo = str(row.get("TIPO_ANALISE", "")).strip()
-        analise_herdada = row.get("ANALISE_HERDADA") is True or "Herdada" in tipo or "HERDADA" in tipo or "Raiz" in tipo
-        if analise_herdada:
-            base_tipo = "Análise Herdada"
+        origem_h = row.get("ORIGEM_HERANCA_RISCO")
+        if origem_h == "MATRIZ_FILIAL_CNPJ_RAIZ":
+            base_tipo = "Análise Herdada (Matriz)"
+        elif origem_h == "CONTROLADORA_HOMOLOGADA_PLANILHA":
+            base_tipo = "Análise Herdada (Controladora)"
         else:
-            seg_ficha = str(row.get("SEGMENTO_METODOLOGICO_FICHA", "")).strip().upper()
-            tipo_ficha = str(row.get("TIPO_FICHA", "")).strip().upper()
-            seg_cad = str(row.get("SEGMENTO_CADASTRO", "")).strip().upper()
-            portfolio = str(row.get("PORTFOLIO", "")).strip().upper()
-            origem_fonte = str(row.get("ORIGEM_FONTE", "")).strip().upper()
-            pelo_menos_5mwm = row.get("POSSUI_PELO_MENOS_5_MWM")
-
-            # Comercializadoras e Geradoras são SEMPRE Análise DF
-            is_comercializadora = (tipo_ficha in ["COMERCIALIZADORA", "GERADORA"]) or ("CPURA" in seg_ficha) or ("CGRUPO" in seg_ficha)
-            
-            if is_comercializadora or origem_fonte == "DF":
-                base_tipo = "Análise DF"
+            tipo = str(row.get("TIPO_ANALISE", "")).strip()
+            analise_herdada = row.get("ANALISE_HERDADA") is True or "Herdada" in tipo or "HERDADA" in tipo or "Raiz" in tipo
+            if analise_herdada:
+                base_tipo = "Análise Herdada"
             else:
-                is_bureau = (
-                    (seg_ficha == "CONSUMIDOR_LE_5") or ("LE_5" in seg_ficha) or
-                    (tipo_ficha == "CONSUMIDOR" and seg_ficha != "CONSUMIDOR_GT_5") or
-                    (seg_cad == "CONSUMIDOR_LE_5") or ("LE_5" in seg_cad) or
-                    (origem_fonte == "BUREAU") or
-                    (pelo_menos_5mwm is False and tipo_ficha == "CONSUMIDOR") or
-                    ("CONSUMIDOR" in portfolio and seg_cad != "CONSUMIDOR_GT_5" and pelo_menos_5mwm is not True)
-                )
-                base_tipo = "Análise Bureau" if is_bureau else "Análise DF"
+                seg_ficha = str(row.get("SEGMENTO_METODOLOGICO_FICHA", "")).strip().upper()
+                tipo_ficha = str(row.get("TIPO_FICHA", "")).strip().upper()
+                seg_cad = str(row.get("SEGMENTO_CADASTRO", "")).strip().upper()
+                portfolio = str(row.get("PORTFOLIO", "")).strip().upper()
+                origem_fonte = str(row.get("ORIGEM_FONTE", "")).strip().upper()
+                pelo_menos_5mwm = row.get("POSSUI_PELO_MENOS_5_MWM")
 
+                # Comercializadoras e Geradoras são SEMPRE Análise DF
+                is_comercializadora = (tipo_ficha in ["COMERCIALIZADORA", "GERADORA"]) or ("CPURA" in seg_ficha) or ("CGRUPO" in seg_ficha)
+                
+                if is_comercializadora or origem_fonte == "DF":
+                    base_tipo = "Análise DF"
+                else:
+                    is_bureau = (
+                        (seg_ficha == "CONSUMIDOR_LE_5") or ("LE_5" in seg_ficha) or
+                        (tipo_ficha == "CONSUMIDOR" and seg_ficha != "CONSUMIDOR_GT_5") or
+                        (seg_cad == "CONSUMIDOR_LE_5") or ("LE_5" in seg_cad) or
+                        (origem_fonte == "BUREAU") or
+                        (pelo_menos_5mwm is False and tipo_ficha == "CONSUMIDOR") or
+                        ("CONSUMIDOR" in portfolio and seg_cad != "CONSUMIDOR_GT_5" and pelo_menos_5mwm is not True)
+                    )
+                    base_tipo = "Análise Bureau" if is_bureau else "Análise DF"
 
         if stat_vig == "VENCIDA":
             return f"{base_tipo} (Vencida)"
@@ -265,17 +422,64 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
 
     df_final["TIPO_ANALISE"] = df_final.apply(determinar_metodologia_vigente, axis=1)
 
-    # REGRA DE GOVERNANÇA E IMPACTO FINANCEIRO:
-    # Se a análise for VENCIDA ou SEM_ANALISE, os valores efetivos de RATING, PD, SCORE e RESTRITIVOS
-    # são convertidos para pd.NA para NÃO MASCARAR O RISCO da carteira a mercado.
-    mask_invalida = df_final["STATUS_VIGENCIA_ANALISE"].isin(["VENCIDA", "SEM_ANALISE"])
-    df_final.loc[mask_invalida, "RATING"] = pd.NA
-    df_final.loc[mask_invalida, "PD_PERCENTUAL"] = pd.NA
-    df_final.loc[mask_invalida, "SCORE"] = pd.NA
-    df_final.loc[mask_invalida, "RESTRITIVOS"] = pd.NA
+    # REGRA DE GOVERNANÇA NOTA TÉCNICA v7 (VISÃO DE CRÉDITO vs VISÃO DE RISCO DE MERCADO):
+    # 1. Preservar o rating documental oficial da ficha para auditoria de crédito:
+    df_final["RATING_OFICIAL_FICHA"] = df_final["RATING"]
 
-    # Intercompany: isento de risco de crédito de terceiros
-    df_final.loc[mask_intercompany, "RATING"] = "N/A"
+    # 2. Casos SEM_ANALISE: mantêm-se estritamente nulos
+    mask_sem_anl = df_final["STATUS_VIGENCIA_ANALISE"] == "SEM_ANALISE"
+    df_final.loc[mask_sem_anl, "RATING"] = pd.NA
+    df_final.loc[mask_sem_anl, "PD_PERCENTUAL"] = pd.NA
+    df_final.loc[mask_sem_anl, "SCORE"] = pd.NA
+    df_final.loc[mask_sem_anl, "RESTRITIVOS"] = pd.NA
+    df_final.loc[mask_sem_anl, "RATING_OFICIAL_FICHA"] = pd.NA
+
+    # 3. Casos VENCIDA:
+    # - Visão de Crédito: RATING_OFICIAL_FICHA fica nulo e STATUS_VIGENCIA_ANALISE = 'VENCIDA'.
+    # - Visão de Risco a Mercado: PD_PERCENTUAL é preenchida com a PD_sub da NT v7 para cálculo
+    #   financeiro (TRC/Perda Esperada/MtM), e RATING_MERCADO deriva da faixa de PD correspondente.
+    mask_vencida = df_final["STATUS_VIGENCIA_ANALISE"] == "VENCIDA"
+    if mask_vencida.any():
+        from domain.credito.rating import derivar_rating_por_pd
+        pd_faixas_cfg = None
+        try:
+            from common.json import ler_json
+            pd_faixas_cfg = ler_json(Path("ENTRADAS/control/configs/pd_faixas.json"))
+        except Exception:
+            pass
+
+        df_final.loc[mask_vencida, "RATING_OFICIAL_FICHA"] = pd.NA
+
+        for idx_v in df_final[mask_vencida].index:
+            seg_f = str(df_final.at[idx_v, "SEGMENTO_METODOLOGICO_FICHA"] or "").strip().upper()
+            tipo_f = str(df_final.at[idx_v, "TIPO_FICHA"] or "").strip().upper()
+            pd_val_orig = df_final.at[idx_v, "PD_PERCENTUAL"]
+
+            try:
+                pd_num_orig = float(pd_val_orig) if pd.notna(pd_val_orig) else None
+            except Exception:
+                pd_num_orig = None
+
+            # Cálculo estrito da PD_sub (NT v7 §§ 6.4, 7.2, 8.2, 9.4)
+            if "CPURA" in seg_f or tipo_f == "COMERCIALIZADORA":
+                pd_sub = max(pd_num_orig or 0.10, 0.10)
+            elif "CGRUPO" in seg_f or "GRUPO" in seg_f:
+                pd_sub = max(pd_num_orig or 0.15, 0.15)
+            elif "GT_5" in seg_f:
+                pd_sub = max(pd_num_orig or 0.50, 0.50)
+            else:
+                pd_sub = pd_num_orig if pd_num_orig is not None else 0.10
+
+            df_final.at[idx_v, "PD_PERCENTUAL"] = pd_sub
+            r_mercado = derivar_rating_por_pd(pd_sub, seg_f or tipo_f, pd_faixas_cfg) if pd_faixas_cfg else "E"
+            df_final.at[idx_v, "RATING"] = r_mercado or "E"
+
+    df_final["RATING_MERCADO"] = df_final["RATING"]
+
+    # Intercompany: isento de risco de crédito de terceiros (rótulo oficial ISENTO_INTERCOMPANY)
+    df_final.loc[mask_intercompany, "RATING"] = "ISENTO_INTERCOMPANY"
+    df_final.loc[mask_intercompany, "RATING_MERCADO"] = "ISENTO_INTERCOMPANY"
+    df_final.loc[mask_intercompany, "RATING_OFICIAL_FICHA"] = "ISENTO_INTERCOMPANY"
     df_final.loc[mask_intercompany, "PD_PERCENTUAL"] = 0.0
     df_final.loc[mask_intercompany, "SCORE"] = pd.NA
     df_final.loc[mask_intercompany, "RESTRITIVOS"] = 0
@@ -299,16 +503,12 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
             .map(_mapa_fonte_gold)
         )
 
-    mask_herdada_gold = df_final["ANALISE_HERDADA"] == True
-    df_final.loc[mask_herdada_gold, "FONTE_ANALISE"] = "Herança Societária"
+    df_final.loc[mask_matriz, "FONTE_ANALISE"] = "Herança Matriz/Filial"
+    df_final.loc[mask_ctrl, "FONTE_ANALISE"] = "Herança Societária Homologada"
     df_final.loc[mask_intercompany, "FONTE_ANALISE"] = "Intercompany"
     df_final.loc[df_final["STATUS_VIGENCIA_ANALISE"] == "SEM_ANALISE", "FONTE_ANALISE"] = pd.NA
 
     # 6. Cálculo da NOVA COLUNA: STATUS_CONTRATO
-    # - Se hoje < SUPRIMENTO_INICIO ➔ A_FORNECER
-    # - Se SUPRIMENTO_INICIO <= hoje <= SUPRIMENTO_FIM ➔ EM_FORNECIMENTO
-    # - Se hoje > SUPRIMENTO_FIM ➔ ENCERRADO
-    # - Se as datas forem nulas ➔ NAO_APLICAVEL
     col_sup_ini = "VIGENCIA_INICIO" if "VIGENCIA_INICIO" in df_final.columns else "SUPRIMENTO_INICIO"
     col_sup_fim = "VIGENCIA_FIM" if "VIGENCIA_FIM" in df_final.columns else "SUPRIMENTO_FIM"
     
@@ -343,6 +543,9 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
         "VIGENCIA_FIM": "SUPRIMENTO_FIM",
         "CONTRAPARTE_NOME_FANTASIA": "CONTRAPARTE_NOME_FANTASIA",
         "CNPJ": "CONTRAPARTE_CNPJ",
+        "CONTRAPARTE_ID": "CONTRAPARTE_ID",
+        "GRUPO_ID": "GRUPO_ID",
+        "NOME_GRUPO": "NOME_GRUPO",
         "NUMERO_REFERENCIA_CONTRATO": "NUMERO_REFERENCIA_CONTRATO",
         "MOVIMENTACAO": "MOVIMENTACAO",
         "PORTFOLIO": "PORTFOLIO",
@@ -357,7 +560,15 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
         "STATUS_VIGENCIA_ANALISE": "STATUS_VIGENCIA_ANALISE",
         "TIPO_ANALISE": "TIPO_ANALISE",
         "STATUS_CONTRATO": "STATUS_CONTRATO",
-        "FONTE_ANALISE": "FONTE_ANALISE"
+        "FONTE_ANALISE": "FONTE_ANALISE",
+        "ORIGEM_HERANCA_RISCO": "ORIGEM_HERANCA_RISCO",
+        "CNPJ_DOADOR_RISCO": "CNPJ_DOADOR_RISCO",
+        "PD_OFICIAL_FICHA": "PD_OFICIAL_FICHA",
+        "PD_RECALCULADA_PYTHON": "PD_RECALCULADA_PYTHON",
+        "DELTA_PD": "DELTA_PD",
+        "STATUS_AUDITORIA_PD": "STATUS_AUDITORIA_PD",
+        "STATUS_AUDITORIA_RATING": "STATUS_AUDITORIA_RATING",
+        "SEGMENTO_METODOLOGICO_FICHA": "SEGMENTO_METODOLOGICO_FICHA"
     }
     
     for col in rename_map.keys():
@@ -371,11 +582,16 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
         df_final = df_final.drop_duplicates(subset=["NUMERO_REFERENCIA_CONTRATO"], keep="last")
 
     # Tipagem estrita para consistência Parquet / PyArrow
-    for num_col in ["MTM_TOTAL_R$", "MTM_VPL_R$", "PD", "SCORE", "RESTRITIVOS"]:
+    for num_col in ["MTM_TOTAL_R$", "MTM_VPL_R$", "PD", "SCORE", "RESTRITIVOS", "PD_OFICIAL_FICHA", "PD_RECALCULADA_PYTHON", "DELTA_PD"]:
         if num_col in df_final.columns:
             df_final[num_col] = pd.to_numeric(df_final[num_col], errors="coerce")
             
-    for str_col in ["CONTRAPARTE_NOME_FANTASIA", "CONTRAPARTE_CNPJ", "NUMERO_REFERENCIA_CONTRATO", "MOVIMENTACAO", "PORTFOLIO", "RATING", "STATUS_VIGENCIA_ANALISE", "TIPO_ANALISE", "STATUS_CONTRATO", "FONTE_ANALISE"]:
+    for str_col in [
+        "CONTRAPARTE_NOME_FANTASIA", "CONTRAPARTE_CNPJ", "CONTRAPARTE_ID", "GRUPO_ID", "NOME_GRUPO",
+        "NUMERO_REFERENCIA_CONTRATO", "MOVIMENTACAO", "PORTFOLIO", "RATING", 
+        "STATUS_VIGENCIA_ANALISE", "TIPO_ANALISE", "STATUS_CONTRATO", "FONTE_ANALISE", 
+        "ORIGEM_HERANCA_RISCO", "STATUS_AUDITORIA_PD", "STATUS_AUDITORIA_RATING", "SEGMENTO_METODOLOGICO_FICHA"
+    ]:
         if str_col in df_final.columns:
             df_final[str_col] = df_final[str_col].astype(str).replace({"nan": None, "None": None, "<NA>": None, "NaT": None})
 
@@ -390,6 +606,49 @@ def processar_visao_contratos_risco(context: AppContext) -> dict:
     df_final.to_parquet(out_path, index=False)
     
     logger.info("Visão Carteira Contratos gerada com %d registros.", len(df_final))
+
+    # 8.1 Exportação do Relatório de Ação Imediata: CNPJs a Mercado Descobertos de Análise
+    try:
+        export_dir = context.path("saidas") / "exportacoes"
+    except Exception:
+        export_dir = Path("SAIDAS/exportacoes")
+    export_dir.mkdir(parents=True, exist_ok=True)
+
+    mask_sem_rating = (
+        df_final["RATING"].isna() | 
+        df_final["RATING"].astype(str).str.strip().isin(["", "None", "nan", "<NA>", "SEM_ANALISE"])
+    )
+    mask_mercado = (
+        (df_final["FONTE_ANALISE"].astype(str) != "Intercompany") &
+        (df_final["STATUS_VIGENCIA_ANALISE"] != "ISENTO_INTERCOMPANY") &
+        (df_final["RATING"].astype(str) != "ISENTO_INTERCOMPANY")
+    )
+
+    df_descobertos = df_final[mask_sem_rating & mask_mercado].copy()
+    if not df_descobertos.empty:
+        df_rel_acao = (
+            df_descobertos.groupby(["CONTRAPARTE_CNPJ", "CONTRAPARTE_NOME_FANTASIA"], as_index=False)
+            .agg({
+                "MTM_TOTAL_R$": "sum",
+                "NUMERO_REFERENCIA_CONTRATO": "count",
+                "PORTFOLIO": lambda x: ", ".join(sorted(set(str(v) for v in x if pd.notna(v)))),
+                "STATUS_VIGENCIA_ANALISE": "first"
+            })
+            .rename(columns={
+                "NUMERO_REFERENCIA_CONTRATO": "TOTAL_CONTRATOS",
+                "PORTFOLIO": "PORTFOLIOS",
+                "STATUS_VIGENCIA_ANALISE": "STATUS_VIGENCIA"
+            })
+            .sort_values(by="MTM_TOTAL_R$", ascending=False)
+        )
+        
+        csv_acao_path = export_dir / "CNPJs_Descobertos_Acao_Imediata.csv"
+        df_rel_acao.to_csv(csv_acao_path, sep=";", index=False, encoding="utf-8-sig")
+        logger.info(
+            "Relatório de Ação Imediata exportado com sucesso: %s (%d CNPJs, R$ %.2f MtM).",
+            csv_acao_path, len(df_rel_acao), df_rel_acao["MTM_TOTAL_R$"].sum()
+        )
+
     return {"status": "SUCESSO", "linhas": len(df_final)}
 
 

@@ -1,0 +1,17 @@
+{
+  "descricao": "Definição declarativa de status contratuais do Denodo que representam vínculo corrente e ativo",
+  "versao_regra": "v1.2",
+  "status_ativos": [
+    "ATIVO",
+    "EM SUPRIMENTO",
+    "2",
+    "VENCIDO"
+  ],
+  "status_inativos_excluidos": [
+    "CANCELADO",
+    "DISTRATADO",
+    "ENCERRADO",
+    "REJEITADO",
+    "INATIVO"
+  ]
+}
